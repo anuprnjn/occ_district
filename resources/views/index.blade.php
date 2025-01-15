@@ -14,7 +14,7 @@
     </div>
 
     <!-- Dropdown for High Court -->
-    <div id="highCourtDropdown" class="dropdown w-[310px] p-[10px] sm:-ml-2">
+    <div id="highCourtDropdown" class="dropdown w-[50%] p-[10px] sm:-ml-2">
         <label for="highCourtSelect" class="mb-2">Select an option:</label>
         <select id="highCourtSelect" class="p-[10px]">
             <option value="applyJudgement" selected>Apply for Orders and Judgement Copy</option>
@@ -23,28 +23,37 @@
     </div>
 
     <!-- Dropdown for District Court -->
-    <div id="districtCourtDropdown" class="dropdown w-[310px] p-[10px]" style="display: none;">
-        <div class="flex justify-start items-start gap-2 flex-col">
-        
-        <label for="selectDist" class="mb-2">Select an option:</label>
-        <select id="selectDist" class="p-[10px]">
-            <option value="applyOthers" selected>Select District</option>
-            @foreach ($districts as $district)
-                <option value="{{ $district['dist_code'] }}">{{ $district['dist_name'] }}</option>
-            @endforeach
-        </select>
-        <label for="selectEsta" class="mb-2">Select an option:</label>
-        <select id="selectEsta" class="p-[10px]">
-            <option value="applyOthers" selected>Select Establishment</option>
-        </select>
+    <div id="districtCourtDropdown" class="dropdown w-[100%] p-[10px]" style="display: none;">
+        <div class="grid grid-cols-2 gap-4">
+            <!-- First Select Box -->
+            <div>
+                <label for="selectDist" class="mb-2 block">Select District:</label>
+                <select id="selectDist" class="w-full p-[10px] border border-gray-300 rounded">
+                    <option value="applyOthers" selected>Select District</option>
+                    @foreach ($districts as $district)
+                        <option value="{{ $district['dist_code'] }}">{{ $district['dist_name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+    
+            <!-- Second Select Box -->
+            <div>
+                <label for="selectEsta" class="mb-2 block">Select Establishment:</label>
+                <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded">
+                    <option value="applyOthers" selected>Select Establishment</option>
+                </select>
+            </div>
         </div>
-        <div class="mb-2 mt-3">
-        <label for="districtCourtSelect">Select an option:</label>
-        <select id="districtCourtSelect" class="p-[10px]">
-            <option value="applyOthers" selected>Apply for Others Copy</option>
-        </select>
+    
+        <!-- Third Select Box -->
+        <div class="mt-4">
+            <label for="districtCourtSelect" class="mb-2 block">Select an option:</label>
+            <select id="districtCourtSelect" class="w-1/2 p-[10px] border border-gray-300 rounded">
+                <option value="applyOthers" selected>Apply for Others Copy</option>
+            </select>
         </div>
     </div>
+    
     
 
     <!-- Form Container -->
@@ -54,6 +63,40 @@
 @endsection
 
 @push('scripts')
+<script>
+    $(document).ready(function () {
+        $('#selectDist').on('change', function () {
+            const distCode = $(this).val();
+
+            if (distCode === 'applyOthers') {
+                $('#selectEsta').html('<option value="applyOthers" selected>Select Establishment</option>');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('get-establishments') }}",
+                method: 'POST',
+                data: {
+                    dist_code: distCode,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (data) {
+                    const establishments = data;
+                    let options = '<option value="applyOthers" selected>Select Establishment</option>';
+
+                    establishments.forEach(function (establishment) {
+                        options += `<option value="${establishment.est_code}">${establishment.estname}</option>`;
+                    });
+
+                    $('#selectEsta').html(options);
+                },
+                error: function () {
+                    alert('Unable to fetch establishments. Please try again later.');
+                }
+            });
+        });
+    });
+</script>
 <script>
     $(document).ready(function () {
         $('#home').addClass('active');

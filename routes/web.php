@@ -8,3 +8,4 @@ Route::get('/', function () {
 });
 
 Route::get('/', [DistrictController::class, 'index']);
+Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
