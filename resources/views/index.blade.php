@@ -14,7 +14,7 @@
     </div>
 
     <!-- Dropdown for High Court -->
-    <div id="highCourtDropdown" class="dropdown w-[50%] p-[10px] sm:-ml-2">
+    <div id="highCourtDropdown" class="dropdown w-[100%] sm:w-[50%] p-[10px] sm:-ml-2">
         <label for="highCourtSelect" class="mb-2">Select an option:</label>
         <select id="highCourtSelect" class="p-[10px]">
             <option value="applyJudgement" selected>Apply for Orders and Judgement Copy</option>
@@ -23,11 +23,11 @@
     </div>
 
     <!-- Dropdown for District Court -->
-    <div id="districtCourtDropdown" class="dropdown w-[100%] p-[10px]" style="display: none;">
-        <div class="grid grid-cols-2 gap-4">
+    <div id="districtCourtDropdown" class=" dark_form dropdown w-[100%] p-[10px] bg-slate-100/70 rounded-md" style="display: none;">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- First Select Box -->
             <div>
-                <label for="selectDist" class="mb-2 block">Select District:</label>
+                <label for="selectDist" class="mb-2 block">Select District:<span>*</span></label>
                 <select id="selectDist" class="w-full p-[10px] border border-gray-300 rounded">
                     <option value="applyOthers" selected>Select District</option>
                     @foreach ($districts as $district)
@@ -38,7 +38,7 @@
     
             <!-- Second Select Box -->
             <div>
-                <label for="selectEsta" class="mb-2 block">Select Establishment:</label>
+                <label for="selectEsta" class="mb-2 block">Select Establishment:<span>*</span></label>
                 <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded">
                     <option value="applyOthers" selected>Select Establishment</option>
                 </select>
@@ -48,7 +48,7 @@
         <!-- Third Select Box -->
         <div class="mt-4">
             <label for="districtCourtSelect" class="mb-2 block">Select an option:</label>
-            <select id="districtCourtSelect" class="w-1/2 p-[10px] border border-gray-300 rounded">
+            <select id="districtCourtSelect" class="sm:w-[49.4%] w-[100%] p-[10px] border border-gray-300 rounded">
                 <option value="applyOthers" selected>Apply for Others Copy</option>
             </select>
         </div>

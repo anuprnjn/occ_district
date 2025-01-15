@@ -830,6 +830,10 @@ input, textarea {
     background-color: white;
     border-radius: 50%;
 }
+label{
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
 
 
 /* DARK MODE STYLES  */
