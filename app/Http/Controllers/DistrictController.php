@@ -8,11 +8,14 @@ class DistrictController extends Controller
 {
     public function index()
     {
+        // Get the base URL from the config or .env file
+        $baseUrl = config('app.api.base_url'); // Using config for better maintainability
+        $apiUrl = $baseUrl . '/district_dropdown.php';
+
         // Fetch data from the API
-        $response = Http::get('http://localhost/occ_api/dropdown.php');
+        $response = Http::get($apiUrl);
 
         if ($response->failed()) {
-            // If the API call fails, log the error and return a meaningful response
             \Log::error('Failed to fetch districts: ' . $response->body());
             return back()->withErrors(['message' => 'Unable to fetch districts.']);
         }
