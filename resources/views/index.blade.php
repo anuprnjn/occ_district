@@ -25,13 +25,17 @@
     <!-- Dropdown for District Court -->
     <div id="districtCourtDropdown" class="dropdown w-[310px] p-[10px]" style="display: none;">
         <div class="flex justify-start items-start gap-2 flex-col">
-        <label for="districtCourtSelect" class="mb-2">Select an option:</label>
-        <select id="districtCourtSelect" class="p-[10px]">
-            <option value="applyOthers" selected>Select Establishment</option>
-        </select>
-        <label for="districtCourtSelect" class="mb-2">Select an option:</label>
-        <select id="districtCourtSelect" class="p-[10px]">
+        
+        <label for="selectDist" class="mb-2">Select an option:</label>
+        <select id="selectDist" class="p-[10px]">
             <option value="applyOthers" selected>Select District</option>
+            @foreach ($districts as $district)
+                <option value="{{ $district['dist_code'] }}">{{ $district['dist_name'] }}</option>
+            @endforeach
+        </select>
+        <label for="selectEsta" class="mb-2">Select an option:</label>
+        <select id="selectEsta" class="p-[10px]">
+            <option value="applyOthers" selected>Select Establishment</option>
         </select>
         </div>
         <div class="mb-2 mt-3">
