@@ -106,16 +106,20 @@
             const selectedCourt = $('input[name="courtType"]:checked').val();
 
             if (selectedCourt === 'highCourt') {
-                $('#highCourtDropdown').show();
-                $('#districtCourtDropdown').hide();
-                $('#formContainer').html(''); // Clear forms
-                $('#highCourtSelect').trigger('change'); // Trigger change event for default option
-            } else {
-                $('#highCourtDropdown').hide();
-                $('#districtCourtDropdown').show();
-                $('#formContainer').html(''); // Clear forms
-                $('#districtCourtSelect').trigger('change'); // Trigger change event for default option
-            }
+            $('#highCourtDropdown').show();
+            $('#districtCourtDropdown').hide();
+            $('#formContainer').html(''); // Clear forms
+            $('#highCourtSelect').trigger('change'); // Trigger change event for default option
+        } else {
+            $('#highCourtDropdown').hide();
+            $('#districtCourtDropdown').show();
+            $('#formContainer').html(''); // Clear forms
+            $('#districtCourtSelect').trigger('change'); // Trigger change event for default option
+
+            // Reset #selectDist dropdown to default value
+            $('#selectDist').val('applyOthers').trigger('change');
+        }
+
         });
 
         // Initially display the form for "Apply for Orders and Judgement Copy"
@@ -298,89 +302,189 @@
                     </form>`;
             } else if (selectedOption === 'applyOthers') {
                 formHtml = `
-                    <form id="applyOrdersForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
-                        <h3 class="font-semibold mb-4">Apply for Orders Copy</h3>
-                        <div class="form-row">
-                        <div class="form-field">
-                            <label for="name">Name: <span>*</span></label>
-                            <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
-                        </div>
-                        <div class="form-field">
-                            <label for="mobile">Mobile No: <span>*</span></label>
-                            <input type="text" id="mobile" name="mobile" placeholder="Enter Your Mobile No" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="email">Email: <span>*</span></label>
-                            <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
-                        </div>
-                        <div class="form-field">
-                            <label for="confirm-email">Confirm Email: <span>*</span></label>
-                            <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="case-type">Case Type: <span>*</span></label>
-                            <select id="case-type" name="case_type" required class="p-[10px]">
-                                <option value="">Please Select</option>
-                                <!-- Add more options here -->
-                            </select>
-                        </div>
-                        <div class="form-field">
-                            <label for="case-no">Case No: <span>*</span></label>
-                            <input type="text" id="case-no" name="case_no" placeholder="Enter Case No" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="case-year">Case Year: <span>*</span></label>
-                            <input type="text" id="case-year" name="case_year" placeholder="Enter Case Year" required>
-                        </div>
-                        <div class="form-field">
-                            <label for="request-mode">Request Mode: <span>*</span></label>
-                            <div>
-                                <input type="radio" id="urgent" name="request_mode" value="urgent" required>
-                                <label for="urgent">Urgent</label>
-                                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required>
-                                <label for="ordinary">Ordinary</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="required-document">Required Document: <span>*</span></label>
-                            <textarea id="required-document" name="required_document" placeholder="Enter Document Details" rows="3" required></textarea>
-                        </div>
-                        <div class="form-field">
-                            <label for="apply-by">Apply By: <span>*</span></label>
-                            <select id="apply-by" name="apply_by" required class="p-[10px]">
-                                <option value="">--Select--</option>
-                                <!-- Add more options here -->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field captcha">
-                            <label for="captcha">Enter Captcha Code Here: </label>
-                            <input type="text" id="captcha" name="captcha" required>
-                            <img src="path-to-captcha.jpg" alt="Captcha">
-                            <button type="button" class="refresh-captcha">
-                                <img src="refresh-icon-path.jpg" alt="Refresh">
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <button type="submit" class="btn-submit">Submit</button>
-                    </div>
-                    </form>`;
+            <form id="applyOrdersForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
+    <h3 class="font-semibold mb-4">Apply for Orders Copy</h3>
+    <div class="form-row">
+        <div class="form-field">
+            <label for="name">Name: <span>*</span></label>
+            <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
+        </div>
+        <div class="form-field">
+            <label for="mobile">Mobile No: <span>*</span></label>
+            <input type="text" id="mobile" name="mobile" placeholder="Enter Your Mobile No" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="email">Email: <span>*</span></label>
+            <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
+        </div>
+        <div class="form-field">
+            <label for="confirm-email">Confirm Email: <span>*</span></label>
+            <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+
+        <div class="form-field">
+            <div class="sm:mt-4 mt-0" >
+                <input  type="radio" id="case-number" name="case_or_filing" value="case" checked onchange="toggleCaseFilingFields()">
+                <label for="case-number">Case Number</label>
+
+                <input class="sm:ml-4 ml-0" type="radio" id="filing-number" name="case_or_filing" value="filing" onchange="toggleCaseFilingFields()">
+                <label for="filing-number">Filing Number</label>
+                
+            </div>
+        </div>
+         <div class="form-field">
+            <label for="case-type">Case Type: <span>*</span></label>
+            <select id="case-type" name="case_type" required class="p-[10px]">
+                <option value="">Please Select</option>
+                @foreach ($caseTypes as $caseType)
+                    <option value="{{ $caseType['case_type'] }}">{{ $caseType['type_name'] }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <!-- Fields for Filing No (hidden initially) -->
+    <div id="filing-fields" style="display:none;">
+        <div class="form-row">
+            <div class="form-field">
+                <label for="filing-no">Filing No: <span>*</span></label>
+                <input type="text" id="filing-no" name="filing_no" placeholder="Enter Filing No" required>
+            </div>
+            <div class="form-field">
+                <label for="filing-year">Filing Year: <span>*</span></label>
+                <input type="text" id="filing-year" name="filing_year" placeholder="Enter Filing Year" required>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fields for Case No (hidden initially) -->
+    <div id="case-fields">
+        <div class="form-row">
+            <div class="form-field">
+                <label for="case-no">Case No: <span>*</span></label>
+                <input type="text" id="case-no" name="case_no" placeholder="Enter Case No" required>
+            </div>
+            <div class="form-field">
+                <label for="case-year">Case Year: <span>*</span></label>
+                <input type="text" id="case-year" name="case_year" placeholder="Enter Case Year" required>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="request-mode">Request Mode: <span>*</span></label>
+            <div>
+                <input type="radio" id="urgent" name="request_mode" value="urgent" required>
+                <label for="urgent">Urgent</label>
+                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required>
+                <label for="ordinary">Ordinary</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="required-document">Required Document: <span>*</span></label>
+            <textarea id="required-document" name="required_document" placeholder="Enter Document Details" rows="3" required></textarea>
+        </div>
+
+        <div class="form-field">
+            <label for="apply-by">Apply By: <span>*</span></label>
+            <select id="apply-by" name="apply_by" required class="p-[10px]" onchange="toggleAdvocateRegistration()">
+                <option value="">--Select--</option>
+                <option value="petitioner">Petitioner</option>
+                <option value="respondent">Respondent</option>
+                <option value="advocate">Advocate</option>
+                <option value="others">Others</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Advocate Registration Field (hidden initially) -->
+    
+
+    <div class="form-row" style="display: flex; justify-content: space-between;width: 100%;">
+        <div id="advocate-registration-field" style="display:none; width:50%">
+            <div class="form-field">
+                <label for="advocate_registration">Enter Advocate registration no: </label>
+                <input type="text" id="advocate_registration" name="advocate_registration">
+            </div>
+         </div>
+
+        <div class="form-field">
+            <label for="captcha">Enter Captcha Code Here: </label>
+            <input type="text" id="captcha" name="captcha" required style="width: 100%">
+            <img src="path-to-captcha.jpg" alt="Captcha">
+            <button type="button" class="refresh-captcha">
+                <img src="refresh-icon-path.jpg" alt="Refresh">
+            </button>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <button type="submit" class="btn-submit">Submit</button>
+    </div>
+</form> 
+                `;
             }
 
             $('#formContainer').html(formHtml);
         });
     });
 </script>
+<script>
+    // Show/Hide Filing and Case Number fields
+    function toggleCaseFilingFields() {
+        const filingFields = document.getElementById('filing-fields');
+        const caseFields = document.getElementById('case-fields');
 
+        const filingRadio = document.getElementById('filing-number');
+        const caseRadio = document.getElementById('case-number');
+
+        // If Filing Number is selected, show Filing fields and hide Case fields
+        if (filingRadio.checked) {
+            filingFields.style.display = 'block';
+            caseFields.style.display = 'none';
+
+            // Change label text dynamically for filing number
+            document.querySelector('label[for="filing-no"]').textContent = "Enter Filing No:";
+            document.querySelector('label[for="filing-year"]').textContent = "Enter Filing Year:";
+
+        } else if (caseRadio.checked) {
+            filingFields.style.display = 'none';
+            caseFields.style.display = 'block';
+
+            // Change label text dynamically for case number
+            document.querySelector('label[for="case-no"]').textContent = "Enter Case No:";
+            document.querySelector('label[for="case-year"]').textContent = "Enter Case Year:";
+        }
+    }
+
+    // Toggle Advocate Registration field visibility
+    function toggleAdvocateRegistration() {
+        const applyBy = document.getElementById('apply-by').value;
+        const advocateField = document.getElementById('advocate-registration-field');
+        if (applyBy === 'advocate') {
+            advocateField.style.display = 'block';
+        } else {
+            advocateField.style.display = 'none';
+        }
+    }
+
+    // Initialize the form
+    window.onload = function () {
+        // Default display: Case No
+        document.getElementById('case-number').checked = true;
+        toggleCaseFilingFields();
+        toggleAdvocateRegistration();
+    };
+</script>
 
 @endpush
