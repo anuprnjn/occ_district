@@ -1,490 +1,341 @@
 @extends('public_layouts.app')
 
-
 @section('content')
 
-<section class="content-section "  >
-    <div class="radio-container" id="main-content">
+<section class="content-section relative">
+    <!-- Navigation to select pages -->
+    <div class="radio-container mb-4">
         <label>
-            <input type="radio" name="courtType" value="highCourt" checked> High Court
+            <input type="radio" name="courtType" value="hcPage" checked onchange="loadContent('hcPage')"> High Court
         </label>
-        <label>
-            <input type="radio" name="courtType" value="districtCourt"> District Court
+        <label class="ml-4">
+            <input type="radio" name="courtType" value="dcPage" onchange="loadContent('dcPage')"> District Court
         </label>
     </div>
 
-    <!-- Dropdown for High Court -->
-    <div id="highCourtDropdown" class="dropdown w-[100%] sm:w-[50%] p-[10px] sm:-ml-2">
-        <label for="highCourtSelect" class="mb-2">Select an option:</label>
-        <select id="highCourtSelect" class="p-[10px]">
-            <option value="applyJudgement" selected>Apply for Orders and Judgement Copy</option>
-            <option value="applyOrders">Apply for Orders Copy</option>
-        </select>
-    </div>
-
-    <!-- Dropdown for District Court -->
-    <div id="districtCourtDropdown" class=" dark_form dropdown w-[100%] p-[10px] bg-slate-100/70 rounded-md" style="display: none;">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- First Select Box -->
-            <div>
-                <label for="selectDist" class="mb-2 block">Select District:<span>*</span></label>
-                <select id="selectDist" class="w-full p-[10px] border border-gray-300 rounded">
-                    <option value="applyOthers" selected>Select District</option>
-                    @foreach ($districts as $district)
-                        <option value="{{ $district['dist_code'] }}">{{ $district['dist_name'] }}</option>
-                    @endforeach
-                </select>
-            </div>
-    
-            <!-- Second Select Box -->
-            <div>
-                <label for="selectEsta" class="mb-2 block">Select Establishment:<span>*</span></label>
-                <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded">
-                    <option value="applyOthers" selected>Select Establishment</option>
-                </select>
-            </div>
-        </div>
-    
-        <!-- Third Select Box -->
-        <div class="mt-4">
-            <label for="districtCourtSelect" class="mb-2 block">Select an option:</label>
-            <select id="districtCourtSelect" class="sm:w-[49.4%] w-[100%] p-[10px] border border-gray-300 rounded">
-                <option value="applyOthers" selected>Apply for Others Copy</option>
-            </select>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="absolute w-full h-[100vh] bg-white mt-10 inset-0 flex items-start justify-start z-50">
+        <div class="spinner flex items-center gap-2 p-2 ml-4 mt-4"> 
+            <img class="w-[32px] animate-spin" src="{{ asset('passets/images/icons/loading.png') }}" alt="Loading">
+            <span class="text-gray-600 load">Loading...</span>
         </div>
     </div>
     
-    
 
-    <!-- Form Container -->
-    <div id="formContainer"></div>
+    <!-- Content Section -->
+    <div id="content-area" class="w-full">
+        <!-- Default content or a placeholder -->
+        <p class="text-lg font-semibold text-rose-800">Please select a court type to view the content.</p>
+    </div>
 </section>
 
 @endsection
 
 @push('scripts')
 <script>
-    $(document).ready(function () {
-        $('#selectDist').on('change', function () {
-            const distCode = $(this).val();
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const contentArea = document.getElementById('content-area');
 
-            if (distCode === 'applyOthers') {
-                $('#selectEsta').html('<option value="applyOthers" selected>Select Establishment</option>');
-                return;
+    const loadContent = (routeName) => {
+        // Show loading spinner
+        loadingSpinner.classList.remove('hidden');
+        contentArea.innerHTML = ''; // Clear previous content
+
+        fetch(`/${routeName}`, { // Adjust the route URL based on your application
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch: ${response.statusText}`);
             }
-
-            $.ajax({
-                url: "{{ route('get-establishments') }}",
-                method: 'POST',
-                data: {
-                    dist_code: distCode,
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function (data) {
-                    const establishments = data;
-                    let options = '<option value="applyOthers" selected>Select Establishment</option>';
-
-                    establishments.forEach(function (establishment) {
-                        options += `<option value="${establishment.est_code}">${establishment.estname}</option>`;
-                    });
-
-                    $('#selectEsta').html(options);
-                },
-                error: function () {
-                    alert('Unable to fetch establishments. Please try again later.');
-                }
-            });
+            return response.text();
+        })
+        .then(data => {
+            contentArea.innerHTML = data;
+            loadingSpinner.classList.add('hidden');
+        })
+        .catch(error => {
+            console.error('Fetch error:', error.message);
+            contentArea.innerHTML = `<p class="text-red-500">Failed to load content. (${error.message})</p>`;
+            loadingSpinner.classList.add('hidden');
         });
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        $('#home').addClass('active');
-
-        // Handle radio button change
-        $('input[name="courtType"]').change(function () {
-            const selectedCourt = $('input[name="courtType"]:checked').val();
-
-            if (selectedCourt === 'highCourt') {
-            $('#highCourtDropdown').show();
-            $('#districtCourtDropdown').hide();
-            $('#formContainer').html(''); // Clear forms
-            $('#highCourtSelect').trigger('change'); // Trigger change event for default option
-        } else {
-            $('#highCourtDropdown').hide();
-            $('#districtCourtDropdown').show();
-            $('#formContainer').html(''); // Clear forms
-            $('#districtCourtSelect').trigger('change'); // Trigger change event for default option
-
-            // Reset #selectDist dropdown to default value
-            $('#selectDist').val('applyOthers').trigger('change');
-        }
-
-        });
-
-        // Initially display the form for "Apply for Orders and Judgement Copy"
-        $('#formContainer').html(` 
-            <form id="applyJudgementForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
-                <h3 class="font-semibold mb-4">Apply for Orders and Judgement Copy</h3>
-                <div class="form-group">
-                    <label>
-                        <input type="radio" name="search-type" value="case-no" checked>
-                        Case No
-                    </label>
-                    <label>
-                        <input type="radio" name="search-type" value="filing-no">
-                        Filing No
-                    </label>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="case-type">Case Type:</label>
-                        <select id="case-type" name="case-type" class="p-[10px]">
-                            <option value="">Please Select</option>
-                            <!-- Add options as needed -->
-                        </select>
-                    </div>
-                    <div class="form-field">
-                        <label for="case-no">Case No:</label>
-                        <input type="text" id="case-no" name="case-no" placeholder="Enter Case No">
-                    </div>
-                    <div class="form-field">
-                        <label for="case-year">Case Year:</label>
-                        <input type="text" id="case-year" name="case-year" placeholder="Enter Case Year">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <input type="text" id="captcha" name="captcha" placeholder="Enter Captcha Code Here">
-                    </div>
-                    <div class="form-field captcha">
-                        <img src="captcha-placeholder.png" alt="Captcha">
-                        <button type="button" class="refresh-captcha">
-                            <img src="refresh-icon.png" alt="Refresh">
-                        </button>
-                    </div>
-                    <div class="form-field">
-                        <button type="submit" class="btn btn-search">Search</button>
-                    </div>
-                </div>
-            </form>
-        `);
-
-        // Handle dropdown selection
-        $('#highCourtSelect, #districtCourtSelect').change(function () {
-            const selectedOption = $(this).val();
-            let formHtml = '';
-
-            if (selectedOption === 'applyJudgement') {
-                formHtml = `
-                    <form id="applyJudgementForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
-                <h3 class="font-semibold mb-4">Apply for Orders and Judgement Copy</h3>
-                <div class="form-group">
-                    <label>
-                        <input type="radio" name="search-type" value="case-no" checked>
-                        Case No
-                    </label>
-                    <label>
-                        <input type="radio" name="search-type" value="filing-no">
-                        Filing No
-                    </label>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="case-type">Case Type:</label>
-                        <select id="case-type" name="case-type" class="p-[10px]">
-                            <option value="">Please Select</option>
-                            <!-- Add options as needed -->
-                        </select>
-                    </div>
-                    <div class="form-field">
-                        <label for="case-no">Case No:</label>
-                        <input type="text" id="case-no" name="case-no" placeholder="Enter Case No">
-                    </div>
-                    <div class="form-field">
-                        <label for="case-year">Case Year:</label>
-                        <input type="text" id="case-year" name="case-year" placeholder="Enter Case Year">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-field">
-                        <input type="text" id="captcha" name="captcha" placeholder="Enter Captcha Code Here">
-                    </div>
-                    <div class="form-field captcha">
-                        <img src="captcha-placeholder.png" alt="Captcha">
-                        <button type="button" class="refresh-captcha">
-                            <img src="refresh-icon.png" alt="Refresh">
-                        </button>
-                    </div>
-                    <div class="form-field">
-                        <button type="submit" class="btn btn-search">Search</button>
-                    </div>
-                </div>
-            </form>`;
-            } else if (selectedOption === 'applyOrders') {
-                formHtml = `
-                    <form id="applyOrdersForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
-                        <h3 class="font-semibold mb-4">Apply for Orders Copy</h3>
-                        <div class="form-row">
-                        <div class="form-field">
-                            <label for="name">Name: <span>*</span></label>
-                            <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
-                        </div>
-                        <div class="form-field">
-                            <label for="mobile">Mobile No: <span>*</span></label>
-                            <input type="text" id="mobile" name="mobile" placeholder="Enter Your Mobile No" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="email">Email: <span>*</span></label>
-                            <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
-                        </div>
-                        <div class="form-field">
-                            <label for="confirm-email">Confirm Email: <span>*</span></label>
-                            <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="case-type">Case Type: <span>*</span></label>
-                            <select id="case-type" name="case_type" required class="p-[10px]">
-                                <option value="">Please Select</option>
-                                <!-- Add more options here -->
-                            </select>
-                        </div>
-                        <div class="form-field">
-                            <label for="case-no">Case No: <span>*</span></label>
-                            <input type="text" id="case-no" name="case_no" placeholder="Enter Case No" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="case-year">Case Year: <span>*</span></label>
-                            <input type="text" id="case-year" name="case_year" placeholder="Enter Case Year" required>
-                        </div>
-                        <div class="form-field">
-                            <label for="request-mode">Request Mode: <span>*</span></label>
-                            <div>
-                                <input type="radio" id="urgent" name="request_mode" value="urgent" required>
-                                <label for="urgent">Urgent</label>
-                                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required>
-                                <label for="ordinary">Ordinary</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="required-document">Required Document: <span>*</span></label>
-                            <textarea id="required-document" name="required_document" placeholder="Enter Document Details" rows="3" required></textarea>
-                        </div>
-                        <div class="form-field">
-                            <label for="apply-by">Apply By: <span>*</span></label>
-                            <select id="apply-by" name="apply_by" required class="p-[10px]">
-                                <option value="">--Select--</option>
-                                <!-- Add more options here -->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-field captcha">
-                            <label for="captcha">Enter Captcha Code Here: </label>
-                            <input type="text" id="captcha" name="captcha" required>
-                            <img src="path-to-captcha.jpg" alt="Captcha">
-                            <button type="button" class="refresh-captcha">
-                                <img src="refresh-icon-path.jpg" alt="Refresh">
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <button type="submit" class="btn-submit">Submit</button>
-                    </div>
-                    </form>`;
-            } else if (selectedOption === 'applyOthers') {
-                formHtml = `
-            <form id="applyOrdersForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
-    <h3 class="font-semibold mb-4">Apply for Orders Copy</h3>
-    <div class="form-row">
-        <div class="form-field">
-            <label for="name">Name: <span>*</span></label>
-            <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
-        </div>
-        <div class="form-field">
-            <label for="mobile">Mobile No: <span>*</span></label>
-            <input type="text" id="mobile" name="mobile" placeholder="Enter Your Mobile No" required>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-field">
-            <label for="email">Email: <span>*</span></label>
-            <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
-        </div>
-        <div class="form-field">
-            <label for="confirm-email">Confirm Email: <span>*</span></label>
-            <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
-        </div>
-    </div>
-
-    <div class="form-row">
-
-        <div class="form-field">
-            <div class="sm:mt-4 mt-0" >
-                <input  type="radio" id="case-number" name="case_or_filing" value="case" checked onchange="toggleCaseFilingFields()">
-                <label for="case-number">Case Number</label>
-
-                <input class="sm:ml-4 ml-0" type="radio" id="filing-number" name="case_or_filing" value="filing" onchange="toggleCaseFilingFields()">
-                <label for="filing-number">Filing Number</label>
-                
-            </div>
-        </div>
-         <div class="form-field">
-            <label for="case-type">Case Type: <span>*</span></label>
-            <select id="case-type" name="case_type" required class="p-[10px]">
-                <option value="">Please Select</option>
-                @foreach ($caseTypes as $caseType)
-                    <option value="{{ $caseType['case_type'] }}">{{ $caseType['type_name'] }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-
-    <!-- Fields for Filing No (hidden initially) -->
-    <div id="filing-fields" style="display:none;">
-        <div class="form-row">
-            <div class="form-field">
-                <label for="filing-no">Filing No: <span>*</span></label>
-                <input type="text" id="filing-no" name="filing_no" placeholder="Enter Filing No" required>
-            </div>
-            <div class="form-field">
-                <label for="filing-year">Filing Year: <span>*</span></label>
-                <input type="text" id="filing-year" name="filing_year" placeholder="Enter Filing Year" required>
-            </div>
-        </div>
-    </div>
-
-    <!-- Fields for Case No (hidden initially) -->
-    <div id="case-fields">
-        <div class="form-row">
-            <div class="form-field">
-                <label for="case-no">Case No: <span>*</span></label>
-                <input type="text" id="case-no" name="case_no" placeholder="Enter Case No" required>
-            </div>
-            <div class="form-field">
-                <label for="case-year">Case Year: <span>*</span></label>
-                <input type="text" id="case-year" name="case_year" placeholder="Enter Case Year" required>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-field">
-            <label for="request-mode">Request Mode: <span>*</span></label>
-            <div>
-                <input type="radio" id="urgent" name="request_mode" value="urgent" required>
-                <label for="urgent">Urgent</label>
-                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required>
-                <label for="ordinary">Ordinary</label>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-field">
-            <label for="required-document">Required Document: <span>*</span></label>
-            <textarea id="required-document" name="required_document" placeholder="Enter Document Details" rows="3" required></textarea>
-        </div>
-
-        <div class="form-field">
-            <label for="apply-by">Apply By: <span>*</span></label>
-            <select id="apply-by" name="apply_by" required class="p-[10px]" onchange="toggleAdvocateRegistration()">
-                <option value="">--Select--</option>
-                <option value="petitioner">Petitioner</option>
-                <option value="respondent">Respondent</option>
-                <option value="advocate">Advocate</option>
-                <option value="others">Others</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Advocate Registration Field (hidden initially) -->
-    
-
-    <div class="form-row" style="display: flex; justify-content: space-between;width: 100%;">
-        <div id="advocate-registration-field" style="display:none; width:50%">
-            <div class="form-field">
-                <label for="advocate_registration">Enter Advocate registration no: </label>
-                <input type="text" id="advocate_registration" name="advocate_registration">
-            </div>
-         </div>
-
-        <div class="form-field">
-            <label for="captcha">Enter Captcha Code Here: </label>
-            <input type="text" id="captcha" name="captcha" required style="width: 100%">
-            <img src="path-to-captcha.jpg" alt="Captcha">
-            <button type="button" class="refresh-captcha">
-                <img src="refresh-icon-path.jpg" alt="Refresh">
-            </button>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <button type="submit" class="btn-submit">Submit</button>
-    </div>
-</form> 
-                `;
-            }
-
-            $('#formContainer').html(formHtml);
-        });
-    });
-</script>
-<script>
-    // Show/Hide Filing and Case Number fields
-    function toggleCaseFilingFields() {
-        const filingFields = document.getElementById('filing-fields');
-        const caseFields = document.getElementById('case-fields');
-
-        const filingRadio = document.getElementById('filing-number');
-        const caseRadio = document.getElementById('case-number');
-
-        // If Filing Number is selected, show Filing fields and hide Case fields
-        if (filingRadio.checked) {
-            filingFields.style.display = 'block';
-            caseFields.style.display = 'none';
-
-            // Change label text dynamically for filing number
-            document.querySelector('label[for="filing-no"]').textContent = "Enter Filing No:";
-            document.querySelector('label[for="filing-year"]').textContent = "Enter Filing Year:";
-
-        } else if (caseRadio.checked) {
-            filingFields.style.display = 'none';
-            caseFields.style.display = 'block';
-
-            // Change label text dynamically for case number
-            document.querySelector('label[for="case-no"]').textContent = "Enter Case No:";
-            document.querySelector('label[for="case-year"]').textContent = "Enter Case Year:";
-        }
-    }
-
-    // Toggle Advocate Registration field visibility
-    function toggleAdvocateRegistration() {
-        const applyBy = document.getElementById('apply-by').value;
-        const advocateField = document.getElementById('advocate-registration-field');
-        if (applyBy === 'advocate') {
-            advocateField.style.display = 'block';
-        } else {
-            advocateField.style.display = 'none';
-        }
-    }
-
-    // Initialize the form
-    window.onload = function () {
-        // Default display: Case No
-        document.getElementById('case-number').checked = true;
-        toggleCaseFilingFields();
-        toggleAdvocateRegistration();
     };
+
+    // Automatically load the default page on initial load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadContent('hcPage');
+    });
 </script>
+<script>
+    function myfun() {
+        var selectedOption = document.getElementById("highCourtSelect").value;
+        if (selectedOption === "applyJudgement") {
+            document.getElementById("orderJudgementForm").style.display = "block";
+            document.getElementById("otherForm").style.display = "none";
+        } else if (selectedOption === "applyOrders") {
+            document.getElementById("orderJudgementForm").style.display = "none";
+            document.getElementById("otherForm").style.display = "block";
+        }
+    }
+
+    // Initial display setup
+    document.addEventListener('DOMContentLoaded', () => {
+        myfun();  // This will ensure the default form is shown on page load
+    });
+</script>
+<script>
+    function fetchEstablishments(dist_code) {
+        if (!dist_code) {
+            // If no district is selected, reset the Establishment dropdown
+            $('#selectEsta').html('<option value="" selected>Select Establishment</option>');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('get-establishments') }}", // Ensure this route exists in your Laravel app
+            method: 'POST',
+            data: {
+                dist_code: dist_code,
+                _token: "{{ csrf_token() }}" // Include the CSRF token for Laravel
+            },
+            success: function (data) {
+                // Clear and populate the Establishment dropdown
+                let options = '<option value="" selected>Select Establishment</option>';
+                data.forEach(function (establishment) {
+                    options += `<option value="${establishment.est_code}">${establishment.estname}</option>`;
+                });
+                $('#selectEsta').html(options);
+            },
+            error: function () {
+                alert('Unable to fetch establishments. Please try again later.');
+            }
+        });
+    }
+</script>
+<script>
+    // Toggle dropdown visibility
+    function toggleDropdown() {
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        dropdownMenu.classList.toggle('hidden');
+    }
+
+    // Filter dropdown options
+    function filterOptions() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const options = document.querySelectorAll('#dropdownOptions li');
+
+        options.forEach(option => {
+            const text = option.textContent || option.innerText;
+            option.style.display = text.toLowerCase().includes(searchInput) ? '' : 'none';
+        });
+    }
+
+    // Select option
+    function selectOption(element) {
+        const dropdownToggle = document.getElementById('dropdownToggle');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        // Set selected value
+        dropdownToggle.innerText = element.innerText;
+        dropdownToggle.dataset.value = element.dataset.value;
+
+        // Close dropdown
+        dropdownMenu.classList.add('hidden');
+
+        // Trigger additional actions (e.g., fetchEstablishments)
+        fetchEstablishments(element.dataset.value);
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('dropdown');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        if (!dropdown.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+</script>
+<script>
+    // Toggle dropdown visibility
+    function toggleCaseTypeDropdown() {
+        const caseTypeMenu = document.getElementById('caseTypeMenu');
+        caseTypeMenu.classList.toggle('hidden');
+    }
+
+    // Filter dropdown options
+    function filterCaseTypeOptions() {
+        const searchInput = document.getElementById('caseTypeSearchInput').value.toLowerCase();
+        const options = document.querySelectorAll('#caseTypeOptions li');
+
+        options.forEach(option => {
+            const text = option.textContent || option.innerText;
+            option.style.display = text.toLowerCase().includes(searchInput) ? '' : 'none';
+        });
+    }
+
+    // Select option
+    function selectCaseTypeOption(element) {
+        const caseTypeToggle = document.getElementById('caseTypeToggle');
+        const caseTypeMenu = document.getElementById('caseTypeMenu');
+
+        // Set selected value
+        caseTypeToggle.innerText = element.innerText;
+        caseTypeToggle.dataset.value = element.dataset.value;
+
+        // Close dropdown
+        caseTypeMenu.classList.add('hidden');
+
+        // Set the hidden input value (if needed for form submission)
+        const caseTypeInput = document.createElement('input');
+        caseTypeInput.type = 'hidden';
+        caseTypeInput.name = 'case_type';
+        caseTypeInput.value = element.dataset.value;
+        caseTypeInput.id = 'hiddenCaseTypeInput';
+
+        const existingInput = document.getElementById('hiddenCaseTypeInput');
+        if (existingInput) {
+            existingInput.remove();
+        }
+        document.querySelector('#caseTypeDropdown').appendChild(caseTypeInput);
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+        const caseTypeDropdown = document.getElementById('caseTypeDropdown');
+        const caseTypeMenu = document.getElementById('caseTypeMenu');
+
+        if (!caseTypeDropdown.contains(event.target)) {
+            caseTypeMenu.classList.add('hidden');
+        }
+    });
+</script>
+
+
+<script>
+let otp = "12345"; // Predefined OTP
+let timerInterval;
+let mobileNumber;
+let otpSent = false; // Flag to track if OTP has been sent
+let otpResent = false; // Flag to track if OTP has been resent
+
+function sendOtp() {
+    const mobileInput = document.getElementById("mobileInput");
+    const otpButton = document.getElementById("otpButton");
+    const mobileLabel = document.getElementById("mobileLabel");
+
+    // If OTP has already been sent, just show the timer and disable the button
+    if (otpSent) {
+        alert("OTP already sent. Please verify OTP.");
+        return;
+    }
+
+    if (!mobileInput.value || isNaN(mobileInput.value)) {
+        alert("Please enter a valid mobile number.");
+        return;
+    }
+
+    // Store the mobile number
+    mobileNumber = mobileInput.value;
+
+    // Disable the button and show alert
+    otpButton.disabled = true;
+    alert("OTP sent successfully!");
+
+    // Update UI for OTP input
+    mobileLabel.textContent = "Enter OTP:";
+    mobileInput.value = "";
+    mobileInput.placeholder = "Enter OTP";
+    otpButton.textContent = "Verify OTP"; // Change button text
+    otpButton.disabled = false;
+    otpButton.onclick = verifyOtp;
+
+    // Start timer
+    startOtpTimer();
+
+    // Set OTP sent flag
+    otpSent = true;
+    otpResent = false; // Reset OTP resent flag
+}
+
+function verifyOtp() {
+    const mobileInput = document.getElementById("mobileInput");
+    const otpButton = document.getElementById("otpButton");
+    const mobileLabel = document.getElementById("mobileLabel");
+    const verificationMessage = document.getElementById("verificationMessage");
+    const otpTimer = document.getElementById("otpTimer");
+    const submitButton = document.querySelector(".order_btn");
+
+    // Check if the OTP input field is empty
+    if (!mobileInput.value) {
+        alert("Please enter the OTP.");
+        return; // Exit the function if the input is empty
+    }
+
+    // Proceed with OTP verification
+    if (mobileInput.value === otp) {
+        clearInterval(timerInterval);
+
+        // Update UI to show verified mobile number
+        mobileLabel.textContent = "Mobile Number Verified:";
+        mobileLabel.classList.add("text-green-500");
+        mobileLabel.classList.add("font-normal");
+        mobileInput.value = mobileNumber; // Restore mobile number
+        mobileInput.disabled = true;
+        otpButton.classList.add("hidden"); // Hide the button
+        otpTimer.classList.add("hidden"); // Hide the timer
+        submitButton.classList.remove("hidden");
+    } else {
+        alert("Incorrect OTP. Please try again.");
+    }
+}
+
+
+function startOtpTimer() {
+    const otpButton = document.getElementById("otpButton");
+    const otpTimer = document.getElementById("otpTimer");
+    let timeLeft = 60;
+
+    otpTimer.textContent = "Resend OTP in (01:00)";
+    otpTimer.classList.remove("hidden");
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
+        const seconds = String(timeLeft % 60).padStart(2, "0");
+        otpTimer.textContent = `Resend OTP in (${minutes}:${seconds})`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            otpTimer.classList.add("hidden");
+            otpButton.textContent = "Resend OTP"; // Change button text to Resend OTP
+            otpButton.disabled = false;
+            otpButton.onclick = resendOtp;
+        }
+    }, 1000);
+}
+
+function resendOtp() {
+    const otpButton = document.getElementById("otpButton");
+
+    // Reset OTP sent flag and set OTP resent flag
+    otpSent = false;
+    otpResent = true;
+
+    // Update UI to allow new OTP to be sent
+    otpButton.disabled = false;
+    otpButton.textContent = "Verify OTP"; // Change button text to Verify OTP
+    otpButton.onclick = verifyOtp;
+
+    alert("OTP resent successfully. Please check your mobile.");
+
+    // Start the timer again after resend
+    startOtpTimer();
+}
+
+</script>    
 
 @endpush

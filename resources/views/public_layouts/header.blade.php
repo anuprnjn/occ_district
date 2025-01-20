@@ -30,7 +30,7 @@
                 </button>
             </li>
             
-            <li id="home">
+            <li id="home" class="active">
                 <a href="index.php">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
                     <span>Home</span>
@@ -90,6 +90,6 @@
 
     <div class="line-animation" id="line"></div>
     <div class="top-bar">
-    <h2>ONLINE CERTIFIED COPY</h2>
+    <h2 class='sm:text-5xl text-2xl mb-1'>ONLINE CERTIFIED COPY</h2>
 
     </div>
