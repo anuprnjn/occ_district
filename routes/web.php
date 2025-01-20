@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DistrictController;
+use App\Http\Controllers\OtpController;
 
 Route::get('/', function () {
     return view('index');
@@ -17,6 +18,10 @@ Route::get('/dcPage', function () {
 
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
+Route::post('/send-otp', [OtpController::class, 'sendOtp']);
+Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
+Route::post('/resend-otp', [OtpController::class, 'resendOtp']);
+
 
 
 
