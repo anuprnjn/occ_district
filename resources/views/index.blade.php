@@ -218,9 +218,11 @@
 {{-- otp section  --}}
 
 <script>
+
 let timerInterval;
 let mobileNumber;
 
+// Function to send OTP
 function sendOtp() {
     const mobileInput = document.getElementById("mobileInput");
     const otpButton = document.getElementById("otpButton");
@@ -231,65 +233,70 @@ function sendOtp() {
         return;
     }
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-    if (!csrfToken) {
-        console.error("CSRF token not found. Ensure the meta tag is included in your HTML.");
-        return;
-    }
+    mobileNumber = mobileInput.value;
 
-    fetch("/send-otp", {
-        method: "POST",
+    // Make a POST request to the sendOtp endpoint
+    fetch('/send-otp', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": csrfToken,
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
         },
-        body: JSON.stringify({ mobile: mobileInput.value }),
+        body: JSON.stringify({ mobile: mobileNumber }),
     })
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
             if (data.success) {
-                alert(`OTP sent successfully! Your OTP is: ${data.otp}`); // Show OTP in alert box
-                mobileNumber = mobileInput.value;
+                alert(`OTP sent successfully. Your OTP is: ${data.otp}`); // Show OTP for now
+                otpButton.disabled = true;
+
+                // Update UI for OTP input
                 mobileLabel.textContent = "Enter OTP:";
                 mobileInput.value = "";
                 mobileInput.placeholder = "Enter OTP";
                 otpButton.textContent = "Verify OTP";
-                otpButton.onclick = verifyOtp;
+                otpButton.disabled = false;
+                otpButton.setAttribute("onclick", "verifyOtp()"); // Ensure verifyOtp is set
+
+                // Start the timer
                 startOtpTimer();
             } else {
                 alert(data.message);
             }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch(error => console.error('Error sending OTP:', error));
 }
 
-
+// Function to verify OTP
 function verifyOtp() {
     const mobileInput = document.getElementById("mobileInput");
     const otpButton = document.getElementById("otpButton");
     const mobileLabel = document.getElementById("mobileLabel");
     const verificationMessage = document.getElementById("verificationMessage");
     const otpTimer = document.getElementById("otpTimer");
-    const submitButton = document.querySelector(".btn-submit");
+    const submitButton = document.querySelector(".order_btn");
 
     if (!mobileInput.value) {
         alert("Please enter the OTP.");
         return;
     }
 
-    // Verify OTP request to the server
-    fetch("/verify-otp", {
-        method: "POST",
+    const otp = mobileInput.value;
+
+    // Make a POST request to the verifyOtp endpoint
+    fetch('/verify-otp', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
         },
-        body: JSON.stringify({ mobile: mobileNumber, otp: mobileInput.value }),
+        body: JSON.stringify({ mobile: mobileNumber, otp: otp }),
     })
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
             if (data.success) {
                 clearInterval(timerInterval);
+
                 mobileLabel.textContent = "Mobile Number Verified:";
                 mobileLabel.classList.add("text-green-500");
                 mobileLabel.classList.add("font-normal");
@@ -299,12 +306,40 @@ function verifyOtp() {
                 otpTimer.classList.add("hidden");
                 submitButton.classList.remove("hidden");
             } else {
-                alert("Incorrect OTP. Please try again.");
+                alert("Invalid OTP. Try again.");
             }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch(error => console.error('Error verifying OTP:', error));
 }
 
+// Function to resend OTP
+function resendOtp() {
+    const otpButton = document.getElementById("otpButton");
+
+    // Make a POST request to the resendOtp endpoint
+    fetch('/resend-otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        },
+        body: JSON.stringify({ mobile: mobileNumber }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`OTP resent successfully. Your OTP is: ${data.otp}`); // Show OTP for now
+                otpButton.textContent = "Verify OTP";
+                otpButton.setAttribute("onclick", "verifyOtp()"); // Ensure verifyOtp is set
+                startOtpTimer();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error resending OTP:', error));
+}
+
+// Function to start OTP timer
 function startOtpTimer() {
     const otpButton = document.getElementById("otpButton");
     const otpTimer = document.getElementById("otpTimer");
@@ -324,35 +359,12 @@ function startOtpTimer() {
             otpTimer.classList.add("hidden");
             otpButton.textContent = "Resend OTP";
             otpButton.disabled = false;
-            otpButton.onclick = resendOtp;
+            otpButton.setAttribute("onclick", "resendOtp()"); // Ensure resendOtp is set
         }
     }, 1000);
 }
 
-function resendOtp() {
-    const otpButton = document.getElementById("otpButton");
 
-    fetch("/resend-otp", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-        },
-        body: JSON.stringify({ mobile: mobileNumber }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                alert(`OTP resent successfully! Your OTP is: ${data.otp}`); // Show OTP in alert box
-                otpButton.textContent = "Verify OTP";
-                otpButton.disabled = false;
-                startOtpTimer();
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch((error) => console.error("Error:", error));
-}
 
 </script>    
 
