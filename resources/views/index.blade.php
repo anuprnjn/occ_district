@@ -16,8 +16,8 @@
     <!-- Loading Spinner -->
     <div id="loading-spinner" class="absolute w-full h-[100vh] bg-white mt-10 inset-0 flex items-start justify-start z-50">
         <div class="spinner flex items-center gap-2 p-2 ml-4 mt-4"> 
-            <img class="w-[32px] animate-spin" src="{{ asset('passets/images/icons/loading.png') }}" alt="Loading">
-            <span class="text-gray-600 load">Loading...</span>
+            <img class="w-[42px] animate-spin" src="{{ asset('passets/images/icons/loading.png') }}" alt="Loading">
+            <span class="text-gray-800 load text-lg">Loading please wait...</span>
         </div>
     </div>
     
@@ -62,5 +62,54 @@
         });
     }
 </script>
+<script>
+function refreshCaptcha() {
+    const refresh = document.querySelector(".refresh-btn");
+    const captchaImg = document.getElementById('captchaImage');
+    refresh.classList.add("animate-spin");
+    captchaImg.src = '{{ captcha_src('math') }}?' + new Date().getTime(); 
+    setTimeout(function() {
+        refresh.classList.remove("animate-spin");
+    }, 1000);
+}
+</script>
+<script>
+    function toggleAdvocateField() {
+        var applyBy = document.getElementById("apply-by").value;
+        var advocateField = document.getElementById("adv_res");
+        if (applyBy === "advocate") {
+            advocateField.closest('.form-field').style.display = "block";
+        } else {
+            advocateField.closest('.form-field').style.display = "none";
+        }
+    }
+</script>
+<script>
+   function updateFields() {
+    // Get the selected radio button value
+    var selectedMode = document.querySelector('input[name="select_mode"]:checked').value;
+
+    // Get references to the labels and input fields
+    var field1Label = document.getElementById("field1-label");
+    var field1Input = document.getElementById("case-no");
+    var field2Label = document.getElementById("field2-label");
+    var field2Input = document.getElementById("case-year");
+
+    // Update the labels and placeholders based on the selected mode
+    if (selectedMode === "case_no") {
+        field1Label.innerHTML = "Case No: <span class='red'>*</span>";
+        field1Input.placeholder = "Enter Case No";
+        field2Label.innerHTML = "Case Year: <span class='red'>*</span>";
+        field2Input.placeholder = "Enter Case Year";
+    } else if (selectedMode === "filling_no") {
+        field1Label.innerHTML = "Filing No: <span class='red'>*</span>";
+        field1Input.placeholder = "Enter Filing No";
+        field2Label.innerHTML = "Filing Year: <span class='required'>*</span>";
+        field2Input.placeholder = "Enter Filing Year";
+    }
+}
+    window.onload = updateFields;
+</script>
+ 
 
 @endpush

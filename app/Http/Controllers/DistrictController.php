@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Mews\Captcha\Facades\Captcha;
 
 class DistrictController extends Controller
 {
@@ -22,8 +23,10 @@ class DistrictController extends Controller
         } else {
             $caseTypes = [];  
         }
+        // Generate the CAPTCHA
+        $captcha = captcha_src('math');
 
-         return view('dcPage', compact('districts','caseTypes'));
+         return view('dcPage', compact('districts','caseTypes','captcha'));
     }
     
     public function getEstablishments(Request $request)
@@ -42,5 +45,6 @@ class DistrictController extends Controller
         \Log::info('Establishments fetched:', $response->json());
         return response()->json($response->json());
     }
+
  
 }

@@ -4,14 +4,14 @@
 <section class="w-full">
     <h3 class="font-semibold text-xl mb-4 p-2">Apply for Others Copy </h3>
 
-    <div class="dark_form flex sm:flex-row flex-col justify-center items-center w-full sm:space-x-4 bg-slate-100/70 p-4 rounded-md -mb-3">
+    <div class="dark_form flex sm:flex-row flex-col justify-center items-center w-full sm:space-x-4 bg-slate-100/70 p-4 rounded-md sm:-mb-3">
 
         <div class="w-full sm:w-1/2">
-            <label for="selectDist" class="mb-2 block pl-2">Select District:<span>*</span></label>
+            <label for="selectDist" class="mb-2 block sm:pl-2 -pl-1">Please Select District:<span>*</span></label>
             <div class="relative w-full dark_select">
                 <!-- Custom Dropdown -->
                 <div id="dropdown" class="w-full p-[8px] border rounded ">
-                    <div id="dropdownToggle" class="cursor-pointer" onclick="toggleDropdown()">Select District</div>
+                    <div id="dropdownToggle" class="cursor-pointer" onclick="toggleDropdown()">Please Select District</div>
                     <div id="dropdownMenu" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
                         <!-- Search Box -->
                         <div class="p-2">
@@ -19,7 +19,7 @@
                         </div>
                         <!-- Options -->
                         <ul id="dropdownOptions" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOption(this)">Select District</li>
+                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOption(this)">Please Select District</li>
                             @foreach ($districts as $district)
                                 <li data-value="{{ $district['dist_code'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOption(this)">
                                     {{ $district['dist_name'] }}
@@ -32,7 +32,7 @@
             
         </div>
         <div class="w-full sm:w-1/2">
-            <label for="selectEsta" class="mb-2 block">Select Establishment:<span>*</span></label>
+            <label for="selectEsta" class="mb-2 block mt-4 sm:mt-0">Select Establishment:<span>*</span></label>
             <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded">
                 <option value="" selected>Select Establishment</option>
             </select>
@@ -40,10 +40,11 @@
     </div>
 
     <form id="applyOrdersForm" class="dark_form p-4 bg-slate-100/70 rounded-md mb-10">
+        @csrf
         <div class="form-row">
         <div class="form-field">
             <label for="name">Name: <span>*</span></label>
-            <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
         </div>
         <div class="form-field">
             <div class="flex items-start justify-start gap-2">
@@ -88,10 +89,10 @@
         <div class="form-field">
             <label for="request-mode">Select the method: <span>*</span></label>
             <div class="mt-2">
-                <input type="radio" id="urgent" name="request_mode" value="urgent" required>
-                <label for="urgent">Case No</label>
-                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required>
-                <label for="ordinary">Filling No</label>
+                <input type="radio" id="case_no" name="select_mode" value="case_no" required checked onchange="updateFields()">
+                <label for="case_no">Case No</label>
+                <input type="radio" id="filling_no" name="select_mode" value="filling_no" required onchange="updateFields()" class="ml-4">
+                <label for="filling_no">Filling No</label>
             </div>
         </div>
         <div class="form-field">
@@ -99,7 +100,7 @@
             <div class="relative w-full dark_select">
                 <!-- Custom Dropdown -->
                 <div id="caseTypeDropdown" class="w-full p-[10px] border rounded ">
-                    <div id="caseTypeToggle" class="cursor-pointer" onclick="toggleCaseTypeDropdown()">Please Select</div>
+                    <div id="caseTypeToggle" class="cursor-pointer" onclick="toggleCaseTypeDropdown()">Please Select Case Type</div>
                     <div id="caseTypeMenu" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
                         <!-- Search Box -->
                         <div class="p-2">
@@ -107,7 +108,7 @@
                         </div>
                         <!-- Options -->
                         <ul id="caseTypeOptions" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this)">Please Select</li>
+                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this)">Please Select Case Type</li>
                             @if (!empty($caseTypes) && is_array($caseTypes))
                                 @foreach ($caseTypes as $caseType)
                                     <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this)">
@@ -126,11 +127,11 @@
 
     <div class="form-row">
         <div class="form-field">
-            <label for="case-no">Case No: <span>*</span></label>
+            <label for="case-no" id="field1-label">Case No: <span class="red">*</span></label>
             <input type="text" id="case-no" name="case_no" placeholder="Enter Case No" required>
         </div>
         <div class="form-field">
-            <label for="case-year">Case Year: <span>*</span></label>
+            <label for="case-year" id="field2-label">Case Year: <span class="red">*</span></label>
             <input type="text" id="case-year" name="case_year" placeholder="Enter Case Year" required>
         </div>
     </div>
@@ -140,7 +141,7 @@
             <div class="mt-2">
                 <input type="radio" id="urgent" name="request_mode" value="urgent" required>
                 <label for="urgent">Urgent</label>
-                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required>
+                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required class="ml-6">
                 <label for="ordinary">Ordinary</label>
             </div>
         </div>
@@ -150,31 +151,37 @@
         </div>
     </div>
     <div class="form-row">
-        <div class="form-field">
+        <div class="form-field mt-1">
             <label for="apply-by">Applied By: <span>*</span></label>
-            <select id="apply-by" name="apply_by" required class="p-[10px]">
+            <select id="apply-by" name="apply_by" required class="p-[12px]" onchange="toggleAdvocateField()">
                 <option value="">--Select--</option>
-                <!-- Add more options here -->
+                <option value="petitioner">Petitioner</option>
+                <option value="respondent">Respondent</option>
+                <option value="advocate">Advocate</option>
+                <option value="others">Others</option>
             </select>
         </div>
-        <div class="form-field">
+        <div class="form-field mt-2" style="display: none;">
             <label for="case-year">Advocate Registration No <span>*</span></label>
-            <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" required>
+            <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" required style="margin-top: 10px;">
         </div>
     </div>
-    <div class="form-row">
+    <div class="form-row mt-4">
         <div class="form-field">
-            <label for="captcha">Enter Captcha Code Here: </label>
-            <input type="text" id="captcha" name="captcha" required>
-            <img src="path-to-captcha.jpg" alt="Captcha">
-            <button type="button" class="refresh-captcha">
-                <img src="refresh-icon-path.jpg" alt="Refresh">
-            </button>
+            <label for="captcha">Evaluate the Expression<span>*</span></label>
+            <div class="flex justify-center items-center gap-1">
+                <img id="captchaImage" src="{{ $captcha }}" alt="Captcha">
+                <input class="text-lg" type="text" id="captcha" name="captcha" required placeholder="Enter the expression">
+                <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
+                    <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
+                </button>
+            </div>
+        </div>
+        <div class="form-field">
+            <button type="submit" class="btn-submit sm:mt-7 hidden order_btn" style="margin-top: 40px;">Submit</button>
         </div>
     </div>
-    <div>
-        <button type="submit" class="btn-submit hidden order_btn">Submit</button>
-    </div>
+  
     </form>
 </section>
 @endsection
