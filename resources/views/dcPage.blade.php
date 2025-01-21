@@ -151,7 +151,7 @@
     </div>
     <div class="form-row">
         <div class="form-field">
-            <label for="apply-by">Apply By: <span>*</span></label>
+            <label for="apply-by">Applied By: <span>*</span></label>
             <select id="apply-by" name="apply_by" required class="p-[10px]">
                 <option value="">--Select--</option>
                 <!-- Add more options here -->
