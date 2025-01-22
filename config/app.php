@@ -3,7 +3,7 @@
 return [
 
     'api' => [
-    'base_url' => env('API_BASE_URL', 'http://192.168.137.48/occ_api'), // Provide a default value as a fallback
+    'base_url' => env('API_BASE_URL', 'http://localhost/occ_api'), 
     ],
 
     /*

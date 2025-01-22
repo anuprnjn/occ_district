@@ -10,8 +10,8 @@ class DistrictController extends Controller
 {
     public function showDistricts()
     {
-         $response = Http::get('http://192.168.137.48/occ_api/district_dropdown.php');
-         $response_case = Http::get('http://192.168.137.48/occ_api/case_type.php');
+         $response = Http::get('http://localhost/occ_api/district_dropdown.php');
+         $response_case = Http::get('http://localhost/occ_api/case_type.php');
 
          if ($response->successful()) {
              $districts = $response->json();  
