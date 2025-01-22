@@ -33,8 +33,9 @@
 
 @push('scripts')
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
+{{-- function for setting dist_code to esta_api  --}}
 <script>
-        function fetchEstablishments(dist_code) {
+    function fetchEstablishments(dist_code) {
         if (!dist_code) {
             // If no district is selected, reset the Establishment dropdown
             $('#selectEsta').html('<option value="" selected>Select Establishment</option>');
@@ -61,18 +62,33 @@
             }
         });
     }
+
+    // Function to store the selected establishment code in sessionStorage
+    function saveEstCode(selectElement) {
+       
+        var selectedEstCode = selectElement.value; // Get the selected establishment code
+        if (selectedEstCode !== '') {
+            sessionStorage.setItem('selectedEstCode', selectedEstCode);
+        }
+        else{
+            sessionStorage.removeItem('selectedEstCode');
+        }
+    }
+   
 </script>
+{{-- function for captcha  --}}
 <script>
-function refreshCaptcha() {
-    const refresh = document.querySelector(".refresh-btn");
-    const captchaImg = document.getElementById('captchaImage');
-    refresh.classList.add("animate-spin");
-    captchaImg.src = '{{ captcha_src('math') }}?' + new Date().getTime(); 
-    setTimeout(function() {
-        refresh.classList.remove("animate-spin");
-    }, 1000);
-}
+    function refreshCaptcha() {
+        const refresh = document.querySelector(".refresh-btn");
+        const captchaImg = document.getElementById('captchaImage');
+        refresh.classList.add("animate-spin");
+        captchaImg.src = '{{ captcha_src('math') }}?' + new Date().getTime(); 
+        setTimeout(function() {
+            refresh.classList.remove("animate-spin");
+        }, 1000);
+    }
 </script>
+{{-- function for change the input based on applied by  --}}
 <script>
     function toggleAdvocateField() {
         var applyBy = document.getElementById("apply-by").value;
@@ -84,6 +100,7 @@ function refreshCaptcha() {
         }
     }
 </script>
+{{-- function for changing the fields based on case no and filling no  --}}
 <script>
    function updateFields() {
     // Get the selected radio button value
@@ -107,9 +124,55 @@ function refreshCaptcha() {
         field2Label.innerHTML = "Filing Year: <span class='required'>*</span>";
         field2Input.placeholder = "Enter Filing Year";
     }
-}
+    }
     window.onload = updateFields;
 </script>
- 
+{{-- Function to store the district code in sessionStorage --}}
+<script>
+    function getDistCode(element) {
+        var distCode = element.getAttribute('data-value');
+        if(distCode !== ''){
+            sessionStorage.setItem('selectedDistCode', distCode); 
+            sessionStorage.removeItem('selectedEstCode');
+        }else{
+            sessionStorage.removeItem('selectedDistCode');
+            sessionStorage.removeItem('selectedEstCode');
+        }
+    }
+    
+</script>
+{{-- function to get the case type  --}}
+<script>
+    function getCaseType(element){
+        var caseType = element.getAttribute('data-value');
+        if(caseType !== ''){
+            sessionStorage.setItem('selectedCaseType', caseType); 
+        }else{
+            sessionStorage.removeItem('selectedCaseType');
+        }
+    }
+</script>    
+{{-- function for setting on submit  --}}
+<script>
+    function handleFormSubmit(event)
+    {
+        event.preventDefault();
+        var district_code = sessionStorage.getItem('selectedDistCode');
+        var establishment_code = sessionStorage.getItem('selectedEstCode');
+        var applicant_name = document.getElementById('name').value;
+        var mobile_number = document.getElementById('mobileInput').value;
+        var email = document.getElementById('email').value;
+        var case_type = sessionStorage.getItem('selectedCaseType');
+        var case_number = document.getElementById('case-no').value;
+        var case_year = document.getElementById('case-year').value;
+        var request_mode = document.querySelector('input[name="request_mode"]:checked').value;
+        var required_document = document.getElementById('required-document').value;
+        var applied_by = document.getElementById('apply-by').value;
+        var advocate_registration = document.getElementById('adv_res').value;
+
+        console.log(district_code, establishment_code, applicant_name, mobile_number, email, case_type, case_number, case_year, request_mode, required_document, applied_by, advocate_registration); 
+    }
+</script>    
+
 
 @endpush

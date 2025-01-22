@@ -19,9 +19,9 @@
                         </div>
                         <!-- Options -->
                         <ul id="dropdownOptions" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOption(this)">Please Select District</li>
+                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOption(this); getDistCode(this)">Please Select District</li>
                             @foreach ($districts as $district)
-                                <li data-value="{{ $district['dist_code'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOption(this)">
+                                <li data-value="{{ $district['dist_code'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOption(this); getDistCode(this)">
                                     {{ $district['dist_name'] }}
                                 </li>
                             @endforeach
@@ -33,10 +33,11 @@
         </div>
         <div class="w-full sm:w-1/2">
             <label for="selectEsta" class="mb-2 block mt-4 sm:mt-0">Select Establishment:<span>*</span></label>
-            <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded">
+            <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded" onchange="saveEstCode(this)">
                 <option value="" selected>Select Establishment</option>
             </select>
         </div>
+        
     </div>
 
     <form id="applyOrdersForm" class="dark_form p-4 bg-slate-100/70 rounded-md mb-10">
@@ -108,10 +109,10 @@
                         </div>
                         <!-- Options -->
                         <ul id="caseTypeOptions" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this)">Please Select Case Type</li>
+                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">Please Select Case Type</li>
                             @if (!empty($caseTypes) && is_array($caseTypes))
                                 @foreach ($caseTypes as $caseType)
-                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this)">
+                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
                                         {{ $caseType['type_name'] }}
                                     </li>
                                 @endforeach
@@ -163,7 +164,7 @@
         </div>
         <div class="form-field mt-2" style="display: none;">
             <label for="case-year">Advocate Registration No <span>*</span></label>
-            <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" required style="margin-top: 10px;">
+            <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" style="margin-top: 10px;">
         </div>
     </div>
     <div class="form-row mt-4">
@@ -178,10 +179,18 @@
             </div>
         </div>
         <div class="form-field">
-            <button type="submit" class="btn-submit sm:mt-7 hidden order_btn" style="margin-top: 40px;">Submit</button>
+            <button type="submit" id="submitBtn" class="btn-submit sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmit(event)">Submit</button>
         </div>
     </div>
-  
     </form>
+
+    <!-- Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-md shadow-lg">
+            <h3 class="text-xl font-semibold mb-4">Application Submitted Successfully</h3>
+            <p id="applicationNumber" class="text-gray-700"></p>
+            <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="closeModal()">Close</button>
+        </div>
+    </div>
 </section>
 @endsection

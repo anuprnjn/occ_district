@@ -17,6 +17,10 @@ Route::get('/dcPage', function () {
     return view('dcPage');
 })->name('dcPage');
 
+Route::get('/show_data', function () {
+    return view('show_data');
+})->name('show_data');
+
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
 Route::post('/send-otp', [OtpController::class, 'sendOtp']);
