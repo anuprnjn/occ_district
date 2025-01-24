@@ -10,23 +10,32 @@ class DistrictController extends Controller
 {
     public function showDistricts()
     {
-         $response = Http::get('http://localhost/occ_api/district_dropdown.php');
-         $response_case = Http::get('http://localhost/occ_api/case_type.php');
 
-         if ($response->successful()) {
-             $districts = $response->json();  
-         } else {
-             $districts = [];  
-         }
-         if ($response_case->successful()) {
-            $caseTypes = $response_case->json(); 
+        // Fetch districts
+        $districtResponse = Http::get(config('app.api.base_url') . '/district_dropdown.php');
+        if ($districtResponse->failed()) {
+            \Log::error('Failed to fetch districts', $districtResponse->json());
+            $districts = [];
         } else {
-            $caseTypes = [];  
+            \Log::info('Districts fetched:', $districtResponse->json());
+            $districts = $districtResponse->json();
         }
+
+        // Fetch case types
+        $caseTypeResponse = Http::get(config('app.api.base_url') . '/case_type.php');
+        if ($caseTypeResponse->failed()) {
+            \Log::error('Failed to fetch case types', $caseTypeResponse->json());
+            $caseTypes = [];
+        } else {
+            \Log::info('Case types fetched:', $caseTypeResponse->json());
+            $caseTypes = $caseTypeResponse->json();
+        }
+
         // Generate the CAPTCHA
         $captcha = captcha_src('math');
 
-         return view('dcPage', compact('districts','caseTypes','captcha'));
+        // Return data to the view
+        return view('dcPage', compact('districts', 'caseTypes', 'captcha'));
     }
     
     public function getEstablishments(Request $request)

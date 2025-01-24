@@ -1307,7 +1307,7 @@
             },
             "time": "2025-01-05T10:52:39+00:00",
             "type": "library",
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Intervention\\Gif\\": "src"
@@ -1384,7 +1384,7 @@
             },
             "time": "2025-01-18T15:42:14+00:00",
             "type": "library",
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Intervention\\Image\\": "src"
@@ -2672,7 +2672,7 @@
                     ]
                 }
             },
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "files": [
                     "src/helpers.php"
