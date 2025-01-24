@@ -180,7 +180,7 @@
             return;
         }
 
-        if (!applicant_name || !mobile_number || !email || !case_number || !case_year || !request_mode || !required_document || !applied_by || !advocate_registration || !selected_method) {
+        if (!applicant_name || !mobile_number || !email || !case_number || !case_year || !request_mode || !required_document || !applied_by) {
             console.error('Missing required form data.');
             alert('Please fill out all required fields.');
             return;
