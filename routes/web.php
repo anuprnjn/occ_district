@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\OtpController;
+use App\Http\Controllers\DCApplicationRegistrationController;
 // use Mews\Captcha\Facades\Captcha;
 
 Route::get('/', function () {
@@ -26,5 +27,6 @@ Route::post('/get-establishments', [DistrictController::class, 'getEstablishment
 Route::post('/send-otp', [OtpController::class, 'sendOtp']);
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
 Route::post('/resend-otp', [OtpController::class, 'resendOtp']);
+Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
 
 

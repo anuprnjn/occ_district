@@ -154,9 +154,10 @@
 </script>    
 {{-- function for setting on submit  --}}
 <script>
-    function handleFormSubmit(event)
-    {
+    function handleFormSubmit(event) {
         event.preventDefault();
+
+        // Collecting session and form data
         var district_code = sessionStorage.getItem('selectedDistCode');
         var establishment_code = sessionStorage.getItem('selectedEstCode');
         var applicant_name = document.getElementById('name').value;
@@ -165,14 +166,80 @@
         var case_type = sessionStorage.getItem('selectedCaseType');
         var case_number = document.getElementById('case-no').value;
         var case_year = document.getElementById('case-year').value;
-        var request_mode = document.querySelector('input[name="request_mode"]:checked').value;
+        var request_mode = document.querySelector('input[name="request_mode"]:checked')?.value;
         var required_document = document.getElementById('required-document').value;
         var applied_by = document.getElementById('apply-by').value;
         var advocate_registration = document.getElementById('adv_res').value;
 
-        console.log(district_code, establishment_code, applicant_name, mobile_number, email, case_type, case_number, case_year, request_mode, required_document, applied_by, advocate_registration); 
-    }
-</script>    
+        const selected_method = document.querySelector('input[name="select_mode"]:checked')?.value;
 
+        // Validate required fields
+        if (!district_code || !establishment_code || !case_type) {
+            console.error('Missing required session data.');
+            alert('Missing session data. Please select the required options.');
+            return;
+        }
+
+        if (!applicant_name || !mobile_number || !email || !case_number || !case_year || !request_mode || !required_document || !applied_by || !advocate_registration || !selected_method) {
+            console.error('Missing required form data.');
+            alert('Please fill out all required fields.');
+            return;
+        }
+
+        // Collect the data into an object to send to the backend
+        var formData = {
+            district_code: district_code,
+            establishment_code: establishment_code,
+            applicant_name: applicant_name,
+            mobile_number: mobile_number,
+            email: email,
+            case_type: case_type,
+            case_number: case_number,
+            case_year: case_year,
+            request_mode: request_mode,
+            required_document: required_document,
+            applied_by: applied_by,
+            advocate_registration_number: advocate_registration,
+            selected_method: selected_method,
+        };
+
+        console.log('Sending data:', formData);
+
+        // Send the POST request to the Laravel backend
+        fetch('/register-application', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    // If response is not successful, throw an error
+                    return response.json().then((errorData) => {
+                        throw new Error(errorData.message || 'An error occurred');
+                    });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // Check if the response indicates success
+                if (data.success) {
+                    alert(`Application registered successfully! Application Number: ${data.application_number}`);
+                    console.log('Success:', data);
+                } else {
+                    alert('Failed to register application. Please try again.');
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch((error) => {
+                // Handle network or server errors
+                console.error('Error:', error.message);
+                alert(`Error: ${error.message}`);
+            });
+    }
+</script> 
 
 @endpush
