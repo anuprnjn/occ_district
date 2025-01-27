@@ -164,8 +164,8 @@
         var mobile_number = document.getElementById('mobileInput').value;
         var email = document.getElementById('email').value;
         var case_type = sessionStorage.getItem('selectedCaseType');
-        var case_number = document.getElementById('case-no').value;
-        var case_year = document.getElementById('case-year').value;
+        var case_filling_number = document.getElementById('case-no').value;
+        var case_filling_year = document.getElementById('case-year').value;
         var request_mode = document.querySelector('input[name="request_mode"]:checked')?.value;
         var required_document = document.getElementById('required-document').value;
         var applied_by = document.getElementById('apply-by').value;
@@ -180,7 +180,7 @@
             return;
         }
 
-        if (!applicant_name || !mobile_number || !email || !case_number || !case_year || !request_mode || !required_document || !applied_by) {
+        if (!applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by) {
             console.error('Missing required form data.');
             alert('Please fill out all required fields.');
             return;
@@ -194,8 +194,8 @@
             mobile_number: mobile_number,
             email: email,
             case_type: case_type,
-            case_number: case_number,
-            case_year: case_year,
+            case_filling_number: case_filling_number,
+            case_filling_year: case_filling_year,
             request_mode: request_mode,
             required_document: required_document,
             applied_by: applied_by,
