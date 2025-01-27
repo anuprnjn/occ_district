@@ -6,6 +6,15 @@ use Illuminate\Support\Facades\Http;
 
 class DCApplicationRegistrationController extends Controller
 {
+    public function refreshCaptcha(Request $request)
+    {
+        // Generate a new CAPTCHA image
+        $captcha = captcha_img('math');  // You can change 'flat' to other styles if needed
+
+        // Return the new CAPTCHA image
+        return response()->json(['captcha_image' => $captcha]);
+    }
+
     public function registerApplication(Request $request)
     {
         // Validate the incoming request data

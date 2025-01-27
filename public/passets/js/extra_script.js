@@ -89,14 +89,14 @@
     }
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', function (event) {
-        const dropdown = document.getElementById('dropdown');
-        const dropdownMenu = document.getElementById('dropdownMenu');
+    // document.addEventListener('click', function (event) {
+    //     const dropdown = document.getElementById('dropdown');
+    //     const dropdownMenu = document.getElementById('dropdownMenu');
 
-        if (!dropdown.contains(event.target)) {
-            dropdownMenu.classList.add('hidden');
-        }
-    });
+    //     if (!dropdown.contains(event.target)) {
+    //         dropdownMenu.classList.add('hidden');
+    //     }
+    // });
 
     // Toggle dropdown visibility
     function toggleCaseTypeDropdown() {
@@ -142,14 +142,14 @@
     }
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', function (event) {
-        const caseTypeDropdown = document.getElementById('caseTypeDropdown');
-        const caseTypeMenu = document.getElementById('caseTypeMenu');
+    // document.addEventListener('click', function (event) {
+    //     const caseTypeDropdown = document.getElementById('caseTypeDropdown');
+    //     const caseTypeMenu = document.getElementById('caseTypeMenu');
 
-        if (!caseTypeDropdown.contains(event.target)) {
-            caseTypeMenu.classList.add('hidden');
-        }
-    });
+    //     if (!caseTypeDropdown.contains(event.target)) {
+    //         caseTypeMenu.classList.add('hidden');
+    //     }
+    // });
 
 // function to send otp and verify 
 

@@ -90,9 +90,9 @@
         <div class="form-field">
             <label for="request-mode">Select the method: <span>*</span></label>
             <div class="mt-2">
-                <input type="radio" id="case_no" name="select_mode" value="case_no" required checked onchange="updateFields()">
+                <input type="radio" id="case_no" name="select_mode" value="C" required checked onchange="updateFields()">
                 <label for="case_no">Case No</label>
-                <input type="radio" id="filling_no" name="select_mode" value="filling_no" required onchange="updateFields()" class="ml-4">
+                <input type="radio" id="filling_no" name="select_mode" value="F" required onchange="updateFields()" class="ml-4">
                 <label for="filling_no">Filling No</label>
             </div>
         </div>
@@ -171,7 +171,7 @@
         <div class="form-field">
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
-                <img id="captchaImage" src="{{ $captcha }}" alt="Captcha">
+                <img id="captchaImage" src="{{ captcha_src() }}" alt="Captcha">
                 <input class="text-lg" type="text" id="captcha" name="captcha" required placeholder="Enter the expression">
                 <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
                     <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
@@ -179,18 +179,9 @@
             </div>
         </div>
         <div class="form-field">
-            <button type="submit" id="submitBtn" class="btn-submit sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmit(event)">Submit</button>
+            <button type="submit" id="submitBtn" class="btn-submit hidden sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmit(event)">Submit</button>
         </div>
     </div>
     </form>
-
-    <!-- Modal -->
-    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-md shadow-lg">
-            <h3 class="text-xl font-semibold mb-4">Application Submitted Successfully</h3>
-            <p id="applicationNumber" class="text-gray-700"></p>
-            <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="closeModal()">Close</button>
-        </div>
-    </div>
 </section>
 @endsection

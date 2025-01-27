@@ -81,11 +81,26 @@
     function refreshCaptcha() {
         const refresh = document.querySelector(".refresh-btn");
         const captchaImg = document.getElementById('captchaImage');
+        
+        // Add animation class to the refresh button
         refresh.classList.add("animate-spin");
-        captchaImg.src = '{{ captcha_src('math') }}?' + new Date().getTime(); 
-        setTimeout(function() {
-            refresh.classList.remove("animate-spin");
-        }, 1000);
+
+        // Make an AJAX request to the route that generates the CAPTCHA
+        fetch('/refresh-captcha')
+            .then(response => response.json())
+            .then(data => {
+                // Update the CAPTCHA image with the new source URL
+                captchaImg.src = data.captcha_src + '?' + new Date().getTime(); 
+            })
+            .catch(error => {
+                console.error('Error refreshing CAPTCHA:', error);
+            })
+            .finally(() => {
+                // Remove the spin animation after the request
+                setTimeout(function() {
+                    refresh.classList.remove("animate-spin");
+                }, 1000);
+            });
     }
 </script>
 {{-- function for change the input based on applied by  --}}
@@ -154,15 +169,48 @@
 </script>    
 {{-- function for setting on submit  --}}
 <script>
-    function handleFormSubmit(event) {
+    function handleFormSubmit1(event) {
         event.preventDefault();
 
-        // Collecting session and form data
+        // Collect captcha input
+        const captcha = document.getElementById('captcha').value.trim();
+
+        // Step 1: Validate CAPTCHA
+        fetch('/validate-captcha', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',  // Ensure the response is expected in JSON format
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                captcha: captcha,
+            }),
+        })
+        .then(response => response.json()) // Ensure you're parsing the JSON response
+        .then(data => {
+            if (data.success) {
+                // Proceed with form submission or other logic after successful CAPTCHA validation
+                submitFormData();
+            } else {
+                alert('CAPTCHA validation failed. Please try again.');
+                document.getElementById('captcha').value = '';
+                refreshCaptcha(); 
+                return;
+            }
+        })
+        .catch(error => {
+            console.error('CAPTCHA validation error:', error);
+            alert('An error occurred while validating the CAPTCHA.');
+        });
+
+        // Collecting form data and session data
         var district_code = sessionStorage.getItem('selectedDistCode');
         var establishment_code = sessionStorage.getItem('selectedEstCode');
         var applicant_name = document.getElementById('name').value;
         var mobile_number = document.getElementById('mobileInput').value;
         var email = document.getElementById('email').value;
+        const cnfemail = document.getElementById('confirm-email').value.trim();
         var case_type = sessionStorage.getItem('selectedCaseType');
         var case_filling_number = document.getElementById('case-no').value;
         var case_filling_year = document.getElementById('case-year').value;
@@ -186,26 +234,50 @@
             return;
         }
 
-        // Collect the data into an object to send to the backend
+        if (email !== cnfemail) {
+            alert('Email and Confirm Email do not match.');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        if (!captcha) {
+            alert('Please evaluate the CAPTCHA.');
+            return;
+        }
+    }
+
+    // Function to submit the form data to the backend
+    function submitFormData() {
+        // Collect all form data for submission
+        var confirmation = confirm('This is the final submit. Please check all your data. If you want to continue, press OK. Press Cancel to cancel the submission.');
+
+        if (!confirmation) {
+            console.log('Form submission canceled.');
+            return;  // Exit the function if the user cancels
+        }
+
         var formData = {
-            district_code: district_code,
-            establishment_code: establishment_code,
-            applicant_name: applicant_name,
-            mobile_number: mobile_number,
-            email: email,
-            case_type: case_type,
-            case_filling_number: case_filling_number,
-            case_filling_year: case_filling_year,
-            request_mode: request_mode,
-            required_document: required_document,
-            applied_by: applied_by,
-            advocate_registration_number: advocate_registration,
-            selected_method: selected_method,
+            district_code: sessionStorage.getItem('selectedDistCode'),
+            establishment_code: sessionStorage.getItem('selectedEstCode'),
+            applicant_name: document.getElementById('name').value,
+            mobile_number: document.getElementById('mobileInput').value,
+            email: document.getElementById('email').value,
+            case_type: sessionStorage.getItem('selectedCaseType'),
+            case_filling_number: document.getElementById('case-no').value,
+            case_filling_year: document.getElementById('case-year').value,
+            request_mode: document.querySelector('input[name="request_mode"]:checked')?.value,
+            required_document: document.getElementById('required-document').value,
+            applied_by: document.getElementById('apply-by').value,
+            advocate_registration_number: document.getElementById('adv_res').value,
+            selected_method: document.querySelector('input[name="select_mode"]:checked')?.value,
         };
 
-        console.log('Sending data:', formData);
-
-        // Send the POST request to the Laravel backend
+        // Send the form data to the server
         fetch('/register-application', {
             method: 'POST',
             headers: {
@@ -215,31 +287,149 @@
             },
             body: JSON.stringify(formData),
         })
-            .then((response) => {
-                if (!response.ok) {
-                    // If response is not successful, throw an error
-                    return response.json().then((errorData) => {
-                        throw new Error(errorData.message || 'An error occurred');
-                    });
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Check if the response indicates success
-                if (data.success) {
-                    alert(`Application registered successfully! Application Number: ${data.application_number}`);
-                    console.log('Success:', data);
-                } else {
-                    alert('Failed to register application. Please try again.');
-                    console.error('Error:', data.message);
-                }
-            })
-            .catch((error) => {
-                // Handle network or server errors
-                console.error('Error:', error.message);
-                alert(`Error: ${error.message}`);
-            });
+        .then(response => response.json()) // Ensure the response is in JSON format
+        .then(data => {
+            if (data.success) {
+                alert(`Application registered successfully! Application Number: ${data.application_number}`);
+                console.log('Success:', data);
+            } else {
+                alert('Failed to register application. Please try again.');
+                console.error('Error:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            alert(`Error: ${error.message}`);
+        });
     }
-</script> 
+</script>
+<script>
+    function handleFormSubmit(event) {
+    event.preventDefault();
 
+    // Collect form data
+    var district_code = sessionStorage.getItem('selectedDistCode');
+    var establishment_code = sessionStorage.getItem('selectedEstCode');
+    var applicant_name = document.getElementById('name').value;
+    var mobile_number = document.getElementById('mobileInput').value;
+    var email = document.getElementById('email').value;
+    const cnfemail = document.getElementById('confirm-email').value.trim();
+    var case_type = sessionStorage.getItem('selectedCaseType');
+    var case_filling_number = document.getElementById('case-no').value;
+    var case_filling_year = document.getElementById('case-year').value;
+    var request_mode = document.querySelector('input[name="request_mode"]:checked')?.value;
+    var required_document = document.getElementById('required-document').value;
+    var applied_by = document.getElementById('apply-by').value;
+    var advocate_registration = document.getElementById('adv_res').value;
+    const selected_method = document.querySelector('input[name="select_mode"]:checked')?.value;
+    const captcha = document.getElementById('captcha').value.trim();
+
+    // Validate required fields
+    if (!district_code || !establishment_code || !case_type) {
+        console.error('Missing required session data.');
+        alert('Missing session data. Please select the required options.');
+        return;
+    }
+
+    if (!applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by) {
+        console.error('Missing required form data.');
+        alert('Please fill out all required fields.');
+        return;
+    }
+
+    if (email !== cnfemail) {
+        alert('Email and Confirm Email do not match.');
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+    }
+    if (!captcha) {
+        alert('Please evaluate the CAPTCHA.');
+        return;  // Stop the process if CAPTCHA is not filled
+    }
+    fetch('/validate-captcha', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',  // Ensure the response is expected in JSON format
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            captcha: captcha,
+        }),
+    })
+    .then(response => response.json()) // Ensure you're parsing the JSON response
+    .then(data => {
+        if (!data.success) {
+            alert('CAPTCHA validation failed. Please try again.');
+            document.getElementById('captcha').value = '';  // Clear captcha input field
+            refreshCaptcha(); // Optional: refresh captcha image
+            return;  // Stop further validation if CAPTCHA fails
+        }
+        submitFormData();
+    })
+    .catch(error => {
+        console.error('CAPTCHA validation error:', error);
+        alert('An error occurred while validating the CAPTCHA.');
+    });
+}
+
+// Function to submit the form data to the backend
+function submitFormData() {
+    var confirmation = confirm('This is the final submit. Please check all your data. If you want to continue, press OK. Press Cancel to cancel the submission.');
+
+    if (!confirmation) {
+        refreshCaptcha();
+        document.getElementById('captcha').value = '';
+        return;  // Exit the function if the user cancels
+    }
+
+    var formData = {
+        district_code: sessionStorage.getItem('selectedDistCode'),
+        establishment_code: sessionStorage.getItem('selectedEstCode'),
+        applicant_name: document.getElementById('name').value,
+        mobile_number: document.getElementById('mobileInput').value,
+        email: document.getElementById('email').value,
+        case_type: sessionStorage.getItem('selectedCaseType'),
+        case_filling_number: document.getElementById('case-no').value,
+        case_filling_year: document.getElementById('case-year').value,
+        request_mode: document.querySelector('input[name="request_mode"]:checked')?.value,
+        required_document: document.getElementById('required-document').value,
+        applied_by: document.getElementById('apply-by').value,
+        advocate_registration_number: document.getElementById('adv_res').value,
+        selected_method: document.querySelector('input[name="select_mode"]:checked')?.value,
+    };
+
+    // Send the form data to the server
+    fetch('/register-application', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => response.json()) // Ensure the response is in JSON format
+    .then(data => {
+        if (data.success) {
+            sessionStorage.setItem('application_number', data.application_number);
+            window.location.href = '/show_data';
+            // alert(`Application registered successfully! Application Number: ${data.application_number}`);
+            // console.log('Success:', data);
+        } else {
+            alert('Failed to register application. Please try again.');
+            console.error('Error:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error.message);
+        alert(`Error: ${error.message}`);
+    });
+}
+</script>    
 @endpush
