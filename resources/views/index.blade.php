@@ -418,7 +418,7 @@ function submitFormData() {
     .then(data => {
         if (data.success) {
             sessionStorage.setItem('application_number', data.application_number);
-            window.location.href = '/show_data';
+            window.location.href = '/application-details';
             // alert(`Application registered successfully! Application Number: ${data.application_number}`);
             // console.log('Success:', data);
         } else {

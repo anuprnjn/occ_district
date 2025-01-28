@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Crypt;
+use App\Http\Controllers\ApplicationController;
 
 Route::get('/', function () {
     return view('index');
@@ -23,9 +24,9 @@ Route::get('/dcPage', function () {
     return view('dcPage');
 })->name('dcPage');
 
-Route::get('/show_data', function () {
-    return view('show_data');
-})->name('show_data');
+Route::get('/application-details', function () {
+    return view('application_details');
+})->name('application_details');
 
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
@@ -48,5 +49,5 @@ Route::post('/validate-captcha', function (Request $request) {
         'message' => 'CAPTCHA validation successful.',
     ]);
 });
-
+Route::post('/fetch-application-details', [ApplicationController::class, 'fetchApplicationDetails'])->name('fetch_application_details');
 
