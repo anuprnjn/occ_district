@@ -4,21 +4,29 @@
 <section class="content-section p-6 relative">
     <!-- Loading overlay -->
     <div id="loading-overlay" class="flex items-center justify-center z-10 h-screen bg-transparent">
-        <p class="text-gray-500 text-xl -mt-[200px]">Loading application details...</p>
+        <p class="flex items-center justify-center gap-2 -mt-[200px]">
+        <img class="w-[42px] animate-spin" src="{{ asset('passets/images/icons/refresh.png') }}" alt="Loading">
+        <span class="text-gray-500 load text-lg">Loading...</span>
+        </p>
     </div>
     
-    <h1 id="application-title" class="sm:text-3xl text-center sm:text-start text-xl uppercase mb-6 font-semibold"></h1>
-    <div id="application-details-container" class=" border-b border-gray-300 shadow-md rounded-lg">
+    <h1 id="application-title" class="sm:text-2xl text-center sm:text-start text-xl uppercase mb-6 font-semibold"></h1>
+    <div id="application-details-container" class=" shadow-md rounded-lg">
         <!-- Application data will appear here -->
     </div>
     
-    <button id="print-button" class="hidden sm:mt-10 sm:mb-0 mb-16 mt-4 p-2 bg-rose-500 pl-5 pr-5 text-white rounded" onclick="printApplication()">Print Document</button>
+    <button id="print-button" class="hidden sm:mt-10 sm:mb-0 mb-16 mt-4 p-2 bg-rose-700 pl-5 pr-5 text-white rounded" onclick="printApplication()">Print Document</button>
+    <br>
+    <div class="sm:mt-4 hidden -mt-10 mb-20 sm:mb-0" id="note">
+    <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
+    </div>
+    
 </section>
 @endsection
 
-@push('scripts')
+@push('scripts')  
 <script>
-    // Format the date and time to "YYYY-MM-DD HH:MM:SS"
+    
     const formatDateTime = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
@@ -77,23 +85,23 @@
                     if (data.selected_method === 'C') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold text-gray-700">Case Year</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg text-gray-900">${data.case_filling_year}</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Case Year</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_year}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold text-gray-700">Case Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg text-gray-900">${data.case_filling_number}</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Case Number</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_number}</td>
                             </tr>
                         `;
                     } else if (data.selected_method === 'F') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold text-gray-700">Filling Year</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg text-gray-900">${data.case_filling_year}</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Filling Year</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_year}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold text-gray-700">Filling Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg text-gray-900">${data.case_filling_number}</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Filling Number</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_number}</td>
                             </tr>
                         `;
                     }
@@ -106,49 +114,53 @@
                                     <th class="px-6 py-3 text-left text-sm sm:text-lg">Information</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-sm sm:text-lg font-light text-gray-700">
+                            <tbody class="text-sm sm:text-lg dark_form">
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Application Number</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Application Number</td>
                                     <td class="px-6 py-4">${data.application_number}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Application Date</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Application Date</td>
                                     <td class="px-6 py-4">${formatDateTime(data.created_at)}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Applicant Name</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Applicant Name</td>
                                     <td class="px-6 py-4">${data.applicant_name}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Mobile Number</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Mobile Number</td>
                                     <td class="px-6 py-4">${data.mobile_number}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Email</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Email</td>
                                     <td class="px-6 py-4">${data.email}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Applied By</td>
+                                    <td class="px-6 py-4 font-semibold">Applied By</td>
                                     <td class="px-6 py-4">${data.applied_by}</td>
                                 </tr>
                                 ${data.applied_by === 'advocate' ? `
                                     <tr class="border-b">
-                                        <td class="px-6 py-4 font-medium">Advocate Registration Number</td>
+                                        <td class="px-6 py-4 font-semibold uppercase">Advocate Registration Number</td>
                                         <td class="px-6 py-4">${data.advocate_registration_number || 'N/A'}</td>
                                     </tr>
                                 ` : ''}
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Request Type</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Request Type</td>
                                     <td class="px-6 py-4">${data.request_mode}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-medium">Case Type</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Case Type</td>
                                     <td class="px-6 py-4">${data.case_type}</td>
                                 </tr>
                                 ${caseDetails}
-                                <tr>
-                                    <td class="px-6 py-4 font-medium">Required Document</td>
+                                <tr class="border-b">
+                                    <td class="px-6 py-4 font-semibold uppercase">Required Document</td>
                                     <td class="px-6 py-4">${data.required_document}</td>
+                                </tr>
+                                 <tr>
+                                    <td class="px-6 py-4 font-semibold uppercase">Payment status</td>
+                                    <td class="px-6 py-4 text-red-500">${data.status}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -156,6 +168,7 @@
 
                     // Show print button after data loads
                     document.getElementById('print-button').style.display = 'inline-block';
+                    document.getElementById('note').style.display = 'inline-block';
                 } else {
                     document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">Failed to fetch application details.</p>';
                 }
@@ -171,32 +184,102 @@
     });
 
     function printApplication() {
-        const districtName = sessionStorage.getItem('district_name');
-        const establishmentName = sessionStorage.getItem('establishment_name');
-        const content = document.getElementById('application-details-container').innerHTML;
-        const printWindow = window.open('', '', 'width=800,height=600');
-        
-        printWindow.document.write(`
-            <html>
-            <head>
-                <title>Print Application Details</title>
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                    th, td { padding: 12px; text-align: left; border: 1px solid #ddd; }
-                    th { background-color: #D09A3F; color: white; }
-                </style>
-            </head>
-            <body>
-                <h1>Online Certified Copy - ${districtName} - ${establishmentName}</h1>
-                ${content}
-            </body>
-            </html>
-        `);
-        
-        printWindow.document.close();
-        printWindow.print();
-    }
+    const districtName = sessionStorage.getItem('district_name') || "District Name Not Available";
+    const establishmentName = sessionStorage.getItem('establishment_name') || "Establishment Name Not Available";
+    const content = document.getElementById('application-details-container').innerHTML;
+    const pageURL = window.location.href;
+
+    const printWindow = window.open('', '', 'width=800,height=600');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Civil Court - ${districtName}</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                }
+                h1 {
+                    text-align: center;
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                h2 {
+                    text-align: center;
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+                h3 {
+                    text-align: center;
+                    font-size: 18px;
+                    margin-bottom: 20px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                th, td {
+                    padding: 12px;
+                    text-align: left;
+                    border: 1px solid #000;
+                }
+                th {
+                    background-color: #D09A3F;
+                    color: black;  
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                td {
+                    font-size: 14px;
+                    font-weight: normal;
+                    color: #000;
+                }
+                td:first-child {
+                    width: 30%;  
+                }
+                td:nth-child(2) {
+                    width: 70%;  
+                }
+                footer {
+                    position: fixed;
+                    bottom: 20px;
+                    left: 20px;
+                    font-size: 12px;
+                    color: #555;
+                }
+                @media print {
+                    @page {
+                        margin: 0;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    footer {
+                        display: block;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Civil Court - ${districtName}</h1>
+            <h2>${establishmentName}</h2>
+            <h3>Online Certified Copy</h3>
+            ${content}
+            <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
+            <footer>Generated by: ${pageURL}</footer>
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+}
 </script>
 
   
