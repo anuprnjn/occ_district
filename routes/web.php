@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\DCApplicationRegistrationController;
+use App\Http\Controllers\HCApplicationRegistrationController;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\HCCaseTypeController;
 
 Route::get('/', function () {
     return view('index');
@@ -29,6 +31,7 @@ Route::get('/application-details', function () {
 })->name('application_details');
 
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
+Route::get('/hcPage', [HCCaseTypeController::class, 'showCases']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
 Route::post('/send-otp', [OtpController::class, 'sendOtp']);
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
@@ -50,4 +53,6 @@ Route::post('/validate-captcha', function (Request $request) {
     ]);
 });
 Route::post('/fetch-application-details', [ApplicationController::class, 'fetchApplicationDetails'])->name('fetch_application_details');
+
+Route::post('/hc-register-application', [HCApplicationRegistrationController::class, 'hcRegisterApplication']);
 
