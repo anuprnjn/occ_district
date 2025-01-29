@@ -63,80 +63,148 @@
     <div class="otherform" id="otherForm" style="display:none;">
         <form id="applyOrdersForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
             <h3 class="font-semibold text-lg mb-4">Apply for Others Copy :</h3>
+            @csrf
             <div class="form-row">
                 <div class="form-field">
                     <label for="name">Name: <span>*</span></label>
                     <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
                 </div>
                 <div class="form-field">
-                    <label for="mobile">Mobile No: <span>*</span></label>
-                    <input type="text" id="mobile" name="mobile" placeholder="Enter Your Mobile No" required>
-                </div>
+            <div class="flex items-start justify-start gap-2">
+                <label for="mobile" id="mobileLabel">Mobile No: <span>*</span></label>
+            <span
+            id="otpTimer"
+            class="text-md text-rose-600 "
+            ></span>
             </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="email">Email: <span>*</span></label>
-                    <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
-                </div>
-                <div class="form-field">
-                    <label for="confirm-email">Confirm Email: <span>*</span></label>
-                    <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
-                </div>
+            <div class="flex items-center justify-center gap-2">
+                <input
+                type="text"
+                id="mobileInput"
+                name="mobile"
+                placeholder="Enter Your Mobile No"
+                class="p-[10px] border border-gray-300 rounded"
+                required
+            >
+            <button
+            type="button"
+            id="otpButton"
+            onclick="sendOtp()"
+            class="bg-[#4B3E2F] sm:w-[200px] w-[150px] sm:p-[10px] p-[8px] rounded-md text-white hover:bg-[#D09A3F]"
+            >
+                Send OTP
+            </button>
+                 
             </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="case-type">Case Type: <span>*</span></label>
-                    <select id="case-type" name="case_type" required class="p-[10px]">
-                        <option value="">Please Select</option>
-                        <!-- Add more options here -->
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label for="case-no">Case No: <span>*</span></label>
-                    <input type="text" id="case-no" name="case_no" placeholder="Enter Case No" required>
-                </div>
+        </div>
+        </div>
+        <div class="form-row">
+            <div class="form-field">
+                <label for="email">Email: <span>*</span></label>
+                <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
             </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="case-year">Case Year: <span>*</span></label>
-                    <input type="text" id="case-year" name="case_year" placeholder="Enter Case Year" required>
-                </div>
-                <div class="form-field">
-                    <label for="request-mode">Request Mode: <span>*</span></label>
-                    <div>
-                        <input type="radio" id="urgent" name="request_mode" value="urgent" required>
-                        <label for="urgent">Urgent</label>
-                        <input type="radio" id="ordinary" name="request_mode" value="ordinary" required>
-                        <label for="ordinary">Ordinary</label>
+            <div class="form-field">
+                <label for="confirm-email">Confirm Email: <span>*</span></label>
+                <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
+            </div>
+        </div>
+        <div class="form-row">
+        <div class="form-field">
+            <label for="request-mode">Select the method: <span>*</span></label>
+            <div class="mt-2">
+                <input type="radio" id="case_no" name="select_mode" value="C" required checked onchange="updateFields()">
+                <label for="case_no">Case No</label>
+                <input type="radio" id="filling_no" name="select_mode" value="F" required onchange="updateFields()" class="ml-4">
+                <label for="filling_no">Filling No</label>
+            </div>
+        </div>
+        <div class="form-field">
+            <label for="case-type">Case Type: <span>*</span></label>
+            <div class="relative w-full dark_select">
+                <!-- Custom Dropdown -->
+                <div id="caseTypeDropdown" class="w-full p-[10px] border rounded ">
+                    <div id="caseTypeToggle" class="cursor-pointer" onclick="toggleCaseTypeDropdown()">Please Select Case Type</div>
+                    <div id="caseTypeMenu" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
+                        <!-- Search Box -->
+                        <div class="p-2">
+                            <input type="text" id="caseTypeSearchInput" class="w-full p-[10px] border border-gray-300 rounded" placeholder="Search Case Type..." onkeyup="filterCaseTypeOptions()">
+                        </div>
+                        <!-- Options -->
+                        <ul id="caseTypeOptions" class="list-none p-0 m-0">
+                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">Please Select Case Type</li>
+                            @if (!empty($caseTypes) && is_array($caseTypes))
+                                @foreach ($caseTypes as $caseType)
+                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
+                                        {{ $caseType['type_name'] }}
+                                    </li>
+                                @endforeach
+                            @else
+                                <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
+                            @endif
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="required-document">Required Document: <span>*</span></label>
-                    <textarea id="required-document" name="required_document" placeholder="Enter Document Details" rows="3" required></textarea>
-                </div>
-                <div class="form-field">
-                    <label for="apply-by">Apply By: <span>*</span></label>
-                    <select id="apply-by" name="apply_by" required class="p-[10px]">
-                        <option value="">--Select--</option>
-                        <!-- Add more options here -->
-                    </select>
-                </div>
+        </div>
+        </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label for="case-no-hc" id="field1-label">Case No: <span class="red">*</span></label>
+            <input type="text" id="case-no-hc" name="case_no" placeholder="Enter Case No" required>
+        </div>
+        <div class="form-field">
+            <label for="case-year-hc" id="field2-label">Case Year: <span class="red">*</span></label>
+            <input type="text" id="case-year-hc" name="case_year" placeholder="Enter Case Year" required>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-field">
+            <label for="request-mode">Request Mode: <span>*</span></label>
+            <div class="mt-2">
+                <input type="radio" id="urgent" name="request_mode" value="urgent" required>
+                <label for="urgent">Urgent</label>
+                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required class="ml-6">
+                <label for="ordinary">Ordinary</label>
             </div>
-            <div class="form-row">
-                <div class="form-field captcha">
-                    <label for="captcha">Enter Captcha Code Here: </label>
-                    <input type="text" id="captcha" name="captcha" required>
-                    <img src="path-to-captcha.jpg" alt="Captcha">
-                    <button type="button" class="refresh-captcha">
-                        <img src="refresh-icon-path.jpg" alt="Refresh">
-                    </button>
-                </div>
+        </div>
+        <div class="form-field">
+            <label for="required-document">Required Document: <span>*</span></label>
+            <textarea id="required-document" name="required_document" placeholder="Enter Document Details" rows="3" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-field mt-1">
+            <label for="apply-by">Applied By: <span>*</span></label>
+            <select id="apply-by" name="apply_by" required class="p-[12px]" onchange="toggleAdvocateField()">
+                <option value="">--Select--</option>
+                <option value="petitioner">Petitioner</option>
+                <option value="respondent">Respondent</option>
+                <option value="advocate">Advocate</option>
+                <option value="others">Others</option>
+            </select>
+        </div>
+        <div class="form-field mt-2" style="display: none;">
+            <label for="case-year">Advocate Registration No <span>*</span></label>
+            <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" style="margin-top: 10px;">
+        </div>
+    </div>
+            <div class="form-row mt-4">
+        <div class="form-field">
+            <label for="captcha">Evaluate the Expression<span>*</span></label>
+            <div class="flex justify-center items-center gap-1">
+                <img id="captchaImage" src="{{ captcha_src() }}" alt="Captcha">
+                <input class="text-lg" type="text" id="captcha-hc" name="captcha" required placeholder="Enter the expression">
+                <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
+                    <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
+                </button>
             </div>
-            <div class="form-row">
-                <button type="submit" class="btn-submit">Submit</button>
-            </div>
+        </div>
+        <div class="form-field">
+            <button type="submit" id="submitBtn" class="btn-submit hidden sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmitForHighCourt(event)">Submit</button>
+        </div>
+    </div>
         </form>
     </div>
 

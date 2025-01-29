@@ -457,4 +457,136 @@ function submitFormData() {
     });
 }
 </script>    
+
+
+<script>
+    function handleFormSubmitForHighCourt(event) {
+    event.preventDefault();
+
+    // Collect form data
+    var applicant_name = document.getElementById('name').value;
+    var mobile_number = document.getElementById('mobileInput').value;
+    var email = document.getElementById('email').value;
+    const cnfemail = document.getElementById('confirm-email').value.trim();
+    var case_type = sessionStorage.getItem('selectedCaseType');
+    var case_filling_number = document.getElementById('case-no-hc').value;
+    var case_filling_year = document.getElementById('case-year-hc').value;
+    var request_mode = document.querySelector('input[name="request_mode"]:checked')?.value;
+    var required_document = document.getElementById('required-document').value;
+    var applied_by = document.getElementById('apply-by').value;
+    var advocate_registration = document.getElementById('adv_res').value;
+    const selected_method = document.querySelector('input[name="select_mode"]:checked')?.value;
+    const captcha = document.getElementById('captcha-hc').value.trim();
+
+    console.log(
+    "Case Type:", case_type,
+    "Applicant Name:", applicant_name,
+    "Mobile Number:", mobile_number,
+    "Email:", email,
+    "Case Filing Number:", case_filling_number,
+    "Case Filing Year:", case_filling_year,
+    "Request Mode:", request_mode,
+    "Required Document:", required_document,
+    "Applied By:", applied_by
+);
+   
+    if (!case_type || !applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by) {
+        console.error('Missing required form data.');
+        alert('Please fill out all required fields.');
+        return;
+    }
+
+    if (email !== cnfemail) {
+        alert('Email and Confirm Email do not match.');
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+    }
+    if (!captcha) {
+        alert('Please evaluate the CAPTCHA.');
+        return;  // Stop the process if CAPTCHA is not filled
+    }
+    fetch('/validate-captcha', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',  // Ensure the response is expected in JSON format
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            captcha: captcha,
+        }),
+    })
+    .then(response => response.json()) // Ensure you're parsing the JSON response
+    .then(data => {
+        if (!data.success) {
+            alert('CAPTCHA validation failed. Please try again.');
+            document.getElementById('captcha').value = '';  // Clear captcha input field
+            refreshCaptcha(); // Optional: refresh captcha image
+            return;  // Stop further validation if CAPTCHA fails
+        }
+        submitHcFormData();
+    })
+    .catch(error => {
+        console.error('CAPTCHA validation error:', error);
+        alert('An error occurred while validating the CAPTCHA.');
+    });
+}
+
+// Function to submit the form data to the backend
+function submitHcFormData() {
+    var confirmation = confirm('This is the final submit. Please check all your data. If you want to continue, press OK. Press Cancel to cancel the submission.');
+
+    if (!confirmation) {
+        refreshCaptcha();
+        document.getElementById('captcha').value = '';
+        return;  // Exit the function if the user cancels
+    }
+
+    var formData = {
+        applicant_name: document.getElementById('name').value,
+        mobile_number: document.getElementById('mobileInput').value,
+        email: document.getElementById('email').value,
+        case_type: sessionStorage.getItem('selectedCaseType'),
+        case_filling_number: document.getElementById('case-no-hc').value,
+        case_filling_year: document.getElementById('case-year-hc').value,
+        request_mode: document.querySelector('input[name="request_mode"]:checked')?.value,
+        required_document: document.getElementById('required-document').value,
+        applied_by: document.getElementById('apply-by').value,
+        advocate_registration_number: document.getElementById('adv_res').value,
+        selected_method: document.querySelector('input[name="select_mode"]:checked')?.value,
+    };
+
+    // Send the form data to the server
+    fetch('/hc-register-application', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => response.json()) // Ensure the response is in JSON format
+    .then(data => {
+        if (data.success) {
+            sessionStorage.setItem('application_number', data.application_number);
+            window.location.href = '/application-details';
+            // alert(`Application registered successfully! Application Number: ${data.application_number}`);
+            // console.log('Success:', data);
+        } else {
+            alert('Failed to register application. Please try again.');
+            console.error('Error:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error.message);
+        alert(`Error: ${error.message}`);
+    });
+}
+</script>      
 @endpush

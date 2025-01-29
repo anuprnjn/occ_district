@@ -4,6 +4,7 @@ return [
 
     'api' => [
     'base_url' => env('API_BASE_URL', 'http://localhost/occ_api/district_court/'), 
+    'hc_base_url' => env('API_BASE_URL_HC', 'http://localhost/occ_api/high_court/'),
     ],
 
     /*
