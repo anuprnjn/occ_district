@@ -62,3 +62,5 @@ Route::post('/fetch-application-details', [ApplicationController::class, 'fetchA
 
 Route::post('/hc-register-application', [HCApplicationRegistrationController::class, 'hcRegisterApplication']);
 
+Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fetchHcApplicationDetails'])->name('fetch_hc_application_details');
+
