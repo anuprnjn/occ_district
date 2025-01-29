@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const routes = {
         "/": "home",
         "/trackStatus": "track_app",
-        "/pendingPayments": "pending_payments",  // Added route for pending payments
+        "/pendingPayments": "pending_payments",
+        "/application-details": "home",
     };
 
     // Remove 'active' from all <li> elements
