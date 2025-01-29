@@ -163,7 +163,7 @@
             </select>
         </div>
         <div class="form-field mt-2" style="display: none;">
-            <label for="case-year">Advocate Registration No <span>*</span></label>
+            <label for="adv_res">Advocate Registration No <span>*</span></label>
             <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" style="margin-top: 10px;">
         </div>
     </div>

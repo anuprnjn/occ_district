@@ -50,8 +50,10 @@
         const establishmentName = sessionStorage.getItem('establishment_name');
         
         if (!applicationNumber) {
+            // Correct implementation of beforeunload for Chrome
             window.location.href = '/'; 
             return;
+            
         }
         
         document.getElementById('loading-overlay').style.display = 'flex'; // Show loading overlay
@@ -175,6 +177,53 @@
 
                 document.getElementById('loading-overlay').style.display = 'none';
                 sessionStorage.removeItem('application_number');
+
+                // Show a persistent warning message
+                function showWarningMessage() {
+                const warningMessage = document.createElement("div");
+                warningMessage.innerHTML = `
+                    <div style="
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    width: 350px;
+                    background: #DAF7A6;
+                    padding: 15px;
+                    text-align: left;
+                    z-index: 1000;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-family: Arial, sans-serif;
+                    font-weight: bold;
+                    border-left: 5px solid red;
+                ">
+                    <span style="font-size: 24px; color: red;">⚠️</span>
+                    <span style="flex: 1; color: #333;">Warning: Refreshing this page will redirect you to the website home page.</span>
+                    <button id="dismissWarning" style="
+                        background: red;
+                        color: white;
+                        border: none;
+                        padding: 5px 10px;
+                        cursor: pointer;
+                        border-radius: 3px;
+                        font-weight: bold;
+                        transition: background 0.3s ease;
+                    ">X</button>
+                </div>
+                `;
+                document.body.appendChild(warningMessage);
+
+                // Add event listener to dismiss button
+                document.getElementById("dismissWarning").addEventListener("click", function () {
+                    warningMessage.remove();
+                });
+            }
+
+            // Call this function when the application details page loads
+            showWarningMessage();
             } catch (error) {
                 console.error('Error fetching application details:', error);
                 document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">An error occurred while fetching application details.</p>';
