@@ -23,6 +23,12 @@ Route::get('/hcPage', function () {
 Route::get('/dcPage', function () {
     return view('dcPage');
 })->name('dcPage');
+Route::get('/trackStatus', function () {
+    return view('trackStatus');
+})->name('trackStatus');
+Route::get('/pendingPayments', function () {
+    return view('pendingPayments');
+})->name('pendingPayments');
 
 Route::get('/application-details', function () {
     return view('application_details');
