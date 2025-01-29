@@ -331,10 +331,14 @@
         return;
     }
 
-    if (!applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by) {
+    if (!applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by ) {
         console.error('Missing required form data.');
         alert('Please fill out all required fields.');
         return;
+    }
+    if (applied_by === 'advocate' && !advocate_registration) {
+        alert('Please enter the advocate registration number.');
+        return false;
     }
 
     if (email !== cnfemail) {
@@ -418,9 +422,30 @@ function submitFormData() {
     .then(data => {
         if (data.success) {
             sessionStorage.setItem('application_number', data.application_number);
+            document.getElementById('applyOrdersForm').reset();
+            const dropdownToggle = document.getElementById('dropdownToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const searchInput = document.getElementById('searchInput');
+            const dropdownOptions = document.getElementById('dropdownOptions').querySelectorAll('li');
+            dropdownToggle.textContent = 'Please Select District'; // Reset dropdown toggle text
+            dropdownMenu.classList.add('hidden'); // Hide the dropdown menu
+            searchInput.value = ''; // Clear the search input
+
+            // Reset the selected option in the custom dropdown
+            dropdownOptions.forEach(option => {
+                option.classList.remove('bg-gray-200'); // Remove any selected styling
+            });
+
+            // Reset the "Select Establishment" dropdown
+            const selectEsta = document.getElementById('selectEsta');
+            selectEsta.innerHTML = '<option value="" selected>Select Establishment</option>';
+            const mobileLabel = document.getElementById("mobileLabel");
+            mobileLabel.innerHTML = 'Mobile Number : <span class="text-red-500">*</span>';
+            mobileLabel.classList.remove("text-green-500");
             window.location.href = '/application-details';
             // alert(`Application registered successfully! Application Number: ${data.application_number}`);
             // console.log('Success:', data);
+
         } else {
             alert('Failed to register application. Please try again.');
             console.error('Error:', data.message);
