@@ -314,5 +314,57 @@ function startOtpTimer() {
 }
 
 
+//CODE FOR CASE TYPE OF ORDER JUDGEMENT FORM
+
+function toggleCaseTypeDropdownForOrderJudgement() {
+    const caseTypeMenu = document.getElementById('caseTypeMenuForOrderJudgementForm');
+    caseTypeMenu.classList.toggle('hidden');
+}
+
+
+// Filter dropdown options
+function filterCaseTypeOptionsForOrderJudgementForm() {
+    const searchInput = document.getElementById('caseTypeSearchInputForOrderJudgementForm').value.toLowerCase();
+    const options = document.querySelectorAll('#caseTypeOptionsForOrderJudgementForm li');
+
+    options.forEach(option => {
+        const text = option.textContent || option.innerText;
+        option.style.display = text.toLowerCase().includes(searchInput) ? '' : 'none';
+    });
+}
+
+
+function selectCaseTypeOptionForOrderJudgementForm(element) {
+    const caseTypeToggle = document.getElementById('caseTypeToggleForOrderJudgementForm');
+    const caseTypeMenu = document.getElementById('caseTypeMenuForOrderJudgementForm');
+
+    // Check if elements exist before manipulating them
+    if (!caseTypeToggle || !caseTypeMenu) {
+        console.error("Dropdown elements not found!");
+        return;
+    }
+
+    // Set selected value
+    caseTypeToggle.innerText = element.innerText;
+    caseTypeToggle.dataset.value = element.dataset.value;
+
+    // Close dropdown
+    caseTypeMenu.classList.add('hidden');
+
+    // Set the hidden input value (if needed for form submission)
+    const caseTypeInput = document.createElement('input');
+    caseTypeInput.type = 'hidden';
+    caseTypeInput.name = 'case_type';
+    caseTypeInput.value = element.dataset.value;
+    caseTypeInput.id = 'hiddenCaseTypeInput';
+
+    const existingInput = document.getElementById('hiddenCaseTypeInput');
+    if (existingInput) {
+        existingInput.remove();
+    }
+    document.querySelector('#caseTypeDropdownForOrderJudgement').appendChild(caseTypeInput);
+}
+
+
 
 
