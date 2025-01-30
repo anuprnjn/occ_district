@@ -172,7 +172,7 @@
                 }
 
                 document.getElementById('loading-overlay').style.display = 'none';
-                sessionStorage.removeItem('application_number');
+                // sessionStorage.removeItem('application_number');
 
                 // Show a persistent warning message
                 function showWarningMessage() {

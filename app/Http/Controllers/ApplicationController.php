@@ -33,13 +33,13 @@ class ApplicationController extends Controller
 
     public function fetchHcApplicationDetails(Request $request)
     {
+    
         $applicationNumber = $request->input('application_number');
         if (!$applicationNumber) {
             return response()->json(['success' => false, 'message' => 'Application number is required.']);
         }
 
-        $baseUrl = config('app.api.base_url_hc'); 
-
+        $baseUrl = config('app.api.hc_base_url'); 
         try {
             $response = Http::post($baseUrl . '/track_high_court_application.php', [
                 'application_number' => $applicationNumber,
@@ -51,6 +51,7 @@ class ApplicationController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to fetch application details.']);
         } catch (\Exception $e) {
             // If an exception occurs, return an error message
+            console.log($e);
             return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
