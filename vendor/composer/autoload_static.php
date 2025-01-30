@@ -532,9 +532,12 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
     );
 
     public static $classMap = array (
+        'App\\Http\\Controllers\\ApplicationController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApplicationController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\DCApplicationRegistrationController' => __DIR__ . '/../..' . '/app/Http/Controllers/DCApplicationRegistrationController.php',
         'App\\Http\\Controllers\\DistrictController' => __DIR__ . '/../..' . '/app/Http/Controllers/DistrictController.php',
-        'App\\Http\\Controllers\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderController.php',
+        'App\\Http\\Controllers\\HCApplicationRegistrationController' => __DIR__ . '/../..' . '/app/Http/Controllers/HCApplicationRegistrationController.php',
+        'App\\Http\\Controllers\\HCCaseTypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HCCaseTypeController.php',
         'App\\Http\\Controllers\\OtpController' => __DIR__ . '/../..' . '/app/Http/Controllers/OtpController.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
