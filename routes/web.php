@@ -36,6 +36,10 @@ Route::get('/application-details', function () {
     return view('application_details');
 })->name('application_details');
 
+Route::get('/hc-application-details', function () {
+    return view('hc_application_details');
+})->name('hc_application_details');
+
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::get('/hcPage', [HCCaseTypeController::class, 'showCases']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');

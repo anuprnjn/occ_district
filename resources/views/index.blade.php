@@ -575,9 +575,10 @@ function submitHcFormData() {
     .then(data => {
         if (data.success) {
             sessionStorage.setItem('application_number', data.application_number);
-            window.location.href = '/application-details';
+            window.location.href = '/hc-application-details';
             // alert(`Application registered successfully! Application Number: ${data.application_number}`);
             // console.log('Success:', data);
+
         } else {
             alert('Failed to register application. Please try again.');
             console.error('Error:', data.message);
