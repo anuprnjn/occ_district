@@ -3,7 +3,7 @@
 @section('content')
 
 <section class="content-section "  >
-    <h1>Track status</h1>
+    <h1>Pending payments</h1>
 </section>
 
 @endsection

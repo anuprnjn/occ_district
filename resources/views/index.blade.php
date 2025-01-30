@@ -2,14 +2,14 @@
 
 @section('content')
 
-<section class="content-section relative">
+<section class="content-section relative" id="main-content">
     <!-- Navigation to select pages -->
     <div class="radio-container mb-4">
         <label>
             <input type="radio" name="courtType" value="hcPage" checked onchange="loadContent('hcPage')"> High Court
         </label>
         <label class="ml-4">
-            <input type="radio" name="courtType" value="dcPage" onchange="loadContent('dcPage')"> District Court
+            <input type="radio" name="courtType" value="dcPage" onchange="loadContent('dcPage')"> Civil Court
         </label>
     </div>
 
