@@ -596,6 +596,7 @@ function submitHcFormData() {
             const mobileLabel = document.getElementById("mobileLabel");
             mobileLabel.innerHTML = 'Mobile Number : <span class="text-red-500">*</span>';
             mobileLabel.classList.remove("text-green-500");
+            mobileInput.placeholder = "Enter mobile number";
             window.location.href = '/hc-application-details';
            
 
