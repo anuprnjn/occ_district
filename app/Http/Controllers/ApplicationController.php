@@ -34,8 +34,7 @@ class ApplicationController extends Controller
     public function fetchHcApplicationDetails(Request $request)
     {
         $applicationNumber = $request->input('application_number');
-        
-        return;
+    
         if (!$applicationNumber) {
             return response()->json(['success' => false, 'message' => 'Application number is required.']);
         }
@@ -46,7 +45,7 @@ class ApplicationController extends Controller
             $response = Http::post($baseUrl . '/track_high_court_application.php', [
                 'application_number' => $applicationNumber,
             ]);
-            dd($response);
+           
             if ($response->successful()) {
                 return response()->json($response->json());
             }
