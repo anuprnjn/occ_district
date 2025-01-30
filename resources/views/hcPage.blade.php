@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="form-row">
-            <div class="form-field">
+            <!-- <div class="form-field">
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
                 <img id="captchaImage" src="{{ captcha_src() }}" alt="Captcha">
@@ -73,7 +73,7 @@
                     <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
                 </button>
             </div>
-        </div>
+        </div> -->
                 <div class="form-field mt-10">
                     <button type="submit" class="btn btn-search">Search</button>
                 </div>

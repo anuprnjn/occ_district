@@ -17,9 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Define routes
     const routes = {
         "/": "home",
+        "/hc-application-details" : "home",
         "/trackStatus": "track_app",
         "/pendingPayments": "pending_payments",
         "/application-details": "home",
+        "/trackStatusDetails": "track_app",
     };
 
     // Remove 'active' from all <li> elements

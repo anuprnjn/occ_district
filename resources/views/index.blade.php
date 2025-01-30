@@ -442,6 +442,7 @@ function submitFormData() {
             const mobileLabel = document.getElementById("mobileLabel");
             mobileLabel.innerHTML = 'Mobile Number : <span class="text-red-500">*</span>';
             mobileLabel.classList.remove("text-green-500");
+            mobileInput.placeholder = "Enter mobile number";
             window.location.href = '/application-details';
             // alert(`Application registered successfully! Application Number: ${data.application_number}`);
             // console.log('Success:', data);

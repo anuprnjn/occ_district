@@ -115,7 +115,7 @@
                             @if (!empty($caseTypes) && is_array($caseTypes))
                                 @foreach ($caseTypes as $caseType)
                                     <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
-                                        {{ $caseType['type_name'] }}
+                                        {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
                                     </li>
                                 @endforeach
                             @else

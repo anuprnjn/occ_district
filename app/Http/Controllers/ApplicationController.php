@@ -50,7 +50,7 @@ class ApplicationController extends Controller
                 return response()->json($response->json());
             }
 
-            return response()->json(['success' => false, 'message' => 'Failed to fetch application details.']);
+            return response()->json(['success' => false, 'message' => 'Application number not found !']);
         } catch (\Exception $e) {
             // If an exception occurs, return an error message
             console.log($e);
