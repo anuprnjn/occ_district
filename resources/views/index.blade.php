@@ -103,6 +103,34 @@
             });
     }
 </script>
+
+{{-- function for captcha for order judgement --}}
+<script>
+    function refreshCaptchaForOrderJudgement() {
+        const refresh = document.querySelector(".refresh-btn-orderJudgement");
+        const captchaImg = document.getElementById('captchaImageOrderJudgement');
+        
+        // Add animation class to the refresh button
+        refresh.classList.add("animate-spin");
+
+        // Make an AJAX request to the route that generates the CAPTCHA
+        fetch('/refresh-captcha')
+            .then(response => response.json())
+            .then(data => {
+                // Update the CAPTCHA image with the new source URL
+                captchaImg.src = data.captcha_src + '?' + new Date().getTime(); 
+            })
+            .catch(error => {
+                console.error('Error refreshing CAPTCHA:', error);
+            })
+            .finally(() => {
+                // Remove the spin animation after the request
+                setTimeout(function() {
+                    refresh.classList.remove("animate-spin");
+                }, 1000);
+            });
+    }
+</script>
 {{-- function for change the input based on applied by  --}}
 <script>
     function toggleAdvocateField() {
@@ -478,18 +506,6 @@ function submitFormData() {
     const selected_method = document.querySelector('input[name="select_mode"]:checked')?.value;
     const captcha = document.getElementById('captcha-hc').value.trim();
 
-    console.log(
-    "Case Type:", case_type,
-    "Applicant Name:", applicant_name,
-    "Mobile Number:", mobile_number,
-    "Email:", email,
-    "Case Filing Number:", case_filling_number,
-    "Case Filing Year:", case_filling_year,
-    "Request Mode:", request_mode,
-    "Required Document:", required_document,
-    "Applied By:", applied_by
-);
-   
     if (!case_type || !applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by) {
         console.error('Missing required form data.');
         alert('Please fill out all required fields.');
@@ -525,7 +541,7 @@ function submitFormData() {
     .then(data => {
         if (!data.success) {
             alert('CAPTCHA validation failed. Please try again.');
-            document.getElementById('captcha').value = '';  // Clear captcha input field
+            document.getElementById('captcha-hc').value = '';  // Clear captcha input field
             refreshCaptcha(); // Optional: refresh captcha image
             return;  // Stop further validation if CAPTCHA fails
         }
@@ -575,9 +591,12 @@ function submitHcFormData() {
     .then(data => {
         if (data.success) {
             sessionStorage.setItem('application_number', data.application_number);
+            document.getElementById('applyOrdersFormHC').reset();
+            const mobileLabel = document.getElementById("mobileLabel");
+            mobileLabel.innerHTML = 'Mobile Number : <span class="text-red-500">*</span>';
+            mobileLabel.classList.remove("text-green-500");
             window.location.href = '/hc-application-details';
-            // alert(`Application registered successfully! Application Number: ${data.application_number}`);
-            // console.log('Success:', data);
+           
 
         } else {
             alert('Failed to register application. Please try again.');

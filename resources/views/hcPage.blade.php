@@ -43,7 +43,7 @@
                             @if (!empty($caseTypes) && is_array($caseTypes))
                                 @foreach ($caseTypes as $caseType)
                                     <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getCaseType(this)">
-                                        {{ $caseType['type_name'] }}
+                                        {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
                                     </li>
                                 @endforeach
                             @else
@@ -67,9 +67,9 @@
             <div class="form-field">
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
-                <img id="captchaImage" src="{{ captcha_src() }}" alt="Captcha">
-                <input class="text-lg" type="text" id="captcha-hc" name="captcha" required placeholder="Enter the expression">
-                <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
+                <img id="captchaImageOrderJudgement" src="{{ captcha_src() }}" alt="Captcha">
+                <input class="text-lg" type="text" id="captcha-hc-orderJudgement" name="captcha" required placeholder="Enter the expression">
+                <button type="button" class="refresh-btn-orderJudgement rounded-full hover:shadow-md" onclick="refreshCaptchaForOrderJudgement()" title="Refresh Captcha">
                     <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
                 </button>
             </div>
@@ -83,7 +83,7 @@
 
     <!-- Form for Apply for Others Copy -->
     <div class="otherform" id="otherForm" style="display:none;">
-        <form id="applyOrdersForm" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
+        <form id="applyOrdersFormHC" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
             <h3 class="font-semibold text-lg mb-4">Apply for Others Copy :</h3>
             @csrf
             <div class="form-row">
@@ -91,7 +91,7 @@
                     <label for="name">Name: <span>*</span></label>
                     <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
                 </div>
-                <div class="form-field">
+        <div class="form-field">
             <div class="flex items-start justify-start gap-2">
                 <label for="mobile" id="mobileLabel">Mobile No: <span>*</span></label>
             <span
@@ -100,13 +100,15 @@
             ></span>
             </div>
             <div class="flex items-center justify-center gap-2">
-                <input
+            <input
                 type="text"
                 id="mobileInput"
                 name="mobile"
                 placeholder="Enter Your Mobile No"
                 class="p-[10px] border border-gray-300 rounded"
                 required
+                maxlength="10"
+                onkeydown="return isNumber(event)"
             >
             <button
             type="button"
@@ -157,7 +159,7 @@
                             @if (!empty($caseTypes) && is_array($caseTypes))
                                 @foreach ($caseTypes as $caseType)
                                     <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
-                                        {{ $caseType['type_name'] }}
+                                        {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
                                     </li>
                                 @endforeach
                             @else
