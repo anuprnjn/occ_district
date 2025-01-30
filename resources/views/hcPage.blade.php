@@ -26,13 +26,34 @@
                 </label>
             </div>
             <div class="form-row">
-                <div class="form-field">
-                    <label for="case-type">Case Type:</label>
-                    <select id="case-type" name="case-type" class="p-[12.5px]">
-                        <option value="">Please Select</option>
-                        <!-- Add options as needed -->
-                    </select>
+            <div class="form-field">
+            <label for="case-type">Case Type: <span>*</span></label>
+            <div class="relative w-full dark_select">
+                <!-- Custom Dropdown -->
+                <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border rounded ">
+                    <div id="caseTypeToggleForOrderJudgementForm" class="cursor-pointer" onclick="toggleCaseTypeDropdownForOrderJudgement()">Please Select Case Type</div>
+                    <div id="caseTypeMenuForOrderJudgementForm" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
+                        <!-- Search Box -->
+                        <div class="p-2">
+                            <input type="text" id="caseTypeSearchInputForOrderJudgementForm" class="w-full p-[10px] border border-gray-300 rounded" placeholder="Search Case Type..." onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
+                        </div>
+                        <!-- Options -->
+                        <ul id="caseTypeOptionsForOrderJudgementForm" class="list-none p-0 m-0">
+                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getCaseType(this)">Please Select Case Type</li>
+                            @if (!empty($caseTypes) && is_array($caseTypes))
+                                @foreach ($caseTypes as $caseType)
+                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getCaseType(this)">
+                                        {{ $caseType['type_name'] }}
+                                    </li>
+                                @endforeach
+                            @else
+                                <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
+                            @endif
+                        </ul>
+                    </div>
                 </div>
+            </div>
+        </div>
                 <div class="form-field">
                     <label for="case-no">Case No:</label>
                     <input type="text" id="case-no" name="case-no" placeholder="Enter Case No">
@@ -43,16 +64,17 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-field">
-                    <input type="text" id="captcha" name="captcha" placeholder="Enter Captcha Code Here">
-                </div>
-                <div class="form-field captcha">
-                    <img src="captcha-placeholder.png" alt="Captcha">
-                    <button type="button" class="refresh-captcha">
-                        <img src="refresh-icon.png" alt="Refresh">
-                    </button>
-                </div>
-                <div class="form-field">
+            <div class="form-field">
+            <label for="captcha">Evaluate the Expression<span>*</span></label>
+            <div class="flex justify-center items-center gap-1">
+                <img id="captchaImage" src="{{ captcha_src() }}" alt="Captcha">
+                <input class="text-lg" type="text" id="captcha-hc" name="captcha" required placeholder="Enter the expression">
+                <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
+                    <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
+                </button>
+            </div>
+        </div>
+                <div class="form-field mt-10">
                     <button type="submit" class="btn btn-search">Search</button>
                 </div>
             </div>
