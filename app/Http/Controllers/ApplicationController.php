@@ -35,6 +35,7 @@ class ApplicationController extends Controller
     {
     
         $applicationNumber = $request->input('application_number');
+    
         if (!$applicationNumber) {
             return response()->json(['success' => false, 'message' => 'Application number is required.']);
         }
@@ -44,6 +45,7 @@ class ApplicationController extends Controller
             $response = Http::post($baseUrl . '/track_high_court_application.php', [
                 'application_number' => $applicationNumber,
             ]);
+           
             if ($response->successful()) {
                 return response()->json($response->json());
             }

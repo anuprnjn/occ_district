@@ -28,6 +28,9 @@ Route::get('/dcPage', function () {
 Route::get('/trackStatus', function () {
     return view('trackStatus');
 })->name('trackStatus');
+Route::get('/trackStatusDetails', function () {
+    return view('trackStatusDetails');
+})->name('trackStatusDetails');
 Route::get('/pendingPayments', function () {
     return view('pendingPayments');
 })->name('pendingPayments');

@@ -56,13 +56,15 @@
             ></span>
             </div>
             <div class="flex items-center justify-center gap-2">
-                <input
+            <input
                 type="text"
                 id="mobileInput"
                 name="mobile"
                 placeholder="Enter Your Mobile No"
                 class="p-[10px] border border-gray-300 rounded"
                 required
+                maxlength="10"
+                onkeydown="return isNumber(event)"
             >
             <button
             type="button"

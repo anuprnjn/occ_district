@@ -156,14 +156,25 @@
 let timerInterval;
 let mobileNumber;
 
+function isNumber(event) {
+    const key = event.key;
+    // Allow numeric keys (0-9) and control keys (backspace, delete, tab, arrow keys)
+    if ((key >= '0' && key <= '9') || key === 'Backspace' || key === 'Delete' || key === 'Tab' || key === 'ArrowLeft' || key === 'ArrowRight') {
+        return true;
+    }
+    // Prevent any other keypress
+    event.preventDefault();
+    return false;
+}
+
 // Function to send OTP
 function sendOtp() {
     const mobileInput = document.getElementById("mobileInput");
     const otpButton = document.getElementById("otpButton");
     const mobileLabel = document.getElementById("mobileLabel");
 
-    if (!mobileInput.value || isNaN(mobileInput.value)) {
-        alert("Please enter a valid mobile number.");
+    if (!mobileInput.value || mobileInput.value.length !== 10) {
+        alert("Please enter a valid 10-digit mobile number.");
         return;
     }
 
