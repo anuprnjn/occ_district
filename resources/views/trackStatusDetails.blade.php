@@ -113,17 +113,17 @@ function displayApplicationDetails(data) {
     }
 
     detailsSection.html(`
-        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+        <table class="dark_form min-w-full bg-white rounded-lg overflow-hidden">
             <thead>
-                <tr class="bg-gray-100">
-                    <th class="py-3 px-6 text-left text-sm font-medium text-gray-700">Details</th>
-                    <th class="py-3 px-6 text-left text-sm font-medium text-gray-700">Information</th>
+                <tr class="bg-[#D09A3F] text-white">
+                    <th class="px-6 py-3 text-left text-sm sm:text-lg">Request Details</th>
+                    <th class="px-6 py-3 text-left text-sm sm:text-lg">Information</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="border-b">
                     <td class="px-6 py-4 font-semibold uppercase">Application Number</td>
-                    <td class="px-6 py-4 text-teal-700 font-bold text-2xl">${data.application_number}</td>
+                    <td class="px-6 py-4 text-teal-500 font-bold text-xl">${data.application_number}</td>
                 </tr>
                 <tr class="border-b">
                     <td class="px-6 py-4 font-semibold uppercase">Applicant Name</td>
