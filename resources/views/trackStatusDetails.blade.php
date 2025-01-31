@@ -27,7 +27,7 @@ $(document).ready(function() {
         // Make AJAX request to fetch the application details
         var selectedCourt = sessionStorage.getItem('selectedCourt');
         var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
-
+        
         $.ajax({
             url: url,
             method: 'POST',
@@ -47,14 +47,59 @@ $(document).ready(function() {
             }
         });
     } else {
-        $('#application-details').html('<p class="text-red-500">No application number provided.</p>');
+        window.location.href = '/trackStatus'; 
+            return;
     }
 });
 
 function displayApplicationDetails(data) {
     // Log the full data to inspect its structure
-    console.log(data);
+    // console.log(data);
+    sessionStorage.removeItem('track_application_number');
+        // Show a persistent warning message
+        function showWarningMessage() {
+        const warningMessage = document.createElement("div");
+        warningMessage.innerHTML = `
+            <div style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: #DAF7A6;
+            padding: 15px;
+            text-align: left;
+            z-index: 1000;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            border-left: 5px solid red;
+        ">
+            <span style="font-size: 24px; color: red;">⚠️</span>
+            <span style="flex: 1; color: #333;">Warning: Refreshing this page will redirect you to the track status page.</span>
+            <button id="dismissWarning" style="
+                background: red;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+                border-radius: 3px;
+                font-weight: bold;
+                transition: background 0.3s ease;
+            ">X</button>
+        </div>
+        `;
+        document.body.appendChild(warningMessage);
 
+        // Add event listener to dismiss button
+        document.getElementById("dismissWarning").addEventListener("click", function () {
+            warningMessage.remove();
+        });
+    }
+    showWarningMessage();
     // Display the application status
     var applicationStatus = data.status ? `Application Status: ${data.status}` : 'Application Status: Pending';
     $('#application-status').text(applicationStatus);

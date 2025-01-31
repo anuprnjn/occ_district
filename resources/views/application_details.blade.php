@@ -87,23 +87,15 @@
                     if (data.selected_method === 'C') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Case Year</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_year}</td>
-                            </tr>
-                            <tr class="border-b">
                                 <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Case Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_number}</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                             </tr>
                         `;
                     } else if (data.selected_method === 'F') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Filling Year</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_year}</td>
-                            </tr>
-                            <tr class="border-b">
                                 <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Filling Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_number}</td>
+                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                             </tr>
                         `;
                     }
@@ -119,7 +111,7 @@
                             <tbody class="text-sm sm:text-lg dark_form">
                                 <tr class="border-b">
                                     <td class="px-6 py-4 font-semibold uppercase">Application Number</td>
-                                    <td class="px-6 py-4">${data.application_number}</td>
+                                    <td class="px-6 py-4 text-teal-500 font-bold text-xl">${data.application_number}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="px-6 py-4 font-semibold uppercase">Application Date</td>
@@ -137,10 +129,12 @@
                                     <td class="px-6 py-4 font-semibold uppercase">Email</td>
                                     <td class="px-6 py-4">${data.email}</td>
                                 </tr>
+                                ${caseDetails}
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold">Applied By</td>
+                                    <td class="px-6 py-4 font-semibold uppercase">Applied By</td>
                                     <td class="px-6 py-4">${data.applied_by}</td>
                                 </tr>
+                                
                                 ${data.applied_by === 'advocate' ? `
                                     <tr class="border-b">
                                         <td class="px-6 py-4 font-semibold uppercase">Advocate Registration Number</td>
@@ -151,11 +145,7 @@
                                     <td class="px-6 py-4 font-semibold uppercase">Request Type</td>
                                     <td class="px-6 py-4">${data.request_mode}</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Case Type</td>
-                                    <td class="px-6 py-4">${data.case_type}</td>
-                                </tr>
-                                ${caseDetails}
+                                
                                 <tr class="border-b">
                                     <td class="px-6 py-4 font-semibold uppercase">Required Document</td>
                                     <td class="px-6 py-4">${data.required_document}</td>
@@ -176,7 +166,7 @@
                 }
 
                 document.getElementById('loading-overlay').style.display = 'none';
-                sessionStorage.removeItem('application_number');
+                // sessionStorage.removeItem('application_number');
 
                 // Show a persistent warning message
                 function showWarningMessage() {

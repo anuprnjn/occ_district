@@ -73,6 +73,7 @@ function trackApplication(event) {
         },
         success: function(response) {
             if (response.success) {
+                trackApplicationForm.reset();
                 // Redirect to the details page
                 window.location.href = '/trackStatusDetails';
             } else {

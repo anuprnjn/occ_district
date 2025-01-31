@@ -610,5 +610,12 @@ function submitHcFormData() {
         alert(`Error: ${error.message}`);
     });
 }
-</script>      
+</script>
+<script>
+function closeModal(){
+    var application_modal = document.getElementById('application_n_details');
+    application_modal.classList.add("hidden");
+}   
+</script>
+
 @endpush

@@ -89,14 +89,14 @@
     }
 
     // Close dropdown when clicking outside
-    // document.addEventListener('click', function (event) {
-    //     const dropdown = document.getElementById('dropdown');
-    //     const dropdownMenu = document.getElementById('dropdownMenu');
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('dropdown');
+        const dropdownMenu = document.getElementById('dropdownMenu');
 
-    //     if (!dropdown.contains(event.target)) {
-    //         dropdownMenu.classList.add('hidden');
-    //     }
-    // });
+        if (!dropdown.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
 
     // Toggle dropdown visibility
     function toggleCaseTypeDropdown() {
@@ -142,14 +142,14 @@
     }
 
     // Close dropdown when clicking outside
-    // document.addEventListener('click', function (event) {
-    //     const caseTypeDropdown = document.getElementById('caseTypeDropdown');
-    //     const caseTypeMenu = document.getElementById('caseTypeMenu');
+    document.addEventListener('click', function (event) {
+        const caseTypeDropdown = document.getElementById('caseTypeDropdown');
+        const caseTypeMenu = document.getElementById('caseTypeMenu');
 
-    //     if (!caseTypeDropdown.contains(event.target)) {
-    //         caseTypeMenu.classList.add('hidden');
-    //     }
-    // });
+        if (!caseTypeDropdown.contains(event.target)) {
+            caseTypeMenu.classList.add('hidden');
+        }
+    });
 
 // function to send otp and verify 
 
@@ -170,6 +170,7 @@ function isNumber(event) {
 // Function to send OTP
 function sendOtp() {
     const mobileInput = document.getElementById("mobileInput");
+    sessionStorage.setItem("mobile_number_dc",mobileInput.value);
     const otpButton = document.getElementById("otpButton");
     const mobileLabel = document.getElementById("mobileLabel");
 
@@ -220,7 +221,9 @@ function verifyOtp() {
     const verificationMessage = document.getElementById("verificationMessage");
     const otpTimer = document.getElementById("otpTimer");
     const submitButton = document.querySelector(".order_btn");
-
+    const application_modal = document.getElementById("application_n_details");
+    const TrackMobileNumber = sessionStorage.getItem('mobile_number_dc');
+   
     if (!mobileInput.value) {
         alert("Please enter the OTP.");
         return;
@@ -241,7 +244,6 @@ function verifyOtp() {
         .then(data => {
             if (data.success) {
                 clearInterval(timerInterval);
-
                 mobileLabel.textContent = "Mobile Number Verified:";
                 mobileLabel.classList.add("text-green-500");
                 mobileLabel.classList.add("font-normal");
@@ -250,6 +252,53 @@ function verifyOtp() {
                 otpButton.classList.add("hidden");
                 otpTimer.classList.add("hidden");
                 submitButton.classList.remove("hidden");
+                
+                
+                fetch('/application-mobile-track', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({ TrackMobileNumber : TrackMobileNumber }),
+                })
+                .then(response => response.json())
+                .then(serverData =>{
+                    if(serverData.success && serverData.data.count > 0)
+                        {
+                        application_modal.classList.remove("hidden");
+                        let maskedNumber = `XXXXX XXX${TrackMobileNumber.slice(-2)}`;
+                        document.getElementById("modalText").innerHTML = 
+                        `Details of recently applied applications with mobile no <span class="text-green-500">${maskedNumber}</span>`;
+
+                        var MobileTrackApplicationDataDC = serverData.data.data;
+                        console.log(MobileTrackApplicationDataDC);
+
+                        let trackedDataHTML = `
+                            <ul class="text-center pl-5 text-slate-500 dark_form">
+                        `;
+
+                        MobileTrackApplicationDataDC.forEach(app => {
+                            trackedDataHTML += `<li>
+                            Application Number: 
+                            <span class="text-green-500 ml-2">${app.application_number}</span> 
+                            Status: <span class="text-rose-500 ml-2">${app.status}</span>
+                            Applied On: <span class="text-sky-500 ml-2">${app.created_at}</span>
+                            </li>`;
+                        });
+
+                        trackedDataHTML += `</ul>`;
+
+                        document.getElementById("trackedDataDC").innerHTML = trackedDataHTML;
+
+
+                        // document.getElementById("trackedDataDC").innerHTML = 
+                        // `Details of recently applied applications with mobile no <span class="text-green-500">${MobileTrackApplicationDataDC.application_number}</span>`;
+                    }else{
+                        return;
+                    }
+                })
+
             } else {
                 alert("Invalid OTP. Try again.");
             }
