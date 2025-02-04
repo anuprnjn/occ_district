@@ -166,7 +166,7 @@
                 }
 
                 document.getElementById('loading-overlay').style.display = 'none';
-                // sessionStorage.removeItem('application_number');
+                sessionStorage.removeItem('application_number');
 
                 // Show a persistent warning message
                 function showWarningMessage() {
@@ -176,7 +176,7 @@
                     position: fixed;
                     bottom: 20px;
                     right: 20px;
-                    width: 350px;
+                    width: 300px;
                     background: #DAF7A6;
                     padding: 15px;
                     text-align: left;
@@ -191,7 +191,7 @@
                     border-left: 5px solid red;
                 ">
                     <span style="font-size: 24px; color: red;">⚠️</span>
-                    <span style="flex: 1; color: #333;">Warning: Refreshing this page will redirect you to the website home page.</span>
+                    <span style="flex: 1; color: #333;font-size:14px;">Warning: Refreshing this page will redirect you to the website home page.</span>
                     <button id="dismissWarning" style="
                         background: red;
                         color: white;

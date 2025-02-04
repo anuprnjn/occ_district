@@ -79,7 +79,7 @@
                 <div class="dark_form bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[500px] md:w-[600px] lg:w-[800px] relative">
                     <button class="absolute top-2 right-2 text-gray-500 hover:text-black" onclick="closeModal()">✖</button>
                     <h4 id="modalText" class="text-lg text-center mb-4"></h4>
-                    <ul id="trackedDataDC"></ul>
+                    <table id="trackedDataDC" class="w-[100%]"></table>
                 </div>
             </div>
         </div>
