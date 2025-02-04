@@ -3,15 +3,12 @@
 @section('content')
 
 <section class="content-section">
-    <!-- <h3 class="font-semibold text-xl -mt-8">Application Details</h3> -->
-
-    <!-- Displaying the application status above the table -->
     <h2 id="application-status" class="text-red-500 text-2xl font-semibold -mt-4"></h2>
-
-    <!-- Displaying the application details -->
     <div id="application-details-section" class="shadow-md rounded-lg mt-10">
         <div id="application-details"></div>
+        
     </div>
+    <button id="print-application-btn" class="mt-5 p-3 bg-blue-500 text-white rounded-lg ">Print Application</button> <!-- Print button -->
 </section>
 
 @endsection
@@ -68,8 +65,8 @@ $(document).ready(function() {
 function displayApplicationDetails(data) {
     // Log the full data to inspect its structure
     // console.log(data);
-    sessionStorage.removeItem('track_application_number');
-    sessionStorage.removeItem('selectedCourt');
+    // sessionStorage.removeItem('track_application_number');
+    // sessionStorage.removeItem('selectedCourt');
         // Show a persistent warning message
         function showWarningMessage() {
         const warningMessage = document.createElement("div");
@@ -228,7 +225,6 @@ function displayApplicationDetails(data) {
     `);
 }
 
-// Function to format the date and time as dd-mm-yyyy hh:mm AM/PM
 function formatDateTime(date) {
     var day = ("0" + date.getDate()).slice(-2);
     var month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -240,6 +236,29 @@ function formatDateTime(date) {
     hours = hours ? hours : 12; // the hour '0' should be '12'
     return day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
 }
+$('#print-application-btn').click(function() {
+    var printContent = document.getElementById('application-details-section').innerHTML;
+    
+    // Create a new window for printing
+    var printWindow = window.open('', '', 'height=600,width=800');
+    
+    // Write the content to the print window
+    printWindow.document.write('<html><head><title>Print Application</title>');
+    printWindow.document.write('<style> body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }');
+    printWindow.document.write('table { width: 100%; border-collapse: collapse; margin: 20px 0; }');
+    printWindow.document.write('th, td { padding: 12px; text-align: left; border: 1px solid #000; }');
+    printWindow.document.write('th { background-color: #D09A3F; color: black; font-size: 16px; font-weight: bold; }');
+    printWindow.document.write('td { font-size: 14px; font-weight: normal; color: #000; }</style>');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h1>Application Details</h1>');
+    printWindow.document.write('<table>' + printContent + '</table>');
+    printWindow.document.write('<footer>Printed on ' + new Date().toLocaleString() + '</footer>');
+    printWindow.document.write('</body></html>');
+
+    // Wait for content to load in the new window and then trigger print
+    printWindow.document.close();
+    printWindow.print();
+});
 </script>
 
 @endpush

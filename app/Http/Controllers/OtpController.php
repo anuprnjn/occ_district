@@ -16,7 +16,7 @@ class OtpController extends Controller
         }
 
         // Generate and store OTP in the session
-        $otp = rand(10000, 99999);
+        $otp = rand(100000, 999999);
         session([$mobile => $otp]);
 
         return response()->json(['success' => true, 'otp' => $otp, 'message' => 'OTP sent successfully']);
@@ -45,7 +45,7 @@ class OtpController extends Controller
         }
 
         // Generate a new OTP and update the session
-        $otp = rand(10000, 99999);
+        $otp = rand(100000, 999999);
         session([$mobile => $otp]);
 
         return response()->json(['success' => true, 'otp' => $otp, 'message' => 'OTP resent successfully']);

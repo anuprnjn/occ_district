@@ -87,15 +87,15 @@
                     if (data.selected_method === 'C') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Case Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
+                                <td class="px-6 py-3 text-sm sm:text-[1rem] font-semibold uppercase">Case Number</td>
+                                <td class="px-6 py-3 text-sm sm:text-[1rem]">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                             </tr>
                         `;
                     } else if (data.selected_method === 'F') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Filling Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
+                                <td class="px-6 py-3 text-sm sm:text-[1rem] font-semibold uppercase">Filling Number</td>
+                                <td class="px-6 py-3 text-sm sm:text-[1rem]">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                             </tr>
                         `;
                     }
@@ -108,7 +108,7 @@
                                     <th class="px-6 py-3 text-left text-sm sm:text-lg">Information</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-sm sm:text-lg dark_form">
+                            <tbody class="text-sm sm:text-[1rem] dark_form">
                                 <tr class="border-b">
                                     <td class="px-6 py-4 font-semibold uppercase">Application Number</td>
                                     <td class="px-6 py-4 text-teal-500 font-bold text-xl">${data.application_number}</td>
@@ -166,7 +166,7 @@
                 }
 
                 document.getElementById('loading-overlay').style.display = 'none';
-                sessionStorage.removeItem('application_number');
+                // sessionStorage.removeItem('application_number');
 
                 // Show a persistent warning message
                 function showWarningMessage() {

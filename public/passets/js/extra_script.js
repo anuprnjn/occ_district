@@ -221,8 +221,9 @@ function verifyOtp() {
     const verificationMessage = document.getElementById("verificationMessage");
     const otpTimer = document.getElementById("otpTimer");
     const submitButton = document.querySelector(".order_btn");
-    const application_modal = document.getElementById("application_n_details");
+
     const TrackMobileNumber = sessionStorage.getItem('mobile_number_dc');
+    const view_recent_applications = document.getElementById('view_recent_button');
    
     if (!mobileInput.value) {
         alert("Please enter the OTP.");
@@ -266,7 +267,8 @@ function verifyOtp() {
                 .then(serverData =>{
                     if(serverData.success && serverData.data.count > 0)
                         {
-                        application_modal.classList.remove("hidden");
+                        view_recent_applications.classList.remove('hidden');
+                        
                         let maskedNumber = `XXXXX XXX${TrackMobileNumber.slice(-2)}`;
                         document.getElementById("modalText").innerHTML = 
                         `Details of recently applied applications with mobile no <span class="text-green-500">${maskedNumber}</span>`;
@@ -276,40 +278,35 @@ function verifyOtp() {
 
                        
                         // Sort data from latest to oldest based on created_at
-                    let sortedData = MobileTrackApplicationDataDC.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-                    // Get the last 5 records (latest first)
-                    let latestFiveRecords = sortedData.slice(0, 5);
-
-                    let trackedDataHTML = `
+                        let trackedDataHTML = `
                         <table class="border-collapse border border-gray-300 w-full">
                             <thead>
-                                <tr class="bg-gray-200">
+                                <tr>
                                     <th class="border border-gray-300 px-4 py-2">Application Number</th>
                                     <th class="border border-gray-300 px-4 py-2">Status</th>
                                     <th class="border border-gray-300 px-4 py-2">Applied On</th>
                                 </tr>
                             </thead>
                             <tbody>`;
-
-                    latestFiveRecords.forEach(app => {
+                    
+                    MobileTrackApplicationDataDC.forEach(app => {
                         trackedDataHTML += `
                             <tr class="text-center">
-                               <td class="border border-gray-300 px-4 py-2 text-[#D09A3F]">
+                                <td class="border border-gray-300 px-4 py-2 text-[#D09A3F]">
                                     <a href="trackStatusDetails?application_number=${app.application_number}" 
                                     class="underline hover:text-[#B07D2E]">
                                         ${app.application_number}
                                     </a>
                                 </td>
-                                <td class="border border-gray-300 px-4 py-2 text-[#4B3D2F]">${app.status}</td>
+                                <td class="border border-gray-300 px-4 py-2">${app.status}</td>
                                 <td class="border border-gray-300 px-4 py-2 text-sky-500">${app.created_at}</td>
                             </tr>`;
                     });
-
+                    
                     trackedDataHTML += `
                             </tbody>
                         </table>`;
-
+                    
                     document.getElementById("trackedDataDC").innerHTML = trackedDataHTML;
 
                         // document.getElementById("trackedDataDC").innerHTML = 
@@ -324,6 +321,10 @@ function verifyOtp() {
             }
         })
         .catch(error => console.error('Error verifying OTP:', error));
+}
+function view_recent_app(){
+    const application_modal = document.getElementById("application_n_details");
+    application_modal.classList.remove("hidden");
 }
 
 // Function to resend OTP

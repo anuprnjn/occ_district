@@ -82,6 +82,7 @@
                     <table id="trackedDataDC" class="w-[100%]"></table>
                 </div>
             </div>
+            <button id="view_recent_button" class="hidden bg-sky-600 hover:bg-sky-700 rounded-md text-white sm:w-[250px] w-[200px] p-[10px]" onclick="view_recent_app()">View Transactions</button>
         </div>
             </div>
         </div>
