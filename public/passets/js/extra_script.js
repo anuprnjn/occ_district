@@ -169,7 +169,6 @@ function isNumber(event) {
 
 // Function to send OTP
 function sendOtp(courtType) {
-    alert(courtType)
     sessionStorage.setItem("court_type_for_verify_otp",courtType);
     const mobileInput = document.getElementById("mobileInput");
     sessionStorage.setItem("mobile_number_dc",mobileInput.value);
