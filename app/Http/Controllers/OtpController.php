@@ -56,8 +56,34 @@ class OtpController extends Controller
             'TrackMobileNumber' => 'required|string',
         ]);
         $mobileNumber = $request->input('TrackMobileNumber');
+        $baseUrl = config('app.api.base_url');
 
-        $response = Http::post('http://localhost/occ_api/district_court/get_application_details_from_mobile.php', [
+        $response = Http::post($baseUrl. '/get_application_details_from_mobile.php', [
+            'mobile_number' => $mobileNumber,
+        ]);
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'data' => $response->json(),
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch data',
+            ], $response->status());
+        }
+    }
+
+    public function getHCApplicationDetailsForMobile(Request $request)
+    {
+        $request->validate([
+            'TrackMobileNumber' => 'required|string',
+        ]);
+        $mobileNumber = $request->input('TrackMobileNumber');
+        $baseUrl = config('app.api.hc_base_url');
+
+
+        $response = Http::post($baseUrl. '/get_application_details_from_mobile_hc.php', [
             'mobile_number' => $mobileNumber,
         ]);
         if ($response->successful()) {

@@ -50,6 +50,7 @@ Route::post('/send-otp', [OtpController::class, 'sendOtp']);
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
 Route::post('/resend-otp', [OtpController::class, 'resendOtp']);
 Route::post('/application-mobile-track', [OtpController::class, 'getApplicationDetails']);
+Route::post('/application-mobile-track-hc', [OtpController::class, 'getHCApplicationDetailsForMobile']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
 Route::get('/refresh-captcha', function () {
     return response()->json(['captcha_src' => captcha_src('math')]);

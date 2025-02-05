@@ -113,11 +113,20 @@
             <button
             type="button"
             id="otpButton"
-            onclick="sendOtp()"
+            value = "HC"
+            onclick="sendOtp(value)"
             class="bg-[#4B3E2F] sm:w-[200px] w-[150px] sm:p-[10px] p-[8px] rounded-md text-white hover:bg-[#D09A3F]"
             >
                 Send OTP
             </button>
+            <div id="application_n_details" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] hidden">
+                <div class="dark_form bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[500px] md:w-[600px] lg:w-[800px] relative">
+                    <button class="absolute top-2 right-2 text-gray-500 hover:text-black" onclick="closeModal()">✖</button>
+                    <h4 id="modalText" class="text-lg text-center mb-4"></h4>
+                    <table id="trackedDataDC" class="w-[100%]"></table>
+                </div>
+            </div>
+            <button id="view_recent_button" class="hidden bg-sky-600 hover:bg-sky-700 rounded-md text-white sm:w-[250px] w-[200px] p-[10px]" onclick="view_recent_app()">View Transactions</button>
                  
             </div>
         </div>

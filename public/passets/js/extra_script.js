@@ -168,7 +168,9 @@ function isNumber(event) {
 }
 
 // Function to send OTP
-function sendOtp() {
+function sendOtp(courtType) {
+    alert(courtType)
+    sessionStorage.setItem("court_type_for_verify_otp",courtType);
     const mobileInput = document.getElementById("mobileInput");
     sessionStorage.setItem("mobile_number_dc",mobileInput.value);
     const otpButton = document.getElementById("otpButton");
@@ -223,7 +225,6 @@ function verifyOtp() {
     const submitButton = document.querySelector(".order_btn");
 
     const TrackMobileNumber = sessionStorage.getItem('mobile_number_dc');
-    const view_recent_applications = document.getElementById('view_recent_button');
    
     if (!mobileInput.value) {
         alert("Please enter the OTP.");
@@ -253,68 +254,8 @@ function verifyOtp() {
                 otpButton.classList.add("hidden");
                 otpTimer.classList.add("hidden");
                 submitButton.classList.remove("hidden");
+                getApplicationDetailByMobile(mobileNumber);
                 
-                
-                fetch('/application-mobile-track', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify({ TrackMobileNumber : TrackMobileNumber }),
-                })
-                .then(response => response.json())
-                .then(serverData =>{
-                    if(serverData.success && serverData.data.count > 0)
-                        {
-                        view_recent_applications.classList.remove('hidden');
-                        
-                        let maskedNumber = `XXXXX XXX${TrackMobileNumber.slice(-2)}`;
-                        document.getElementById("modalText").innerHTML = 
-                        `Details of recently applied applications with mobile no <span class="text-green-500">${maskedNumber}</span>`;
-
-                        var MobileTrackApplicationDataDC = serverData.data.data;
-                        console.log(MobileTrackApplicationDataDC);
-
-                       
-                        // Sort data from latest to oldest based on created_at
-                        let trackedDataHTML = `
-                        <table class="border-collapse border border-gray-300 w-full">
-                            <thead>
-                                <tr>
-                                    <th class="border border-gray-300 px-4 py-2">Application Number</th>
-                                    <th class="border border-gray-300 px-4 py-2">Status</th>
-                                    <th class="border border-gray-300 px-4 py-2">Applied On</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-                    
-                    MobileTrackApplicationDataDC.forEach(app => {
-                        trackedDataHTML += `
-                            <tr class="text-center">
-                                <td class="border border-gray-300 px-4 py-2 text-[#D09A3F]">
-                                    <a href="trackStatusDetails?application_number=${app.application_number}" 
-                                    class="underline hover:text-[#B07D2E]">
-                                        ${app.application_number}
-                                    </a>
-                                </td>
-                                <td class="border border-gray-300 px-4 py-2">${app.status}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-sky-500">${app.created_at}</td>
-                            </tr>`;
-                    });
-                    
-                    trackedDataHTML += `
-                            </tbody>
-                        </table>`;
-                    
-                    document.getElementById("trackedDataDC").innerHTML = trackedDataHTML;
-
-                        // document.getElementById("trackedDataDC").innerHTML = 
-                        // `Details of recently applied applications with mobile no <span class="text-green-500">${MobileTrackApplicationDataDC.application_number}</span>`;
-                    }else{
-                        return;
-                    }
-                })
 
             } else {
                 alert("Invalid OTP. Try again.");
@@ -435,6 +376,75 @@ function selectCaseTypeOptionForOrderJudgementForm(element) {
     document.querySelector('#caseTypeDropdownForOrderJudgement').appendChild(caseTypeInput);
 }
 
+function getApplicationDetailByMobile(mobileNumber) {
+    const courtType = sessionStorage.getItem('court_type_for_verify_otp');
+    
+    const view_recent_applications = document.getElementById('view_recent_button');
+    var url = '/application-mobile-track';
+    if(courtType == 'HC') {
+        url = '/application-mobile-track-hc';
+    } else {
+        url = '/application-mobile-track';
+    }
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        },
+        body: JSON.stringify({ TrackMobileNumber : mobileNumber }),
+    })
+    .then(response => response.json())
+    .then(serverData =>{
+        if(serverData.success && serverData.data.count > 0)
+            {
+            view_recent_applications.classList.remove('hidden');
+            
+            let maskedNumber = `XXXXX XXX${mobileNumber.slice(-2)}`;
+            document.getElementById("modalText").innerHTML = 
+            `Details of recently applied applications with mobile no <span class="text-green-500">${maskedNumber}</span>`;
 
+            var MobileTrackApplicationDataDC = serverData.data.data;
+            console.log(MobileTrackApplicationDataDC);
 
+           
+            // Sort data from latest to oldest based on created_at
+            let trackedDataHTML = `
+            <table class="border-collapse border border-gray-300 w-full">
+                <thead>
+                    <tr>
+                        <th class="border border-gray-300 px-4 py-2">Application Number</th>
+                        <th class="border border-gray-300 px-4 py-2">Status</th>
+                        <th class="border border-gray-300 px-4 py-2">Applied On</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        
+        MobileTrackApplicationDataDC.forEach(app => {
+            trackedDataHTML += `
+                <tr class="text-center">
+                    <td class="border border-gray-300 px-4 py-2 text-[#D09A3F]">
+                        <a href="trackStatusDetails?application_number=${app.application_number}" 
+                        class="underline hover:text-[#B07D2E]">
+                            ${app.application_number}
+                        </a>
+                    </td>
+                    <td class="border border-gray-300 px-4 py-2">${app.status}</td>
+                    <td class="border border-gray-300 px-4 py-2 text-sky-500">${app.created_at}</td>
+                </tr>`;
+        });
+        
+        trackedDataHTML += `
+                </tbody>
+            </table>`;
+        
+        document.getElementById("trackedDataDC").innerHTML = trackedDataHTML;
 
+            // document.getElementById("trackedDataDC").innerHTML = 
+            // `Details of recently applied applications with mobile no <span class="text-green-500">${MobileTrackApplicationDataDC.application_number}</span>`;
+        }else{
+            return;
+        }
+    })
+
+}
