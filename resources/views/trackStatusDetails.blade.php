@@ -2,13 +2,26 @@
 
 @section('content')
 
-<section class="content-section">
-    <h2 id="application-status" class="text-red-500 text-2xl font-semibold -mt-4"></h2>
+<section class="content-section ">
+
+    <div id="loading-overlay" class=" flex items-center justify-center z-10 h-screen bg-transparent">
+        <p class="flex items-center justify-center gap-2 -mt-[200px]">
+        <img class="w-[42px] animate-spin" src="{{ asset('passets/images/icons/refresh.png') }}" alt="Loading">
+        <span class="text-gray-500 load text-lg">Loading...</span>
+        </p>
+    </div>
+
+    <h2 id="application-status" class="text-rose-500 text-2xl font-semibold -mt-4 text-center sm:text-left md:text-left"></h2>
     <div id="application-details-section" class="shadow-md rounded-lg mt-10">
         <div id="application-details"></div>
         
     </div>
-    <button id="print-application-btn" class="mt-5 p-3 bg-blue-500 text-white rounded-lg ">Print Application</button> <!-- Print button -->
+    <div id="print_container" class="hidden flex flex-col justify-start items-start">
+    <button id="print-application-btn" class="mt-5 p-3 bg-rose-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">Print Application</button> <!-- Print button -->
+    <div class="sm:mt-4 -mt-10 mb-20 sm:mb-0" id="note">
+    <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
+    </div>
+    </div>
 </section>
 
 @endsection
@@ -110,6 +123,9 @@ function displayApplicationDetails(data) {
         });
     }
     showWarningMessage();
+    document.getElementById('loading-overlay').style.display ='none';
+    const print_btn_track = document.getElementById('print_container');
+    print_btn_track.classList.remove('hidden');
     // Display the application status
     var applicationStatus = data.status ? `Application Status: ${data.status}` : 'Application Status: Pending';
     $('#application-status').text(applicationStatus);
@@ -237,26 +253,96 @@ function formatDateTime(date) {
     return day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ' ' + ampm;
 }
 $('#print-application-btn').click(function() {
-    var printContent = document.getElementById('application-details-section').innerHTML;
-    
-    // Create a new window for printing
-    var printWindow = window.open('', '', 'height=600,width=800');
-    
-    // Write the content to the print window
-    printWindow.document.write('<html><head><title>Print Application</title>');
-    printWindow.document.write('<style> body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }');
-    printWindow.document.write('table { width: 100%; border-collapse: collapse; margin: 20px 0; }');
-    printWindow.document.write('th, td { padding: 12px; text-align: left; border: 1px solid #000; }');
-    printWindow.document.write('th { background-color: #D09A3F; color: black; font-size: 16px; font-weight: bold; }');
-    printWindow.document.write('td { font-size: 14px; font-weight: normal; color: #000; }</style>');
-    printWindow.document.write('</head><body>');
-    printWindow.document.write('<h1>Application Details</h1>');
-    printWindow.document.write('<table>' + printContent + '</table>');
-    printWindow.document.write('<footer>Printed on ' + new Date().toLocaleString() + '</footer>');
-    printWindow.document.write('</body></html>');
+    const content = document.getElementById('application-details-section').innerHTML;
+    const pageURL = window.location.href;
 
-    // Wait for content to load in the new window and then trigger print
+    const printWindow = window.open('', '', 'width=800,height=600');
+    printWindow.document.write(`
+        <html>
+        <head>
+           
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                }
+                h1 {
+                    text-align: center;
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                h2 {
+                    text-align: center;
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+                h3 {
+                    text-align: center;
+                    font-size: 18px;
+                    margin-bottom: 20px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                th, td {
+                    padding: 12px;
+                    text-align: left;
+                    border: 1px solid #000;
+                }
+                th {
+                    background-color: #D09A3F;
+                    color: black;  
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                td {
+                    font-size: 14px;
+                    font-weight: normal;
+                    color: #000;
+                }
+                td:first-child {
+                    width: 30%;  
+                }
+                td:nth-child(2) {
+                    width: 70%;  
+                }
+                footer {
+                    position: fixed;
+                    bottom: 20px;
+                    left: 20px;
+                    font-size: 12px;
+                    color: #555;
+                }
+                @media print {
+                    @page {
+                        margin: 0;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    footer {
+                        display: block;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <h3>Online Certified Copy</h3>
+            ${content}
+            <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
+            <footer>Generated by: ${pageURL}</footer>
+        </body>
+        </html>
+    `);
+
     printWindow.document.close();
+    printWindow.focus();
     printWindow.print();
 });
 </script>
