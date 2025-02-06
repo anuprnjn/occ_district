@@ -483,4 +483,253 @@ function closeModal(){
 }   
 </script>
 
+<script>
+    window.addEventListener('load', function() {
+        sessionStorage.setItem('search_type','case');
+    });
+</script>    
+
+<script>
+    function toggleFields(radio) {
+        
+
+    var selectedMode = document.querySelector('input[name="search-type-case"]:checked').value;
+    sessionStorage.setItem('search_type',selectedMode);
+
+    const caseFields = document.querySelectorAll(".case-field");
+    const filingFields = document.querySelectorAll(".filling-field");
+    const caseInputs = document.querySelectorAll(".case-field input");
+    const filingInputs = document.querySelectorAll(".filling-field input");
+
+    // Check which radio button is selected and adjust the fields accordingly
+    if (radio.value === "case") {
+        // Show Case fields, hide Filing fields
+        caseFields.forEach(field => field.style.display = "block");
+        filingFields.forEach(field => field.style.display = "none");
+
+        // Update data-value for inputs in case section
+        caseInputs.forEach(input => input.dataset.value = "C");
+        filingInputs.forEach(input => input.dataset.value = ""); // Clear data-value in filing fields
+    } else {
+        // Show Filing fields, hide Case fields
+        caseFields.forEach(field => field.style.display = "none");
+        filingFields.forEach(field => field.style.display = "block");
+
+        // Update data-value for inputs in filing section
+        filingInputs.forEach(input => input.dataset.value = "F");
+        caseInputs.forEach(input => input.dataset.value = ""); // Clear data-value in case fields
+    }
+}
+
+// Ensure the correct state on page load
+document.addEventListener("DOMContentLoaded", function () {
+    // Get the selected radio button on page load
+    const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
+    
+    // If a radio button is selected, toggle fields accordingly
+    if (selectedRadio) {
+        toggleFields(selectedRadio);
+    }
+});
+</script>
+<script>
+   function getHcCaseType(element) {
+        var caseType = element.getAttribute('data-value');
+        if (caseType !== '') {
+            sessionStorage.setItem('selectedHcCaseType', caseType); 
+        } else {
+            sessionStorage.removeItem('selectedHcCaseType');
+        }
+    }
+</script>
+
+<script>
+function submitJudgementForm(event) {
+    event.preventDefault(); 
+
+    // Step 1: Get the Case Type from the selected element (if any)
+    const selectedCaseTypeHc = sessionStorage.getItem('selectedHcCaseType');
+    
+    // Ensure Case Type is selected before proceeding
+    if (!selectedCaseTypeHc) {
+        alert("Please select Case Type.");
+        return;
+    }
+
+    // Step 2: Check if the user selected a Case Type for the search form.
+    const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
+    if (!selectedRadio) {
+        alert("Please choose Case Number or Filling Number.");
+        return;
+    }
+
+    let caseNo, caseYear, filingNo, filingYear;
+    
+    // Step 3: Validate Case No / Filing No based on the selected search type.
+    if (selectedRadio.value === "case") {
+        caseNo = document.getElementById('case-no').value.trim();
+        caseYear = document.getElementById('case-year').value.trim();
+        
+        if (!caseNo) {
+            alert("Please enter Case Number.");
+            return;
+        }
+        if (!caseYear) {
+            alert("Please enter Case Year.");
+            return;
+        }
+    } else if (selectedRadio.value === "filling") {
+        filingNo = document.getElementById('filling-no').value.trim();
+        filingYear = document.getElementById('filling-year').value.trim();
+        
+        if (!filingNo) {
+            alert("Please enter Filing Number.");
+            return;
+        }
+        if (!filingYear) {
+            alert("Please enter Filing Year.");
+            return;
+        }
+    }
+
+    // Step 4: Validate CAPTCHA.
+    const captcha = document.getElementById('captcha-hc-orderJudgement').value.trim();
+    if (!captcha) {
+        alert('Please evaluate the CAPTCHA.');
+        return;
+    }
+
+    // Step 5: Now that all validations are passed, validate CAPTCHA via API.
+    fetch('/validate-captcha', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ captcha: captcha })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert('CAPTCHA validation failed. Please try again.');
+            refreshCaptchaForOrderJudgement();
+            document.getElementById('captcha-hc-orderJudgement').value = '';
+            return;
+        }
+
+        // Step 6: Proceed with submitting the form data after CAPTCHA is validated.
+        let requestData = { selectedCaseTypeHc };
+        requestData.search_type = sessionStorage.getItem('search_type');  
+        if (selectedRadio.value === "case") {
+            requestData.HcCaseNo = caseNo;
+            requestData.HcCaseYear = caseYear;
+        } else if (selectedRadio.value === "filling") {
+            requestData.HcFillingNo = filingNo;
+            requestData.HcFillingYear = filingYear;
+        }
+
+        fetch('/fetch-judgement-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // const loadOverlay = document.getElementById("loadingOverlay");
+            // loadOverlay.classList.remove('hidden');
+            window.scrollBy(0, 550);
+             // Remove the selected case type from session storage
+            sessionStorage.removeItem('selectedHcCaseType');
+            refreshCaptchaForOrderJudgement();
+            document.getElementById('captcha-hc-orderJudgement').value = '';
+
+           document.getElementById('case-no').value = '';
+           document.getElementById('case-year').value = '';
+           document.getElementById('filling-no').value = '';
+           document.getElementById('filling-year').value = '';
+
+            const caseTypeDropdown = document.getElementById('caseTypeDropdownForOrderJudgement');
+            const caseTypeMenu = document.getElementById('caseTypeMenuForOrderJudgementForm');
+            const caseTypeOptions = document.getElementById('caseTypeOptionsForOrderJudgementForm');
+
+            document.getElementById('caseTypeToggleForOrderJudgementForm').innerText = 'Please Select Case Type';
+            caseTypeMenu.classList.add('hidden');
+            document.getElementById('caseTypeSearchInputForOrderJudgementForm').value = '';
+            const optionItems = caseTypeOptions.querySelectorAll('li');
+            optionItems.forEach(item => item.classList.remove('bg-gray-100')); 
+            caseTypeOptions.querySelector('li').classList.add('bg-gray-100'); 
+
+
+            // showing the data comming from response !
+
+            // Function to populate table and show the div
+            function populateTable(responseData) {
+                const orderDetailsDiv = document.getElementById("orderDetails");
+                // const loadOverlay = document.getElementById("loadingOverlay");
+                // orderDetailsDiv.classList.remove('hidden'); uncomment to show data
+                // loadOverlay.classList.add('hidden');
+                
+                const tableBody = document.getElementById("orderTableBody");
+
+                tableBody.innerHTML = "";
+
+                if (responseData.cases && responseData.cases.length > 0) {
+                    responseData.cases.forEach((caseData) => {
+                        tableBody.innerHTML += `
+                            <tr class="border-b">
+                                <td class="p-3 font-bold uppercase">CIN Number</td>
+                                <td class="p-3">${caseData.cino}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-bold uppercase">Petitioner Name</td>
+                                <td class="p-3">${caseData.pet_name}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-bold uppercase">Respondent Name</td>
+                                <td class="p-3">${caseData.res_name}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 font-bold uppercase">Case Status</td>
+                                <td class="p-3">${caseData.casestatus}</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold uppercase">Apply link</td>
+                                <td class="p-3">
+                                    <button class="p-[10px] bg-teal-600 w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
+                                        Click here
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    orderDetailsDiv.classList.remove("hidden");
+                }
+            }
+
+            const responseData = data;
+
+            populateTable(responseData);
+            
+        })
+        .catch(error => {
+            sessionStorage.removeItem('selectedHcCaseType');
+            refreshCaptchaForOrderJudgement();
+            document.getElementById('captcha-hc-orderJudgement').value = '';
+            console.error('Error fetching judgement data:', error);
+        });
+    })
+    .catch(error => {
+        alert('An error occurred while validating the CAPTCHA.');
+    });
+}
+</script>
+
+
 @endpush

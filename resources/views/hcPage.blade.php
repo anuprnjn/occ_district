@@ -4,7 +4,7 @@
 <section class="w-full">
 
     <div id="highCourtDropdown" class="dropdown w-[100%] sm:w-[50%] p-[10px] sm:-ml-2">
-        <label for="highCourtSelect" class="mb-2">Select an option:</label>
+        <label for="highCourtSelect" class="mb-4">Select an option:</label>
         <select id="highCourtSelect" class="p-[10px]" onchange="myfun()">
             <option value="applyJudgement" selected>Apply for Orders and Judgement Copy</option>
             <option value="applyOrders">Apply for Others Copy</option>
@@ -13,16 +13,16 @@
 
     <!-- Form for Apply for Orders and Judgement Copy -->
     <div class="orderJudgement" id="orderJudgementForm" style="display:block;">
-        <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
-            <h3 class="font-semibold text-lg mb-4">Apply for Orders And Judgement Copy :</h3>
+        <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id="orderJudgementHc">
+            <h3 class="font-semibold text-lg mb-5">Apply for Orders And Judgement Copy :</h3>
             <div class="form-group">
-                <label>
-                    <input type="radio" name="search-type" value="case-no" checked>
-                    Case No
+                <label class="cursor-pointer">
+                    <input type="radio" name="search-type-case" value="case" checked onchange="toggleFields(this)">
+                    Case Number
                 </label>
-                <label>
-                    <input type="radio" name="search-type" value="filing-no">
-                    Filing No
+                <label class="cursor-pointer">
+                    <input type="radio" name="search-type-case" value="filling" onchange="toggleFields(this)">
+                    Filing Number
                 </label>
             </div>
             <div class="form-row">
@@ -30,19 +30,19 @@
             <label for="case-type">Case Type: <span>*</span></label>
             <div class="relative w-full dark_select">
                 <!-- Custom Dropdown -->
-                <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border rounded ">
+                <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border border-[#ccc] rounded ">
                     <div id="caseTypeToggleForOrderJudgementForm" class="cursor-pointer" onclick="toggleCaseTypeDropdownForOrderJudgement()">Please Select Case Type</div>
-                    <div id="caseTypeMenuForOrderJudgementForm" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
+                    <div id="caseTypeMenuForOrderJudgementForm" class="hidden absolute top-full left-0 w-full max-h-60 border border-[#ccc] dark_select overflow-y-auto rounded shadow-lg z-10">
                         <!-- Search Box -->
                         <div class="p-2">
-                            <input type="text" id="caseTypeSearchInputForOrderJudgementForm" class="w-full p-[10px] border border-gray-300 rounded" placeholder="Search Case Type..." onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
+                            <input type="text" id="caseTypeSearchInputForOrderJudgementForm" class="w-full p-[10px] border border-[#ccc] rounded" placeholder="Search Case Type..." onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
                         </div>
                         <!-- Options -->
                         <ul id="caseTypeOptionsForOrderJudgementForm" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getCaseType(this)">Please Select Case Type</li>
+                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">Please Select Case Type</li>
                             @if (!empty($caseTypes) && is_array($caseTypes))
                                 @foreach ($caseTypes as $caseType)
-                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getCaseType(this)">
+                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">
                                         {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
                                     </li>
                                 @endforeach
@@ -54,14 +54,25 @@
                 </div>
             </div>
         </div>
-                <div class="form-field">
-                    <label for="case-no">Case No:</label>
-                    <input type="text" id="case-no" name="case-no" placeholder="Enter Case No">
-                </div>
-                <div class="form-field">
-                    <label for="case-year">Case Year:</label>
-                    <input type="text" id="case-year" name="case-year" placeholder="Enter Case Year">
-                </div>
+               
+        <div class="form-field case-field space-y-[14px]">
+            <label for="case-no">Case Number: <span>*</span></label>
+            <input type="text" id="case-no" name="case-no" placeholder="Enter Case Number" data-value="C" required>
+            </div>
+        <div class="form-field case-field space-y-[14px]">
+            <label for="case-year">Case Year: <span>*</span></label>
+            <input type="text" id="case-year" name="case-year" placeholder="Enter Case Year" data-value="C" required>
+        </div>
+        <div class="form-field filling-field space-y-[14px]">
+            <label for="filling-no">Filing Number: <span>*</span></label>
+            <input type="text" id="filling-no" name="filling-no" placeholder="Enter Filing Number" data-value="F" required>
+        </div>
+        <div class="form-field filling-field space-y-[14px]">
+            <label for="filling-year">Filing Year: <span>*</span></label>
+            <input type="text" id="filling-year" name="filling-year" placeholder="Enter Filing Year" data-value="F" required>
+        </div>
+
+               
             </div>
             <div class="form-row">
             <div class="form-field">
@@ -75,11 +86,69 @@
             </div>
         </div>
                 <div class="form-field mt-10">
-                    <button type="submit" class="btn btn-search">Search</button>
+                    <button type="submit" class="btn btn-search" onclick="submitJudgementForm(event)">Search</button>
                 </div>
             </div>
         </form>
+
+        <!-- response data of order and judgement copy in this div  -->
+        <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16">
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="absolute inset-0 bg-white flex items-center justify-center z-10">
+                <div class="flex flex-col items-center">
+                    <svg class="animate-spin h-8 w-8 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    <p class="mt-2 text-teal-600 font-semibold">Please wait...</p>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="p-3 font-semibold text-lg -mb-4">Order and Judgement Copy Details:</h3>
+
+            <!-- Table -->
+            <div class="w-full">
+                <table class="w-full rounded-lg">
+                    <tbody id="orderTableBody">
+                        <tr class="border-b">
+                            <td class="p-3 font-bold uppercase">Case Number</td>
+                            <td class="p-3" id="caseNumber">-</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3 font-bold uppercase">CIN Number</td>
+                            <td class="p-3" id="cinoNumber">-</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3 font-bold uppercase">Petitioner Name</td>
+                            <td class="p-3" id="petitionerName">-</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3 font-bold uppercase">Respondent Name</td>
+                            <td class="p-3" id="respondentName">-</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3 font-bold uppercase">Case Status</td>
+                            <td class="p-3" id="caseStatus">-</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold uppercase">Apply link</td>
+                            <td class="p-3">
+                                <button onclick="showLoading()" class="p-[10px] bg-teal-600 w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
+                                    Click here
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+     <!-- response data of order and judgement copy div end  -->
+
+
     </div>
+
+    
 
     <!-- Form for Apply for Others Copy -->
     <div class="otherform" id="otherForm" style="display:none;">
@@ -246,5 +315,17 @@
 
 
 @push('scripts')
+
+@endpush
+
+@push('styles')
+<style>
+    .filling-field {
+        display: none;
+    }
+    .case-field {
+        display: block;
+    }
+</style>   
 
 @endpush

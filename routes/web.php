@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HCCaseTypeController;
+use App\Http\Controllers\JudgementController;
 
 Route::get('/', function () {
     return view('index');
@@ -73,3 +74,4 @@ Route::post('/hc-register-application', [HCApplicationRegistrationController::cl
 
 Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fetchHcApplicationDetails'])->name('fetch_hc_application_details');
 
+Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgementData']);
