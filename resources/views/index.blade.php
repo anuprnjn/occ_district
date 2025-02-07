@@ -33,7 +33,7 @@
 
 @push('scripts')
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
-{{-- function for setting dist_code to esta_api  --}}
+<!-- {{-- function for setting dist_code to esta_api  --}} -->
 <script>
     function fetchEstablishments(dist_code) {
         if (!dist_code) {
@@ -76,7 +76,7 @@
     }
    
 </script>
-{{-- function for captcha  --}}
+<!-- {{-- function for captcha  --}} -->
 <script>
     function refreshCaptcha() {
         const refresh = document.querySelector(".refresh-btn");
@@ -104,7 +104,7 @@
     }
 </script>
 
-{{-- function for captcha for order judgement --}}
+<!-- {{-- function for captcha for order judgement --}} -->
 <script>
     function refreshCaptchaForOrderJudgement() {
         const refresh = document.querySelector(".refresh-btn-orderJudgement");
@@ -131,7 +131,7 @@
             });
     }
 </script>
-{{-- function for change the input based on applied by  --}}
+<!-- {{-- function for change the input based on applied by  --}} -->
 <script>
     function toggleAdvocateField() {
         var applyBy = document.getElementById("apply-by").value;
@@ -143,7 +143,7 @@
         }
     }
 </script>
-{{-- function for changing the fields based on case no and filling no  --}}
+<!-- {{-- function for changing the fields based on case no and filling no  --}} -->
 <script>
    function updateFields() {
     // Get the selected radio button value
@@ -170,7 +170,7 @@
     }
     window.onload = updateFields;
 </script>
-{{-- Function to store the district code in sessionStorage --}}
+<!-- {{-- Function to store the district code in sessionStorage --}} -->
 <script>
     function getDistCode(element) {
         var distCode = element.getAttribute('data-value');
@@ -184,7 +184,7 @@
     }
     
 </script>
-{{-- function to get the case type  --}}
+<!-- {{-- function to get the case type  --}} -->
 <script>
     function getCaseType(element){
         var caseType = element.getAttribute('data-value');
@@ -195,7 +195,7 @@
         }
     }
 </script>    
-{{-- function for setting on submit  --}}
+<!-- {{-- function for setting on submit  --}} -->
 <script>
     function handleFormSubmit(event) {
     event.preventDefault();
@@ -641,6 +641,9 @@ function submitJudgementForm(event) {
         })
         .then(response => response.json())
         .then(data => {
+
+                sessionStorage.setItem("caseInfo", JSON.stringify(data));
+               
                 const loadingOverlay = document.getElementById("loadingOverlay"); // Get loading div
 
                 // Show loading overlay
@@ -685,7 +688,7 @@ function submitJudgementForm(event) {
 
                             let buttonAction = count_data === 0
                                 ? "handleApplyForOthers()"
-                                : "window.location.href='/otherDetails'";
+                                : "handleApplyForOthersHavingOrders()";
 
                             tableBody.innerHTML += `
                                 <tr class="border-b">
@@ -726,11 +729,10 @@ function submitJudgementForm(event) {
                                 <td class="p-3 font-bold uppercase text-red-500">No Records found !!!</td>
                             </tr>`;
                     }
-
-                    // Hide loading overlay after data loads
+                   
                     setTimeout(() => {
                         loadingOverlay.classList.add("hidden");
-                    }, 3000);
+                    }, 2000);
                 }
 
                 // Fetch response data and populate table
@@ -766,7 +768,14 @@ function submitJudgementForm(event) {
     document.getElementById("orderJudgementForm").style.display = "none";
     document.getElementById("otherForm").style.display = "block";
 }
-</script>    
+</script>  
+<script>
+    function handleApplyForOthersHavingOrders(){
+        const orderDetailsDiv = document.getElementById("orderDetails");
+        orderDetailsDiv.classList.add("hidden");
+        window.location.href='/caseInformation'
+    }
+</script>  
 
 
 @endpush

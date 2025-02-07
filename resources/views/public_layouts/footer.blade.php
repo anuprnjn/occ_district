@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/pendingPayments": "pending_payments",
         "/application-details": "home",
         "/trackStatusDetails": "track_app",
+        "/caseInformation" : "home",
     };
 
     // Remove 'active' from all <li> elements
