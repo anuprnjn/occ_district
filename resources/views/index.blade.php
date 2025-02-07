@@ -758,6 +758,10 @@ function submitJudgementForm(event) {
 </script>
 <script>
     function handleApplyForOthers() {
+    const orderDetailsDiv = document.getElementById("orderDetails");
+
+    orderDetailsDiv.classList.add("hidden");
+
     var selectedOption = document.getElementById("highCourtSelect").value = "applyOrders";
     document.getElementById("orderJudgementForm").style.display = "none";
     document.getElementById("otherForm").style.display = "block";
