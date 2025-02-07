@@ -936,3 +936,9 @@ body.dark-mode .top-bar h2 {
 body.dark-mode .load{
     color: white;
 }
+.loading_hc{
+    background: #fff;
+}
+body.dark-mode .loading_hc{
+    background: #202020;
+}

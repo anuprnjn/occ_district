@@ -641,84 +641,110 @@ function submitJudgementForm(event) {
         })
         .then(response => response.json())
         .then(data => {
-            // const loadOverlay = document.getElementById("loadingOverlay");
-            // loadOverlay.classList.remove('hidden');
-            window.scrollBy(0, 550);
-             // Remove the selected case type from session storage
-            sessionStorage.removeItem('selectedHcCaseType');
-            refreshCaptchaForOrderJudgement();
-            document.getElementById('captcha-hc-orderJudgement').value = '';
+                const loadingOverlay = document.getElementById("loadingOverlay"); // Get loading div
 
-           document.getElementById('case-no').value = '';
-           document.getElementById('case-year').value = '';
-           document.getElementById('filling-no').value = '';
-           document.getElementById('filling-year').value = '';
+                // Show loading overlay
+                loadingOverlay.classList.remove("hidden");
 
-            const caseTypeDropdown = document.getElementById('caseTypeDropdownForOrderJudgement');
-            const caseTypeMenu = document.getElementById('caseTypeMenuForOrderJudgementForm');
-            const caseTypeOptions = document.getElementById('caseTypeOptionsForOrderJudgementForm');
+                window.scrollBy(0, 500);
 
-            document.getElementById('caseTypeToggleForOrderJudgementForm').innerText = 'Please Select Case Type';
-            caseTypeMenu.classList.add('hidden');
-            document.getElementById('caseTypeSearchInputForOrderJudgementForm').value = '';
-            const optionItems = caseTypeOptions.querySelectorAll('li');
-            optionItems.forEach(item => item.classList.remove('bg-gray-100')); 
-            caseTypeOptions.querySelector('li').classList.add('bg-gray-100'); 
+                // Remove selected case type from session storage
+                sessionStorage.removeItem('selectedHcCaseType');
+                refreshCaptchaForOrderJudgement();
 
+                // Clear input fields
+                document.getElementById('captcha-hc-orderJudgement').value = '';
+                document.getElementById('case-no').value = '';
+                document.getElementById('case-year').value = '';
+                document.getElementById('filling-no').value = '';
+                document.getElementById('filling-year').value = '';
 
-            // showing the data comming from response !
+                // Reset case type dropdown
+                const caseTypeMenu = document.getElementById('caseTypeMenuForOrderJudgementForm');
+                const caseTypeOptions = document.getElementById('caseTypeOptionsForOrderJudgementForm');
 
-            // Function to populate table and show the div
-            function populateTable(responseData) {
-                const orderDetailsDiv = document.getElementById("orderDetails");
-                // const loadOverlay = document.getElementById("loadingOverlay");
-                // orderDetailsDiv.classList.remove('hidden'); uncomment to show data
-                // loadOverlay.classList.add('hidden');
-                
-                const tableBody = document.getElementById("orderTableBody");
+                document.getElementById('caseTypeToggleForOrderJudgementForm').innerText = 'Please Select Case Type';
+                caseTypeMenu.classList.add('hidden');
+                document.getElementById('caseTypeSearchInputForOrderJudgementForm').value = '';
+                const optionItems = caseTypeOptions.querySelectorAll('li');
+                optionItems.forEach(item => item.classList.remove('bg-gray-100'));
+                caseTypeOptions.querySelector('li').classList.add('bg-gray-100');
+            
 
-                tableBody.innerHTML = "";
+                function populateTable(responseData, count_data) {
+                    const orderDetailsDiv = document.getElementById("orderDetails");
+                    const tableBody = document.getElementById("orderTableBody");
 
-                if (responseData.cases && responseData.cases.length > 0) {
-                    responseData.cases.forEach((caseData) => {
+                    // Clear previous table data
+                    tableBody.innerHTML = "";
+
+                    if (responseData.cases && responseData.cases.length > 0) {
+                        responseData.cases.forEach((caseData, index) => {
+                            let applyText = count_data === 0 ? "Apply for Others Copy" : "Click Here";
+                            let applyText2 = count_data === 0 ? "No Order Found" : "Apply Link";
+
+                            let buttonAction = count_data === 0
+                                ? "handleApplyForOthers()"
+                                : "window.location.href='/otherDetails'";
+
+                            tableBody.innerHTML += `
+                                <tr class="border-b">
+                                    <td class="p-3 font-bold uppercase">Case Number</td>
+                                    <td class="p-3">${caseData.caseno}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3 font-bold uppercase">CIN Number</td>
+                                    <td class="p-3">${caseData.cino}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3 font-bold uppercase">Petitioner Name</td>
+                                    <td class="p-3">${caseData.pet_name}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3 font-bold uppercase">Respondent Name</td>
+                                    <td class="p-3">${caseData.res_name}</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3 font-bold uppercase">Case Status</td>
+                                    <td class="p-3">${caseData.casestatus}</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold uppercase">${applyText2}</td>
+                                    <td class="p-3">
+                                        <button onclick="${buttonAction}" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
+                                            ${applyText}
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        orderDetailsDiv.classList.remove("hidden");
+                    } else {
                         tableBody.innerHTML += `
                             <tr class="border-b">
-                                <td class="p-3 font-bold uppercase">CIN Number</td>
-                                <td class="p-3">${caseData.cino}</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="p-3 font-bold uppercase">Petitioner Name</td>
-                                <td class="p-3">${caseData.pet_name}</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="p-3 font-bold uppercase">Respondent Name</td>
-                                <td class="p-3">${caseData.res_name}</td>
-                            </tr>
-                            <tr class="border-b">
-                                <td class="p-3 font-bold uppercase">Case Status</td>
-                                <td class="p-3">${caseData.casestatus}</td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-bold uppercase">Apply link</td>
-                                <td class="p-3">
-                                    <button class="p-[10px] bg-teal-600 w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
-                                        Click here
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                    });
+                                <td class="p-3 font-bold uppercase text-red-500">No Records found !!!</td>
+                            </tr>`;
+                    }
 
-                    orderDetailsDiv.classList.remove("hidden");
+                    // Hide loading overlay after data loads
+                    setTimeout(() => {
+                        loadingOverlay.classList.add("hidden");
+                    }, 3000);
                 }
-            }
 
-            const responseData = data;
+                // Fetch response data and populate table
+                const responseData = data;
+                const count_data = data.order_count;
 
-            populateTable(responseData);
-            
-        })
+                populateTable(responseData, count_data);
+            })
         .catch(error => {
+            const tableBody = document.getElementById("orderTableBody");
+            tableBody.innerHTML += `
+                <tr class="border-b">
+                    <td class="p-3 font-bold uppercase text-red-500">No Data found !!!</td>
+                </tr>`
             sessionStorage.removeItem('selectedHcCaseType');
             refreshCaptchaForOrderJudgement();
             document.getElementById('captcha-hc-orderJudgement').value = '';
@@ -730,6 +756,13 @@ function submitJudgementForm(event) {
     });
 }
 </script>
+<script>
+    function handleApplyForOthers() {
+    var selectedOption = document.getElementById("highCourtSelect").value = "applyOrders";
+    document.getElementById("orderJudgementForm").style.display = "none";
+    document.getElementById("otherForm").style.display = "block";
+}
+</script>    
 
 
 @endpush

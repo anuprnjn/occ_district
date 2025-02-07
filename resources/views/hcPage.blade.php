@@ -14,7 +14,7 @@
     <!-- Form for Apply for Orders and Judgement Copy -->
     <div class="orderJudgement" id="orderJudgementForm" style="display:block;">
         <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id="orderJudgementHc">
-            <h3 class="font-semibold text-lg mb-5">Apply for Orders And Judgement Copy :</h3>
+            <h3 class="font-semibold sm:text-lg text-md mb-5">Apply for Orders And Judgement Copy :</h3>
             <div class="form-group">
                 <label class="cursor-pointer">
                     <input type="radio" name="search-type-case" value="case" checked onchange="toggleFields(this)">
@@ -92,11 +92,11 @@
         </form>
 
         <!-- response data of order and judgement copy in this div  -->
-        <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16">
+        <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
             <!-- Loading Overlay -->
-            <div id="loadingOverlay" class="absolute inset-0 bg-white flex items-center justify-center z-10">
+            <div id="loadingOverlay" class="loading_hc absolute inset-0 flex items-center justify-center z-10">
                 <div class="flex flex-col items-center">
-                    <svg class="animate-spin h-8 w-8 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-8 w-8 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                     </svg>
@@ -111,34 +111,7 @@
             <div class="w-full">
                 <table class="w-full rounded-lg">
                     <tbody id="orderTableBody">
-                        <tr class="border-b">
-                            <td class="p-3 font-bold uppercase">Case Number</td>
-                            <td class="p-3" id="caseNumber">-</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-3 font-bold uppercase">CIN Number</td>
-                            <td class="p-3" id="cinoNumber">-</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-3 font-bold uppercase">Petitioner Name</td>
-                            <td class="p-3" id="petitionerName">-</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-3 font-bold uppercase">Respondent Name</td>
-                            <td class="p-3" id="respondentName">-</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="p-3 font-bold uppercase">Case Status</td>
-                            <td class="p-3" id="caseStatus">-</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 font-bold uppercase">Apply link</td>
-                            <td class="p-3">
-                                <button onclick="showLoading()" class="p-[10px] bg-teal-600 w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
-                                    Click here
-                                </button>
-                            </td>
-                        </tr>
+                        <!-- dynamically getting data from the api here -->
                     </tbody>
                 </table>
             </div>
