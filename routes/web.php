@@ -58,7 +58,7 @@ Route::post('/application-mobile-track', [OtpController::class, 'getApplicationD
 Route::post('/application-mobile-track-hc', [OtpController::class, 'getHCApplicationDetailsForMobile']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
 Route::get('/refresh-captcha', function () {
-    return response()->json(['captcha_src' => captcha_src('math')]);
+    return response()->json(['captcha_src' => captcha_src('default')]); 
 });
 Route::post('/validate-captcha', function (Request $request) {
     // Step 1: Validate the CAPTCHA input using Mews CAPTCHA's built-in validation rule

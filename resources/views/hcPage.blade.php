@@ -114,7 +114,7 @@
             </div>
 
             <!-- Title -->
-            <h3 class="p-3 font-semibold text-lg -mb-4">Order and Judgement Copy Details:</h3>
+            <h3 class="p-3 font-semibold sm:text-xl text-lg -mb-4">Order and Judgement Copy Details:</h3>
 
             <!-- Table -->
             <div class="w-full">
