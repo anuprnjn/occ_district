@@ -32,7 +32,7 @@ class DistrictController extends Controller
         }
 
         // Generate the CAPTCHA
-        $captcha = captcha_src('math');
+        $captcha = captcha_img('math');
 
         // Return data to the view
         return view('dcPage', compact('districts', 'caseTypes', 'captcha'));

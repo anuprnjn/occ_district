@@ -665,13 +665,29 @@ function submitJudgementForm(event) {
                 // Reset case type dropdown
                 const caseTypeMenu = document.getElementById('caseTypeMenuForOrderJudgementForm');
                 const caseTypeOptions = document.getElementById('caseTypeOptionsForOrderJudgementForm');
+                const searchInput = document.getElementById('caseTypeSearchInputForOrderJudgementForm');
+                const caseTypeToggle = document.getElementById('caseTypeToggleForOrderJudgementForm');
 
-                document.getElementById('caseTypeToggleForOrderJudgementForm').innerText = 'Please Select Case Type';
+                // Reset dropdown text
+                caseTypeToggle.innerText = 'Please Select Case Type';
+
+                // Hide dropdown menu
                 caseTypeMenu.classList.add('hidden');
-                document.getElementById('caseTypeSearchInputForOrderJudgementForm').value = '';
+
+                // Clear search input
+                searchInput.value = '';
+
+                // Get all list items and reset their visibility
                 const optionItems = caseTypeOptions.querySelectorAll('li');
-                optionItems.forEach(item => item.classList.remove('bg-gray-100'));
-                caseTypeOptions.querySelector('li').classList.add('bg-gray-100');
+                optionItems.forEach(item => {
+                    item.classList.remove('bg-gray-100'); // Remove any highlight
+                    item.style.display = 'block'; // Ensure all items are visible
+                });
+
+                // Set default highlight (if needed)
+                if (optionItems.length > 0) {
+                    optionItems[0].classList.add('bg-gray-100');
+                }
             
 
                 function populateTable(responseData, count_data) {
@@ -694,9 +710,14 @@ function submitJudgementForm(event) {
                                 : "handleApplyForOthersHavingOrders()";
 
                             tableBody.innerHTML += `
+                               
                                 <tr class="border-b">
+                                    <td class="p-3 font-bold uppercase">Filling Number</td>
+                                    <td class="p-3">${caseData?.fillingno || 'N/A'}</td>
+                                </tr>
+                                 <tr class="border-b">
                                     <td class="p-3 font-bold uppercase">Case Number</td>
-                                    <td class="p-3">${caseData.caseno}</td>
+                                    <td class="p-3">${caseData?.caseno || 'N/A'}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="p-3 font-bold uppercase">CIN Number</td>

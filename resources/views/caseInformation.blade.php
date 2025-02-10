@@ -111,8 +111,8 @@
             // Display case details
             const caseDetailsDiv = document.getElementById("caseDetails");
             caseDetailsDiv.innerHTML = `
+            <p><strong>Filing Number:</strong> ${data.cases[0].fillingno}</p>
                 <p><strong>Case Number:</strong> ${data.cases[0].caseno}</p>
-                <p><strong>Filing Number:</strong> ${data.cases[0].filling_no}</p>
                 <p><strong>CNR Number:</strong> ${data.cases[0].cino}</p>
                 <p><strong>Petitioner Name:</strong> ${data.cases[0].pet_name}</p>
                 <p><strong>Respondent Name:</strong> ${data.cases[0].res_name}</p>

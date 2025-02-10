@@ -30,28 +30,37 @@
             <label for="case-type">Case Type: <span>*</span></label>
             <div class="relative w-full dark_select">
                 <!-- Custom Dropdown -->
-                <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border border-[#ccc] rounded ">
-                    <div id="caseTypeToggleForOrderJudgementForm" class="cursor-pointer" onclick="toggleCaseTypeDropdownForOrderJudgement()">Please Select Case Type</div>
-                    <div id="caseTypeMenuForOrderJudgementForm" class="hidden absolute top-full left-0 w-full max-h-60 border border-[#ccc] dark_select overflow-y-auto rounded shadow-lg z-10">
-                        <!-- Search Box -->
-                        <div class="p-2">
-                            <input type="text" id="caseTypeSearchInputForOrderJudgementForm" class="w-full p-[10px] border border-[#ccc] rounded" placeholder="Search Case Type..." onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
-                        </div>
-                        <!-- Options -->
-                        <ul id="caseTypeOptionsForOrderJudgementForm" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">Please Select Case Type</li>
-                            @if (!empty($caseTypes) && is_array($caseTypes))
-                                @foreach ($caseTypes as $caseType)
-                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">
-                                        {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
-                                    </li>
-                                @endforeach
-                            @else
-                                <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
-                            @endif
-                        </ul>
+                <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border border-[#ccc] rounded relative">
+    <div id="caseTypeToggleForOrderJudgementForm" 
+         class="cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis" 
+         onclick="toggleCaseTypeDropdownForOrderJudgement()">Please Select Case Type</div>
+    <div id="caseTypeMenuForOrderJudgementForm" 
+         class="hidden absolute top-full left-0 w-full max-h-60 border border-[#ccc] dark_select overflow-y-auto rounded shadow-lg z-10">
+        <!-- Search Box -->
+        <div class="p-2">
+            <input type="text" id="caseTypeSearchInputForOrderJudgementForm" 
+                   class="w-full p-[10px] border border-[#ccc] rounded" 
+                   placeholder="Search Case Type..." 
+                   onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
                     </div>
+                    <!-- Options -->
+                    <ul id="caseTypeOptionsForOrderJudgementForm" class="list-none p-0 m-0">
+                        <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
+                            onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">Please Select Case Type</li>
+                        @if (!empty($caseTypes) && is_array($caseTypes))
+                            @foreach ($caseTypes as $caseType)
+                                <li data-value="{{ $caseType['case_type'] }}" 
+                                    class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap" 
+                                    onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">
+                                    {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
+                                </li>
+                            @endforeach
+                        @else
+                            <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
+                        @endif
+                    </ul>
                 </div>
+            </div>
             </div>
         </div>
                
