@@ -116,6 +116,8 @@
                 </table>
             </div>
         </div>
+        <span id='case_err' class="hidden text-lg text-center flex items-center justify-center bg-slate-100/70 text-rose-500 p-4 rounded-md mb-12 sm:mb-0 "></span>
+
      <!-- response data of order and judgement copy div end  -->
 
 

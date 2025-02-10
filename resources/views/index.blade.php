@@ -677,12 +677,15 @@ function submitJudgementForm(event) {
                 function populateTable(responseData, count_data) {
                     const orderDetailsDiv = document.getElementById("orderDetails");
                     const tableBody = document.getElementById("orderTableBody");
+                    const caseErrElement = document.getElementById('case_err');
 
                     // Clear previous table data
                     tableBody.innerHTML = "";
 
                     if (responseData.cases && responseData.cases.length > 0) {
                         responseData.cases.forEach((caseData, index) => {
+                            caseErrElement.classList.add('hidden');
+
                             let applyText = count_data === 0 ? "Apply for Others Copy" : "Click Here";
                             let applyText2 = count_data === 0 ? "No Order Found" : "Apply Link";
 
@@ -724,10 +727,9 @@ function submitJudgementForm(event) {
 
                         orderDetailsDiv.classList.remove("hidden");
                     } else {
-                        tableBody.innerHTML += `
-                            <tr class="border-b">
-                                <td class="p-3 font-bold uppercase text-red-500">No Records found !!!</td>
-                            </tr>`;
+                        
+                            caseErrElement.classList.remove('hidden');
+                            caseErrElement. innerHTML = 'No Cases found !!!';
                     }
                    
                     setTimeout(() => {
