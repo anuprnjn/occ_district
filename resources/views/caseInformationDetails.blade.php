@@ -242,7 +242,7 @@
 </script>     -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    let timeoutDuration = 10000; // 5 minutes in milliseconds
+    let timeoutDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
     let timeout;
     let sessionExpired = false;
 
