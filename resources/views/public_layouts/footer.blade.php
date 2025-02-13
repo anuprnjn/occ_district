@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/application-details": "home",
         "/trackStatusDetails": "track_app",
         "/caseInformation" : "home",
+        "/caseInformationDetails" : "home",
     };
 
     // Remove 'active' from all <li> elements

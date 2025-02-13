@@ -955,3 +955,17 @@ body.dark-mode .loading_hc{
     text-overflow: ellipsis; /* Adds '...' for overflowed text */
     max-width: 100%; /* Prevents expansion */
 }
+
+.loader {
+    border: 3px solid #fff;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

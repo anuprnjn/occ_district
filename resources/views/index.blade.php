@@ -642,7 +642,9 @@ function submitJudgementForm(event) {
         .then(response => response.json())
         .then(data => {
 
-                sessionStorage.setItem("caseInfo", JSON.stringify(data));
+                // sessionStorage.setItem("caseInfo", JSON.stringify(data));
+                sessionStorage.setItem("responseData", JSON.stringify(data));
+                sessionStorage.setItem('urgent_fee', data.urgent_fee);
                
                 const loadingOverlay = document.getElementById("loadingOverlay"); // Get loading div
 
@@ -706,8 +708,8 @@ function submitJudgementForm(event) {
                             let applyText2 = count_data === 0 ? "No Order Found" : "Apply Link";
 
                             let buttonAction = count_data === 0
-                                ? "handleApplyForOthers()"
-                                : "handleApplyForOthersHavingOrders()";
+                                ? `handleApplyForOthers()`
+                                : `handleApplyForOthersHavingOrders(${index})`;
 
                             tableBody.innerHTML += `
                                
@@ -760,6 +762,7 @@ function submitJudgementForm(event) {
 
                 // Fetch response data and populate table
                 const responseData = data;
+                sessionStorage.setItem('urgent_fee',data.urgent_fee);
                 const count_data = data.order_count;
 
                 populateTable(responseData, count_data);
@@ -793,12 +796,23 @@ function submitJudgementForm(event) {
 }
 </script>  
 <script>
-    function handleApplyForOthersHavingOrders(){
-        const orderDetailsDiv = document.getElementById("orderDetails");
-        orderDetailsDiv.classList.add("hidden");
-        window.location.href='/caseInformation'
+  function handleApplyForOthersHavingOrders(index) {
+      // Get the stored response data from sessionStorage
+      const storedData = sessionStorage.getItem("responseData");
+      console.log('stored',storedData)
+    const parsedData = storedData ? JSON.parse(storedData) : null;
+
+    if (parsedData && parsedData.cases) {
+        // Store the full response data (if not already stored)
+        sessionStorage.setItem("caseInfo", JSON.stringify(parsedData));
+        console.log(parsedData);
     }
-</script>  
+
+    // Hide order details and navigate to the next page
+    document.getElementById("orderDetails").classList.add("hidden");
+    window.location.href = '/caseInformation';
+  }
+</script> 
 
 
 @endpush

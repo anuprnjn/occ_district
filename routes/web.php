@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Crypt;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HCCaseTypeController;
 use App\Http\Controllers\JudgementController;
+use App\Http\Controllers\OrderCopyController;
 
 Route::get('/', function () {
     return view('index');
@@ -48,6 +49,10 @@ Route::get('/caseInformation', function () {
     return view('caseInformation');
 })->name('caseInformation');
 
+Route::get('/caseInformationDetails', function () {
+    return view('caseInformationDetails');
+})->name('caseInformationDetails');
+
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::get('/hcPage', [HCCaseTypeController::class, 'showCases']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
@@ -79,3 +84,5 @@ Route::post('/hc-register-application', [HCApplicationRegistrationController::cl
 Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fetchHcApplicationDetails'])->name('fetch_hc_application_details');
 
 Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgementData']);
+
+Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy']);
