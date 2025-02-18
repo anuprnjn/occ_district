@@ -39,10 +39,17 @@ class ApplicationController extends Controller
         if (!$applicationNumber) {
             return response()->json(['success' => false, 'message' => 'Application number is required.']);
         }
+        if(str_starts_with($applicationNumber, 'HCW')) {
+            $baseUrl = config('app.api.hc_order_copy_base_url');
+            $pagename=  '/track_high_court_order_copy_application.php';
+        } else {
+            $baseUrl = config('app.api.hc_base_url'); 
+            $pagename=  '/track_high_court_application.php';
+        }
 
-        $baseUrl = config('app.api.hc_base_url'); 
+        
         try {
-            $response = Http::post($baseUrl . '/track_high_court_application.php', [
+            $response = Http::post($baseUrl . $pagename, [
                 'application_number' => $applicationNumber,
             ]);
            

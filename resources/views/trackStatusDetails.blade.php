@@ -182,6 +182,15 @@ function displayApplicationDetails(data) {
             </tr>
         `;
     }
+    var reqDocs = '';
+    if (data.required_document) {
+        reqDocs = `
+              <tr class="border-b">
+                    <td class="px-6 py-4 font-semibold uppercase">Required Document</td>
+                    <td class="px-6 py-4">${data.required_document}</td>
+                </tr>
+        `;
+    }
 
     detailsSection.html(`
         <table class="dark_form min-w-full bg-white rounded-lg overflow-hidden">
@@ -217,10 +226,7 @@ function displayApplicationDetails(data) {
                     <td class="px-6 py-4">${data.request_mode}</td>
                 </tr>
                
-                <tr class="border-b">
-                    <td class="px-6 py-4 font-semibold uppercase">Required Document</td>
-                    <td class="px-6 py-4">${data.required_document}</td>
-                </tr>
+                ${reqDocs}
                 <tr class="border-b">
                     <td class="px-6 py-4 font-semibold uppercase">Applied By</td>
                     <td class="px-6 py-4">${data.applied_by}</td>
