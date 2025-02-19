@@ -115,7 +115,7 @@ function userLogin(event){
     .then(response => response.json()) // Ensure you're parsing the JSON response
     .then(data => {
         if (!data.success) {
-            alert('captcha validation failed. Please try again.');
+            alert('CAPTCHA validation failed. Please try again.');
             document.getElementById('captcha').value = '';  // Clear captcha input field
             refreshCaptcha(); // Optional: refresh captcha image
             return;  // Stop further validation if CAPTCHA fails

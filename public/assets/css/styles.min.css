@@ -4989,7 +4989,7 @@ textarea.form-control-lg {
   word-wrap: break-word;
   background-color: var(--bs-card-bg);
   background-clip: border-box;
-  border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+  border: 1px solid #FFAE1D;
   border-radius: var(--bs-card-border-radius);
   box-shadow: var(--bs-card-box-shadow);
 }
@@ -16806,3 +16806,6 @@ ul {
   line-height: 20px;
 }
 
+.left-sidebar {
+  background-color: #edfaff; 
+}
