@@ -1,32 +1,53 @@
-@extends('public_layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Jharkhand High Court</title>
+    
+    <link rel="stylesheet" href="{{ asset('passets/style.css')}}" />
+    <link rel="stylesheet" href="{{ asset('passets/additional_style.css')}}" />
+    <link rel="icon" href="{{ asset('passets/images/favicon.png')}}" type="image/png">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <script src="{{ asset('passets/js/tailwind.js')}}"></script>
+    <script src="{{ asset('passets/js/jquery_7.1.js')}}"></script>
+</head>
+<body class="flex items-center justify-center h-screen bg-cover bg-center" 
+      style="background-image: url('{{ asset('passets/images/law.jpg') }}');">
 
-@section('content')
+    <div class="bg-slate-100/70 shadow-md rounded-lg p-6 max-w-md w-full backdrop-blur-lg">
+        <h3 class="text-2xl font-bold text-center mb-6 flex items-center w-full justify-center gap-2"><img src="{{ asset('passets/images/icons/userlogin.svg')}}" class="w-12">REGISTERED USER LOGIN</h3>
 
-<section class="content-section">
-    <h3 class="font-semibold text-xl -mt-8 flex items-center justify-start gap-2 bg-[#D09A3F]/10 rounded-md p-2"><img src="{{ asset('passets/images/icons/userlogin.svg')}}" class="w-12">Registered User Login </h3>
-
-    <form autocomplete='off' class=" w-[] dark_form p-4 mt-4 bg-slate-100/70 border rounded-md mb-10 pb-10 pt-4" id='trackApplicationForm'>
-        <div class="form-group">
-            <select name="court_login" id="courtLogin" class='w-[50%] p-[11px]'>
-                <option value="HC">High Court Login</option>
-                <option value="DC">Civil Court Login</option>
+        <!-- Court Selection Dropdown -->
+        <div class="mb-4">
+            <label class='text-sm'>Select Court <span class="text-red-500">*</span></label>
+            <select id="courtType" class=" block p-[11px] mt-2">
+                <option value="high_court">High Court User Login</option>
+                <option value="civil_court">Civil Court User Login</option>
             </select>
         </div>
-        <div class="flex justify-center sm:flex-row flex-col items-center sm:gap-10 w-[50%]">
-            
-            <div class="form-field ">
-                <!-- <label for="userID"> Username: <span>*</span></label> -->
-                <input type="text" id="userID" name="userID" placeholder="Enter username" class="" >
-                <!-- <label for="password"> Password: <span>*</span></label> -->
-                <div class="relative w-full">
-                    <input type="password" id="password" name="password" placeholder="Enter Password" 
-                        class="w-full p-2 pr-12 border rounded-md bg-gray-800 text-white">
-                    <button type="button" id="togglePassword" 
-                        class="absolute inset-y-1 right-3 flex items-center justify-center rounded-full ">
-                        <img id="eyeOpen" src="{{ asset('passets/images/icons/eyeopen.svg')}}" alt="Show" class="w-6" style="display:block;">
-                        <img id="eyeClosed" src="{{ asset('passets/images/icons/eyeclose.svg')}}" alt="Hide" class="w-6" style="display:none;">
+
+        <!-- Login Form -->
+        <form id="loginForm">
+            <!-- User ID -->
+            <div class="mb-4">
+                <label class='text-sm'>User ID <span class="text-red-500">*</span></label>
+                <input type="text" id="userID" name="userID" placeholder="Enter your User ID" required class='mt-2'>
+            </div>
+
+            <!-- Password Field with Eye Icon -->
+            <div class="mb-4">
+                <label class='text-sm'>Password <span class="text-red-500">*</span></label>
+                <div class="relative">
+                <input type="password" id="password" name="password" placeholder="Enter your password" required class='mt-2'>
+                    <button type="button" id="togglePassword" class="absolute mt-2 inset-y-1 right-3 flex items-center">
+                        <img id="eyeOpen" src="{{ asset('passets/images/icons/eyeopen.svg')}}" alt="Show" class="w-6">
+                        <img id="eyeClosed" src="{{ asset('passets/images/icons/eyeclose.svg')}}" alt="Hide" class="w-6 hidden">
                     </button>
                 </div>
+            </div>
+            <div class="form-field">
                 <label for="captcha">Enter the Captcha<span>*</span></label>
                 <div class="flex justify-center items-center gap-1">
                     <img id="captchaImage" src="{{ captcha_src() }}" alt="Captcha">
@@ -35,34 +56,35 @@
                         <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
                     </button>
                 </div>
-                <button type="submit" class=" w-[100%] btn-submit order_btn mt-4 flex items-center justify-center gap-1" onClick="userLogin(event)"> LOGIN <img src="{{ asset('passets/images/icons/loginicon.svg')}}" alt=""> </button>
-            </div>    
-        </div>
-       
-    </form>
-</section>
+            </div>
+            <!-- Submit Button -->
+            <div class="mt-6">
+                <button type="submit" class="w-full btn-submit order_btn" onclick='userLogin(event)'>
+                    Login
+                </button>
+            </div>
+        </form>
+    </div>
 
-@endsection
-
-@push('scripts')
 <script>
-document.getElementById('togglePassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('password');
-    const eyeOpen = document.getElementById('eyeOpen');
-    const eyeClosed = document.getElementById('eyeClosed');
-    
     // Toggle Password Visibility
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeOpen.style.display = 'none';
-        eyeClosed.style.display = 'block';
-    } else {
-        passwordInput.type = 'password';
-        eyeOpen.style.display = 'block';
-        eyeClosed.style.display = 'none';
-    }
-});
-</script>    
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const eyeOpen = document.getElementById('eyeOpen');
+        const eyeClosed = document.getElementById('eyeClosed');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeOpen.classList.add('hidden');
+            eyeClosed.classList.remove('hidden');
+        } else {
+            passwordInput.type = 'password';
+            eyeOpen.classList.remove('hidden');
+            eyeClosed.classList.add('hidden');
+        }
+    });
+
+</script>
 <script>
 function userLogin(event){
     event.preventDefault();
@@ -93,7 +115,7 @@ function userLogin(event){
     .then(response => response.json()) // Ensure you're parsing the JSON response
     .then(data => {
         if (!data.success) {
-            alert('CAPTCHA validation failed. Please try again.');
+            alert('captcha validation failed. Please try again.');
             document.getElementById('captcha').value = '';  // Clear captcha input field
             refreshCaptcha(); // Optional: refresh captcha image
             return;  // Stop further validation if CAPTCHA fails
@@ -103,8 +125,9 @@ function userLogin(event){
         console.error('CAPTCHA validation error:', error);
         alert('An error occurred while validating the CAPTCHA.');
     });
-}
-</script>   
+    }
+</script> 
+
 <script>
     function refreshCaptcha() {
         const refresh = document.querySelector(".refresh-btn");
@@ -131,5 +154,5 @@ function userLogin(event){
             });
     }
 </script>
-
-@endpush
+</body>
+</html>
