@@ -16,6 +16,8 @@ use App\Http\Controllers\HCCaseTypeController;
 use App\Http\Controllers\JudgementController;
 use App\Http\Controllers\OrderCopyController;
 
+use App\Http\Controllers\admin\RoleController;
+
 Route::get('/', function () {
     return view('index');
 });
@@ -94,8 +96,11 @@ Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy'
 
 
 
-//admin routes 
+//admin routes **************************************************************
 
 Route::get('/admin', function () {
     return view('admin.dashboard');
 })->name('admin.dashboard');
+
+
+Route::get('/admin/role-list', [RoleController::class, 'RoleList'])->name('role_list');

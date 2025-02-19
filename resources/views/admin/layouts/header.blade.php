@@ -85,18 +85,18 @@
                   <span class="d-flex">
                     <iconify-icon icon="solar:home-angle-line-duotone"></iconify-icon>
                   </span>
-                  <span class="hide-menu">Admin details</span>
+                  <span class="hide-menu">Master Data</span>
                 </div>
               </a>
               <ul aria-expanded="false" class="collapse first-level">
                 <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" target="_blank"
-                    href="#">
+                  <a class="sidebar-link justify-content-between" 
+                  href="{{ route('role_list') }}">
                     <div class="d-flex align-items-center gap-3">
                       <span class="d-flex">
                         <span class="icon-small"></span>
                       </span>
-                      <span class="hide-menu">Update Page 1</span>
+                      <span class="hide-menu">Role List</span>
                     </div>
                   </a>
                 </li>
