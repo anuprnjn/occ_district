@@ -650,7 +650,7 @@ label .required {
     font-weight: bold;
 }
 
-input[type="text"], input[type="email"], select, textarea {
+input[type="text"], input[type="email"],input[type="password"], select, textarea {
     padding: 10px;
     font-size: 16px;
     border: 1px solid var(--border-clr);

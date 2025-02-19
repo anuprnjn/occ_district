@@ -27,6 +27,11 @@ Route::get('/hcPage', function () {
 Route::get('/dcPage', function () {
     return view('dcPage');
 })->name('dcPage');
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
 Route::get('/trackStatus', function () {
     return view('trackStatus');
 })->name('trackStatus');
@@ -86,3 +91,11 @@ Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fet
 Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgementData']);
 
 Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy']);
+
+
+
+//admin routes 
+
+Route::get('/admin', function () {
+    return view('admin.dashboard');
+})->name('admin.dashboard');
