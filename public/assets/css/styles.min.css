@@ -2118,16 +2118,24 @@ progress {
   }
 }
 .table {
-  --bs-table-color: #000; /* Black text for better visibility */
-  --bs-table-bg: #fff; /* White background for contrast */
-  --bs-table-border-color: #000; /* Black border */
-  --bs-table-striped-bg: #f2f2f2; /* Light gray for striped rows */
-  --bs-table-hover-bg: #e0e0e0; /* Slightly darker gray for hover effect */
-
+  --bs-table-color-type: initial;
+  --bs-table-bg-type: initial;
+  --bs-table-color-state: initial;
+  --bs-table-bg-state: initial;
+  --bs-table-color: var(--bs-body-color);
+  --bs-table-bg: #fff;
+  --bs-table-border-color: rgba(17, 28, 45, 0.0509803922);
+  --bs-table-accent-bg: transparent;
+  --bs-table-striped-color: var(--bs-body-color);
+  --bs-table-striped-bg: #eff4fa;
+  --bs-table-active-color: var(--bs-body-color);
+  --bs-table-active-bg: rgba(var(--bs-emphasis-color-rgb), 0.1);
+  --bs-table-hover-color: var(--bs-body-color);
+  --bs-table-hover-bg: #f6f9fc;
   width: 100%;
   margin-bottom: 1rem;
-  border-collapse: collapse; /* Ensures a cleaner border appearance */
-  font-size: 16px; /* Modern font size */
+  vertical-align: top;
+  border-color: var(--bs-table-border-color);
 }
 .table > :not(caption) > * > * {
   padding: 16px 24px;

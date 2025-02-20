@@ -3,11 +3,11 @@
 @section('title', 'High Court of Jharkhand || Menu List')
 
 @section('content')
-<div class="body-wrapper" style="margin-top: -70px;">
+
     <div class="body-wrapper-inner">
         <div class="container-fluid">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Menu Master</h5>
+                <h5 class="card-title fw-semibold mb-4" style="margin-top:-70px;">Menu Master</h5>
 
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
