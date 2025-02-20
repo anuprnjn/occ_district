@@ -50,7 +50,7 @@
             <div class="form-field">
                 <label for="captcha">Enter the Captcha<span>*</span></label>
                 <div class="flex justify-center items-center gap-1">
-                    <img id="captchaImage" src="{{ captcha_src() }}" alt="Captcha">
+                    <img id="captchaImage" src="{{ session('captcha_image') }}" alt="Captcha">
                     <input class="text-lg" type="text" id="captcha" name="captcha" required placeholder="Enter the captcha">
                     <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
                         <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
@@ -130,27 +130,27 @@ function userLogin(event){
 
 <script>
     function refreshCaptcha() {
-        const refresh = document.querySelector(".refresh-btn");
+        const refreshBtn = document.querySelector(".refresh-btn img"); // Select the refresh icon
         const captchaImg = document.getElementById('captchaImage');
-        
-        // Add animation class to the refresh button
-        refresh.classList.add("animate-spin");
 
-        // Make an AJAX request to the route that generates the CAPTCHA
+        // Add spin animation
+        refreshBtn.classList.add("animate-spin");
+
         fetch('/refresh-captcha')
             .then(response => response.json())
             .then(data => {
-                // Update the CAPTCHA image with the new source URL
-                captchaImg.src = data.captcha_src + '?' + new Date().getTime(); 
+                if (data.captcha_src) {
+                    captchaImg.src = data.captcha_src;
+                } else {
+                    console.error('Failed to update CAPTCHA');
+                }
             })
             .catch(error => {
                 console.error('Error refreshing CAPTCHA:', error);
             })
             .finally(() => {
-                // Remove the spin animation after the request
-                setTimeout(function() {
-                    refresh.classList.remove("animate-spin");
-                }, 1000);
+                // Remove spin animation after 1 second
+                setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
             });
     }
 </script>
