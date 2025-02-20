@@ -8,8 +8,8 @@
 
     <!--  Sidebar End -->
     <!--  Main wrapper -->
-    <div class="body-wrapper" style="margin-top: -70px;">
-     
+    <!-- <div class="body-wrapper" style="margin-top: -70px;"> -->
+    
       <div class="body-wrapper-inner">
         <div class="container-fluid">
           <!--  Row 1 -->
@@ -18,7 +18,7 @@
           <div class="container">
             <div class="row">
               
-               <div class="card-body">
+               <div class="card-body" style="margin-top:-70px;">
               <h5 class="card-title fw-semibold mb-4">Form Template Designs</h5>
               <div class="card">
                 <div class="card-body">
@@ -46,7 +46,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="colorSelect" class="form-label">Choose a Color</label>
-                        <select class="form-control" id="colorSelect">
+                        <select class="form-select" id="colorSelect">
                             <option value="">Select a color</option>
                             <option value="red">Red</option>
                             <option value="blue">Blue</option>

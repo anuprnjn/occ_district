@@ -17,6 +17,13 @@
     <!--  App Topstrip -->
     <div class="app-topstrip py-2 bg-dark px-3 w-100 d-lg-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center justify-content-center gap-3 mb-2 mb-lg-0">
+        <ul class="navbar-nav">
+          <li class="nav-item d-block d-xl-none">
+            <a class="nav-link sidebartoggler " id="headerCollapse" href="javascript:void(0)">
+            <i class="fa-solid fa-bars text-white" style="font-size:18px;"></i>
+            </a>
+          </li>
+        </ul>
         <a class="d-flex align-items-center text-decoration-none" href="/admin">
             <img src="{{ asset('passets/images/favicon.png') }}" alt="High Court Logo" width="45" class="ms-2 img-fluid">
             <h6 class="ms-3 mt-2  text-white fw-bold text-uppercase" style="letter-spacing: 0px;">
@@ -69,6 +76,14 @@
     <aside class="left-sidebar">
       <!-- Sidebar scroll-->
       <div>
+      <div class="brand-logo d-flex align-items-center justify-content-end">
+          <!-- <a href="/admin" class="text-nowrap logo-img" style="margin-top: 20px;margin-bottom: -20px;">
+            <img src="{{ asset('passets/images/HC-main.png') }}" alt="" width="200" />
+          </a> -->
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+          <i class="fa-solid fa-xmark" style="font-size:20px;"></i>
+          </div>
+        </div>
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar mt-4" data-simplebar="">
           <ul id="sidebarnav">
@@ -174,3 +189,17 @@
       </div>
       <!-- End Sidebar scroll-->
     </aside>
+    <!-- <header class="app-header">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <ul class="navbar-nav">
+          <li class="nav-item d-block d-xl-none">
+            <a class="nav-link sidebartoggler " id="headerCollapse" href="javascript:void(0)">
+            <i class="fa-solid fa-bars"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header> -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+    
