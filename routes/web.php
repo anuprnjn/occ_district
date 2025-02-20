@@ -17,6 +17,10 @@ use App\Http\Controllers\JudgementController;
 use App\Http\Controllers\OrderCopyController;
 
 use App\Http\Controllers\admin\RoleController;
+use App\Http\Controllers\admin\MenuController;
+use App\Http\Controllers\admin\SubMenuController;
+use App\Http\Controllers\admin\PermissionController;
+
 
 Route::get('/', function () {
     return view('index');
@@ -100,7 +104,20 @@ Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy'
 
 Route::get('/admin', function () {
     return view('admin.dashboard');
-})->name('admin.dashboard');
+})->name('index');
 
 
-Route::get('/admin/role-list', [RoleController::class, 'RoleList'])->name('role_list');
+Route::get('/admin/menu-list', [MenuController::class, 'MenuList'])->name('menu_list');
+Route::post('/admin/menu-add', [MenuController::class, 'addMenu'])->name('menu_add');
+Route::post('/admin/menu-update', [MenuController::class, 'updateMenu'])->name('menu_update');
+
+Route::get('/admin/submenu-list', [SubMenuController::class, 'SubMenuList'])->name('submenu_list');
+Route::post('/admin/submenu-add', [SubMenuController::class, 'addSubMenu'])->name('submenu_add');
+Route::post('/admin/submenu-update', [SubMenuController::class, 'updateSubMenu'])->name('submenu_update');
+Route::post('/submenu/delete', [SubMenuController::class, 'deleteSubMenu'])->name('submenu_delete');
+
+Route::get('/admin/roles', [RoleController::class, 'RoleList'])->name('role_list');
+Route::post('/admin//roles/add', [RoleController::class, 'addRole'])->name('role_add');
+Route::post('/admin/roles/update', [RoleController::class, 'updateRole'])->name('role_update');
+
+Route::get('/admin/permission', [PermissionController::class, 'PermissionList'])->name('permission_list');
