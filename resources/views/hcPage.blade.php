@@ -86,7 +86,7 @@
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
                 <!-- <img id="captchaImageOrderJudgement" src="{{ session('captcha_image') }} alt="Captcha"> -->
-                <img id="captchaImageOrderJudgement" src="{{ session('captcha_image') }}" alt="Captcha">
+                <img id="captchaImageOrderJudgement" src="{{ $captcha }}" alt="Captcha">
 
                 <input class="text-lg" type="text" id="captcha-hc-orderJudgement" name="captcha" required placeholder="Enter the expression">
                 <button type="button" class="refresh-btn-orderJudgement rounded-full hover:shadow-md" onclick="refreshCaptchaForOrderJudgement()" title="Refresh Captcha">
@@ -280,7 +280,7 @@
         <div class="form-field">
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
-            <img id="captchaImage" src="{{ session('captcha_image') }}" alt="Captcha">
+            <img id="captchaImage" src="{{ $captcha }}" alt="Captcha">
                 <input class="text-lg" type="text" id="captcha-hc" name="captcha" required placeholder="Enter the expression">
                 <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
                     <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">

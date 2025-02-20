@@ -30,12 +30,11 @@ class HCCaseTypeController extends Controller
         $builder = new CaptchaBuilder($captchaPhrase);
         $builder->build(150, 48); // Set width & height
     
-        // Store CAPTCHA in session
+        // Store only CAPTCHA phrase in session for validation
         Session::put('captcha', $captchaPhrase);
-        Session::put('captcha_image', $builder->inline());
     
-        // Retrieve CAPTCHA from session
-        $captcha = Session::get('captcha_image');
+        // Pass CAPTCHA image directly to the view (do not store in session)
+        $captcha = $builder->inline();
     
         return view('hcPage', compact('caseTypes', 'captcha'));
     }

@@ -105,29 +105,29 @@
 </script> -->
 <script>
     function refreshCaptcha() {
-        const refreshBtn = document.querySelector(".refresh-btn img"); // Select the refresh icon
-        const captchaImg = document.getElementById('captchaImage');
+    const refreshBtn = document.querySelector(".refresh-btn img"); // Refresh icon
+    const captchaImg = document.getElementById('captchaImage');
 
-        // Add spin animation
-        refreshBtn.classList.add("animate-spin");
+    // Add spinning animation
+    refreshBtn.classList.add("animate-spin");
 
-        fetch('/refresh-captcha')
-            .then(response => response.json())
-            .then(data => {
-                if (data.captcha_src) {
-                    captchaImg.src = data.captcha_src;
-                } else {
-                    console.error('Failed to update CAPTCHA');
-                }
-            })
-            .catch(error => {
-                console.error('Error refreshing CAPTCHA:', error);
-            })
-            .finally(() => {
-                // Remove spin animation after 1 second
-                setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
-            });
-    }
+    fetch('/refresh-captcha')
+        .then(response => response.json())
+        .then(data => {
+            if (data.captcha_src) {
+                captchaImg.src = data.captcha_src; // Update CAPTCHA image
+            } else {
+                console.error('Failed to update CAPTCHA');
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing CAPTCHA:', error);
+        })
+        .finally(() => {
+            // Remove spin animation after 1 second
+            setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
+        });
+}
 </script>
 <script>
     function refreshCaptchaForOrderJudgement() {
@@ -138,21 +138,21 @@
         refreshBtn.classList.add("animate-spin");
 
         fetch('/refresh-captcha')
-            .then(response => response.json())
-            .then(data => {
-                if (data.captcha_src) {
-                    captchaImg.src = data.captcha_src;
-                } else {
-                    console.error('Failed to update CAPTCHA');
-                }
-            })
-            .catch(error => {
-                console.error('Error refreshing CAPTCHA:', error);
-            })
-            .finally(() => {
-                // Remove spin animation after 1 second
-                setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
-            });
+        .then(response => response.json())
+        .then(data => {
+            if (data.captcha_src) {
+                captchaImg.src = data.captcha_src; // Update CAPTCHA image
+            } else {
+                console.error('Failed to update CAPTCHA');
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing CAPTCHA:', error);
+        })
+        .finally(() => {
+            // Remove spin animation after 1 second
+            setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
+        });
     }
 </script>
 

@@ -12,18 +12,17 @@ class HCApplicationRegistrationController extends Controller
     {
         // Generate a random alphanumeric CAPTCHA string
         $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        $captchaPhrase = substr(str_shuffle($characters), 0, 6); // 6-character alphanumeric
+        $captchaPhrase = substr(str_shuffle($characters), 0, 6);
     
-        // Create a new CAPTCHA image
+        // Create CAPTCHA image
         $builder = new CaptchaBuilder($captchaPhrase);
-        $builder->build(150, 48); // Set width & height
+        $builder->build(150, 48);
     
-        // Store the new CAPTCHA phrase in session
+        // Store only the CAPTCHA phrase in the session
         Session::put('captcha', $captchaPhrase);
-        Session::put('captcha_image', $builder->inline());
     
-        // Return the new CAPTCHA image in JSON response
-        return response()->json(['captcha_image' => $builder->inline()]);
+        // Return new CAPTCHA image as JSON
+        return response()->json(['captcha_src' => $builder->inline()]);
     }
 
     public function hcRegisterApplication(Request $request)
