@@ -77,7 +77,7 @@
    
 </script>
 <!-- {{-- function for captcha  --}} -->
-<script>
+<!-- <script>
     function refreshCaptcha() {
         const refresh = document.querySelector(".refresh-btn");
         const captchaImg = document.getElementById('captchaImage');
@@ -102,10 +102,63 @@
                 }, 1000);
             });
     }
+</script> -->
+<script>
+    function refreshCaptcha() {
+    const refreshBtn = document.querySelector(".refresh-btn img"); // Refresh icon
+    const captchaImg = document.getElementById('captchaImage');
+
+    // Add spinning animation
+    refreshBtn.classList.add("animate-spin");
+
+    fetch('/refresh-captcha')
+        .then(response => response.json())
+        .then(data => {
+            if (data.captcha_src) {
+                captchaImg.src = data.captcha_src; // Update CAPTCHA image
+            } else {
+                console.error('Failed to update CAPTCHA');
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing CAPTCHA:', error);
+        })
+        .finally(() => {
+            // Remove spin animation after 1 second
+            setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
+        });
+}
+</script>
+<script>
+    function refreshCaptchaForOrderJudgement() {
+        const refreshBtn = document.querySelector(".refresh-btn-orderJudgement img"); // Select the refresh icon
+        const captchaImg = document.getElementById('captchaImageOrderJudgement');
+
+        // Add spin animation
+        refreshBtn.classList.add("animate-spin");
+
+        fetch('/refresh-captcha')
+        .then(response => response.json())
+        .then(data => {
+            if (data.captcha_src) {
+                captchaImg.src = data.captcha_src; // Update CAPTCHA image
+            } else {
+                console.error('Failed to update CAPTCHA');
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing CAPTCHA:', error);
+        })
+        .finally(() => {
+            // Remove spin animation after 1 second
+            setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
+        });
+    }
 </script>
 
+
 <!-- {{-- function for captcha for order judgement --}} -->
-<script>
+<!-- <script>
     function refreshCaptchaForOrderJudgement() {
         const refresh = document.querySelector(".refresh-btn-orderJudgement");
         const captchaImg = document.getElementById('captchaImageOrderJudgement');
@@ -130,7 +183,17 @@
                 }, 1000);
             });
     }
-</script>
+</script> -->
+<!-- <script>
+    function refreshCaptchaForOrderJudgement() {
+     fetch('/refresh-captcha')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('captchaImageOrderJudgement').src = data.captcha_src;
+            })
+            .catch(error => console.error('Error refreshing CAPTCHA:', error));
+        }
+ </script> -->
 <!-- {{-- function for change the input based on applied by  --}} -->
 <script>
     function toggleAdvocateField() {

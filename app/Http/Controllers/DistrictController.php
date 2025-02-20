@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Mews\Captcha\Facades\Captcha;
+use Gregwar\Captcha\CaptchaBuilder;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+
 
 class DistrictController extends Controller
 {
@@ -31,12 +35,20 @@ class DistrictController extends Controller
             $caseTypes = $caseTypeResponse->json();
         }
 
-        // Generate the CAPTCHA
-        $captcha = captcha_img('default');
+        // Generate the CAPTCHA using Gregwar Captcha
+        $builder = new CaptchaBuilder();
+        $builder->setPhrase(strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6))); // Generate a 6-character alphanumeric phrase
+        $builder->build(150, 48); // Set width & height
+
+        // Store CAPTCHA phrase in session
+        Session::put('captcha', $builder->getPhrase());
+
+        // Get CAPTCHA as inline image
+        $captcha = $builder->inline();
 
         // Return data to the view
         return view('dcPage', compact('districts', 'caseTypes', 'captcha'));
-    }
+    } 
     
     public function getEstablishments(Request $request)
     {

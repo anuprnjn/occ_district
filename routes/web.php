@@ -15,8 +15,9 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HCCaseTypeController;
 use App\Http\Controllers\JudgementController;
 use App\Http\Controllers\OrderCopyController;
-
+use Gregwar\Captcha\CaptchaBuilder;
 use App\Http\Controllers\admin\RoleController;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\admin\PermissionController;
@@ -73,16 +74,62 @@ Route::post('/resend-otp', [OtpController::class, 'resendOtp']);
 Route::post('/application-mobile-track', [OtpController::class, 'getApplicationDetails']);
 Route::post('/application-mobile-track-hc', [OtpController::class, 'getHCApplicationDetailsForMobile']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
+// Route::get('/refresh-captcha', function () {
+//     return response()->json(['captcha_src' => captcha_src('default')]); 
+// });
 Route::get('/refresh-captcha', function () {
-    return response()->json(['captcha_src' => captcha_src('default')]); 
+    // Generate a random alphanumeric CAPTCHA string
+    $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    $captchaPhrase = substr(str_shuffle($characters), 0, 6); // 6-character alphanumeric string
+
+    // Create a new CAPTCHA image
+    $builder = new CaptchaBuilder($captchaPhrase);
+    $builder->build(150, 48); // Set width & height
+
+    // Store the new CAPTCHA phrase in session
+    Session::put('captcha', $captchaPhrase);
+    Session::put('captcha_image', $builder->inline());
+
+    // Return the new CAPTCHA image in JSON response
+    return response()->json(['captcha_src' => $builder->inline()]);
 });
+// Route::post('/validate-captcha', function (Request $request) {
+//     // Step 1: Validate the CAPTCHA input using Mews CAPTCHA's built-in validation rule
+//     $request->validate([
+//         'captcha' => 'required|captcha', // Mews CAPTCHA validation rule
+//     ]);
+
+//     // Step 2: If validation passes, return success response
+//     return response()->json([
+//         'success' => true,
+//         'message' => 'CAPTCHA validation successful.',
+//     ]);
+// });
 Route::post('/validate-captcha', function (Request $request) {
-    // Step 1: Validate the CAPTCHA input using Mews CAPTCHA's built-in validation rule
-    $request->validate([
-        'captcha' => 'required|captcha', // Mews CAPTCHA validation rule
+    // Step 1: Validate the CAPTCHA input against the stored session value
+    $validator = Validator::make($request->all(), [
+        'captcha' => [
+            'required',
+            function ($attribute, $value, $fail) {
+                if ($value !== Session::get('captcha')) {
+                    $fail('Invalid CAPTCHA');
+                }
+            }
+        ],
     ]);
 
-    // Step 2: If validation passes, return success response
+    // Step 2: If validation fails, return error response
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid CAPTCHA. Please try again.',
+        ], 422);
+    }
+
+    // Step 3: Clear CAPTCHA session after successful validation to prevent reuse
+    Session::forget('captcha');
+
+    // Step 4: Return success response
     return response()->json([
         'success' => true,
         'message' => 'CAPTCHA validation successful.',
