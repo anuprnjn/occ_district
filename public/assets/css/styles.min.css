@@ -16375,7 +16375,7 @@ textarea.form-control-lg {
 }
 .left-sidebar {
   width: 260px;
-  background-color: #fff;
+  /* background-color: #fff; */
   position: absolute;
   transition: 0.2s ease-in;
   box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.03);
@@ -16398,13 +16398,14 @@ textarea.form-control-lg {
 }
 
 .sidebar-divider {
-  height: 1px;
+  height: 3px;
   width: calc(100% - 18px);
   display: block;
   margin: 13px 0;
   margin-left: 9px;
-  background-image: linear-gradient(90deg, transparent, transparent 50%, var(--bs-white) 50%, var(--bs-white) 100%), linear-gradient(90deg, var(--bs-border-color), var(--bs-border-color), var(--bs-border-color), var(--bs-border-color), var(--bs-border-color));
-  background-size: 7px 3px, 100% 3px;
+  background-image: radial-gradient(circle, #111C2D 30%, transparent 30%);
+  background-size: 7px 3px; /* Controls dot spacing */
+  background-repeat: repeat-x; /* Extends dots horizontally */
 }
 .sidebar-divider.lg {
   width: calc(100% - 32px);

@@ -3,16 +3,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Gregwar\Captcha\CaptchaBuilder;
+use Illuminate\Support\Facades\Session;
 
 class HCApplicationRegistrationController extends Controller
 {
     public function refreshCaptcha(Request $request)
     {
-        // Generate a new CAPTCHA image
-        $captcha = captcha_img('math');  // You can change 'flat' to other styles if needed
-
-        // Return the new CAPTCHA image
-        return response()->json(['captcha_image' => $captcha]);
+        // Generate a random alphanumeric CAPTCHA string
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $captchaPhrase = substr(str_shuffle($characters), 0, 6); // 6-character alphanumeric
+    
+        // Create a new CAPTCHA image
+        $builder = new CaptchaBuilder($captchaPhrase);
+        $builder->build(150, 48); // Set width & height
+    
+        // Store the new CAPTCHA phrase in session
+        Session::put('captcha', $captchaPhrase);
+        Session::put('captcha_image', $builder->inline());
+    
+        // Return the new CAPTCHA image in JSON response
+        return response()->json(['captcha_image' => $builder->inline()]);
     }
 
     public function hcRegisterApplication(Request $request)
