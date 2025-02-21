@@ -126,19 +126,7 @@
                     </div>
                   </a>
                 </li>
-
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('role_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">Role Type</span>
-                    </div>
-                  </a>
-                </li>
-                
+      
               </ul>
             </li>
 
@@ -154,12 +142,12 @@
               <ul aria-expanded="false" class="collapse first-level">
                 <li class="sidebar-item">
                   <a class="sidebar-link justify-content-between" 
-                  href="{{ route('permission_list') }}">
+                  href="{{ route('role_list') }}">
                     <div class="d-flex align-items-center gap-3">
                       <span class="d-flex">
                         <span class="icon-small"></span>
                       </span>
-                      <span class="hide-menu">Role And Permission</span>
+                      <span class="hide-menu">Role And Permission </span>
                     </div>
                   </a>
                 </li>

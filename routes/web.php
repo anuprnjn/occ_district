@@ -20,7 +20,7 @@ use App\Http\Controllers\admin\RoleController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
-use App\Http\Controllers\admin\PermissionController;
+
 
 
 Route::get('/', function () {
@@ -164,7 +164,8 @@ Route::post('/admin/submenu-update', [SubMenuController::class, 'updateSubMenu']
 Route::post('/submenu/delete', [SubMenuController::class, 'deleteSubMenu'])->name('submenu_delete');
 
 Route::get('/admin/roles', [RoleController::class, 'RoleList'])->name('role_list');
-Route::post('/admin//roles/add', [RoleController::class, 'addRole'])->name('role_add');
-Route::post('/admin/roles/update', [RoleController::class, 'updateRole'])->name('role_update');
+Route::get('/admin/roles/add', [RoleController::class, 'showAddRoleForm'])->name('add_role'); // Fixed method reference
+Route::post('/admin/roles/add', [RoleController::class, 'addRole'])->name('role_add'); // Post request for adding role
+Route::get('/admin/role/edit/{role_id}', [RoleController::class, 'editRole'])->name('role_edit');
+Route::post('/admin/role/update/{role_id}', [RoleController::class, 'updateRole'])->name('role_update');
 
-Route::get('/admin/permission', [PermissionController::class, 'PermissionList'])->name('permission_list');
