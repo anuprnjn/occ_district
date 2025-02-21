@@ -21,8 +21,7 @@ use App\Http\Controllers\admin\RoleController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
-use App\Http\Controllers\admin\PermissionController;
-use App\Http\Controllers\admin\PaymentController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
     return view('index');
