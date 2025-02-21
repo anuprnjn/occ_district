@@ -2122,7 +2122,7 @@ progress {
   --bs-table-bg-type: initial;
   --bs-table-color-state: initial;
   --bs-table-bg-state: initial;
-  --bs-table-color: var(--bs-body-color);
+  /* --bs-table-color: var(--bs-body-color); */
   --bs-table-bg: #fff;
   --bs-table-border-color: rgba(17, 28, 45, 0.0509803922);
   --bs-table-accent-bg: transparent;
@@ -2139,7 +2139,7 @@ progress {
 }
 .table > :not(caption) > * > * {
   padding: 16px 24px;
-  color: var(--bs-table-color-state, var(--bs-table-color-type, var(--bs-table-color)));
+  color: #000;
   background-color: var(--bs-table-bg);
   border-bottom-width: var(--bs-border-width);
   box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg)));
