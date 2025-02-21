@@ -50,7 +50,7 @@
             <div class="form-field">
                 <label for="captcha">Enter the Captcha<span>*</span></label>
                 <div class="flex justify-center items-center gap-1">
-                    <img id="captchaImage" src="{{ session('captcha_image') }}" alt="Captcha">
+                    <img id="captchaImage" src="{{ session('captcha_image') }}" alt="Captcha" class="rounded-md">
                     <input class="text-lg" type="text" id="captcha" name="captcha" required placeholder="Enter the captcha">
                     <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
                         <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">

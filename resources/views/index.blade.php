@@ -692,6 +692,13 @@ function submitJudgementForm(event) {
             requestData.HcFillingYear = filingYear;
         }
 
+        const searchBtn = document.getElementById('searchBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        searchBtn.disabled = true;
+        btnText.textContent = " ";
+        btnSpinner.classList.remove("hidden");
+
         fetch('/fetch-judgement-data', {
             method: 'POST',
             headers: {
@@ -708,13 +715,14 @@ function submitJudgementForm(event) {
                 // sessionStorage.setItem("caseInfo", JSON.stringify(data));
                 sessionStorage.setItem("responseData", JSON.stringify(data));
                 sessionStorage.setItem('urgent_fee', data.urgent_fee);
-               
-                const loadingOverlay = document.getElementById("loadingOverlay"); // Get loading div
+                
+                // const loadingOverlay = document.getElementById("loadingOverlay"); // Get loading div
 
                 // Show loading overlay
-                loadingOverlay.classList.remove("hidden");
-
-                window.scrollBy(0, 500);
+                // loadingOverlay.classList.remove("hidden");
+               
+                // window.scrollBy(0, 500);
+                setTimeout(() => window.scrollBy(0, 350), 200);
 
                 // Remove selected case type from session storage
                 sessionStorage.removeItem('selectedHcCaseType');
@@ -810,17 +818,23 @@ function submitJudgementForm(event) {
                                 </tr>
                             `;
                         });
-
+                        resetButton();
                         orderDetailsDiv.classList.remove("hidden");
                     } else {
                         
                             caseErrElement.classList.remove('hidden');
                             caseErrElement. innerHTML = 'No Cases found !!!';
+                            resetButton();
                     }
                    
-                    setTimeout(() => {
-                        loadingOverlay.classList.add("hidden");
-                    }, 2000);
+                    function resetButton() {
+                        searchBtn.disabled = false;
+                        btnText.textContent = "Search";
+                        btnSpinner.classList.add("hidden");
+                    }
+                    // setTimeout(() => {
+                    //     loadingOverlay.classList.add("hidden");
+                    // }, 2000);
                 }
 
                 // Fetch response data and populate table

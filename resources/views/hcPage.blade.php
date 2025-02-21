@@ -86,7 +86,7 @@
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
                 <!-- <img id="captchaImageOrderJudgement" src="{{ session('captcha_image') }} alt="Captcha"> -->
-                <img id="captchaImageOrderJudgement" src="{{ $captcha }}" alt="Captcha">
+                <img id="captchaImageOrderJudgement" src="{{ $captcha }}" alt="Captcha" class="rounded-md">
 
                 <input class="text-lg" type="text" id="captcha-hc-orderJudgement" name="captcha" required placeholder="Enter the expression">
                 <button type="button" class="refresh-btn-orderJudgement rounded-full hover:shadow-md" onclick="refreshCaptchaForOrderJudgement()" title="Refresh Captcha">
@@ -94,16 +94,19 @@
                 </button>
             </div>
         </div>
-                <div class="form-field mt-10">
-                    <button type="submit" class="btn btn-search" onclick="submitJudgementForm(event)">Search</button>
-                </div>
+        <div class="form-field mt-10">
+            <button type="submit" class="btn btn-search flex items-center justify-center gap-2" onclick="submitJudgementForm(event)" id="searchBtn">
+                <span id="btnText">Search</span>
+                <span id="btnSpinner" class=" animate-spin hidden border-2 border-white border-t-transparent rounded-full w-6 h-6"></span>
+            </button>
+        </div>
             </div>
         </form>
 
         <!-- response data of order and judgement copy in this div  -->
         <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
             <!-- Loading Overlay -->
-            <div id="loadingOverlay" class="loading_hc absolute inset-0 flex items-center justify-center z-10">
+            <!-- <div id="loadingOverlay" class="loading_hc absolute inset-0 flex items-center justify-center z-10">
                 <div class="flex flex-col items-center">
                     <svg class="animate-spin h-8 w-8 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -111,7 +114,7 @@
                     </svg>
                     <p class="mt-2 text-teal-600 font-semibold">Please wait...</p>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Title -->
             <h3 class="p-3 font-semibold sm:text-xl text-lg -mb-4">Order and Judgement Copy Details:</h3>
@@ -280,7 +283,7 @@
         <div class="form-field">
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
-            <img id="captchaImage" src="{{ $captcha }}" alt="Captcha">
+            <img id="captchaImage" src="{{ $captcha }}" alt="Captcha" class="rounded-md">
                 <input class="text-lg" type="text" id="captcha-hc" name="captcha" required placeholder="Enter the expression">
                 <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
                     <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">

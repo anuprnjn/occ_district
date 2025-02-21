@@ -65,7 +65,6 @@
             </li>
            
         </ul>
-       
     </nav>
     <main>
     <div class="main-top">

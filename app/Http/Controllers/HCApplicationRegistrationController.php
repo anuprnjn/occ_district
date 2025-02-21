@@ -10,17 +10,18 @@ class HCApplicationRegistrationController extends Controller
 {
     public function refreshCaptcha(Request $request)
     {
-        // Generate a random alphanumeric CAPTCHA string
-        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        $captchaPhrase = substr(str_shuffle($characters), 0, 6);
-    
-        // Create CAPTCHA image
-        $builder = new CaptchaBuilder($captchaPhrase);
+        // Generate a simple math equation
+        $num1 = rand(1, 9);
+        $num2 = rand(1, 9);
+        $mathEquation = "{$num1} + {$num2}";
+
+        // Store the correct answer in session
+        Session::put('captcha', $num1 + $num2);
+
+        // Create a CAPTCHA image with the equation
+        $builder = new CaptchaBuilder($mathEquation);
         $builder->build(150, 48);
-    
-        // Store only the CAPTCHA phrase in the session
-        Session::put('captcha', $captchaPhrase);
-    
+
         // Return new CAPTCHA image as JSON
         return response()->json(['captcha_src' => $builder->inline()]);
     }
