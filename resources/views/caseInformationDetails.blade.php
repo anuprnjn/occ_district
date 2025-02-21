@@ -47,7 +47,7 @@
         </table>
            <div class="flex justify-end items-start w-full gap-3 mt-2">
            <button class="order_btn bg-sky-500 w-[200px] text-white p-3 rounded-md hover:bg-sky-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="editUserDetails()">Edit details</button>
-           <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="submitUserDetails(event)">Pay now</button>
+           <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="paymentToMerchant(event)">Pay now</button>
            </div>
     </div>
 
@@ -122,6 +122,7 @@
             }
 
             totalAmount += isUrgent;
+            sessionStorage.setItem('paybleAmount',totalAmount);
 
             document.getElementById("applicantDetails").innerHTML = applicantDetailsHtml;
             document.getElementById("totalAmountSection").innerHTML = `₹${totalAmount.toFixed(2)}`;
@@ -242,7 +243,7 @@
 </script>     -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    let timeoutDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+    let timeoutDuration = 500 * 60 * 1000; // 5 minutes in milliseconds
     let timeout;
     let sessionExpired = false;
 
@@ -355,5 +356,40 @@
     // Attach event listener for form submission
     document.querySelector("button[onclick='submitUserDetails(event)']").onclick = submitUserDetails;
 });
-</script>    
+</script> 
+<script>
+    function paymentToMerchant(event){
+        event.preventDefault();
+
+        fetch('/fetch-merchant-details')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Error:", data.error);
+                } else {
+                    // console.log("Merchant Details:", data);
+                    const userData = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
+                    const payble_amount = sessionStorage.getItem("paybleAmount");
+                    const alertMessage = `
+                        Department ID: ${data.merchantDetails[0].deptid}
+                        IFMS Office Code: ${data.merchantDetails[0].ifmsofficecode}
+                        Receipt Head Code: ${data.merchantDetails[0].recieptheadcode}
+                        Security Code: ${data.merchantDetails[0].securitycode}
+                        Treas Code: ${data.merchantDetails[0].treascode}
+                        DEPTTRANID : ${data.departmentId}
+                        Depositer ID: ${data.depositerId}
+                        Depositer Name: ${userData.name}
+                        Amount: ${payble_amount}
+                        PAN: ${data.pan}
+                        ADDINFO01: ${data.AdditionalInfo01}
+                        ADDINFO02: ${data.AdditionalInfo02}
+                        ADDINFO03: ${data.AdditionalInfo03}
+                        ResponseURL: ${data.responseurl}
+                    `;
+                    alert(alertMessage);
+                }
+            })
+            .catch(error => console.error("Fetch error:", error));
+    }
+</script>  
 @endpush

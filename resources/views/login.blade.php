@@ -14,7 +14,7 @@
     <script src="{{ asset('passets/js/jquery_7.1.js')}}"></script>
 </head>
 <body class="flex items-center justify-center h-screen bg-cover bg-center" 
-      style="background-image: url('{{ asset('passets/images/law.jpg') }}');">
+      style="background-image: url('{{ asset('passets/images/justice.jpg') }}');">
 
     <div class="bg-slate-100/70 shadow-md rounded-lg p-6 max-w-md w-full backdrop-blur-lg">
         <h3 class="text-2xl font-bold text-center mb-6 flex items-center w-full justify-center gap-2"><img src="{{ asset('passets/images/icons/userlogin.svg')}}" class="w-12">REGISTERED USER LOGIN</h3>
@@ -48,10 +48,11 @@
                 </div>
             </div>
             <div class="form-field">
-                <label for="captcha">Enter the Captcha<span>*</span></label>
+                <label for="captcha">Evaluate the Expression<span>*</span></label>
                 <div class="flex justify-center items-center gap-1">
-                    <img id="captchaImage" src="{{ session('captcha_image') }}" alt="Captcha" class="rounded-md">
-                    <input class="text-lg" type="text" id="captcha" name="captcha" required placeholder="Enter the captcha">
+                    <!-- <img id="captchaImage" src="{{ session('captcha') }}" alt="Captcha" class="rounded-md"> -->
+                    <img id="captchaImage" src="" alt="Captcha" class="rounded-md">
+                    <input class="text-lg" type="text" id="captcha" name="captcha" required placeholder="Enter the expression">
                     <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
                         <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
                     </button>
@@ -65,7 +66,21 @@
             </div>
         </form>
     </div>
-
+<script>
+window.onload = function() {
+    fetch('/get-login-captcha')
+        .then(response => response.json())
+        .then(data => {
+            console.log("CAPTCHA fetched successfully:", data);
+            // Update the image source with the new CAPTCHA
+            document.getElementById('captchaImage').src = data.captcha_src;
+        })
+        .catch(error => {
+            console.error("Error fetching CAPTCHA:", error);
+            // alert("Error fetching CAPTCHA: " + error);
+        });
+};
+</script>  
 <script>
     // Toggle Password Visibility
     document.getElementById('togglePassword').addEventListener('click', function () {

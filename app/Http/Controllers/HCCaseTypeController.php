@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Mews\Captcha\Facades\Captcha;
 use Gregwar\Captcha\CaptchaBuilder;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class HCCaseTypeController extends Controller

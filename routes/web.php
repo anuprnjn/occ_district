@@ -15,12 +15,14 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HCCaseTypeController;
 use App\Http\Controllers\JudgementController;
 use App\Http\Controllers\OrderCopyController;
+use App\Http\Controllers\LoginController;
 use Gregwar\Captcha\CaptchaBuilder;
 use App\Http\Controllers\admin\RoleController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\admin\PermissionController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
     return view('index');
@@ -72,7 +74,9 @@ Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
 Route::post('/resend-otp', [OtpController::class, 'resendOtp']);
 Route::post('/application-mobile-track', [OtpController::class, 'getApplicationDetails']);
 Route::post('/application-mobile-track-hc', [OtpController::class, 'getHCApplicationDetailsForMobile']);
+Route::get('/get-login-captcha', [LoginController::class, 'getLoginCaptcha']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
+Route::get('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
 // Route::get('/refresh-captcha', function () {
 //     return response()->json(['captcha_src' => captcha_src('default')]); 
 // });
