@@ -11,15 +11,19 @@ class DCApplicationRegistrationController extends Controller
 {
     public function refreshCaptcha(Request $request)
     {
-        // Generate an alphanumeric CAPTCHA (6 characters)
-        $builder = new CaptchaBuilder();
-        $builder->setPhrase(strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6))); // Alphanumeric phrase
-        $builder->build(150, 48); // Set width & height
-    
-        // Store the new CAPTCHA phrase in session
-        Session::put('captcha', $builder->getPhrase());
-    
-        // Return the new CAPTCHA image in JSON response
+        // Generate a simple math equation
+        $num1 = rand(1, 9);
+        $num2 = rand(1, 9);
+        $mathEquation = "{$num1} + {$num2}";
+
+        // Store the correct answer in session
+        Session::put('captcha', $num1 + $num2);
+
+        // Create a CAPTCHA image with the equation
+        $builder = new CaptchaBuilder($mathEquation);
+        $builder->build(150, 48);
+
+        // Return new CAPTCHA image as JSON
         return response()->json(['captcha_src' => $builder->inline()]);
     }
     

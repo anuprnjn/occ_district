@@ -22,7 +22,6 @@ use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\admin\PermissionController;
 
-
 Route::get('/', function () {
     return view('index');
 });
@@ -78,19 +77,19 @@ Route::post('/register-application', [DCApplicationRegistrationController::class
 //     return response()->json(['captcha_src' => captcha_src('default')]); 
 // });
 Route::get('/refresh-captcha', function () {
-    // Generate a random alphanumeric CAPTCHA string
-    $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    $captchaPhrase = substr(str_shuffle($characters), 0, 6); // 6-character alphanumeric string
+    // Generate a simple math equation
+    $num1 = rand(1, 9);
+    $num2 = rand(1, 9);
+    $mathEquation = "{$num1} + {$num2}";
 
-    // Create a new CAPTCHA image
-    $builder = new CaptchaBuilder($captchaPhrase);
-    $builder->build(150, 48); // Set width & height
+    // Store the correct answer in session
+    Session::put('captcha', $num1 + $num2);
 
-    // Store the new CAPTCHA phrase in session
-    Session::put('captcha', $captchaPhrase);
-    Session::put('captcha_image', $builder->inline());
+    // Create a CAPTCHA image with the equation
+    $builder = new CaptchaBuilder($mathEquation);
+    $builder->build(150, 48);
 
-    // Return the new CAPTCHA image in JSON response
+    // Return new CAPTCHA image as JSON
     return response()->json(['captcha_src' => $builder->inline()]);
 });
 // Route::post('/validate-captcha', function (Request $request) {
@@ -111,7 +110,7 @@ Route::post('/validate-captcha', function (Request $request) {
         'captcha' => [
             'required',
             function ($attribute, $value, $fail) {
-                if ($value !== Session::get('captcha')) {
+                if ((int)$value !== Session::get('captcha')) {
                     $fail('Invalid CAPTCHA');
                 }
             }

@@ -65,7 +65,6 @@
             </li>
            
         </ul>
-        <!-- {{ route('admin.dashboard') }} -->
     </nav>
     <main>
     <div class="main-top">

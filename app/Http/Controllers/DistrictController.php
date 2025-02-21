@@ -35,13 +35,17 @@ class DistrictController extends Controller
             $caseTypes = $caseTypeResponse->json();
         }
 
-        // Generate the CAPTCHA using Gregwar Captcha
-        $builder = new CaptchaBuilder();
-        $builder->setPhrase(strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 6))); // Generate a 6-character alphanumeric phrase
+        // Generate two random numbers for the math CAPTCHA
+        $num1 = rand(1, 9);
+        $num2 = rand(1, 9);
+        $mathEquation = "{$num1} + {$num2}";
+
+        // Create the CAPTCHA image with the math equation
+        $builder = new CaptchaBuilder($mathEquation);
         $builder->build(150, 48); // Set width & height
 
-        // Store CAPTCHA phrase in session
-        Session::put('captcha', $builder->getPhrase());
+        // Store the correct answer in session
+        Session::put('captcha', $num1 + $num2);
 
         // Get CAPTCHA as inline image
         $captcha = $builder->inline();
