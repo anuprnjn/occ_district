@@ -22,7 +22,7 @@
                             @csrf
                             <div class="mb-3">
                                 <label for="menu_id" class="form-label">Select Menu</label>
-                                <select class="form-control" id="menu_id" name="menu_id" required>
+                                <select class="form-select" id="menu_id" name="menu_id" required>
                                     <option value="">-- Select Menu --</option>
                                     @foreach($menudata as $menu)
                                         <option value="{{ $menu['menu_id'] }}">{{ $menu['menu_name'] }}</option>
