@@ -167,6 +167,31 @@
                 
               </ul>
             </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:home-angle-line-duotone"></iconify-icon>
+                  </span>
+                  <span class="hide-menu">Payment Details</span>
+                </div>
+              </a>
+              <ul aria-expanded="false" class="collapse first-level">
+                <li class="sidebar-item">
+                  <a class="sidebar-link justify-content-between" 
+                  href="{{ route('payment_parameter_list') }}">
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="d-flex">
+                        <span class="icon-small"></span>
+                      </span>
+                      <span class="hide-menu">HC Payment Parameter</span>
+                    </div>
+                  </a>
+                </li>
+      
+              </ul>
+            </li>
             
            
             

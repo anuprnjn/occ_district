@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\admin\PaymentParameterController;
 
 Route::get('/', function () {
     return view('index');
@@ -170,4 +171,8 @@ Route::get('/admin/roles/add', [RoleController::class, 'showAddRoleForm'])->name
 Route::post('/admin/roles/add', [RoleController::class, 'addRole'])->name('role_add'); // Post request for adding role
 Route::get('/admin/role/edit/{role_id}', [RoleController::class, 'editRole'])->name('role_edit');
 Route::post('/admin/role/update/{role_id}', [RoleController::class, 'updateRole'])->name('role_update');
+
+Route::get('/admin/payment-parameter-list', [PaymentParameterController::class, 'parameterList'])->name('payment_parameter_list');
+
+Route::post('/admin/payment-parameter/update', [PaymentParameterController::class, 'update'])->name('payment_parameter_update');
 
