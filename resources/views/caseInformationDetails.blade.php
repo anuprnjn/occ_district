@@ -12,7 +12,7 @@
                 ( NOTE: It is advised to pay through Netbanking/BHIM UPI with the SBI epay gateway option )
             </span>
         </marquee>
-</div>
+    </div>
         <table class="w-full border border-gray-300">
             <tbody id="caseInfoTable">
                 <!-- Data will be populated dynamically -->
@@ -68,12 +68,11 @@
 @push('scripts')
    
 <script>
-    
     document.addEventListener("DOMContentLoaded", function () {
     fetch('/get-urgent-fee')
         .then(response => response.json())
         .then(data => {
-            console.log(data.urgent_fee);
+            // console.log(data.urgent_fee);
             const urgent_fee_value = parseFloat(data.urgent_fee)
             const caseInfo = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
 
@@ -187,7 +186,7 @@
 
     if (!caseInfo) {
         sessionStorage.removeItem('caseInfo');
-        window.location.href = "/"; // Redirect to the index page
+        window.location.href = "/"; 
     }
 });
 </script>  
@@ -293,9 +292,9 @@
 
             if (responseData.success) {
                 alert(`Success! Application Number: ${responseData.application_number}\nMessage: ${responseData.message}`);
-                // sessionStorage.removeItem('caseInfo');
-                // sessionStorage.removeItem('caseInfoDetails');
                 paymentToMerchant(event, responseData.application_number)
+                // sessionStorage.removeItem('caseInfo');
+                // sessionStorage.removeItem('caseInfoDetails');   
             } else {
                 alert("Error: Data insertion failed.");
             }
@@ -336,7 +335,6 @@ function paymentToMerchant(event, applicationNumber) {
             if (form) {
                 // Set encrypted value
                 form.querySelector('input[name="requestparam"]').value = data.enc_val;
-                
                 // Use submit correctly
                 // form.submit();
             } else {

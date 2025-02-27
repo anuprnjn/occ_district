@@ -43,9 +43,11 @@ Route::get('/login', function () {
 Route::get('/trackStatus', function () {
     return view('trackStatus');
 })->name('trackStatus');
+
 Route::get('/trackStatusDetails', function () {
     return view('trackStatusDetails');
 })->name('trackStatusDetails');
+
 Route::get('/pendingPayments', function () {
     return view('pendingPayments');
 })->name('pendingPayments');
@@ -70,6 +72,10 @@ Route::get('/transactionStatus', function () {
     return view('transactionStatus');
 })->name('transactionStatus');
 
+Route::get('/screenReader', function () {
+    return view('screenReader');
+})->name('screenReader');
+
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::get('/hcPage', [HCCaseTypeController::class, 'showCases']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
@@ -80,43 +86,20 @@ Route::post('/application-mobile-track', [OtpController::class, 'getApplicationD
 Route::post('/application-mobile-track-hc', [OtpController::class, 'getHCApplicationDetailsForMobile']);
 Route::get('/get-login-captcha', [LoginController::class, 'getLoginCaptcha']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
-// Route::get('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
 Route::post('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
 Route::post('/set-urgent-fee', [FeeController::class, 'setUrgentFee']);
 Route::get('/get-urgent-fee', [FeeController::class, 'getUrgentFee']);
-// Route::get('/refresh-captcha', function () {
-//     return response()->json(['captcha_src' => captcha_src('default')]); 
-// });
 Route::get('/refresh-captcha', function () {
-    // Generate a simple math equation
     $num1 = rand(1, 9);
     $num2 = rand(1, 9);
     $mathEquation = "{$num1} + {$num2}";
-
-    // Store the correct answer in session
     Session::put('captcha', $num1 + $num2);
-
-    // Create a CAPTCHA image with the equation
     $builder = new CaptchaBuilder($mathEquation);
     $builder->build(150, 48);
-
-    // Return new CAPTCHA image as JSON
     return response()->json(['captcha_src' => $builder->inline()]);
 });
-// Route::post('/validate-captcha', function (Request $request) {
-//     // Step 1: Validate the CAPTCHA input using Mews CAPTCHA's built-in validation rule
-//     $request->validate([
-//         'captcha' => 'required|captcha', // Mews CAPTCHA validation rule
-//     ]);
 
-//     // Step 2: If validation passes, return success response
-//     return response()->json([
-//         'success' => true,
-//         'message' => 'CAPTCHA validation successful.',
-//     ]);
-// });
 Route::post('/validate-captcha', function (Request $request) {
-    // Step 1: Validate the CAPTCHA input against the stored session value
     $validator = Validator::make($request->all(), [
         'captcha' => [
             'required',
@@ -127,19 +110,13 @@ Route::post('/validate-captcha', function (Request $request) {
             }
         ],
     ]);
-
-    // Step 2: If validation fails, return error response
     if ($validator->fails()) {
         return response()->json([
             'success' => false,
             'message' => 'Invalid CAPTCHA. Please try again.',
         ], 422);
     }
-
-    // Step 3: Clear CAPTCHA session after successful validation to prevent reuse
     Session::forget('captcha');
-
-    // Step 4: Return success response
     return response()->json([
         'success' => true,
         'message' => 'CAPTCHA validation successful.',

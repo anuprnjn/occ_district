@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/caseInformation" : "home",
         "/caseInformationDetails" : "home",
         "/transactionStatus" : "home",
+        // "/screenReader" : "home",
     };
 
     // Remove 'active' from all <li> elements
