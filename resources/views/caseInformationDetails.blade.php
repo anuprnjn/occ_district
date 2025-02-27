@@ -124,7 +124,7 @@
                         totalAmount += amount;
 
                         let tableRow = `
-                            <tr class="hover:bg-gray-50 transition">
+                            <tr>
                                 <td class="p-2">${order.orderNumber}</td>
                                 <td class="p-2">${order.orderDate}</td>
                                 <td class="p-2">${order.numPages}</td>
