@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\FeeController;
 
 Route::get('/', function () {
     return view('index');
