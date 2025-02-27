@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/trackStatusDetails": "track_app",
         "/caseInformation" : "home",
         "/caseInformationDetails" : "home",
+        "/transactionStatus" : "home",
     };
 
     // Remove 'active' from all <li> elements

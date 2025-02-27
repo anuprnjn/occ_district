@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\FeeController;
 
 Route::get('/', function () {
     return view('index');
@@ -65,6 +66,10 @@ Route::get('/caseInformationDetails', function () {
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
 
+Route::get('/transactionStatus', function () {
+    return view('transactionStatus');
+})->name('transactionStatus');
+
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::get('/hcPage', [HCCaseTypeController::class, 'showCases']);
 Route::post('/get-establishments', [DistrictController::class, 'getEstablishments'])->name('get-establishments');
@@ -75,7 +80,10 @@ Route::post('/application-mobile-track', [OtpController::class, 'getApplicationD
 Route::post('/application-mobile-track-hc', [OtpController::class, 'getHCApplicationDetailsForMobile']);
 Route::get('/get-login-captcha', [LoginController::class, 'getLoginCaptcha']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
-Route::get('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
+// Route::get('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
+Route::post('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
+Route::post('/set-urgent-fee', [FeeController::class, 'setUrgentFee']);
+Route::get('/get-urgent-fee', [FeeController::class, 'getUrgentFee']);
 // Route::get('/refresh-captcha', function () {
 //     return response()->json(['captcha_src' => captcha_src('default')]); 
 // });

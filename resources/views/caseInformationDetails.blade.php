@@ -3,7 +3,6 @@
 @section('content')
 
 <section class="content-section flex flex-col gap-4">
-
     <!-- Case Information & Orders -->
     <div class="w-full dark_form rounded-md  -mt-10">
     <div class="flex items-center">
@@ -47,87 +46,106 @@
         </table>
            <div class="flex justify-end items-start w-full gap-3 mt-2">
            <button class="order_btn bg-sky-500 w-[200px] text-white p-3 rounded-md hover:bg-sky-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="editUserDetails()">Edit details</button>
-           <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="paymentToMerchant(event)">Pay now</button>
+            <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="submitUserDetails(event)">
+                Pay now
+            </button>
            </div>
     </div>
+
+    <form name="eGrassClient" method="post" action="https://finance.jharkhand.gov.in/jegras/payment.aspx">
+
+        <input type="hidden" name="requestparam" value="">
+
+        <!-- <input type="submit" name="submit" value="Submit"> -->
+        <input type="submit" value="Submit" class="hidden">
+    </form>
+
 
 </section>
 
 @endsection
 
 @push('scripts')
+   
 <script>
+    
     document.addEventListener("DOMContentLoaded", function () {
-        const caseInfo = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
-        const urgent_fee_value = sessionStorage.getItem("urgent_fee");
-       
-        // urgent_fee_value = 5.00
-        if (caseInfo) {
-            let applicantDetailsHtml = `
+    fetch('/get-urgent-fee')
+        .then(response => response.json())
+        .then(data => {
+            const urgent_fee_value = parseFloat(data.urgent_fee)
+            const caseInfo = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
+
+            if (caseInfo) {
+                let applicantDetailsHtml = `
+                    <tr>
+                        <td class="border p-2 font-bold">Name</td>
+                        <td class="border p-2">${caseInfo.name}</td>
+                        <td class="border p-2 font-bold">Mobile: ${caseInfo.mobile}</td>
+                    </tr>
+                    <tr>
+                        <td class="border p-2 font-bold">Email</td>
+                        <td class="border p-2">${caseInfo.email}</td>
+                        <td class="border p-2 font-bold">Applied By: <span class="capitalize">${caseInfo.selectedValue}</span></td>
+                    </tr>
+                    ${caseInfo.adv_res ? `
+                    <tr>
+                        <td class="border p-2 font-bold">Advocate Registration</td>
+                        <td class="border p-2">${caseInfo.adv_res}</td>
+                        <td class="border p-2 font-bold">Request Mode:
+                            <span class="px-3 py-1 rounded-md text-white ${caseInfo.requestMode === 'urgent' ? 'bg-red-500' : 'bg-green-500'}">
+                                ${caseInfo.requestMode.charAt(0).toUpperCase() + caseInfo.requestMode.slice(1)}
+                            </span>
+                            ${caseInfo.requestMode === 'urgent' ? `<span class="text-xs text-gray-600 ml-2">(Urgent Fee ₹${urgent_fee_value})</span>` : ''}
+                        </td>
+                    </tr>` : `
+                    <tr>
+                        <td class="border p-2 font-bold">Request Mode</td>
+                        <td class="border p-2">
+                            <span class="px-3 py-1 rounded-md text-white ${caseInfo.requestMode === 'urgent' ? 'bg-red-500' : 'bg-green-500'}">
+                                ${caseInfo.requestMode.charAt(0).toUpperCase() + caseInfo.requestMode.slice(1)}
+                            </span>
+                            ${caseInfo.requestMode === 'urgent' ? `<span class="text-xs ml-2">(Urgent Fee ₹${urgent_fee_value})</span>` : ''}
+                        </td>
+                        <td class="border p-2"></td>
+                    </tr>`}
                 <tr>
-                <td class="border p-2 font-bold">Name</td>
-                <td class="border p-2">${caseInfo.name}</td>
-                <td class="border p-2 font-bold">Mobile: ${caseInfo.mobile}</td>
-            </tr>
-            <tr>
-                <td class="border p-2 font-bold">Email</td>
-                <td class="border p-2">${caseInfo.email}</td>
-                <td class="border p-2 font-bold">Applied By: <span class="capitalize">${caseInfo.selectedValue}</span></td>
-            </tr>
-            ${caseInfo.adv_res ? `
-            <tr>
-                <td class="border p-2 font-bold">Advocate Registration</td>
-                <td class="border p-2">${caseInfo.adv_res}</td>
-                <td class="border p-2 font-bold">Request Mode:
-                    <span class="px-3 py-1 rounded-md text-white ${caseInfo.requestMode === 'urgent' ? 'bg-red-500' : 'bg-green-500'}">
-                        ${caseInfo.requestMode.charAt(0).toUpperCase() + caseInfo.requestMode.slice(1)}
-                    </span>
-                    ${caseInfo.requestMode === 'urgent' ? `<span class="text-xs text-gray-600 ml-2">(Urgent Fee ₹${parseFloat(urgent_fee_value) || 0})</span>` : ''}
-                </td>
-            </tr>` : `
-            <tr>
-                <td class="border p-2 font-bold">Request Mode</td>
-                <td class="border p-2">
-                    <span class="px-3 py-1 rounded-md text-white ${caseInfo.requestMode === 'urgent' ? 'bg-red-500' : 'bg-green-500'}">
-                        ${caseInfo.requestMode.charAt(0).toUpperCase() + caseInfo.requestMode.slice(1)}
-                    </span>
-                    ${caseInfo.requestMode === 'urgent' ? `<span class="text-xs ml-2">(Urgent Fee ₹${parseFloat(urgent_fee_value) || 0})</span>` : ''}
-                </td>
-                <td class="border p-2"></td>
-            </tr>`}
-            <tr>
-                <td class="border p-2 font-bold">Total Payable Amount</td>
-                <td class="border p-2 text-green-500" colspan="2" id="totalAmountSection"></td>
-            </tr>
-            `;
+                    <td class="border p-2 font-bold">Total Payable Amount</td>
+                    <td class="border p-2 text-green-500" colspan="2" id="totalAmountSection"></td>
+                </tr>
+                `;
 
-            let totalAmount = 0;
-            let isUrgent = caseInfo.requestMode === 'urgent' ? parseFloat(urgent_fee_value) || 0 : 0;
+                let totalAmount = 0;
+                let isUrgent = caseInfo.requestMode === 'urgent' ? urgent_fee_value : 0;
 
-            if (caseInfo.selectedOrders && caseInfo.selectedOrders.length > 0) {
-                caseInfo.selectedOrders.forEach(order => {
-                    let amount = parseFloat(order.amount) || 0;
-                    totalAmount += amount;
+                if (caseInfo.selectedOrders && caseInfo.selectedOrders.length > 0) {
+                    caseInfo.selectedOrders.forEach(order => {
+                        let amount = parseFloat(order.amount) || 0;
+                        totalAmount += amount;
 
-                    let tableRow = `
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="p-2">${order.orderNumber}</td>
-                            <td class="p-2">${order.orderDate}</td>
-                            <td class="p-2">${order.numPages}</td>
-                            <td class="p-2 font-bold text-green-600">₹${amount.toFixed(2)}</td>
-                        </tr>`;
-                    
-                    document.querySelector("#ordersTable tbody").insertAdjacentHTML('beforeend', tableRow);
-                });
+                        let tableRow = `
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="p-2">${order.orderNumber}</td>
+                                <td class="p-2">${order.orderDate}</td>
+                                <td class="p-2">${order.numPages}</td>
+                                <td class="p-2 font-bold text-green-600">₹${amount.toFixed(2)}</td>
+                            </tr>`;
+                        
+                        document.querySelector("#ordersTable tbody").insertAdjacentHTML('beforeend', tableRow);
+                    });
+                }
+
+                totalAmount += isUrgent;
+                sessionStorage.setItem('paybleAmount', totalAmount);
+
+                document.getElementById("applicantDetails").innerHTML = applicantDetailsHtml;
+                document.getElementById("totalAmountSection").innerHTML = `₹${totalAmount.toFixed(2)}`;
             }
-
-            totalAmount += isUrgent;
-            sessionStorage.setItem('paybleAmount',totalAmount);
-
-            document.getElementById("applicantDetails").innerHTML = applicantDetailsHtml;
-            document.getElementById("totalAmountSection").innerHTML = `₹${totalAmount.toFixed(2)}`;
-        }
-    });
+        })
+        .catch(error => {
+            console.error('Error fetching urgent fee:', error);
+        });
+});
 </script>
 
 <script>
@@ -172,75 +190,7 @@
     }
 });
 </script>  
-<!-- <script>
-    async function submitUserDetails(event) {
-        event.preventDefault();
 
-        try {
-            const userData = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
-            const caseData = JSON.parse(sessionStorage.getItem('caseInfo'));
-
-            var casenoss = caseData.cases[0].caseno;
-            var fillingnoss = caseData.cases[0].fillingno;
-            console.log(userData);
-
-            const matchCaseNo = casenoss.match(/\/(\d+)\/?/);
-            const matchCaseYear = casenoss.match(/\/(\d{4})$/);
-            const matchFilingNo = fillingnoss.match(/\/(\d+)\/?/);
-            const matchFilingYear = fillingnoss.match(/\/(\d{4})$/);
-
-            const caseNumber = matchCaseNo ? matchCaseNo[1] : "";
-            const caseYear = matchCaseYear ? matchCaseYear[1] : "";
-            const filingNumber = matchFilingNo ? matchFilingNo[1] : "";
-            const filingYear = matchFilingYear ? matchFilingYear[1] : caseYear; // If filing year is not found, use case year
-
-            const requestData = {
-                applicant_name: userData.name,
-                mobile_number: userData.mobile,
-                email: userData.email,
-                case_type: caseData.cases[0].casetype,
-                filingcase_type: caseData.cases[0].filingcasetype,
-                case_number: caseNumber,
-                filing_number: filingNumber,
-                case_year: caseYear,
-                filing_year: filingYear,
-                request_mode: userData.requestMode,
-                applied_by: userData.selectedValue,
-                cino: caseData.cases[0].cino, // Use the actual CINO
-                advocate_registration_number: userData.adv_res ? userData.adv_res : null, // Send adv_reg if available, else null
-                order_details: userData.selectedOrders.map((order, index) => ({
-                    order_no: index + 1,
-                    order_date: order.orderDate,
-                    case_number: caseNumber,
-                    filing_number: filingNumber,
-                    page_count: order.numPages,
-                    amount: order.amount
-                }))
-            };
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const response = await fetch("/submit-order-copy", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken
-                },
-                body: JSON.stringify(requestData)
-            });
-
-            const responseData = await response.json();
-
-            if (responseData.success) {
-                alert(`Success! Application Number: ${responseData.application_number}\nMessage: ${responseData.message}`);
-            } else {
-                alert("Error: Data insertion failed.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("An error occurred while submitting the request.");
-        }
-    }
-</script>     -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     let timeoutDuration = 500 * 60 * 1000; // 5 minutes in milliseconds
@@ -342,8 +292,9 @@
 
             if (responseData.success) {
                 alert(`Success! Application Number: ${responseData.application_number}\nMessage: ${responseData.message}`);
-                sessionStorage.removeItem('caseInfo');
-                sessionStorage.removeItem('caseInfoDetails');
+                // sessionStorage.removeItem('caseInfo');
+                // sessionStorage.removeItem('caseInfoDetails');
+                paymentToMerchant(event, responseData.application_number)
             } else {
                 alert("Error: Data insertion failed.");
             }
@@ -355,41 +306,45 @@
 
     // Attach event listener for form submission
     document.querySelector("button[onclick='submitUserDetails(event)']").onclick = submitUserDetails;
+    
 });
-</script> 
-<script>
-    function paymentToMerchant(event){
-        event.preventDefault();
+function paymentToMerchant(event, applicationNumber) {
+    event.preventDefault();
 
-        fetch('/fetch-merchant-details')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error("Error:", data.error);
-                } else {
-                    // console.log("Merchant Details:", data);
-                    const userData = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
-                    const payble_amount = sessionStorage.getItem("paybleAmount");
-                    const alertMessage = `
-                        Department ID: ${data.merchantDetails[0].deptid}
-                        IFMS Office Code: ${data.merchantDetails[0].ifmsofficecode}
-                        Receipt Head Code: ${data.merchantDetails[0].recieptheadcode}
-                        Security Code: ${data.merchantDetails[0].securitycode}
-                        Treas Code: ${data.merchantDetails[0].treascode}
-                        DEPTTRANID : ${data.departmentId}
-                        Depositer ID: ${data.depositerId}
-                        Depositer Name: ${userData.name}
-                        Amount: ${payble_amount}
-                        PAN: ${data.pan}
-                        ADDINFO01: ${data.AdditionalInfo01}
-                        ADDINFO02: ${data.AdditionalInfo02}
-                        ADDINFO03: ${data.AdditionalInfo03}
-                        ResponseURL: ${data.responseurl}
-                    `;
-                    alert(alertMessage);
-                }
-            })
-            .catch(error => console.error("Fetch error:", error));
-    }
-</script>  
+    const userData = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
+    const paybleAmount = sessionStorage.getItem("paybleAmount");
+
+    fetch('/fetch-merchant-details', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ userData, paybleAmount, applicationNumber })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error("Error:", data.error);
+        } else {
+            console.log("Encrypted Value:", data.enc_val);
+            console.log("Application Number:", data.application_number)
+            // Find the form correctly
+            const form = document.querySelector('form[name="eGrassClient"]');
+
+            if (form) {
+                // Set encrypted value
+                form.querySelector('input[name="requestparam"]').value = data.enc_val;
+                
+                // Use submit correctly
+                // form.submit();
+            } else {
+                console.error("Form eGrassClient not found!");
+            }
+        }
+    })
+    .catch(error => console.error("Fetch error:", error));
+}
+</script> 
+
 @endpush

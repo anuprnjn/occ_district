@@ -714,8 +714,18 @@ function submitJudgementForm(event) {
 
                 // sessionStorage.setItem("caseInfo", JSON.stringify(data));
                 sessionStorage.setItem("responseData", JSON.stringify(data));
-                sessionStorage.setItem('urgent_fee', data.urgent_fee);
-                
+                // sessionStorage.setItem('urgent_fee', data.urgent_fee);
+                fetch('/set-urgent-fee', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                    },
+                    body: JSON.stringify({ urgent_fee: data.urgent_fee}) 
+                })
+                .then(response => response.json())
+                .then(data => console.log(data.message, "Stored Fee:", data.urgent_fee))
+                .catch(error => console.error('Error:', error));
                 // const loadingOverlay = document.getElementById("loadingOverlay"); // Get loading div
 
                 // Show loading overlay
@@ -839,7 +849,7 @@ function submitJudgementForm(event) {
 
                 // Fetch response data and populate table
                 const responseData = data;
-                sessionStorage.setItem('urgent_fee',data.urgent_fee);
+                // sessionStorage.setItem('urgent_fee',data.urgent_fee);
                 const count_data = data.order_count;
 
                 populateTable(responseData, count_data);

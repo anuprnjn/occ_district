@@ -7,6 +7,7 @@ return [
     'hc_base_url' => env('API_BASE_URL_HC', 'http://localhost/occ_api/high_court/'),
     'hc_order_copy_base_url' => env('API_BASE_URL_HC_order_copy', 'http://localhost/occ_api/high_court_order_copy/'),
     'admin_url' => env('API_admin', 'http://localhost/occ_api/admin/'),
+    'transaction_url' => env('API_transaction', 'http://localhost/occ_api/transaction/'),
     ],
 
     /*

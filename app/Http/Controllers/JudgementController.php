@@ -36,7 +36,7 @@ class JudgementController extends Controller
         }
 
         // Call the external API
-        $apiUrl = 'http://192.168.58.197/occ_api/high_court_order_copy/case_search.php';
+        $apiUrl = 'http://localhost/occ_api/high_court_order_copy/case_search.php';
         $response = Http::post($apiUrl, $apiData);
         
         if ($response->successful()) {
