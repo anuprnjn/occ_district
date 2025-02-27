@@ -21,7 +21,7 @@
 
         <!-- Orders Table -->
         <h2 class="text-md font-semibold mt-4 mb-3">Orders</h2>
-        <div class="overflow-x-auto rounded-md">
+        <div class="overflow-x-auto">
             <table class="w-full border border-gray-300 text-sm" id="ordersTable">
                 <thead>
                     <tr class="bg-gray-800 text-white text-left text-md">
