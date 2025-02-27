@@ -73,6 +73,7 @@
     fetch('/get-urgent-fee')
         .then(response => response.json())
         .then(data => {
+            console.log(data.urgent_fee);
             const urgent_fee_value = parseFloat(data.urgent_fee)
             const caseInfo = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
 

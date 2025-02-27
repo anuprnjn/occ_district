@@ -714,6 +714,7 @@ function submitJudgementForm(event) {
 
                 // sessionStorage.setItem("caseInfo", JSON.stringify(data));
                 sessionStorage.setItem("responseData", JSON.stringify(data));
+                
                 // sessionStorage.setItem('urgent_fee', data.urgent_fee);
                 fetch('/set-urgent-fee', {
                     method: "POST",
@@ -724,14 +725,9 @@ function submitJudgementForm(event) {
                     body: JSON.stringify({ urgent_fee: data.urgent_fee}) 
                 })
                 .then(response => response.json())
-                .then(data => console.log(data.message, "Stored Fee:", data.urgent_fee))
+                .then(data => console.log('Data fetched'))
                 .catch(error => console.error('Error:', error));
-                // const loadingOverlay = document.getElementById("loadingOverlay"); // Get loading div
-
-                // Show loading overlay
-                // loadingOverlay.classList.remove("hidden");
-               
-                // window.scrollBy(0, 500);
+                
                 setTimeout(() => window.scrollBy(0, 350), 200);
 
                 // Remove selected case type from session storage
