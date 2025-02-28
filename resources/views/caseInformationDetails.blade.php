@@ -336,7 +336,7 @@ function paymentToMerchant(event, applicationNumber) {
                 // Set encrypted value
                 form.querySelector('input[name="requestparam"]').value = data.enc_val;
                 // Use submit correctly
-                // form.submit();
+                form.submit();
             } else {
                 console.error("Form eGrassClient not found!");
             }

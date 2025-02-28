@@ -19,7 +19,15 @@
             <div class="row">
               
                <div class="card-body" style="margin-top:-70px;">
-              <h5 class="card-title fw-semibold mb-4">Form Template Designs</h5>
+               <h5 class="card-title fw-semibold mb-4">
+                  @if(session('user.caseType') === 'DC')
+                      District Court user logged in
+                  @elseif(session('user.caseType') === 'HC')
+                      High Court user logged in
+                  @else
+                      User logged in
+                  @endif
+              </h5>
               <div class="card">
                 <div class="card-body">
                   <form>

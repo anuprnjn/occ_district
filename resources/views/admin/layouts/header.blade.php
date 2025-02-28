@@ -8,6 +8,7 @@
   <link rel="shortcut icon" href="{{ asset('passets/images/favicon.png') }}" type="image/png">
   <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css')}}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -26,18 +27,43 @@
       </ul>
         <a class="d-flex align-items-center text-decoration-none" href="/admin">
             <img src="{{ asset('passets/images/favicon.png') }}" alt="High Court Logo" width="45" class="ms-2 img-fluid">
-            <h6 class="ms-3 mt-2  text-white fw-bold text-uppercase" style="letter-spacing: 0px;">
-                ( Admin Panel ) <br><span class="fs-6 fw-normal text-warning">Online Certified Copy</span>
+            <h6 class="ms-3 mt-2 text-white fw-bold text-uppercase" style="letter-spacing: 0px;">
+                <span class="fs-6 fw-normal text-warning">Online Certified Copy</span>
             </h6>
         </a>
+        <span class="text-white">
+          @if(session('user.name'))
+              ( Welcome, <span class="text-success text-uppercase">{{ session('user.name') }}</span> )
+          @endif
+      </span>
     </div>
-
+    <div class="d-flex flex-wrap gap-6">
       <div class="d-lg-flex align-items-center gap-4">
+     
+        <!-- establishmant dropdown  -->
+        <div class="btn-group">
+                <button class="btn bg-info-subtle text-info dropdown-toggle @if(session('user.caseType') !== 'DC') d-none @endif" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Select Establishment
+        </button>
+              </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <li><a class="dropdown-item" href="javascript:void(0)">Action</a></li>
+                      <li>
+                          <a class="dropdown-item" href="javascript:void(0)">Another action</a>
+                      </li>
+                      <li>
+                          <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
+                      </li>
+                  </ul>
+              </div> 
+          </div>
+    <!-- establishment dropdown ends  -->
+      
         <div class="dropdown">
           <a class="btn btn-outline-warning d-flex align-items-center gap-2 px-4 py-2 rounded-pill" 
             href="javascript:void(0)" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fa-solid fa-user-tie fs-5"></i>
-            <span class="fw-semibold">Admin Profile</span>
+            <i class="fa-solid fa-user-shield"></i>
+            <span class="fw-semibold">Admin</span>
             <i class="fa-solid fa-chevron-down fs-6"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up shadow-lg p-3" 
@@ -49,7 +75,7 @@
             </li>
             <li>
               <a target="_blank" href="#" class="dropdown-item d-flex align-items-center gap-2 py-2">
-                <i class="fa-solid fa-user-pen fs-5 text-success"></i> Update Admin Details
+                <i class="fa-solid fa-user-pen fs-5 text-success"></i> Update profile
               </a>
             </li>
             <li>
@@ -62,10 +88,9 @@
             </li>
            
             <li>
-              <a class="btn btn-danger d-flex align-items-center gap-2 justify-content-center w-100 py-2 rounded-pill" 
-                href="javascript:void(0)">
-                <i class="fa-solid fa-sign-out-alt fs-5"></i> LOGOUT
-              </a>
+              <button class="btn btn-danger d-flex align-items-center gap-2 justify-content-center w-100 py-2 rounded-pill" id="logoutButton">
+                  <i class="fa-solid fa-sign-out-alt fs-5"></i> LOGOUT
+              </button>
             </li>
           </ul>
         </div>
@@ -201,4 +226,29 @@
       </div>
       <!-- End Sidebar scroll-->
     </aside>
+    <!-- Logout Confirmation Modal -->
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white"> <!-- Updated header color -->
+        <h5 class="modal-title" id="logoutModalLabel" style="color:white !important;"><i class="fas fa-sign-out" style="margin-right: 10px;"></i>Confirm Logout</h5>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+          <p>Are you sure you want to log out?</p>
+          <div class="progress" style="height: 10px;">
+            <div id="logoutProgressBar" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <p id="timerText" class="mt-3">Redirecting in <span id="countdown">10</span> seconds...</p>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top: -20px;">
+        <button type="button" class="btn btn-secondary btn-md" id="cancelLogout" data-bs-dismiss="modal" style="width: 120px;">Cancel</button>
+        <button type="button" class="btn btn-primary btn-md" id="confirmLogout" style="width: 120px;">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <div class="body-wrapper">

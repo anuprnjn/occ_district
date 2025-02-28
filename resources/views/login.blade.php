@@ -18,13 +18,13 @@
 
     <div class="bg-slate-100/70 shadow-md rounded-lg p-6 max-w-md w-full backdrop-blur-lg">
         <h3 class="text-2xl font-bold text-center mb-6 flex items-center w-full justify-center gap-2"><img src="{{ asset('passets/images/icons/userlogin.svg')}}" class="w-12">REGISTERED USER LOGIN</h3>
-
+        <div id="error-message" class="text-red-500 text-center -mt-4 hidden"></div>
         <!-- Court Selection Dropdown -->
         <div class="mb-4">
             <label class='text-sm'>Select Court <span class="text-red-500">*</span></label>
             <select id="courtType" class=" block p-[11px] mt-2">
-                <option value="high_court">High Court User Login</option>
-                <option value="civil_court">Civil Court User Login</option>
+                <option value="HC">High Court User Login</option>
+                <option value="DC">Civil Court User Login</option>
             </select>
         </div>
 
@@ -40,7 +40,7 @@
             <div class="mb-4">
                 <label class='text-sm'>Password <span class="text-red-500">*</span></label>
                 <div class="relative">
-                <input type="password" id="password" name="password" placeholder="Enter your password" required class='mt-2'>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required class="mt-2" autocomplete="current-password">
                     <button type="button" id="togglePassword" class="absolute mt-2 inset-y-1 right-3 flex items-center">
                         <img id="eyeOpen" src="{{ asset('passets/images/icons/eyeopen.svg')}}" alt="Show" class="w-6">
                         <img id="eyeClosed" src="{{ asset('passets/images/icons/eyeclose.svg')}}" alt="Hide" class="w-6 hidden">
@@ -67,19 +67,19 @@
         </form>
     </div>
 <script>
-window.onload = function() {
-    fetch('/get-login-captcha')
-        .then(response => response.json())
-        .then(data => {
-            console.log("CAPTCHA fetched successfully:", data);
-            // Update the image source with the new CAPTCHA
-            document.getElementById('captchaImage').src = data.captcha_src;
-        })
-        .catch(error => {
-            console.error("Error fetching CAPTCHA:", error);
-            // alert("Error fetching CAPTCHA: " + error);
-        });
-};
+    window.onload = function() {
+        fetch('/get-login-captcha')
+            .then(response => response.json())
+            .then(data => {
+                // console.log("CAPTCHA fetched successfully:", data);
+                // Update the image source with the new CAPTCHA
+                document.getElementById('captchaImage').src = data.captcha_src;
+            })
+            .catch(error => {
+                console.error("Error fetching CAPTCHA:", error);
+                // alert("Error fetching CAPTCHA: " + error);
+            });
+    };
 </script>  
 <script>
     // Toggle Password Visibility
@@ -101,47 +101,79 @@ window.onload = function() {
 
 </script>
 <script>
-function userLogin(event){
+async function userLogin(event) {
     event.preventDefault();
+
     const userId = document.getElementById('userID').value.trim();
     const pass = document.getElementById('password').value.trim();
+    const courtType = document.getElementById('courtType').value;
     const captcha = document.getElementById('captcha').value.trim();
-    if(userId === ''){
-        alert('Please enter UserID')
-        return;
-    }if(pass === ''){
-        alert('Please enter Password')
-        return;
-    }if(captcha === ''){
-        alert('Please enter Captcha')
-        return;
-    }
-    fetch('/validate-captcha', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',  // Ensure the response is expected in JSON format
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            captcha: captcha,
-        }),
-    })
-    .then(response => response.json()) // Ensure you're parsing the JSON response
-    .then(data => {
-        if (!data.success) {
-            alert('CAPTCHA validation failed. Please try again.');
-            document.getElementById('captcha').value = '';  // Clear captcha input field
-            refreshCaptcha(); // Optional: refresh captcha image
-            return;  // Stop further validation if CAPTCHA fails
+    const errorDiv = document.getElementById('error-message'); 
+    const loginButton = document.querySelector('.btn-submit'); 
+    
+    errorDiv.classList.add("hidden");
+    errorDiv.innerText = "";
+
+    if (!userId) return showError("Please enter User ID");
+    if (!pass) return showError("Please enter Password");
+    if (!captcha) return showError("Please enter Captcha");
+
+    try {
+        loginButton.disabled = true;
+        loginButton.innerText = "Logging in...";
+
+        // Validate CAPTCHA
+        let captchaResponse = await fetch('/validate-captcha', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ captcha: captcha })
+        });
+
+        let captchaData = await captchaResponse.json();
+        if (!captchaData.success) {
+            refreshCaptcha();
+            return showError("CAPTCHA validation failed. Please try again.");
         }
-    })
-    .catch(error => {
-        console.error('CAPTCHA validation error:', error);
-        alert('An error occurred while validating the CAPTCHA.');
-    });
+
+        // Perform Login
+        let loginResponse = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ username: userId, password: pass, courtType: courtType })
+        });
+
+        let loginData = await loginResponse.json();
+
+        if (loginData.success) {
+            window.location.href = loginData.redirect;
+        } else {
+            refreshCaptcha();
+            showError(loginData.message || "Invalid credentials. Please try again.");
+        }
+    } catch (error) {
+        console.error("Login Error:", error);
+        showError("Something went wrong. Please try again.");
+    } finally {
+        loginButton.disabled = false;
+        loginButton.innerText = "Login";
     }
-</script> 
+}
+
+// Function to show error messages
+function showError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.innerText = message;
+    errorDiv.classList.remove("hidden");
+}
+</script>    
 
 <script>
     function refreshCaptcha() {
@@ -156,6 +188,7 @@ function userLogin(event){
             .then(data => {
                 if (data.captcha_src) {
                     captchaImg.src = data.captcha_src;
+                    document.getElementById('captcha').value = '';
                 } else {
                     console.error('Failed to update CAPTCHA');
                 }
@@ -164,7 +197,6 @@ function userLogin(event){
                 console.error('Error refreshing CAPTCHA:', error);
             })
             .finally(() => {
-                // Remove spin animation after 1 second
                 setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
             });
     }

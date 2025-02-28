@@ -22,6 +22,9 @@ class FeeController extends Controller
     {
         $urgentFee = Session::get('urgent_fee', 5.00); 
         // dd(Session::all());
+        // $hashedPassword = bcrypt('tushar');
+        // dd($hashedPassword);
+        // exit();
         return response()->json([
             'urgent_fee' => $urgentFee,
         ]);

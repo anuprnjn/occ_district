@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/application-details": "home",
         "/trackStatusDetails": "track_app",
         "/caseInformation" : "home",
-        "/caseInformationDetails" : "home",
+        "/occ/CDPay" : "home",
         "/transactionStatus" : "home",
         // "/screenReader" : "home",
     };

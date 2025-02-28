@@ -16810,3 +16810,23 @@ ul {
   width: 100%;
   line-height: 20px;
 }
+/* Custom Modal Header */
+.modal-header.bg-danger {
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+/* Progress Bar Styling */
+.progress {
+  background-color: #f5f5f5;
+}
+
+.progress-bar {
+  transition: width 1s linear;
+}
+
+/* Modal Button Styles */
+.modal-footer .btn {
+  font-weight: bold;
+  border-radius: 12px;
+}
