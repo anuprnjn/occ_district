@@ -104,29 +104,30 @@
     }
 </script> -->
 <script>
-    function refreshCaptcha() {
+async function refreshCaptcha() {
     const refreshBtn = document.querySelector(".refresh-btn img"); // Refresh icon
     const captchaImg = document.getElementById('captchaImage');
 
     // Add spinning animation
     refreshBtn.classList.add("animate-spin");
 
-    fetch('/refresh-captcha')
-        .then(response => response.json())
-        .then(data => {
-            if (data.captcha_src) {
-                captchaImg.src = data.captcha_src; // Update CAPTCHA image
-            } else {
-                console.error('Failed to update CAPTCHA');
-            }
-        })
-        .catch(error => {
-            console.error('Error refreshing CAPTCHA:', error);
-        })
-        .finally(() => {
-            // Remove spin animation after 1 second
-            setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
-        });
+    try {
+        const response = await fetch('/refresh-captcha');
+        const data = await response.json();
+
+        if (data.captcha_src) {
+            captchaImg.src = data.captcha_src; // Update CAPTCHA image
+        } else {
+            console.error('Failed to update CAPTCHA');
+            alert('Failed to refresh CAPTCHA. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error refreshing CAPTCHA:', error);
+        alert('An error occurred while refreshing the CAPTCHA.');
+    } finally {
+        // Ensure the spin animation is removed after 1 second
+        setTimeout(() => refreshBtn.classList.remove("animate-spin"), 1000);
+    }
 }
 </script>
 <script>

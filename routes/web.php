@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\FeeController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
@@ -70,7 +71,7 @@ Route::get('/occ/CDPay', function () {
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
 
-Route::get('/transactionStatus', function () {
+Route::get('/occ/gras_resp_cc', function () {
     return view('transactionStatus');
 })->name('transactionStatus');
 
@@ -92,47 +93,12 @@ Route::post('/register-application', [DCApplicationRegistrationController::class
 Route::post('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
 Route::post('/set-urgent-fee', [FeeController::class, 'setUrgentFee']);
 Route::get('/get-urgent-fee', [FeeController::class, 'getUrgentFee']);
-Route::get('/refresh-captcha', function () {
-    $num1 = rand(1, 9);
-    $num2 = rand(1, 9);
-    $mathEquation = "{$num1} + {$num2}";
-    Session::put('captcha', $num1 + $num2);
-    $builder = new CaptchaBuilder($mathEquation);
-    $builder->build(150, 48);
-    return response()->json(['captcha_src' => $builder->inline()]);
-});
-
-Route::post('/validate-captcha', function (Request $request) {
-    $validator = Validator::make($request->all(), [
-        'captcha' => [
-            'required',
-            function ($attribute, $value, $fail) {
-                if ((int)$value !== Session::get('captcha')) {
-                    $fail('Invalid CAPTCHA');
-                }
-            }
-        ],
-    ]);
-    if ($validator->fails()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid CAPTCHA. Please try again.',
-        ], 422);
-    }
-    Session::forget('captcha');
-    return response()->json([
-        'success' => true,
-        'message' => 'CAPTCHA validation successful.',
-    ]);
-});
+Route::get('/refresh-captcha', [CaptchaController::class, 'refreshCaptcha']);
+Route::post('/validate-captcha', [CaptchaController::class, 'validateCaptcha']);
 Route::post('/fetch-application-details', [ApplicationController::class, 'fetchApplicationDetails'])->name('fetch_application_details');
-
 Route::post('/hc-register-application', [HCApplicationRegistrationController::class, 'hcRegisterApplication']);
-
 Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fetchHcApplicationDetails'])->name('fetch_hc_application_details');
-
 Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgementData']);
-
 Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy']);
 
 

@@ -251,7 +251,7 @@ function handleCaseInformationSubmit(event) {
         btnSpinner.classList.add("hidden");
         submitBtn.disabled = false;
 
-        window.location.href = '/occ/CIDPay';
+        window.location.href = '/occ/CDPay';
     }, 1500);
 }
 

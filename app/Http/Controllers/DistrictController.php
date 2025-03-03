@@ -39,20 +39,54 @@ class DistrictController extends Controller
         $num1 = rand(1, 9);
         $num2 = rand(1, 9);
         $mathEquation = "{$num1} + {$num2}";
-
-        // Create the CAPTCHA image with the math equation
-        $builder = new CaptchaBuilder($mathEquation);
-        $builder->build(150, 48); // Set width & height
-
+    
         // Store the correct answer in session
         Session::put('captcha', $num1 + $num2);
-
-        // Get CAPTCHA as inline image
-        $captcha = $builder->inline();
+       
+        $captcha = $this->generateCaptchaImage($mathEquation);
 
         // Return data to the view
         return view('dcPage', compact('districts', 'caseTypes', 'captcha'));
     } 
+    private function generateCaptchaImage($text)
+    {
+        $width = 150;
+        $height = 50;
+    
+        // Create an image canvas
+        $image = imagecreatetruecolor($width, $height);
+    
+        // Define colors
+        $backgroundColor = imagecolorallocate($image, 255, 255, 255); // White
+        $textColor = imagecolorallocate($image, 0, 0, 0); // Black
+        $lineColor = imagecolorallocate($image, 200, 200, 200); // Gray (for noise)
+        
+        // Fill the background
+        imagefilledrectangle($image, 0, 0, $width, $height, $backgroundColor);
+    
+        // Add some noise lines
+        for ($i = 0; $i < 5; $i++) {
+            imageline($image, rand(0, $width), rand(0, $height), rand(0, $width), rand(0, $height), $lineColor);
+        }
+    
+        // Add the text to the image
+        $fontSize = 20; // Built-in font size
+        $textX = rand(20, 40);
+        $textY = rand(10, 20);
+        imagestring($image, $fontSize, $textX, $textY, $text, $textColor);
+    
+        // Start output buffering
+        ob_start();
+        imagepng($image); // Output image as PNG
+        $imageData = ob_get_contents();
+        ob_end_clean();
+    
+        // Destroy image
+        imagedestroy($image);
+    
+        // Return base64-encoded image
+        return 'data:image/png;base64,' . base64_encode($imageData);
+    }
     
     public function getEstablishments(Request $request)
     {
