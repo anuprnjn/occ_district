@@ -114,12 +114,6 @@
           <ul id="sidebarnav">
             
             <li class="sidebar-item">
-              <a class="sidebar-link" href="{{ route('index') }}" aria-expanded="false">
-                <iconify-icon icon="solar:atom-line-duotone"></iconify-icon>
-                <span class="hide-menu">Dashboard</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
               <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
                 <div class="d-flex align-items-center gap-3">
                   <span class="d-flex">
@@ -151,6 +145,18 @@
                     </div>
                   </a>
                 </li>
+
+                <li class="sidebar-item">
+                  <a class="sidebar-link justify-content-between" 
+                  href="{{ route('payment_parameter_list') }}">
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="d-flex">
+                        <span class="icon-small"></span>
+                      </span>
+                      <span class="hide-menu">HC Payment Parameter</span>
+                    </div>
+                  </a>
+                </li>
       
               </ul>
             </li>
@@ -178,18 +184,28 @@
                 </li>
                 <li class="sidebar-item">
                   <a class="sidebar-link justify-content-between" 
-                  href="{{ route('submenu_list') }}">
+                  href="{{ route('hc_user_list') }}">
                     <div class="d-flex align-items-center gap-3">
                       <span class="d-flex">
                         <span class="icon-small"></span>
                       </span>
-                      <span class="hide-menu">User List</span>
+                      <span class="hide-menu">Highcourt User List </span>
                     </div>
                   </a>
                 </li>
 
-                
-                
+                <li class="sidebar-item">
+                  <a class="sidebar-link justify-content-between" 
+                  href="{{ route('dc_user_list') }}">
+                    <div class="d-flex align-items-center gap-3">
+                      <span class="d-flex">
+                        <span class="icon-small"></span>
+                      </span>
+                      <span class="hide-menu">District User List</span>
+                    </div>
+                  </a>
+                </li>
+
               </ul>
             </li>
 
@@ -197,26 +213,64 @@
               <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
                 <div class="d-flex align-items-center gap-3">
                   <span class="d-flex">
-                    <iconify-icon icon="solar:home-angle-line-duotone"></iconify-icon>
+                    <iconify-icon icon="solar:document-text-line-duotone" class=""></iconify-icon>
                   </span>
-                  <span class="hide-menu">Payment Details</span>
+                  <span class="hide-menu">Highcourt Request</span>
                 </div>
               </a>
               <ul aria-expanded="false" class="collapse first-level">
                 <li class="sidebar-item">
                   <a class="sidebar-link justify-content-between" 
-                  href="{{ route('payment_parameter_list') }}">
+                  href="{{ route('hc_web_application_list') }}">
                     <div class="d-flex align-items-center gap-3">
                       <span class="d-flex">
                         <span class="icon-small"></span>
                       </span>
-                      <span class="hide-menu">HC Payment Parameter</span>
+                      <span class="hide-menu">Web Copy</span>
                     </div>
                   </a>
                 </li>
-      
+
+                
+                  <li class="sidebar-item">
+                    <a class="sidebar-link justify-content-between" 
+                    href="{{ route('hc_other_copy') }}">
+                      <div class="d-flex align-items-center gap-3">
+                        <span class="d-flex">
+                          <span class="icon-small"></span>
+                        </span>
+                        <span class="hide-menu">Others Copy</span>
+                      </div>
+                    </a>
+                  </li>
               </ul>
             </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="d-flex">
+                    <iconify-icon icon="solar:document-text-line-duotone" class=""></iconify-icon>
+                  </span>
+                  <span class="hide-menu">District Request</span>
+                </div>
+              </a>
+              <ul aria-expanded="false" class="collapse first-level">
+                  <li class="sidebar-item">
+                    <a class="sidebar-link justify-content-between" 
+                    href="{{ route('dc_other_copy') }}">
+                      <div class="d-flex align-items-center gap-3">
+                        <span class="d-flex">
+                          <span class="icon-small"></span>
+                        </span>
+                        <span class="hide-menu">Others Copy</span>
+                      </div>
+                    </a>
+                  </li>
+              </ul>
+            </li>
+
+            
             
            
             
