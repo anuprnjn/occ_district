@@ -12,7 +12,7 @@ class FeeController extends Controller
         $urgentFee = $request->input('urgent_fee'); 
         Session::put('urgent_fee', $urgentFee);
         Session::save();
-        dd(Session::all());
+        // dd(Session::all());
         
         return response()->json([
             'message' => 'Urgent fee stored in session',
