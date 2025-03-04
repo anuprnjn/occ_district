@@ -67,7 +67,7 @@ Route::get('/caseInformation', function () {
     return view('caseInformation');
 })->name('caseInformation');
 
-Route::get('/occ/CDPay', function () {
+Route::get('/occ/cd_pay', function () {
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
 
