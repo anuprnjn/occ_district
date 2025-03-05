@@ -34,31 +34,25 @@
                                 <th>Date</th>
                             </tr>
                         </thead>
-                    
                         <tbody>
-                            @forelse ($dcuserdata as $index => $hcuser)
+                            @forelse ($dcuserdata as $index => $dcuser)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $hcuser['application_number'] }}</td>
-                                    <td>{{ $hcuser['applicant_name'] }}</td>
-                                    <td>{{ $hcuser['mobile_number'] }}</td>
-                                    <td>{{ $hcuser['case_type_name'].'/'. $hcuser['case_filling_number'].'/'.$hcuser['case_filling_year']}}
-                                      
-                                        @if ($hcuser['selected_method'] == 'F') (Filing No) 
-                                    
-                                       @elseif ($hcuser['selected_method'] == 'C')(Case No)
-                                             
-                                       @else
-                                         {{ $hcuser['selected_method'] }}  {{-- Default fallback --}}
-                                       @endif
-                                    
+                                    <td>{{ $dcuser->application_number }}</td>
+                                    <td>{{ $dcuser->applicant_name }}</td>
+                                    <td>{{ $dcuser->mobile_number }}</td>
+                                    <td>{{ $dcuser->case_type_name . '/' . $dcuser->case_filling_number . '/' . $dcuser->case_filling_year }}
+                                        @if ($dcuser->selected_method == 'F') (Filing No) 
+                                        @elseif ($dcuser->selected_method == 'C') (Case No)
+                                        @else
+                                            {{ $dcuser->selected_method }} {{-- Default fallback --}}
+                                        @endif
                                     </td>
-                                    <td>{{ $hcuser['created_at'] }}</td>
-                                    
+                                    <td>{{ $dcuser->created_at }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center">No HC Users found</td>
+                                    <td colspan="7" class="text-center">No DC Users found</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -41,13 +41,12 @@
                             @forelse ($hcuserdata as $index => $hcuser)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $hcuser['application_number'] }}</td>
-                                    <td>{{ $hcuser['applicant_name'] }}</td>
-                                    <td>{{ $hcuser['mobile_number'] }}</td>
-                                    <td>{{ $hcuser['type_name'].'/'. $hcuser['case_number'].'/'.$hcuser['case_year']}}</td>
-                                    <td>{{ $hcuser['type_name'].'/'. $hcuser['filing_number'].'/'.$hcuser['filing_year']}}</td>
-                                    <td>{{ $hcuser['created_at'] }}</td>
-                                    
+                                    <td>{{ $hcuser->application_number }}</td>
+                                    <td>{{ $hcuser->applicant_name }}</td>
+                                    <td>{{ $hcuser->mobile_number }}</td>
+                                    <td>{{ $hcuser->type_name }}/{{ $hcuser->case_number }}/{{ $hcuser->case_year }}</td>
+                                    <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}</td>
+                                    <td>{{ $hcuser->created_at }}</td>
                                 </tr>
                             @empty
                                 <tr>

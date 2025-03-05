@@ -4,57 +4,54 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class HcWebApplicationController extends Controller
 {
-    // Fetch HC User List
+    // Fetch HC User List from database
     public function listHcWebApplication()
-{
-    try {
-        $apiUrl = config('app.api.admin_url') . '/fetch_hc_web_application.php';
-        $hcUserResponse = Http::timeout(10)->get($apiUrl);
+    {
+        try {
+            // Retrieve data using Laravel Query Builder
+            $hcuserdata = DB::table('hc_order_copy_applicant_registration as apr')
+                ->select(
+                    'apr.application_id',
+                    'apr.application_number',
+                    'apr.cino',
+                    'apr.applicant_name',
+                    'apr.mobile_number',
+                    'apr.email',
+                    DB::raw('COALESCE(ct1.type_name, ct2.type_name) AS type_name'), // Handles case type and filing case type
+                    'apr.case_type',
+                    'apr.case_number',
+                    'apr.case_year',
+                    'apr.filingcase_type',
+                    'apr.filing_number',
+                    'apr.filing_year',
+                    'apr.request_mode',
+                    'apr.applied_by',
+                    'apr.advocate_registration_number',
+                    'apr.status',
+                    'apr.payment_status',
+                    'apr.created_by',
+                    'apr.updated_by',
+                    'apr.created_at',
+                    'apr.updated_at'
+                )
+                ->leftJoin('high_court_case_type as ct1', 'ct1.case_type', '=', 'apr.case_type')
+                ->leftJoin('high_court_case_type as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
+                ->orderBy('apr.created_at', 'desc')
+                ->get();
 
-        // Check for HTTP errors
-        if ($hcUserResponse->failed()) {
-            Log::error('Failed to fetch HC User Data', [
-                'status' => $hcUserResponse->status(),
-                'response' => $hcUserResponse->body()
-            ]);
+            // Return view with data using compact
+            return view('admin.hc_web_copy.hc_web_application_list', compact('hcuserdata'));
 
-            return view('admin.hc_web_copy.hc_web_application_list', [
-                'hcuserdata' => []
-            ])->with('error', 'Failed to retrieve data.');
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
+
+            return view('admin.hc_web_copy.hc_web_application_list', compact('hcuserdata'))
+                ->with('error', 'An error occurred while fetching data.');
         }
-
-        // Parse JSON response
-        $hcuserdata = $hcUserResponse->json();
-
-        // Ensure 'applications' key exists
-        if (!isset($hcuserdata['applications']) || !is_array($hcuserdata['applications'])) {
-            Log::error('Invalid API response format', ['response' => $hcuserdata]);
-
-            return view('admin.hc_web_copy.hc_web_application_list', [
-                'hcuserdata' => []
-            ])->with('error', 'Invalid API response.');
-        }
-
-        // Return view with data
-        return view('admin.hc_web_copy.hc_web_application_list', [
-            'hcuserdata' => $hcuserdata['applications']
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
-
-        return view('admin.hc_web_copy.hc_web_application_list', [
-            'hcuserdata' => []
-        ])->with('error', 'An error occurred while fetching data.');
     }
-}
-
-
-
-
 }

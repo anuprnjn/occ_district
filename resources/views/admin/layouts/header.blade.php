@@ -37,33 +37,32 @@
           @endif
       </span>
     </div>
+    
     <div class="d-flex flex-wrap gap-6">
+       <!-- establishmant dropdown  -->
+       <div class="btn-group">
+        @if(session('user.caseType') === 'DC' && session('user.establishments'))
+      <select  id="establishment" name="establishment">
+        <option value="">-- Select Establishment --</option>
+        @foreach(session('user.establishments') as $establishment)
+            <option value="{{ $establishment['est_code'] }}">
+                {{ $establishment['estname'] }}
+            </option>
+        @endforeach
+    </select>
+    @endif
+      </div> 
+  </div>
+<!-- establishment dropdown ends  -->
       <div class="d-lg-flex align-items-center gap-4">
      
-        <!-- establishmant dropdown  -->
-        <div class="btn-group">
-                <button class="btn bg-info-subtle text-info dropdown-toggle @if(session('user.caseType') !== 'DC') d-none @endif" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            Select Establishment
-        </button>
-              </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <li><a class="dropdown-item" href="javascript:void(0)">Action</a></li>
-                      <li>
-                          <a class="dropdown-item" href="javascript:void(0)">Another action</a>
-                      </li>
-                      <li>
-                          <a class="dropdown-item" href="javascript:void(0)">Something else here</a>
-                      </li>
-                  </ul>
-              </div> 
-          </div>
-    <!-- establishment dropdown ends  -->
+       
       
         <div class="dropdown">
           <a class="btn btn-outline-warning d-flex align-items-center gap-2 px-4 py-2 rounded-pill" 
             href="javascript:void(0)" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fa-solid fa-user-shield"></i>
-            <span class="fw-semibold">Admin</span>
+            <span class="fw-semibold">{{ session('user.role_name') }}</span>
             <i class="fa-solid fa-chevron-down fs-6"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up shadow-lg p-3" 

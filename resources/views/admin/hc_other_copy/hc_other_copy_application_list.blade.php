@@ -39,22 +39,21 @@
                             @forelse ($hcuserdata as $index => $hcuser)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $hcuser['application_number'] }}</td>
-                                    <td>{{ $hcuser['applicant_name'] }}</td>
-                                    <td>{{ $hcuser['mobile_number'] }}</td>
-                                    <td>{{ $hcuser['case_type_name'].'/'. $hcuser['case_filling_number'].'/'.$hcuser['case_filling_year']}}
-                                      
-                                        @if ($hcuser['selected_method'] == 'F') (Filing No) 
-                                    
-                                       @elseif ($hcuser['selected_method'] == 'C')(Case No)
-                                             
-                                       @else
-                                         {{ $hcuser['selected_method'] }}  {{-- Default fallback --}}
-                                       @endif
-                                    
+                                    <td>{{ $hcuser->application_number }}</td>
+                                    <td>{{ $hcuser->applicant_name }}</td>
+                                    <td>{{ $hcuser->mobile_number }}</td>
+                                    <td>
+                                        {{ $hcuser->case_type_name . '/' . $hcuser->case_filling_number . '/' . $hcuser->case_filling_year }}
+                                        
+                                        @if ($hcuser->selected_method == 'F') 
+                                            (Filing No) 
+                                        @elseif ($hcuser->selected_method == 'C')
+                                            (Case No)
+                                        @else
+                                            {{ $hcuser->selected_method }}  {{-- Default fallback --}}
+                                        @endif
                                     </td>
-                                    <td>{{ $hcuser['created_at'] }}</td>
-                                    
+                                    <td>{{ \Carbon\Carbon::parse($hcuser->created_at)->format('d-m-Y H:i:s') }}</td>
                                 </tr>
                             @empty
                                 <tr>

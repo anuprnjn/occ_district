@@ -90,11 +90,19 @@ class LoginController extends Controller
 
         try {
             // Call external API
-            $response = Http::post("http://localhost/occ_api/admin/login.php", $credentials);
+            if($request->courtType=="HC"){
+                $response = Http::post(config('app.api.admin_url') .'/login.php', $credentials);
+            }
+            else if($request->courtType=="DC"){
+                $response = Http::post(config('app.api.admin_url') .'/login_dc.php', $credentials);
+            }
+           
+
+
             $data = $response->json();
 
             // Log response for debugging
-            \Log::info('Login API Response:', $data);
+            Log::info('Login API Response:', $data);
 
             // Check if API returned user data correctly
             if ($response->successful() && isset($data['user'])) {
@@ -119,7 +127,7 @@ class LoginController extends Controller
 
         } catch (\Exception $e) {
             // Log the error
-            \Log::error('Login API Error: ' . $e->getMessage());
+            Log::error('Login API Error: ' . $e->getMessage());
 
             return response()->json([
                 "success" => false,
