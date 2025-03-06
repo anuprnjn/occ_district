@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>@yield('title')</title>
-</head>
-<body>
-    @include('admin.layouts.header')
 
-    <main>
-        @yield('content')
-    </main>
+    @include('admin.layouts.header')
+    
+    @yield('content')
 
     @include('admin.layouts.footer')
-</body>
-</html>
+
+    <!-- Include any additional styles -->
+@stack('styles')
+
+<!-- Include any additional scripts -->
+@stack('scripts')

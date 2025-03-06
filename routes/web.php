@@ -78,7 +78,6 @@ Route::get('/occ/cd_pay', function () {
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
 
-
 Route::get('/screenReader', function () {
     return view('screenReader');
 })->name('screenReader');
@@ -112,7 +111,7 @@ Route::get('/get-caseInformation-data', [SessionDataController::class, 'getCaseI
 //admin routes **************************************************************
 
 Route::middleware([AuthenticateUser::class])->group(function () {
-    Route::get('/admin', function () {
+    Route::get('/admin/index', function () {
         return view('admin.dashboard');
     })->name('index');
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
@@ -145,6 +144,8 @@ Route::get('/admin/dc-user-edit/{id}', [DcUserController::class, 'editDcUser'])-
 Route::post('/admin/dc-user-update/{id}', [DcUserController::class, 'updateDcUser'])->name('dc_user_update'); // Keep it as POST
 
 Route::get('/admin/hc-web-application', [HcWebApplicationController::class, 'listHcWebApplication'])->name('hc_web_application_list');
+Route::get('/admin/hc-web-application/{encryptedAppNumber}', [HcWebApplicationController::class, 'viewHcWebApplication'])
+    ->name('hc-web-application.view');
 Route::get('/admin/hc-other-copy', [HcOtherCopyController::class, 'listHcOtherCopy'])->name('hc_other_copy');
 Route::get('/admin/dc-other-copy', [DcOtherCopyController::class, 'listDcOtherCopy'])->name('dc_other_copy');
 
