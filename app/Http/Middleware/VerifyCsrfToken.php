@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace App\Http\Middleware;
 
@@ -20,6 +20,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'submit-order-copy',
-        '/occ/gras_res_cc',  
+        'api/*',  
     ];
 }

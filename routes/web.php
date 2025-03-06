@@ -33,6 +33,7 @@ use App\Http\Controllers\SessionDataController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
 
+
 Route::get('/', function () {
     return view('index');
 });
@@ -77,19 +78,6 @@ Route::get('/occ/cd_pay', function () {
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
 
-// Route::match(['get', 'post'], '/occ/gras_res_cc', function (Request $request) {
-//     return view('transactionStatus')->with('responseData', $request->all());
-// })->name('transactionStatus');
-Route::match(['get', 'post'], '/occ/gras_res_cc', function (Request $request) {
-    // Log the incoming request data for debugging
-    \Log::info('Received Data:', $request->all());
-
-    return response()->json([
-        'message' => 'Request received!',
-        'method' => $request->method(),  // To log whether it's a GET or POST request
-        'data' => $request->all()        // Returns all the POST data
-    ]);
-})->name('transactionStatus');
 
 Route::get('/screenReader', function () {
     return view('screenReader');
