@@ -115,7 +115,7 @@ class LoginController extends Controller
                 return response()->json([
                     "success" => true,
                     "message" => "Login successful!",
-                    "redirect" => url('/admin') 
+                    "redirect" => url('/admin/index') 
                 ]);
             }
 

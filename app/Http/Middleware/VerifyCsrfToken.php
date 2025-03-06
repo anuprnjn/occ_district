@@ -18,8 +18,9 @@ class VerifyCsrfToken extends Middleware
      *
      * @var array<int, string>
      */
+
     protected $except = [
-        'submit-order-copy',
-        '/occ/gras_res_cc',  
+        'submit-order-copy', // Exclude this route from CSRF protection
     ];
+
 }
