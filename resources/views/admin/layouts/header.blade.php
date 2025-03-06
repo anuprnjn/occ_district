@@ -1,307 +1,288 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>High Court of Jharkhand || ADMIN PANNEL</title>
-  <link rel="shortcut icon" href="{{ asset('passets/images/favicon.png') }}" type="image/png">
-  <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css')}}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-
-<body>
-<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
-
-    <!--  App Topstrip -->
-    <div class="app-topstrip py-2 bg-dark px-3 w-100 d-lg-flex align-items-center justify-content-between">
-    <div class="d-flex align-items-center justify-content-center gap-3 mb-2 mb-lg-0">
-      <ul class="navbar-nav">
-        <li class="nav-item d-block d-xl-none">
-          <a class="nav-link sidebartoggler " id="headerCollapse" href="javascript:void(0)">
-          <i class="fa-solid fa-bars text-white" style="font-size:18px;"></i>
-          </a>
-        </li>
-      </ul>
-        <a class="d-flex align-items-center text-decoration-none" href="/admin">
-            <img src="{{ asset('passets/images/favicon.png') }}" alt="High Court Logo" width="45" class="ms-2 img-fluid">
-            <h6 class="ms-3 mt-2 text-white fw-bold text-uppercase" style="letter-spacing: 0px;">
-                <span class="fs-6 fw-normal text-warning">Online Certified Copy</span>
-            </h6>
-        </a>
-        <span class="text-white">
-          @if(session('user.name'))
-              ( Welcome, <span class="text-success text-uppercase">{{ session('user.name') }}</span> )
-          @endif
-      </span>
-    </div>
-    
-    <div class="d-flex flex-wrap gap-6">
-       <!-- establishmant dropdown  -->
-       <div class="btn-group">
-        @if(session('user.caseType') === 'DC' && session('user.establishments'))
-      <select  id="establishment" name="establishment">
-        <option value="">-- Select Establishment --</option>
-        @foreach(session('user.establishments') as $establishment)
-            <option value="{{ $establishment['est_code'] }}">
-                {{ $establishment['estname'] }}
-            </option>
-        @endforeach
-    </select>
-    @endif
-      </div> 
-  </div>
-<!-- establishment dropdown ends  -->
-      <div class="d-lg-flex align-items-center gap-4">
-     
-       
-      
-        <div class="dropdown">
-          <a class="btn btn-outline-warning d-flex align-items-center gap-2 px-4 py-2 rounded-pill" 
-            href="javascript:void(0)" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fa-solid fa-user-shield"></i>
-            <span class="fw-semibold">{{ session('user.role_name') }}</span>
-            <i class="fa-solid fa-chevron-down fs-6"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up shadow-lg p-3" 
-            aria-labelledby="adminDropdown">
-            <li>
-              <a target="_blank" href="#" class="dropdown-item d-flex align-items-center gap-2 py-2">
-                <i class="fa-solid fa-user fs-5 text-primary"></i> View Profile
+  <!--begin::Head-->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@yield('title', 'High Court of Jharkhand') | High Court of Jharkhand</title>
+    <!--begin::Primary Meta Tags-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="title" content="AdminLTE 4 | General Form Elements" />
+    <meta name="author" content="ColorlibHQ" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta
+      name="description"
+      content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS."
+    />
+    <meta
+      name="keywords"
+      content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard"
+    />
+    <!--end::Primary Meta Tags-->
+    <!--begin::Fonts-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+      integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
+      crossorigin="anonymous"
+    />
+    <!--end::Fonts-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
+      integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg="
+      crossorigin="anonymous"
+    />
+    <!--end::Third Party Plugin(OverlayScrollbars)-->
+    <!--begin::Third Party Plugin(Bootstrap Icons)-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
+      crossorigin="anonymous"
+    />
+    <!--end::Third Party Plugin(Bootstrap Icons)-->
+    <!--begin::Required Plugin(AdminLTE)-->
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
+    <!--end::Required Plugin(AdminLTE)-->
+    <!-- Correct way to include DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+  </head>
+  <!--end::Head-->
+  <!--begin::Body-->
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <!--begin::App Wrapper-->
+    <div class="app-wrapper">
+      <!--begin::Header-->
+      <nav class="app-header navbar navbar-expand bg-warning-subtle" data-bs-theme="dark">
+        <!--begin::Container-->
+        <div class="container-fluid">
+          <!--begin::Start Navbar Links-->
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                <i class="bi bi-list"></i>
               </a>
             </li>
-            <li>
-              <a target="_blank" href="#" class="dropdown-item d-flex align-items-center gap-2 py-2">
-                <i class="fa-solid fa-user-pen fs-5 text-success"></i> Update profile
-              </a>
-            </li>
-            <li>
-              <a target="_blank" href="#" class="dropdown-item d-flex align-items-center gap-2 py-2">
-                <i class="fa-solid fa-key fs-5 text-warning"></i> Change Password
-              </a>
-            </li>
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-           
-            <li>
-              <button class="btn btn-danger d-flex align-items-center gap-2 justify-content-center w-100 py-2 rounded-pill" id="logoutButton">
-                  <i class="fa-solid fa-sign-out-alt fs-5"></i> LOGOUT
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-    <!-- Sidebar Start -->
-    <aside class="left-sidebar">
-      <!-- Sidebar scroll-->
-      <div>
-        <div class="brand-logo d-flex align-items-center justify-content-end">
-          <!-- <a href="/admin" class="text-nowrap logo-img" style="margin-top: 20px;margin-bottom: -20px;">
-            <img src="{{ asset('passets/images/HC-main.png') }}" alt="" width="200" />
-          </a> -->
-          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-          <i class="fa-solid fa-xmark" style="font-size:20px;"></i>
-          </div>
-        </div>
-        <!-- Sidebar navigation-->
-        <nav class="sidebar-nav scroll-sidebar mt-4" data-simplebar="">
-          <ul id="sidebarnav">
-            
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <iconify-icon icon="solar:home-angle-line-duotone"></iconify-icon>
-                  </span>
-                  <span class="hide-menu">Master Data</span>
-                </div>
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('menu_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">Main Menu</span>
-                    </div>
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('submenu_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">Sub Menu</span>
-                    </div>
-                  </a>
-                </li>
-
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('payment_parameter_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">HC Payment Parameter</span>
-                    </div>
-                  </a>
-                </li>
-      
-              </ul>
-            </li>
-
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <iconify-icon icon="solar:home-angle-line-duotone"></iconify-icon>
-                  </span>
-                  <span class="hide-menu">User And Permission</span>
-                </div>
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('role_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">Role And Permission </span>
-                    </div>
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('hc_user_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">Highcourt User List </span>
-                    </div>
-                  </a>
-                </li>
-
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('dc_user_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">District User List</span>
-                    </div>
-                  </a>
-                </li>
-
-              </ul>
-            </li>
-
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <iconify-icon icon="solar:document-text-line-duotone" class=""></iconify-icon>
-                  </span>
-                  <span class="hide-menu">Highcourt Request</span>
-                </div>
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between" 
-                  href="{{ route('hc_web_application_list') }}">
-                    <div class="d-flex align-items-center gap-3">
-                      <span class="d-flex">
-                        <span class="icon-small"></span>
-                      </span>
-                      <span class="hide-menu">Web Copy</span>
-                    </div>
-                  </a>
-                </li>
-
-                
-                  <li class="sidebar-item">
-                    <a class="sidebar-link justify-content-between" 
-                    href="{{ route('hc_other_copy') }}">
-                      <div class="d-flex align-items-center gap-3">
-                        <span class="d-flex">
-                          <span class="icon-small"></span>
-                        </span>
-                        <span class="hide-menu">Others Copy</span>
-                      </div>
-                    </a>
-                  </li>
-              </ul>
-            </li>
-
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <iconify-icon icon="solar:document-text-line-duotone" class=""></iconify-icon>
-                  </span>
-                  <span class="hide-menu">District Request</span>
-                </div>
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                  <li class="sidebar-item">
-                    <a class="sidebar-link justify-content-between" 
-                    href="{{ route('dc_other_copy') }}">
-                      <div class="d-flex align-items-center gap-3">
-                        <span class="d-flex">
-                          <span class="icon-small"></span>
-                        </span>
-                        <span class="hide-menu">Others Copy</span>
-                      </div>
-                    </a>
-                  </li>
-              </ul>
-            </li>
-
-            
-            
-           
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link" style="color: antiquewhite">Online Certified Copy</a></li>
             
           </ul>
-        </nav>
-        <!-- End Sidebar navigation -->
-      </div>
-      <!-- End Sidebar scroll-->
-    </aside>
-    <!-- Logout Confirmation Modal -->
-<!-- Logout Confirmation Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white"> <!-- Updated header color -->
-        <h5 class="modal-title" id="logoutModalLabel" style="color:white !important;"><i class="fas fa-sign-out" style="margin-right: 10px;"></i>Confirm Logout</h5>
-      </div>
-      <div class="modal-body">
-        <div class="text-center">
-          <p>Are you sure you want to log out?</p>
-          <div class="progress" style="height: 10px;">
-            <div id="logoutProgressBar" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          <!--end::Start Navbar Links-->
+          <!--begin::End Navbar Links-->
+          <ul class="navbar-nav ms-auto">
+            
+            
+            <!--begin::Fullscreen Toggle-->
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              </a>
+            </li>
+            <!--end::Fullscreen Toggle-->
+            <!--begin::User Menu Dropdown-->
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                  <span class="d-none d-md-inline" style="color: antiquewhite">
+                      @if(session('user.name'))
+                      {{ session('user.name') }}::{{ session('user.role_name') }}
+                      @endif
+                      
+                  </span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li>
+                    <button class="dropdown-item" id="logoutButton">
+                          <i class="bi bi-box-arrow-right"></i> Sign Out
+                    </button>
+                  </li>
+              </ul>
+          </li>
+            <!--end::User Menu Dropdown-->
+          </ul>
+          <!--end::End Navbar Links-->
+        </div>
+        <!--end::Container-->
+      </nav>
+      <!--end::Header-->
+      <!--begin::Sidebar-->
+      <aside class="app-sidebar bg-dark-subtle" data-bs-theme="dark">
+        <!--begin::Sidebar Brand-->
+        <div class="sidebar-brand">
+          <!--begin::Brand Link-->
+          <a href="../index.html" class="brand-link">
+            <!--begin::Brand Image-->
+            <!--<img
+              src="../../../dist/assets/img/AdminLTELogo.png"
+              alt="AdminLTE Logo"
+              class="brand-image opacity-75 shadow"
+            />--> 
+            <!--end::Brand Image-->
+            <span>OCC</span>
+            <!--begin::Brand Text-->
+            <span class="brand-text fw-light">
+              @if(session('user.caseType') === 'HC')
+                  Highcourt 
+              @elseif(session('user.caseType') === 'DC')
+                  {{ session('user.dist_name') }} <!-- Assuming 'districtName' contains the district -->
+              @endif
+          </span>
+            <!--end::Brand Text-->
+          </a>
+          <!--end::Brand Link-->
+        </div>
+        <!--end::Sidebar Brand-->
+        <!--begin::Sidebar Wrapper-->
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <!--begin::Sidebar Menu-->
+            <ul
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="menu"
+              data-accordion="false"
+            >
+              
+              <li class="nav-item">
+                <a href="{{ route('index') }}" class="nav-link">
+                  <i class="nav-icon bi bi-speedometer"></i>
+                  <p>Dashboard</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-box-seam-fill"></i>
+                  <p>
+                    Master Data
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('menu_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Main Menu</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('submenu_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Sub Menu</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('payment_parameter_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Hc Payment Parameter</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-person-circle"></i>
+                  <p>
+                    User And Permission
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('role_list') }}" class="nav-link active">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Role And Permission</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('hc_user_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Highcourt User</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('dc_user_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>District Court User</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link" >
+                  <i class="nav-icon bi bi-pencil-square"></i>
+                  <p>
+                    Highcourt Request
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('hc_web_application_list') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Web Copy</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('hc_other_copy') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Other Copy</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a href="#" class="nav-link" >
+                  <i class="nav-icon bi bi-pc-display-horizontal"></i>
+                  <p>
+                    District Court Request
+                    <!--<span class="nav-badge badge text-bg-secondary me-3">6</span>-->
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('dc_other_copy') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Other Copy</p>
+                    </a>
+                  </li>
+                  
+                </ul>
+              </li>
+
+              
+            </ul>
+            <!--end::Sidebar Menu-->
+          </nav>
+        </div>
+        <!--end::Sidebar Wrapper-->
+      </aside>
+      <!--end::Sidebar-->
+
+      <!-- Logout Confirmation Modal -->
+
+      <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+          <div class="modal-content">
+            <div class="modal-header bg-danger text-white"> <!-- Updated header color -->
+              <h5 class="modal-title" id="logoutModalLabel" style="color:white !important;"><i class="fas fa-sign-out" style="margin-right: 10px;"></i>Confirm Logout</h5>
+            </div>
+            <div class="modal-body">
+              <div class="text-center">
+                <p>Are you sure you want to log out?</p>
+                <div class="progress" style="height: 10px;">
+                  <div id="logoutProgressBar" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <p id="timerText" class="mt-3">Redirecting in <span id="countdown">10</span> seconds...</p>
+              </div>
+            </div>
+            <div class="modal-footer" style="margin-top: -20px;">
+              <button type="button" class="btn btn-secondary btn-md" id="cancelLogout" data-bs-dismiss="modal" style="width: 120px;">Cancel</button>
+              <button type="button" class="btn btn-primary btn-md" id="confirmLogout" style="width: 120px;">OK</button>
+            </div>
           </div>
-          <p id="timerText" class="mt-3">Redirecting in <span id="countdown">10</span> seconds...</p>
         </div>
       </div>
-      <div class="modal-footer" style="margin-top: -20px;">
-        <button type="button" class="btn btn-secondary btn-md" id="cancelLogout" data-bs-dismiss="modal" style="width: 120px;">Cancel</button>
-        <button type="button" class="btn btn-primary btn-md" id="confirmLogout" style="width: 120px;">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-    <div class="body-wrapper">
