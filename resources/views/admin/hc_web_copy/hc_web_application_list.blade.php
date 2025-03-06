@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Crypt;
               <div class="card-header"><div class="card-title">Highcourt Web Copy Request List</div></div>
               <div class="card-body">
                 <table id="myTable" class="table table-bordered">
-                    <thead>
+                    <thead class="table-primary">
                         <tr>
                             <th>#</th>
                             <th>Application No</th>
