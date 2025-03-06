@@ -35,7 +35,7 @@ return [
 
     'http_only' => true, // Prevent JavaScript from accessing the session cookie
 
-    'same_site' => 'strict', // Strongest security for cross-site requests
+    'same_site' => 'lax', // Strongest security for cross-site requests
 
     'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
 

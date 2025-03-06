@@ -41,9 +41,13 @@
    
     <h2 class="text-lg font-semibold mb-3">Applicant Details</h2>
 
-        <table class="w-full border border-gray-300">
-            <tbody id="applicantDetails"></tbody>
-        </table>
+    <table class="w-full border border-gray-300">
+        <tbody id="applicantDetails"></tbody>
+        <tr>
+            <td class="border p-2 font-bold">Total Payable Amount</td>
+            <td class="border p-2 text-green-500" colspan="2" id="totalAmountSection"></td>
+        </tr>
+    </table>
            <div class="flex justify-end items-start w-full gap-3 mt-2">
            <button class="order_btn bg-sky-500 w-[200px] text-white p-3 rounded-md hover:bg-sky-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="editUserDetails()">Edit details</button>
             <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="submitUserDetails(event)">
@@ -52,7 +56,7 @@
            </div>
     </div>
 
-    <form name="eGrassClient" method="post" action="https://finance.jharkhand.gov.in/jegras/payment.aspx">
+    <form name="eGrassClient" method="POST" action="https://finance.jharkhand.gov.in/jegras/payment.aspx">
 
         <input type="hidden" name="requestparam" value="">
 
@@ -69,12 +73,16 @@
    
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    fetch('/get-urgent-fee')
+    fetch('/get-caseInformation-data')
         .then(response => response.json())
         .then(data => {
-            // console.log(data.urgent_fee);
-            const urgent_fee_value = parseFloat(data.urgent_fee)
-            const caseInfo = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
+            console.log("Fetched Data:", data.session_data);
+
+            const urgent_fee_value = parseFloat(data.session_data.urgent_fee);
+           
+            let caseInfo = typeof data.session_data.caseInfoDetails === "string"
+                ? JSON.parse(data.session_data.caseInfoDetails)
+                : data.session_data.caseInfoDetails;
 
             if (caseInfo) {
                 let applicantDetailsHtml = `
@@ -109,69 +117,89 @@
                         </td>
                         <td class="border p-2"></td>
                     </tr>`}
-                <tr>
-                    <td class="border p-2 font-bold">Total Payable Amount</td>
-                    <td class="border p-2 text-green-500" colspan="2" id="totalAmountSection"></td>
-                </tr>
                 `;
 
+                document.getElementById("applicantDetails").innerHTML = applicantDetailsHtml;
+
+                // **Handling Orders Table**
                 let totalAmount = 0;
                 let isUrgent = caseInfo.requestMode === 'urgent' ? urgent_fee_value : 0;
+                let ordersTableBody = document.querySelector("#ordersTable tbody");
+                ordersTableBody.innerHTML = ""; // Clear previous data
 
                 if (caseInfo.selectedOrders && caseInfo.selectedOrders.length > 0) {
                     caseInfo.selectedOrders.forEach(order => {
-                        let amount = parseFloat(order.amount) || 0;
+                        let amount = parseFloat(order.amount.replace('₹', '')) || 0;
                         totalAmount += amount;
 
                         let tableRow = `
                             <tr>
-                                <td class="p-2">${order.orderNumber}</td>
-                                <td class="p-2">${order.orderDate}</td>
-                                <td class="p-2">${order.numPages}</td>
-                                <td class="p-2 font-bold text-green-600">₹${amount.toFixed(2)}</td>
+                                <td class="p-2 border">${order.orderNumber}</td>
+                                <td class="p-2 border">${order.orderDate}</td>
+                                <td class="p-2 border">${order.numPages}</td>
+                                <td class="p-2 border font-bold text-green-600">₹${amount.toFixed(2)}</td>
                             </tr>`;
                         
-                        document.querySelector("#ordersTable tbody").insertAdjacentHTML('beforeend', tableRow);
+                        ordersTableBody.insertAdjacentHTML('beforeend', tableRow);
                     });
+                } else {
+                    ordersTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="p-2 border text-center text-gray-500">No orders available</td>
+                        </tr>`;
                 }
 
                 totalAmount += isUrgent;
                 sessionStorage.setItem('paybleAmount', totalAmount);
 
-                document.getElementById("applicantDetails").innerHTML = applicantDetailsHtml;
                 document.getElementById("totalAmountSection").innerHTML = `₹${totalAmount.toFixed(2)}`;
             }
         })
         .catch(error => {
-            console.error('Error fetching urgent fee:', error);
+            console.error('Error fetching case information:', error);
         });
 });
-</script>
+</script>    
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const storedData = sessionStorage.getItem("caseInfo");
+        fetch('/get-caseInformation-data')
+            .then(response => response.json())
+            .then(data => {
+                // console.log("Fetched Data:", data.session_data.responseData.cases[0]); 
 
-        if (storedData) {
-            const data = JSON.parse(storedData);
-            const caseInfoTable = document.querySelector("#caseInfoTable");
+                // Ensure responseData exists
+                if (data.session_data && data.session_data.responseData) {
+                    const caseInfo = data.session_data.responseData.cases[0];
+                    const caseInfoTable = document.querySelector("#caseInfoTable");
 
-            caseInfoTable.innerHTML = `
-                <tr>
-                    <td class="border p-2 font-bold">Filing Number</td><td class="border p-2">${data.cases[0].fillingno}</td>
-                    <td class="border p-2 font-bold">Case Number</td><td class="border p-2">${data.cases[0].caseno}</td>
-                </tr>
-                <tr>
-                 <td class="border p-2 font-bold">CNR Number</td><td class="border p-2">${data.cases[0].cino}</td>
-                    <td class="border p-2 font-bold">Case Status</td><td class="border p-2">${data.cases[0].casestatus}</td>
-                     
-                </tr>
-                <tr>
-                   <td class="border p-2 font-bold">Petitioner Name</td><td class="border p-2">${data.cases[0].pet_name}</td>
-                    <td class="border p-2 font-bold">Respondent Name</td><td class="border p-2">${data.cases[0].res_name}</td>
-                </tr>
-            `;
-        }           
+                    caseInfoTable.innerHTML = `
+                        <tr>
+                            <td class="border p-2 font-bold">Filing Number</td>
+                            <td class="border p-2">${caseInfo.fillingno || 'N/A'}</td>
+                            <td class="border p-2 font-bold">Case Number</td>
+                            <td class="border p-2">${caseInfo.caseno || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2 font-bold">CNR Number</td>
+                            <td class="border p-2">${caseInfo.cino || 'N/A'}</td>
+                            <td class="border p-2 font-bold">Case Status</td>
+                            <td class="border p-2">${caseInfo.casestatus || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2 font-bold">Petitioner Name</td>
+                            <td class="border p-2">${caseInfo.pet_name || 'N/A'}</td>
+                            <td class="border p-2 font-bold">Respondent Name</td>
+                            <td class="border p-2">${caseInfo.res_name || 'N/A'}</td>
+                        </tr>
+                    `;
+                } else {
+                    console.error("responseData is missing in the fetched data.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching case information:", error);
+            });
     });
 </script>
 
@@ -186,12 +214,12 @@
 
     if (!caseInfo) {
         sessionStorage.removeItem('caseInfo');
-        window.location.href = "/"; 
+        // window.location.href = "/"; 
     }
 });
 </script>  
 
-<script>
+<!-- <script>
   document.addEventListener("DOMContentLoaded", function () {
     let timeoutDuration = 500 * 60 * 1000; // 5 minutes in milliseconds
     let timeout;
@@ -233,13 +261,30 @@
     document.addEventListener("mousemove", resetSessionTimeout);
     document.addEventListener("keydown", resetSessionTimeout);
 
+     async function fetchSessionData() {
+        try {
+            const response = await fetch("/get-caseInformation-data");
+            const sessionData = await response.json();
+            return sessionData.session_data;
+        } catch (error) {
+            console.error("Error fetching session data:", error);
+            return null;
+        }
+    }
+
     async function submitUserDetails(event) {
         event.preventDefault();
         clearTimeout(timeout); // Stop the session timeout
 
         try {
-            const userData = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
-            const caseData = JSON.parse(sessionStorage.getItem('caseInfo'));
+             const sessionData = await fetchSessionData();
+            if (!sessionData) {
+                alert("Error fetching session data.");
+                return;
+            }
+
+            const userData = sessionData.caseInfoDetails;
+            const caseData = sessionData.responseData;
 
             var casenoss = caseData.cases[0].caseno;
             var fillingnoss = caseData.cases[0].fillingno;
@@ -344,6 +389,202 @@ function paymentToMerchant(event, applicationNumber) {
     })
     .catch(error => console.error("Fetch error:", error));
 }
-</script> 
+</script>  -->
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+    let timeout;
+    let timeoutDuration = 500 * 60 * 1000; // 5 minutes
+    let sessionExpired = false;
+
+    function startSessionTimeout() {
+        timeout = setTimeout(() => {
+            sessionExpired = true;
+            if (!document.hidden) {
+                alert("Session expired! Redirecting to home page.");
+                window.location.href = "/";
+            }
+        }, timeoutDuration);
+    }
+
+    function resetSessionTimeout() {
+        if (sessionExpired) return;
+        clearTimeout(timeout);
+        startSessionTimeout();
+    }
+
+    document.addEventListener("visibilitychange", function () {
+        if (!document.hidden && sessionExpired) {
+            alert("Session expired! Redirecting to home page.");
+            window.location.href = "/";
+        }
+    });
+
+    startSessionTimeout();
+    document.addEventListener("mousemove", resetSessionTimeout);
+    document.addEventListener("keydown", resetSessionTimeout);
+
+    async function fetchSessionData() {
+        try {
+            const response = await fetch("/get-caseInformation-data");
+            const sessionData = await response.json();
+
+            if (!sessionData || !sessionData.session_data) {
+                console.error("Invalid session data response:", sessionData);
+                return null;
+            }
+
+            return sessionData.session_data;
+        } catch (error) {
+            console.error("Error fetching session data:", error);
+            return null;
+        }
+    }
+
+    async function submitUserDetails(event) {
+        event.preventDefault();
+        if (timeout) clearTimeout(timeout);
+
+        try {
+            const sessionData = await fetchSessionData();
+            if (!sessionData) {
+                alert("Error fetching session data.");
+                return;
+            }
+
+            const userData = sessionData.caseInfoDetails; // Fresh data from API
+            const caseData = sessionData.responseData;
+
+            if (!userData || !caseData) {
+                console.error("Session data missing:", { userData, caseData });
+                alert("Session data is missing. Please refresh and try again.");
+                return;
+            }
+
+            const casenoss = caseData.cases[0]?.caseno || "";
+            const fillingnoss = caseData.cases[0]?.fillingno || "";
+
+            const matchCaseNo = casenoss.match(/\/(\d+)\/?/);
+            const matchCaseYear = casenoss.match(/\/(\d{4})$/);
+            const matchFilingNo = fillingnoss.match(/\/(\d+)\/?/);
+            const matchFilingYear = fillingnoss.match(/\/(\d{4})$/);
+
+            const caseNumber = matchCaseNo ? matchCaseNo[1] : "";
+            const caseYear = matchCaseYear ? matchCaseYear[1] : "";
+            const filingNumber = matchFilingNo ? matchFilingNo[1] : "";
+            const filingYear = matchFilingYear ? matchFilingYear[1] : caseYear;
+
+            const requestData = {
+                applicant_name: userData.name,
+                mobile_number: userData.mobile,
+                email: userData.email,
+                case_type: caseData.cases[0]?.casetype || "",
+                filingcase_type: caseData.cases[0]?.filingcasetype || "",
+                case_number: caseNumber,
+                filing_number: filingNumber,
+                case_year: caseYear,
+                filing_year: filingYear,
+                request_mode: userData.requestMode,
+                applied_by: userData.selectedValue,
+                cino: caseData.cases[0]?.cino || "",
+                advocate_registration_number: userData.adv_res || null,
+                order_details: userData.selectedOrders.map((order, index) => ({
+                    order_no: index + 1,
+                    order_date: order.orderDate,
+                    case_number: caseNumber,
+                    filing_number: filingNumber,
+                    page_count: parseInt(order.numPages, 10) || 0,
+                    amount: parseFloat(order.amount?.replace(/[^\d.]/g, '') || "0")
+                }))
+            };
+
+            console.log("Submitting request data:", requestData);
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const response = await fetch("/submit-order-copy", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const responseData = await response.json();
+
+            if (responseData.success) {
+                alert(`Success! Application Number: ${responseData.application_number}\nMessage: ${responseData.message}`);
+                paymentToMerchant(event, responseData.application_number);
+            } else {
+                alert("Error: Data insertion failed.");
+            }
+        } catch (error) {
+            console.error("Error in submitUserDetails:", error);
+            alert("An error occurred while submitting the request.");
+        }
+    }
+
+    async function paymentToMerchant(event, applicationNumber) {
+        event.preventDefault();
+
+        try {
+            const sessionData = await fetchSessionData();
+            if (!sessionData) {
+                alert("Error fetching session data.");
+                return;
+            }
+
+            const userData = sessionData.caseInfoDetails;
+            console.log(userData);
+            const paybleAmount = sessionStorage.getItem('paybleAmount');
+            console.log(paybleAmount);
+
+            if (!userData) {
+                alert("Error: User data is missing. Please refresh and try again.");
+                return;
+            }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            const response = await fetch("/fetch-merchant-details", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: JSON.stringify({ userData, paybleAmount, applicationNumber })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                console.error("Payment Error:", data.error);
+                alert("Error processing payment.");
+            } else {
+                console.log("Encrypted Value:", data.enc_val);
+                console.log("Application Number:", data.application_number);
+
+                const form = document.querySelector('form[name="eGrassClient"]');
+                if (form) {
+                    form.querySelector('input[name="requestparam"]').value = data.enc_val;
+                    form.submit();
+                } else {
+                    console.error("Form 'eGrassClient' not found!");
+                    alert("Payment form not found. Please try again.");
+                }
+            }
+        } catch (error) {
+            console.error("Error in paymentToMerchant:", error);
+            alert("An error occurred while processing the payment.");
+        }
+    }
+
+    const submitButton = document.querySelector("button[onclick='submitUserDetails(event)']");
+    if (submitButton) {
+        submitButton.onclick = submitUserDetails;
+    } else {
+        console.error("Submit button not found.");
+    }
+});
+</script>
 
 @endpush

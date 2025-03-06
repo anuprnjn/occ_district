@@ -23,7 +23,7 @@ use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CaptchaController;
-use App\Http\Controllers\FeeController;
+use App\Http\Controllers\SessionDataController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
 
@@ -71,8 +71,18 @@ Route::get('/occ/cd_pay', function () {
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
 
-Route::get('/occ/gras_resp_cc', function () {
-    return view('transactionStatus');
+// Route::match(['get', 'post'], '/occ/gras_res_cc', function (Request $request) {
+//     return view('transactionStatus')->with('responseData', $request->all());
+// })->name('transactionStatus');
+Route::match(['get', 'post'], '/occ/gras_res_cc', function (Request $request) {
+    // Log the incoming request data for debugging
+    \Log::info('Received Data:', $request->all());
+
+    return response()->json([
+        'message' => 'Request received!',
+        'method' => $request->method(),  // To log whether it's a GET or POST request
+        'data' => $request->all()        // Returns all the POST data
+    ]);
 })->name('transactionStatus');
 
 Route::get('/screenReader', function () {
@@ -91,8 +101,6 @@ Route::get('/get-login-captcha', [LoginController::class, 'getLoginCaptcha']);
 Route::post('/api/login', [LoginController::class, 'login']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
 Route::post('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
-Route::post('/set-urgent-fee', [FeeController::class, 'setUrgentFee']);
-Route::get('/get-urgent-fee', [FeeController::class, 'getUrgentFee']);
 Route::get('/refresh-captcha', [CaptchaController::class, 'refreshCaptcha']);
 Route::post('/validate-captcha', [CaptchaController::class, 'validateCaptcha']);
 Route::post('/fetch-application-details', [ApplicationController::class, 'fetchApplicationDetails'])->name('fetch_application_details');
@@ -101,6 +109,10 @@ Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fet
 Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgementData']);
 Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy']);
 
+Route::post('/set-response-data', [SessionDataController::class, 'setResponseData'])->middleware('web');
+Route::get('/get-case-data', [SessionDataController::class, 'getCaseData'])->middleware('web');
+Route::post('/set-caseInformation-data', [SessionDataController::class, 'setCaseInfoData'])->middleware('web');
+Route::get('/get-caseInformation-data', [SessionDataController::class, 'getCaseInfoData'])->middleware('web');
 
 
 //admin routes **************************************************************

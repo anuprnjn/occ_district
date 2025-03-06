@@ -716,20 +716,36 @@ function submitJudgementForm(event) {
         .then(data => {
 
                 // sessionStorage.setItem("caseInfo", JSON.stringify(data));
-                sessionStorage.setItem("responseData", JSON.stringify(data));
-                
-                // sessionStorage.setItem('urgent_fee', data.urgent_fee);
-                fetch('/set-urgent-fee', {
+                // sessionStorage.setItem("responseData", JSON.stringify(data));
+                fetch('/set-response-data', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
                     },
-                    body: JSON.stringify({ urgent_fee: data.urgent_fee}) 
+                    body: JSON.stringify({ respData: data, urgent_fee: data.urgent_fee }) 
                 })
-                .then(response => response.json())
-                .then(data => console.log('Data fetched'))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to store data in session');
+                    }
+                    return response.json();
+                })
+                .then(data => console.log(data.message))  // Logs success message
                 .catch(error => console.error('Error:', error));
+                
+                // sessionStorage.setItem('urgent_fee', data.urgent_fee);
+                // fetch('/set-urgent-fee', {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json",
+                //         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                //     },
+                //     body: JSON.stringify({ urgent_fee: data.urgent_fee}) 
+                // })
+                // .then(response => response.json())
+                // .then(data => console.log('Data fetched'))
+                // .catch(error => console.error('Error:', error));
                 
                 setTimeout(() => window.scrollBy(0, 350), 200);
 

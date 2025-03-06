@@ -24,14 +24,15 @@ class PaymentController extends Controller
         $merchantDetails = $response->json();
         $userData = $request->input('userData');
         $paybleAmount = $request->input('paybleAmount');
+        // $paybleAmount = 10;
         $applicationNumber = $request->input('applicationNumber');
 
         $PAN = 'N/A';
         $ADDINFO1 = $applicationNumber;
         $ADDINFO2 = 'N/A';
         $ADDINFO3 = 'N/A';
-        $responseURL = 'http://127.0.0.1:8000/transactionStatus';
-        $key = $merchantDetails[0]['securitycode'];
+        $responseURL = 'http://127.0.0.1:8000/occ/gras_resp_cc';
+        $key = 'Ky@5432#';
 
         // Constructing `Requestparameter` string
         $Requestparameter = implode('|', [
@@ -72,6 +73,7 @@ class PaymentController extends Controller
             'securitycode' => $merchantDetails[0]['securitycode'] ?? '',
             'response_url' => $responseURL ?? ''
         ];
+       
         // Send data to entryPayDetails API
         $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request.php', $entryData);
 

@@ -108,44 +108,69 @@
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const storedData = sessionStorage.getItem("caseInfo");
-        // console.log(storedData);
-        if (storedData) {
-            const data = JSON.parse(storedData);
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/get-case-data')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log('Full API Response:', data); 
+                   
+                    const responseData = data?.session_data?.responseData;
+                    if (!responseData) {
+                        throw new Error('Missing responseData !');
+                    }
 
-            // Display case details
-            const caseDetailsDiv = document.getElementById("caseDetails");
-            caseDetailsDiv.innerHTML = `
-            <p><strong>Filing Number:</strong> ${data.cases[0].fillingno}</p>
-                <p><strong>Case Number:</strong> ${data.cases[0].caseno}</p>
-                <p><strong>CNR Number:</strong> ${data.cases[0].cino}</p>
-                <p><strong>Case Status:</strong> ${data.cases[0].casestatus}</p>
-                <p><strong>Petitioner Name:</strong> ${data.cases[0].pet_name}</p>
-                <p><strong>Respondent Name:</strong> ${data.cases[0].res_name}</p>
-            `;
+                    // ** Display Case Details **
+                    const caseDetailsDiv = document.getElementById("caseDetails");
+                    const caseInfo = responseData.cases?.[0];
 
-            // Display orders in table
-            const ordersTable = document.querySelector("#ordersTable tbody");
-            ordersTable.innerHTML = ""; // Clear existing content
+                    if (caseInfo) {
+                        caseDetailsDiv.innerHTML = `
+                                <p><strong>Filing Number:</strong> ${caseInfo.fillingno || 'N/A'}</p>
+                                <p><strong>Case Number:</strong> ${caseInfo.caseno || 'N/A'}</p>
+                                <p><strong>CNR Number:</strong> ${caseInfo.cino || 'N/A'}</p>
+                                <p><strong>Case Status:</strong> ${caseInfo.casestatus || 'N/A'}</p>
+                                <p><strong>Petitioner Name:</strong> ${caseInfo.pet_name || 'N/A'}</p>
+                                <p><strong>Respondent Name:</strong> ${caseInfo.res_name || 'N/A'}</p>
+                        `;
+                    } else {
+                        caseDetailsDiv.innerHTML = `<p class="text-red-500">No case information found!</p>`;
+                    }
 
-            data.orders.forEach(order => {
-                const row = `
-                    <tr>
-                        <td class="py-2 px-4 border"><input type="checkbox"/></td>
-                        <td class="py-2 px-4 border">${order.order_no}</td>
-                        <td class="py-2 px-4 border">${order.order_dt}</td>
-                        <td class="py-2 px-4 border">${order.page_count}</td>
-                        <td class="py-2 px-4 border">${order.amount}</td>
-                    </tr>
-                `;
-                ordersTable.innerHTML += row;
-            });
-        } else {
-            document.getElementById("caseDetails").innerHTML = `<p class="text-red-500">Unable to load case details, please try again.</p>`;
-        }
-    });
-</script>
+                    // ** Display Orders Table **
+                    const ordersTable = document.getElementById("ordersTable").querySelector("tbody");
+                    ordersTable.innerHTML = ""; // Clear existing content
+
+                    if (responseData.orders && responseData.orders.length > 0) {
+                        responseData.orders.forEach(order => {
+                            const row = `
+                                <tr class="border-b">
+                                    <td class="py-2 px-4 border"><input type="checkbox"/></td>
+                                    <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
+                                    <td class="py-2 px-4 border">${order.order_dt || 'N/A'}</td>
+                                    <td class="py-2 px-4 border">${order.page_count || 0}</td>
+                                    <td class="py-2 px-4 border">₹${order.amount || 0}</td>
+                                </tr>
+                            `;
+                            ordersTable.innerHTML += row;
+                        });
+                    } else {
+                        ordersTable.innerHTML = `<tr><td colspan="5" class="text-center py-2">No orders available</td></tr>`;
+                    }
+
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    document.getElementById("caseDetails").innerHTML = `
+                        <p class="text-red-500">Error: ${error.message}</p>
+                    `;
+                });
+        });
+    </script>
 <script>
     function toggleAdvocateField() {
     const advocateField = document.getElementById('advocateField');
@@ -244,7 +269,23 @@ function handleCaseInformationSubmit(event) {
         };
 
         console.log(formData);
-        sessionStorage.setItem('caseInfoDetails', JSON.stringify(formData));
+        // sessionStorage.setItem('caseInfoDetails', JSON.stringify(formData));
+        fetch('/set-caseInformation-data', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                },
+                body: JSON.stringify({ caseInfoDetails: formData }) 
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to store data in session');
+                }
+                return response.json();
+            })
+            .then(data => console.log(data.message)) 
+            .catch(error => console.error('Error:', error));
 
         // Reset button state
         btnText.style.display = "flex";
@@ -264,7 +305,7 @@ document.getElementById("apply-by").addEventListener("change", toggleAdvocateFie
 
     if (!caseInfo) {
         // sessionStorage.removeItem('caseInfo');
-        window.location.href = "/"; // Redirect to the index page
+        // Redirect to the index page
     }
 });
 </script> 
