@@ -17,10 +17,16 @@ use App\Http\Controllers\JudgementController;
 use App\Http\Controllers\OrderCopyController;
 use App\Http\Controllers\LoginController;
 use Gregwar\Captcha\CaptchaBuilder;
-use App\Http\Controllers\admin\RoleController;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\MenuController;
 use App\Http\Controllers\admin\SubMenuController;
+use App\Http\Controllers\admin\HcUserController;
+use App\Http\Controllers\admin\DcUserController;
+use App\Http\Controllers\admin\HcOtherCopyController;
+use App\Http\Controllers\admin\DcOtherCopyController;
+use App\Http\Controllers\admin\HcWebApplicationController;
+use App\Http\Controllers\admin\PaymentParameterController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
@@ -121,24 +127,40 @@ Route::middleware([AuthenticateUser::class])->group(function () {
     Route::get('/admin', function () {
         return view('admin.dashboard');
     })->name('index');
-    
-    Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
-    Route::get('/admin/menu-list', [MenuController::class, 'MenuList'])->name('menu_list');
-    Route::post('/admin/menu-add', [MenuController::class, 'addMenu'])->name('menu_add');
-    Route::post('/admin/menu-update', [MenuController::class, 'updateMenu'])->name('menu_update');
-    
-    Route::get('/admin/submenu-list', [SubMenuController::class, 'SubMenuList'])->name('submenu_list');
-    Route::post('/admin/submenu-add', [SubMenuController::class, 'addSubMenu'])->name('submenu_add');
-    Route::post('/admin/submenu-update', [SubMenuController::class, 'updateSubMenu'])->name('submenu_update');
-    Route::post('/submenu/delete', [SubMenuController::class, 'deleteSubMenu'])->name('submenu_delete');
-    
-    Route::get('/admin/roles', [RoleController::class, 'RoleList'])->name('role_list');
-    Route::get('/admin/roles/add', [RoleController::class, 'showAddRoleForm'])->name('add_role'); // Fixed method reference
-    Route::post('/admin/roles/add', [RoleController::class, 'addRole'])->name('role_add'); // Post request for adding role
-    Route::get('/admin/role/edit/{role_id}', [RoleController::class, 'editRole'])->name('role_edit');
-    Route::post('/admin/role/update/{role_id}', [RoleController::class, 'updateRole'])->name('role_update');
-    
-    Route::get('/admin/payment-parameter-list', [PaymentParameterController::class, 'parameterList'])->name('payment_parameter_list');
-    
-    Route::post('/admin/payment-parameter/update', [PaymentParameterController::class, 'update'])->name('payment_parameter_update');
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/menu-list', [MenuController::class, 'MenuList'])->name('menu_list');
+Route::post('/admin/menu-add', [MenuController::class, 'addMenu'])->name('menu_add');
+Route::post('/admin/menu-update', [MenuController::class, 'updateMenu'])->name('menu_update');
+
+Route::get('/admin/submenu-list', [SubMenuController::class, 'SubMenuList'])->name('submenu_list');
+Route::post('/admin/submenu-add', [SubMenuController::class, 'addSubMenu'])->name('submenu_add');
+Route::post('/admin/submenu-update', [SubMenuController::class, 'updateSubMenu'])->name('submenu_update');
+Route::post('/submenu/delete', [SubMenuController::class, 'deleteSubMenu'])->name('submenu_delete');
+
+Route::get('/admin/roles', [RoleController::class, 'RoleList'])->name('role_list');
+Route::get('/admin/roles/add', [RoleController::class, 'showAddRoleForm'])->name('add_role'); // Fixed method reference
+Route::post('/admin/roles/add', [RoleController::class, 'addRole'])->name('role_add'); // Post request for adding role
+Route::get('/admin/role/edit/{role_id}', [RoleController::class, 'editRole'])->name('role_edit');
+Route::post('/admin/role/update/{role_id}', [RoleController::class, 'updateRole'])->name('role_update');
+
+Route::get('/admin/hc-user-list', [HcUserController::class, 'listHcUser'])->name('hc_user_list');
+Route::get('/admin/hc-user-add', [HcUserController::class, 'showHcUser'])->name('hc_user_add');
+Route::post('/admin/hc-user-add', [HcUserController::class, 'addHcUser'])->name('hc_user_add');
+Route::get('/admin/hc-user-edit/{id}', [HcUserController::class, 'editHcUser'])->name('hc_user_edit');
+Route::post('/admin/hc-user-update/{id}', [HcUserController::class, 'updateHcUser'])->name('hc_user_update'); // Keep it as POST
+
+Route::get('/admin/dc-user-list', [DcUserController::class, 'listDcUser'])->name('dc_user_list');
+Route::get('/admin/dc-user-add', [DcUserController::class, 'showDcUser'])->name('dc_user_add');
+Route::post('/admin/fetch-establishments', [DcUserController::class, 'fetchEstablishments'])->name('fetch_establishments');
+Route::post('/admin/dc-user-add', [DcUserController::class, 'addDcUser'])->name('dc_user_add');
+Route::get('/admin/dc-user-edit/{id}', [DcUserController::class, 'editDcUser'])->name('dc_user_edit');
+Route::post('/admin/dc-user-update/{id}', [DcUserController::class, 'updateDcUser'])->name('dc_user_update'); // Keep it as POST
+
+Route::get('/admin/hc-web-application', [HcWebApplicationController::class, 'listHcWebApplication'])->name('hc_web_application_list');
+Route::get('/admin/hc-other-copy', [HcOtherCopyController::class, 'listHcOtherCopy'])->name('hc_other_copy');
+Route::get('/admin/dc-other-copy', [DcOtherCopyController::class, 'listDcOtherCopy'])->name('dc_other_copy');
+
+Route::get('/admin/payment-parameter-list', [PaymentParameterController::class, 'parameterList'])->name('payment_parameter_list');  
+Route::post('/admin/payment-parameter/update', [PaymentParameterController::class, 'update'])->name('payment_parameter_update');
+
 });
