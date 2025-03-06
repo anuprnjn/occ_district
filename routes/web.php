@@ -33,6 +33,7 @@ use App\Http\Controllers\SessionDataController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
 
+
 Route::get('/', function () {
     return view('index');
 });
