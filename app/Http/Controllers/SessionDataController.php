@@ -40,7 +40,6 @@ class SessionDataController extends Controller
     public function getCaseInfoData() {
         // Ensure session data is saved before retrieving it
         Session::save();
-    
         return response()->json([
             'session_id' => Session::getId(),
             'session_data' => Session::all() // Retrieves fresh session data
