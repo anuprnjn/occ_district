@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SessionEstdController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\OtpController;
@@ -151,5 +152,11 @@ Route::get('/admin/dc-other-copy', [DcOtherCopyController::class, 'listDcOtherCo
 
 Route::get('/admin/payment-parameter-list', [PaymentParameterController::class, 'parameterList'])->name('payment_parameter_list');  
 Route::post('/admin/payment-parameter/update', [PaymentParameterController::class, 'update'])->name('payment_parameter_update');
+
+Route::post('/update-session-estd-code', [SessionEstdController::class, 'updateEstdCode'])->name('update.session.estd_code');
+
+Route::post('/admin/upload-order-copy', [HcWebApplicationController::class, 'uploadOrderCopy'])->name('admin.uploadOrderCopy');
+Route::get('/admin/download-order-copy/{fileName}', [HcWebApplicationController::class, 'downloadOrderCopy'])->name('admin.downloadOrderCopy');
+Route::get('/admin/delete-order-copy/{orderNumber}', [HcWebApplicationController::class, 'deleteOrderCopy'])->name('admin.deleteOrderCopy');
 
 });

@@ -57,7 +57,7 @@ use Illuminate\Support\Facades\Crypt;
                             <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}</td>
                             <td>{{ $hcuser->created_at }}</td>
                             <td>
-                                <a href="{{ route('hc-web-application.view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm">View</a>
+                                <a href="{{ route('hc-web-application.view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i>View</a>
                             </td>
                         </tr>
                     @empty

@@ -13,30 +13,18 @@ class DcOtherCopyController extends Controller
     public function listDcOtherCopy()
     {
         try {
+            $dist_code = session('user.dist_code');
+            $estd_code = session('user.estd_code');
+
             // Retrieve data using Laravel Query Builder
             $dcuserdata = DB::table('district_court_applicant_registration as dc')
                 ->select(
-                    'dc.application_id',
-                    'dc.application_number',
-                    'dc.applicant_name',
-                    'dc.mobile_number',
-                    'dc.email',
-                    'dc.case_type',
-                    'ct.type_name as case_type_name', // Fetch case type name from case type table
-                    'dc.case_filling_number',
-                    'dc.case_filling_year',
-                    'dc.selected_method',
-                    'dc.request_mode',
-                    'dc.required_document',
-                    'dc.applied_by',
-                    'dc.advocate_registration_number',
-                    'dc.status',
-                    'dc.created_by',
-                    'dc.updated_by',
-                    'dc.created_at',
-                    'dc.updated_at'
+                    'dc.*', // Select all columns from dc
+                    'ct.type_name as case_type_name' // Fetch case type name from case type table
                 )
                 ->leftJoin('districts_case_type as ct', 'dc.case_type', '=', 'ct.case_type')
+                ->where('dc.district_code', $dist_code) // Filter by district_code
+                ->where('dc.establishment_code', $estd_code) // Filter by establishment_code
                 ->orderBy('dc.created_at', 'desc')
                 ->get();
 
