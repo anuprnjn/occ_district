@@ -28,6 +28,7 @@ use App\Http\Controllers\admin\HcOtherCopyController;
 use App\Http\Controllers\admin\DcOtherCopyController;
 use App\Http\Controllers\admin\HcWebApplicationController;
 use App\Http\Controllers\admin\PaymentParameterController;
+use App\Http\Controllers\admin\DCPaymentParameterController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
@@ -158,5 +159,7 @@ Route::post('/update-session-estd-code', [SessionEstdController::class, 'updateE
 Route::post('/admin/upload-order-copy', [HcWebApplicationController::class, 'uploadOrderCopy'])->name('admin.uploadOrderCopy');
 Route::get('/admin/download-order-copy/{fileName}', [HcWebApplicationController::class, 'downloadOrderCopy'])->name('admin.downloadOrderCopy');
 Route::get('/admin/delete-order-copy/{orderNumber}', [HcWebApplicationController::class, 'deleteOrderCopy'])->name('admin.deleteOrderCopy');
+Route::get('/admin/payment-parameter-list-dc', [DCPaymentParameterController::class, 'parameterList'])->name('payment_parameter_list_dc');  
+Route::post('/admin/payment-parameter-dc/update', [DCPaymentParameterController::class, 'update'])->name('payment_parameter_update_dc');
 
 });
