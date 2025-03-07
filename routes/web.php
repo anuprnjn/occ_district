@@ -27,6 +27,7 @@ use App\Http\Controllers\admin\HcOtherCopyController;
 use App\Http\Controllers\admin\DcOtherCopyController;
 use App\Http\Controllers\admin\HcWebApplicationController;
 use App\Http\Controllers\admin\PaymentParameterController;
+use App\Http\Controllers\admin\DCPaymentParameterController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
@@ -151,5 +152,8 @@ Route::get('/admin/dc-other-copy', [DcOtherCopyController::class, 'listDcOtherCo
 
 Route::get('/admin/payment-parameter-list', [PaymentParameterController::class, 'parameterList'])->name('payment_parameter_list');  
 Route::post('/admin/payment-parameter/update', [PaymentParameterController::class, 'update'])->name('payment_parameter_update');
+
+Route::get('/admin/payment-parameter-list-dc', [DCPaymentParameterController::class, 'parameterList'])->name('payment_parameter_list_dc');  
+Route::post('/admin/payment-parameter-dc/update', [DCPaymentParameterController::class, 'update'])->name('payment_parameter_update_dc');
 
 });

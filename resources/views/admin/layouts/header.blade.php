@@ -176,6 +176,12 @@
                       <p>Hc Payment Parameter</p>
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="{{ route('payment_parameter_list_dc') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>DC Payment Parameter</p>
+                    </a>
+                  </li>
                 </ul>
               </li>
               
