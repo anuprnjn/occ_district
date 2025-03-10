@@ -54,7 +54,7 @@
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
       <!--begin::Header-->
-      <nav class="app-header navbar navbar-expand bg-warning-subtle" data-bs-theme="dark">
+     <nav class="app-header navbar navbar-expand bg-warning-subtle" data-bs-theme="dark">
         <!--begin::Container-->
         <div class="container-fluid">
           <!--begin::Start Navbar Links-->
@@ -68,6 +68,24 @@
             
           </ul>
           <!--end::Start Navbar Links-->
+            <!--begin::Center Dropdown-->
+            @if(session('user.caseType') === 'DC' && session('user.establishments'))
+            <form class="d-flex mx-auto" method="POST" action="{{ route('update.session.estd_code') }}">
+                @csrf
+                <select id="est_code" name="est_code" class="form-select" onchange="this.form.submit();">
+                    @foreach(session('user.establishments') as $establishment)
+                        <option value="{{ $establishment['est_code'] }}" 
+                            {{ session('user.estd_code') == $establishment['est_code'] ? 'selected' : '' }}>
+                            {{ $establishment['estname'] }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
+        @endif
+          <!--end::Center Dropdown-->
+
+
+
           <!--begin::End Navbar Links-->
           <ul class="navbar-nav ms-auto">
             
@@ -104,6 +122,7 @@
         </div>
         <!--end::Container-->
       </nav>
+
       <!--end::Header-->
       <!--begin::Sidebar-->
       <aside class="app-sidebar bg-dark-subtle" data-bs-theme="dark">
@@ -174,6 +193,12 @@
                     <a href="{{ route('payment_parameter_list') }}" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Hc Payment Parameter</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('payment_parameter_list_dc') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>DC Payment Parameter</p>
                     </a>
                   </li>
                 </ul>

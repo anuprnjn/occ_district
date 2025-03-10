@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SessionEstdController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\OtpController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\admin\HcOtherCopyController;
 use App\Http\Controllers\admin\DcOtherCopyController;
 use App\Http\Controllers\admin\HcWebApplicationController;
 use App\Http\Controllers\admin\PaymentParameterController;
+use App\Http\Controllers\admin\DCPaymentParameterController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
@@ -153,5 +155,13 @@ Route::get('/admin/dc-other-copy', [DcOtherCopyController::class, 'listDcOtherCo
 
 Route::get('/admin/payment-parameter-list', [PaymentParameterController::class, 'parameterList'])->name('payment_parameter_list');  
 Route::post('/admin/payment-parameter/update', [PaymentParameterController::class, 'update'])->name('payment_parameter_update');
+
+Route::post('/update-session-estd-code', [SessionEstdController::class, 'updateEstdCode'])->name('update.session.estd_code');
+
+Route::post('/admin/upload-order-copy', [HcWebApplicationController::class, 'uploadOrderCopy'])->name('admin.uploadOrderCopy');
+Route::get('/admin/download-order-copy/{fileName}', [HcWebApplicationController::class, 'downloadOrderCopy'])->name('admin.downloadOrderCopy');
+Route::get('/admin/delete-order-copy/{orderNumber}', [HcWebApplicationController::class, 'deleteOrderCopy'])->name('admin.deleteOrderCopy');
+Route::get('/admin/payment-parameter-list-dc', [DCPaymentParameterController::class, 'parameterList'])->name('payment_parameter_list_dc');  
+Route::post('/admin/payment-parameter-dc/update', [DCPaymentParameterController::class, 'update'])->name('payment_parameter_update_dc');
 
 });

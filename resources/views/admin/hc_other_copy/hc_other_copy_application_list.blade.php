@@ -95,12 +95,7 @@ use Illuminate\Support\Facades\Crypt;
             $('#myTable').DataTable(); // Initialize DataTables
         });
     </script>
-    <script>
-    $(document).ready(function () { 
-        $("#highcourt_request").addClass("active");
-        $("#hc_other_copy").addClass("active");
-    });
-  </script>
+    
 @endpush
 
 @endsection
