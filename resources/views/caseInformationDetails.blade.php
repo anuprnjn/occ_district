@@ -72,14 +72,18 @@
 @push('scripts')
    
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    fetch('/get-caseInformation-data')
-        .then(response => response.json())
-        .then(data => {
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            // Fetch session data asynchronously
+            const response = await fetch('/get-caseInformation-data');
+            if (!response.ok) {
+                throw new Error('Failed to fetch case information data');
+            }
+            const data = await response.json();
             console.log("Fetched Data:", data.session_data);
 
             const urgent_fee_value = parseFloat(data.session_data.urgent_fee);
-           
+
             let caseInfo = typeof data.session_data.caseInfoDetails === "string"
                 ? JSON.parse(data.session_data.caseInfoDetails)
                 : data.session_data.caseInfoDetails;
@@ -150,56 +154,67 @@
                 }
 
                 totalAmount += isUrgent;
-                sessionStorage.setItem('paybleAmount', totalAmount);
 
+                // **Store Payable Amount in the session via fetch**
+                await fetch('/set-paybleAmount', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                    },
+                    body: JSON.stringify({ paybleAmount: totalAmount })
+                });
+
+                // **Update Total Amount Display**
                 document.getElementById("totalAmountSection").innerHTML = `₹${totalAmount.toFixed(2)}`;
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error fetching case information:', error);
-        });
-});
-</script>    
+        }
+    });
+</script>   
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch('/get-caseInformation-data')
-            .then(response => response.json())
-            .then(data => {
-                // console.log("Fetched Data:", data.session_data.responseData.cases[0]); 
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            // Fetch case information data asynchronously
+            const response = await fetch('/get-caseInformation-data');
+            if (!response.ok) {
+                throw new Error('Failed to fetch case information data');
+            }
+            const data = await response.json();
 
-                // Ensure responseData exists
-                if (data.session_data && data.session_data.responseData) {
-                    const caseInfo = data.session_data.responseData.cases[0];
-                    const caseInfoTable = document.querySelector("#caseInfoTable");
+            // Ensure responseData exists
+            if (data.session_data && data.session_data.responseData) {
+                const caseInfo = data.session_data.responseData.cases[0];
+                const caseInfoTable = document.querySelector("#caseInfoTable");
 
-                    caseInfoTable.innerHTML = `
-                        <tr>
-                            <td class="border p-2 font-bold">Filing Number</td>
-                            <td class="border p-2">${caseInfo.fillingno || 'N/A'}</td>
-                            <td class="border p-2 font-bold">Case Number</td>
-                            <td class="border p-2">${caseInfo.caseno || 'N/A'}</td>
-                        </tr>
-                        <tr>
-                            <td class="border p-2 font-bold">CNR Number</td>
-                            <td class="border p-2">${caseInfo.cino || 'N/A'}</td>
-                            <td class="border p-2 font-bold">Case Status</td>
-                            <td class="border p-2">${caseInfo.casestatus || 'N/A'}</td>
-                        </tr>
-                        <tr>
-                            <td class="border p-2 font-bold">Petitioner Name</td>
-                            <td class="border p-2">${caseInfo.pet_name || 'N/A'}</td>
-                            <td class="border p-2 font-bold">Respondent Name</td>
-                            <td class="border p-2">${caseInfo.res_name || 'N/A'}</td>
-                        </tr>
-                    `;
-                } else {
-                    console.error("responseData is missing in the fetched data.");
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching case information:", error);
-            });
+                caseInfoTable.innerHTML = `
+                    <tr>
+                        <td class="border p-2 font-bold">Filing Number</td>
+                        <td class="border p-2">${caseInfo.fillingno || 'N/A'}</td>
+                        <td class="border p-2 font-bold">Case Number</td>
+                        <td class="border p-2">${caseInfo.caseno || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td class="border p-2 font-bold">CNR Number</td>
+                        <td class="border p-2">${caseInfo.cino || 'N/A'}</td>
+                        <td class="border p-2 font-bold">Case Status</td>
+                        <td class="border p-2">${caseInfo.casestatus || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td class="border p-2 font-bold">Petitioner Name</td>
+                        <td class="border p-2">${caseInfo.pet_name || 'N/A'}</td>
+                        <td class="border p-2 font-bold">Respondent Name</td>
+                        <td class="border p-2">${caseInfo.res_name || 'N/A'}</td>
+                    </tr>
+                `;
+            } else {
+                console.error("responseData is missing in the fetched data.");
+            }
+        } catch (error) {
+            console.error("Error fetching case information:", error);
+        }
     });
 </script>
 
@@ -208,188 +223,7 @@
     window.history.back();
     }
 </script>  
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const caseInfo = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
 
-    if (!caseInfo) {
-        sessionStorage.removeItem('caseInfo');
-        // window.location.href = "/"; 
-    }
-});
-</script>  
-
-<!-- <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let timeoutDuration = 500 * 60 * 1000; // 5 minutes in milliseconds
-    let timeout;
-    let sessionExpired = false;
-
-    function startSessionTimeout() {
-        timeout = setTimeout(() => {
-            sessionStorage.removeItem('caseInfo');
-            sessionStorage.removeItem('caseInfoDetails');
-            sessionStorage.removeItem('uegent_fee');
-
-            sessionExpired = true;
-
-            if (!document.hidden) {
-                alert("Session expired! Redirecting to home page.");
-                window.location.href = "/";
-            }
-        }, timeoutDuration);
-    }
-
-    function resetSessionTimeout() {
-        if (sessionExpired) return; // Prevent reset if session already expired
-        clearTimeout(timeout);
-        startSessionTimeout();
-    }
-
-    // Detect when the user switches back to the tab
-    document.addEventListener("visibilitychange", function () {
-        if (!document.hidden && sessionExpired) {
-            alert("Session expired! Redirecting to home page.");
-            window.location.href = "/";
-        }
-    });
-
-    // Start the session timeout when the page loads
-    startSessionTimeout();
-
-    // Attach the resetSessionTimeout function to user interactions
-    document.addEventListener("mousemove", resetSessionTimeout);
-    document.addEventListener("keydown", resetSessionTimeout);
-
-     async function fetchSessionData() {
-        try {
-            const response = await fetch("/get-caseInformation-data");
-            const sessionData = await response.json();
-            return sessionData.session_data;
-        } catch (error) {
-            console.error("Error fetching session data:", error);
-            return null;
-        }
-    }
-
-    async function submitUserDetails(event) {
-        event.preventDefault();
-        clearTimeout(timeout); // Stop the session timeout
-
-        try {
-             const sessionData = await fetchSessionData();
-            if (!sessionData) {
-                alert("Error fetching session data.");
-                return;
-            }
-
-            const userData = sessionData.caseInfoDetails;
-            const caseData = sessionData.responseData;
-
-            var casenoss = caseData.cases[0].caseno;
-            var fillingnoss = caseData.cases[0].fillingno;
-
-            const matchCaseNo = casenoss.match(/\/(\d+)\/?/);
-            const matchCaseYear = casenoss.match(/\/(\d{4})$/);
-            const matchFilingNo = fillingnoss.match(/\/(\d+)\/?/);
-            const matchFilingYear = fillingnoss.match(/\/(\d{4})$/);
-
-            const caseNumber = matchCaseNo ? matchCaseNo[1] : "";
-            const caseYear = matchCaseYear ? matchCaseYear[1] : "";
-            const filingNumber = matchFilingNo ? matchFilingNo[1] : "";
-            const filingYear = matchFilingYear ? matchFilingYear[1] : caseYear;
-
-            const requestData = {
-                applicant_name: userData.name,
-                mobile_number: userData.mobile,
-                email: userData.email,
-                case_type: caseData.cases[0].casetype,
-                filingcase_type: caseData.cases[0].filingcasetype,
-                case_number: caseNumber,
-                filing_number: filingNumber,
-                case_year: caseYear,
-                filing_year: filingYear,
-                request_mode: userData.requestMode,
-                applied_by: userData.selectedValue,
-                cino: caseData.cases[0].cino,
-                advocate_registration_number: userData.adv_res ? userData.adv_res : null,
-                order_details: userData.selectedOrders.map((order, index) => ({
-                    order_no: index + 1,
-                    order_date: order.orderDate,
-                    case_number: caseNumber,
-                    filing_number: filingNumber,
-                    page_count: order.numPages,
-                    amount: order.amount
-                }))
-            };
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const response = await fetch("/submit-order-copy", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken
-                },
-                body: JSON.stringify(requestData)
-            });
-
-            const responseData = await response.json();
-
-            if (responseData.success) {
-                alert(`Success! Application Number: ${responseData.application_number}\nMessage: ${responseData.message}`);
-                paymentToMerchant(event, responseData.application_number)
-                // sessionStorage.removeItem('caseInfo');
-                // sessionStorage.removeItem('caseInfoDetails');   
-            } else {
-                alert("Error: Data insertion failed.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("An error occurred while submitting the request.");
-        }
-    }
-
-    // Attach event listener for form submission
-    document.querySelector("button[onclick='submitUserDetails(event)']").onclick = submitUserDetails;
-    
-});
-function paymentToMerchant(event, applicationNumber) {
-    event.preventDefault();
-
-    const userData = JSON.parse(sessionStorage.getItem('caseInfoDetails'));
-    const paybleAmount = sessionStorage.getItem("paybleAmount");
-
-    fetch('/fetch-merchant-details', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ userData, paybleAmount, applicationNumber })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            console.error("Error:", data.error);
-        } else {
-            console.log("Encrypted Value:", data.enc_val);
-            console.log("Application Number:", data.application_number)
-            // Find the form correctly
-            const form = document.querySelector('form[name="eGrassClient"]');
-
-            if (form) {
-                // Set encrypted value
-                form.querySelector('input[name="requestparam"]').value = data.enc_val;
-                // Use submit correctly
-                form.submit();
-            } else {
-                console.error("Form eGrassClient not found!");
-            }
-        }
-    })
-    .catch(error => console.error("Fetch error:", error));
-}
-</script>  -->
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
     let timeout;
@@ -451,7 +285,8 @@ function paymentToMerchant(event, applicationNumber) {
                 return;
             }
 
-            const userData = sessionData.caseInfoDetails; // Fresh data from API
+            const userData = sessionData.caseInfoDetails;
+            console.log('submit order copy details', userData);
             const caseData = sessionData.responseData;
 
             if (!userData || !caseData) {
@@ -477,6 +312,8 @@ function paymentToMerchant(event, applicationNumber) {
                 applicant_name: userData.name,
                 mobile_number: userData.mobile,
                 email: userData.email,
+                petitioner_name: userData.petitioner_name,
+                respondent_name: userData.respondent_name,
                 case_type: caseData.cases[0]?.casetype || "",
                 filingcase_type: caseData.cases[0]?.filingcasetype || "",
                 case_number: caseNumber,
@@ -534,12 +371,16 @@ function paymentToMerchant(event, applicationNumber) {
             }
 
             const userData = sessionData.caseInfoDetails;
-            console.log(userData);
-            const paybleAmount = sessionStorage.getItem('paybleAmount');
-            console.log(paybleAmount);
-
             if (!userData) {
                 alert("Error: User data is missing. Please refresh and try again.");
+                return;
+            }
+
+            // Fetch payable amount securely from session
+            const paybleAmount = await getPaybleAmount();
+            console.log(paybleAmount);
+            if (!paybleAmount) {
+                alert("Error fetching payable amount.");
                 return;
             }
 
@@ -566,7 +407,8 @@ function paymentToMerchant(event, applicationNumber) {
                 const form = document.querySelector('form[name="eGrassClient"]');
                 if (form) {
                     form.querySelector('input[name="requestparam"]').value = data.enc_val;
-                    form.submit();
+                    alert('Entered to transaction details');
+                    // form.submit();
                 } else {
                     console.error("Form 'eGrassClient' not found!");
                     alert("Payment form not found. Please try again.");
@@ -575,6 +417,30 @@ function paymentToMerchant(event, applicationNumber) {
         } catch (error) {
             console.error("Error in paymentToMerchant:", error);
             alert("An error occurred while processing the payment.");
+        }
+    }
+
+    // Function to fetch payable amount securely from session
+    async function getPaybleAmount() {
+        try {
+            const response = await fetch('/get-paybleAmount', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to retrieve payable amount from session.');
+            }
+
+            const data = await response.json();
+            console.log("Payable Amount:", data.paybleAmount);
+            return data.paybleAmount; // Return the fetched amount
+        } catch (error) {
+            console.error('Error fetching payable amount:', error);
+            return null;
         }
     }
 

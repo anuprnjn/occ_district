@@ -45,5 +45,17 @@ class SessionDataController extends Controller
             'session_data' => Session::all() // Retrieves fresh session data
         ]);
     }
+    public function setPaybleAmount(Request $request) { 
+        $paybleAmount = $request->input('paybleAmount'); 
+        Session::put('paybleAmount', $paybleAmount);
+        Session::save(); 
+        
+        return response()->json(Session::all());
+    }
+    public function getPaybleAmount(){
+        Session::save();
+        $paybleAmount = Session::get('paybleAmount');
+        return response()->json(['paybleAmount' => $paybleAmount]);
+    }
     
 }

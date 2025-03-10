@@ -103,7 +103,9 @@ Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgemen
 Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy']);
 
 Route::post('/set-response-data', [SessionDataController::class, 'setResponseData'])->middleware('web');
+Route::post('/set-paybleAmount', [SessionDataController::class, 'setPaybleAmount'])->middleware('web');
 Route::get('/get-case-data', [SessionDataController::class, 'getCaseData'])->middleware('web');
+Route::get('/get-paybleAmount', [SessionDataController::class, 'getPaybleAmount'])->middleware('web');
 Route::post('/set-caseInformation-data', [SessionDataController::class, 'setCaseInfoData'])->middleware('web');
 Route::get('/get-caseInformation-data', [SessionDataController::class, 'getCaseInfoData'])->middleware('web');
 

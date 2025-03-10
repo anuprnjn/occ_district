@@ -108,69 +108,67 @@
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
 
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('/get-case-data')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // console.log('Full API Response:', data); 
-                   
-                    const responseData = data?.session_data?.responseData;
-                    if (!responseData) {
-                        throw new Error('Missing responseData !');
-                    }
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            // Fetch case data asynchronously
+            const response = await fetch('/get-case-data');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
 
-                    // ** Display Case Details **
-                    const caseDetailsDiv = document.getElementById("caseDetails");
-                    const caseInfo = responseData.cases?.[0];
+            // Ensure responseData exists
+            const responseData = data?.session_data?.responseData;
+            if (!responseData) {
+                throw new Error('Missing responseData!');
+            }
 
-                    if (caseInfo) {
-                        caseDetailsDiv.innerHTML = `
-                                <p><strong>Filing Number:</strong> ${caseInfo.fillingno || 'N/A'}</p>
-                                <p><strong>Case Number:</strong> ${caseInfo.caseno || 'N/A'}</p>
-                                <p><strong>CNR Number:</strong> ${caseInfo.cino || 'N/A'}</p>
-                                <p><strong>Case Status:</strong> ${caseInfo.casestatus || 'N/A'}</p>
-                                <p><strong>Petitioner Name:</strong> ${caseInfo.pet_name || 'N/A'}</p>
-                                <p><strong>Respondent Name:</strong> ${caseInfo.res_name || 'N/A'}</p>
-                        `;
-                    } else {
-                        caseDetailsDiv.innerHTML = `<p class="text-red-500">No case information found!</p>`;
-                    }
+            // ** Display Case Details **
+            const caseDetailsDiv = document.getElementById("caseDetails");
+            const caseInfo = responseData.cases?.[0];
 
-                    // ** Display Orders Table **
-                    const ordersTable = document.getElementById("ordersTable").querySelector("tbody");
-                    ordersTable.innerHTML = ""; // Clear existing content
+            if (caseInfo) {
+                caseDetailsDiv.innerHTML = `
+                    <p><strong>Filing Number:</strong> ${caseInfo.fillingno || 'N/A'}</p>
+                    <p><strong>Case Number:</strong> ${caseInfo.caseno || 'N/A'}</p>
+                    <p><strong>CNR Number:</strong> ${caseInfo.cino || 'N/A'}</p>
+                    <p><strong>Case Status:</strong> ${caseInfo.casestatus || 'N/A'}</p>
+                    <p><strong>Petitioner Name:</strong> ${caseInfo.pet_name || 'N/A'}</p>
+                    <p><strong>Respondent Name:</strong> ${caseInfo.res_name || 'N/A'}</p>
+                `;
+            } else {
+                caseDetailsDiv.innerHTML = `<p class="text-red-500">No case information found!</p>`;
+            }
 
-                    if (responseData.orders && responseData.orders.length > 0) {
-                        responseData.orders.forEach(order => {
-                            const row = `
-                                <tr class="border-b">
-                                    <td class="py-2 px-4 border"><input type="checkbox"/></td>
-                                    <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
-                                    <td class="py-2 px-4 border">${order.order_dt || 'N/A'}</td>
-                                    <td class="py-2 px-4 border">${order.page_count || 0}</td>
-                                    <td class="py-2 px-4 border">₹${order.amount || 0}</td>
-                                </tr>
-                            `;
-                            ordersTable.innerHTML += row;
-                        });
-                    } else {
-                        ordersTable.innerHTML = `<tr><td colspan="5" class="text-center py-2">No orders available</td></tr>`;
-                    }
+            // ** Display Orders Table **
+            const ordersTable = document.getElementById("ordersTable").querySelector("tbody");
+            ordersTable.innerHTML = ""; // Clear existing content
 
-                })
-                .catch(error => {
-                    console.error('Fetch Error:', error);
-                    document.getElementById("caseDetails").innerHTML = `
-                        <p class="text-red-500">Error: ${error.message}</p>
+            if (responseData.orders && responseData.orders.length > 0) {
+                responseData.orders.forEach(order => {
+                    const row = `
+                        <tr class="border-b">
+                            <td class="py-2 px-4 border"><input type="checkbox"/></td>
+                            <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
+                            <td class="py-2 px-4 border">${order.order_dt || 'N/A'}</td>
+                            <td class="py-2 px-4 border">${order.page_count || 0}</td>
+                            <td class="py-2 px-4 border">₹${order.amount || 0}</td>
+                        </tr>
                     `;
+                    ordersTable.innerHTML += row;
                 });
-        });
-    </script>
+            } else {
+                ordersTable.innerHTML = `<tr><td colspan="5" class="text-center py-2">No orders available</td></tr>`;
+            }
+
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            document.getElementById("caseDetails").innerHTML = `
+                <p class="text-red-500">Error: ${error.message}</p>
+            `;
+        }
+    });
+</script>
 <script>
     function toggleAdvocateField() {
     const advocateField = document.getElementById('advocateField');
@@ -189,7 +187,6 @@
 
 function handleCaseInformationSubmit(event) {
     event.preventDefault();
-    sessionStorage.removeItem('responseData');
 
     const submitBtn = document.getElementById("submitBtn");
     const btnText = document.getElementById("btnText");
@@ -263,50 +260,61 @@ function handleCaseInformationSubmit(event) {
     submitBtn.disabled = true;
 
     // Simulate form processing delay
-    setTimeout(() => {
-        const formData = {
-            name, mobile, email, selectedValue, adv_res, requestMode, selectedOrders
-        };
+    setTimeout(async () => {
+        try {
+            const CaseResponse = await fetch('/get-case-data');
+            if (!CaseResponse.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const CaseData = await CaseResponse.json();
 
-        console.log(formData);
-        // sessionStorage.setItem('caseInfoDetails', JSON.stringify(formData));
-        fetch('/set-caseInformation-data', {
+            // Ensure responseData exists
+            const responseData = CaseData?.session_data?.responseData;
+            const petitioner_name = responseData.cases[0].pet_name;
+            const respondent_name = responseData.cases[0].res_name;
+
+            if (!responseData) {
+                throw new Error('Missing responseData!');
+            }
+            const formData = {
+                name, mobile, email, selectedValue, adv_res, requestMode, selectedOrders, petitioner_name, respondent_name
+            };
+
+            console.log(formData);
+
+            // Prepare fetch request
+            const response = await fetch('/set-caseInformation-data', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
                 },
-                body: JSON.stringify({ caseInfoDetails: formData }) 
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to store data in session');
-                }
-                return response.json();
-            })
-            .then(data => console.log(data.message)) 
-            .catch(error => console.error('Error:', error));
+                body: JSON.stringify({ caseInfoDetails: formData })
+            });
 
-        // Reset button state
-        btnText.style.display = "flex";
-        btnSpinner.classList.add("hidden");
-        submitBtn.disabled = false;
+            if (!response.ok) {
+                throw new Error('Failed to store data in session');
+            }
 
-        window.location.href = '/occ/cd_pay';
+            const data = await response.json();
+            console.log(data.message);
+
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            // Reset button state
+            btnText.style.display = "flex";
+            btnSpinner.classList.add("hidden");
+            submitBtn.disabled = false;
+
+            // Redirect after processing
+            window.location.href = '/occ/cd_pay';
+        }
     }, 1500);
 }
 
 // Ensure advocate field updates on dropdown change
 document.getElementById("apply-by").addEventListener("change", toggleAdvocateField);
 </script>    
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const caseInfo = JSON.parse(sessionStorage.getItem('caseInfo'));
 
-    if (!caseInfo) {
-        // sessionStorage.removeItem('caseInfo');
-        // Redirect to the index page
-    }
-});
-</script> 
 @endpush

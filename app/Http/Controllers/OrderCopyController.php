@@ -24,6 +24,8 @@ class OrderCopyController extends Controller
                 'applicant_name' => 'required|string',
                 'mobile_number' => 'required|string',
                 'email' => 'required|email',
+                'petitioner_name' => 'required|string',
+                'respondent_name' => 'required|string',
                 'case_type' => 'required|string',
                 'filingcase_type' => 'required|string',
                 'case_number' => 'required|string',
