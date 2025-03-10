@@ -409,6 +409,7 @@
                     form.querySelector('input[name="requestparam"]').value = data.enc_val;
                     alert('Entered to transaction details');
                     // form.submit();
+                    window.location.href='/api/occ/gras_resp_cc';
                 } else {
                     console.error("Form 'eGrassClient' not found!");
                     alert("Payment form not found. Please try again.");

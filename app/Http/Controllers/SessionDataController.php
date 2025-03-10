@@ -42,6 +42,9 @@ class SessionDataController extends Controller
     public function getPaybleAmount(){
         Session::save();
         $paybleAmount = Session::get('paybleAmount');
+        // dd(Session::all());
+        // exit();
+
         return response()->json(['paybleAmount' => $paybleAmount]);
     }
     public function setResponseData(Request $request) {

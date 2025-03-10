@@ -5,15 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Helpers\clsEncrypt; 
+use Illuminate\Support\Facades\Session;
+
+
 class PaymentController extends Controller
 {
     public function fetchMerchantDetails(Request $request)
     {
-        $departmentId = '';
-        for ($i = 0; $i < 19; $i++) {
-            $departmentId .= mt_rand(0, 9);
-        }
-
         // $depositerId = 'DRID' . str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
         $depositerId = "DRID001";
         $response = Http::get(config('app.api.admin_url') . '/fetch_jegras_merchent_details.php');
@@ -24,9 +22,10 @@ class PaymentController extends Controller
 
         $merchantDetails = $response->json();
         $userData = $request->input('userData');
+        $urgent_fee = Session::get('urgent_fee');
         $paybleAmount = $request->input('paybleAmount');
         $applicationNumber = $request->input('applicationNumber');
-
+        $transaction_no = $merchantDetails[0]['TransactionNumber'];
         $PAN = 'N/A';
         $ADDINFO1 = $applicationNumber;
         $ADDINFO2 = 'N/A';
@@ -39,7 +38,7 @@ class PaymentController extends Controller
             $merchantDetails[0]['deptid'],
             $merchantDetails[0]['recieptheadcode'],
             $userData['name'],
-            $departmentId,
+            $transaction_no,
             $paybleAmount,
             $depositerId,
             $PAN,
@@ -61,10 +60,11 @@ class PaymentController extends Controller
             'application_number' => $applicationNumber, 
             'recieptheadcode' => $merchantDetails[0]['recieptheadcode'] ?? '',
             'depositername' => $userData['name'] ?? '',
-            'depttranid' => $departmentId ?? '',
+            'depttranid' => $transaction_no ?? '',
             'depositerid'=> $depositerId ?? '',
             'amount' => $paybleAmount ?? '',
             'panno' => $PAN ?? '',
+            'urgent_fee' => $urgent_fee ?? '',
             'addinfo1' => $ADDINFO1 ?? '',
             'addinfo2' => $ADDINFO2 ?? '',
             'addinfo3' => $ADDINFO3 ?? '',
@@ -96,20 +96,5 @@ class PaymentController extends Controller
             'application_number' => $applicationNumber
         ]);
     }
-    // public function testEncryption()
-    // {
-    //     $key = 'key1234'; // Your test key (should be at least 16 characters)
-    //     $data = "COMTAX|003900800020101|ABC CONSTRUCTION|1234567891234567891|2|DRID001|NA|NA|NA|NA|PRJ|PRJFIN001|sec1234";
     
-    //     $enc = new clsEncrypt();
-    //     $encrypted = $enc->encrypt($data, $key);
-    //     $decrypted = $enc->decrypt($encrypted, $key);
-    //     dd($decrypted);
-    //     exit();
-    //     return response()->json([
-    //         'original' => $data,
-    //         'encrypted' => $encrypted,
-    //         'decrypted' => $decrypted
-    //     ]);
-    // }
 }

@@ -24,44 +24,53 @@
                 @if(!empty($responseData))
                     <tr>
                         <td class="px-6 py-2 font-bold">TRANSACTION ID</td>
-                        <td class="px-6 py-2">{{ $responseData['TRANSACTION_ID'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">{{ $responseData['depttranid'] ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 font-bold">APPLICATION NUMBER</td>
+                        <td class="px-6 py-2">{{ $responseData['addinfo1'] ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">NAME</td>
-                        <td class="px-6 py-2">{{ $responseData['DEPOSITERNAME'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">{{ $responseData['depositername'] ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">AMOUNT</td>
-                        <td class="px-6 py-2">{{ $responseData['TXN_AMOUNT'] ?? 'N/A' }}.00 ₹</td>
+                        <td class="px-6 py-2">₹{{ $responseData['amount'] ?? 'N/A' }}.00</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">STATUS</td>
                         <td class="px-6 py-2">
-                            <span class="font-bold tracking-wide {{ ($responseData['STATUS'] ?? '') == 'SUCCESS' ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $responseData['STATUS'] ?? 'N/A' }}
+                            <span class="font-bold tracking-wide {{ ($responseData['status'] ?? '') == 'SUCCESS' ? 'text-green-600' : 'text-red-600' }}">
+                                {{ $responseData['status'] ?? 'N/A' }}
                             </span>
                         </td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">PAYMENT STATUS MESSAGE</td>
-                        <td class="px-6 py-2">{{ $responseData['PAYMENTSTATUSMESSAGE'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">{{ $responseData['paymentstatusmessage'] }}</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">GRN NUMBER</td>
-                        <td class="px-6 py-2">{{ $responseData['GRN'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">{{ $responseData['grn'] ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">CIN NUMBER</td>
-                        <td class="px-6 py-2">{{ $responseData['CIN'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">{{ $responseData['cin'] ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">REFERENCE NUMBER</td>
-                        <td class="px-6 py-2">{{ $responseData['REF_NO'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">{{ $responseData['ref_no'] ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 font-bold">MODE OF PAYMENT</td>
+                        <td class="px-6 py-2">{{ $responseData['pmode'] ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">TXN DATE</td>
-                        <td class="px-6 py-2">{{ $responseData['TXN_DATE'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">{{ $responseData['txn_date'] ?? 'N/A' }}</td>
                     </tr>
+                   
                 @else
                     <tr>
                         <td class="px-6 py-2 font-bold text-center" colspan="2">No Data Available</td>
