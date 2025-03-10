@@ -44,7 +44,24 @@ class SessionDataController extends Controller
         $paybleAmount = Session::get('paybleAmount');
         return response()->json(['paybleAmount' => $paybleAmount]);
     }
+    public function setResponseData(Request $request) {
+        Session::flush(); 
+        $respData = $request->input('respData'); 
+        $urgentFee = $request->input('urgent_fee');
+        Session::put('responseData', $respData);
+        Session::put('urgent_fee', $urgentFee);
+        Session::save(); 
+        return response()->json(Session::all());
+    }
+    public function getCaseData() {
+        $sessionPath = storage_path('framework/sessions/' . Session::getId());
+        Session::save();
+        
+        return response()->json([
+            'session_id' => Session::getId(),
+            'session_file_exists' => file_exists($sessionPath),
+            'session_data' => Session::all()
+        ]); 
+    }
     
 }
-
-
