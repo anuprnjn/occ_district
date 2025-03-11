@@ -4,21 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class SessionDataController extends Controller
-{
-    public function updateEstdCode(Request $request)
-    {
-        $request->validate([
-            'est_code' => 'required|string'
-        ]);
-
-        Session::put('user.estd_code', $request->est_code);
-
-        return redirect()->back(); // Redirect back after setting session
-    }
+{   
     public function setCaseInfoData(Request $request) { 
         $caseInfoDetails = $request->input('caseInfoDetails'); 
         Session::put('caseInfoDetails', $caseInfoDetails);
         Session::save();  
+        Session::reflash();
+
         return response()->json([
             'message' => 'Case Info Data Stored Successfully!',
             'session_data' => Session::all() 
@@ -36,15 +28,20 @@ class SessionDataController extends Controller
         $paybleAmount = $request->input('paybleAmount'); 
         Session::put('paybleAmount', $paybleAmount);
         Session::save(); 
+        Session::reflash();
+
         
         return response()->json(Session::all());
     }
-    public function getPaybleAmount(){
+    public function getPaybleAmount()
+    {
         Session::save();
-        $paybleAmount = Session::get('paybleAmount');
-        // dd(Session::all());
-        // exit();
-
+        $paybleAmount = Session::get('paybleAmount'); 
+        Session::reflash();
+        if ($paybleAmount === null) {
+            return response()->json(['error' => 'Payable amount not found'], 404);
+        }
+    
         return response()->json(['paybleAmount' => $paybleAmount]);
     }
     public function setResponseData(Request $request) {
@@ -54,12 +51,14 @@ class SessionDataController extends Controller
         Session::put('responseData', $respData);
         Session::put('urgent_fee', $urgentFee);
         Session::save(); 
+        Session::reflash();
+
         return response()->json(Session::all());
     }
     public function getCaseData() {
         $sessionPath = storage_path('framework/sessions/' . Session::getId());
         Session::save();
-        
+        Session::reflash();
         return response()->json([
             'session_id' => Session::getId(),
             'session_file_exists' => file_exists($sessionPath),

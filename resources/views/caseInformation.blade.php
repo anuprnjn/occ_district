@@ -30,7 +30,7 @@
     <!-- First Section Ends -->
 
     <!-- Second Section -->
-    <div class=" dark_form w-full bg-slate-100/70 sm:w-1/3 p-4 rounded-md mt-10">
+    <div class=" dark_form w-full bg-slate-100/70 sm:w-1/3 p-4 rounded-md mt-10 sm:mb-0 mb-[100px]">
         <h2 class="text-xl font-bold mb-4">User Details</h2>
         
         <form action="#" class=" space-y-4">

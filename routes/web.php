@@ -34,7 +34,8 @@ use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
-
+use App\Http\Middleware\CheckSession;
+use App\Http\Middleware\CheckSessionCd_pay;
 
 Route::get('/', function () {
     return view('index');
@@ -72,13 +73,16 @@ Route::get('/hc-application-details', function () {
     return view('hc_application_details');
 })->name('hc_application_details');
 
-Route::get('/caseInformation', function () {
-    return view('caseInformation');
-})->name('caseInformation');
-
-Route::get('/occ/cd_pay', function () {
-    return view('caseInformationDetails');
-})->name('caseInformationDetails');
+Route::middleware([CheckSession::class])->group(function () {
+    Route::get('/caseInformation', function () {
+        return view('caseInformation');
+    })->name('caseInformation');
+});
+Route::middleware([CheckSessionCd_pay::class])->group(function () {
+    Route::get('/occ/cd_pay', function () {
+        return view('caseInformationDetails');
+    })->name('caseInformationDetails');
+});
 
 Route::get('/screenReader', function () {
     return view('screenReader');
@@ -103,14 +107,16 @@ Route::post('/hc-register-application', [HCApplicationRegistrationController::cl
 Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fetchHcApplicationDetails'])->name('fetch_hc_application_details');
 Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgementData']);
 Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy']);
-
 Route::post('/set-response-data', [SessionDataController::class, 'setResponseData'])->middleware('web');
 Route::post('/set-paybleAmount', [SessionDataController::class, 'setPaybleAmount'])->middleware('web');
 Route::get('/get-case-data', [SessionDataController::class, 'getCaseData'])->middleware('web');
 Route::get('/get-paybleAmount', [SessionDataController::class, 'getPaybleAmount'])->middleware('web');
 Route::post('/set-caseInformation-data', [SessionDataController::class, 'setCaseInfoData'])->middleware('web');
 Route::get('/get-caseInformation-data', [SessionDataController::class, 'getCaseInfoData'])->middleware('web');
-
+Route::get('/clear-session', function () {
+    session()->flush(); 
+    return response()->json(['success' => true]);
+})->name('clear.session');
 
 //admin routes **************************************************************
 

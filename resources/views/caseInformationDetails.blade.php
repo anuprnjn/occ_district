@@ -48,7 +48,7 @@
             <td class="border p-2 text-green-500" colspan="2" id="totalAmountSection"></td>
         </tr>
     </table>
-           <div class="flex justify-end items-start w-full gap-3 mt-2">
+           <div class="flex justify-end items-start w-full gap-3 mt-2 sm:mb-0 mb-20">
            <button class="order_btn bg-sky-500 w-[200px] text-white p-3 rounded-md hover:bg-sky-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="editUserDetails()">Edit details</button>
             <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="submitUserDetails(event)">
                 Pay now

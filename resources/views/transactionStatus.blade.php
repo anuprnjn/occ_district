@@ -152,4 +152,23 @@
         newWindow.print();
     });
 </script>
+<script>
+    window.onload = function() {
+        try {
+            fetch('/clear-session', {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Session storage cleared");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        } catch (error) {
+            console.error('Try-catch error:', error);
+        }
+    };
+</script>    
 @endpush

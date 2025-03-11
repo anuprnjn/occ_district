@@ -136,9 +136,6 @@
 
 
     </div>
-
-    
-
     <!-- Form for Apply for Others Copy -->
     <div class="otherform" id="otherForm" style="display:none;">
         <form id="applyOrdersFormHC" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
@@ -147,7 +144,7 @@
             <div class="form-row">
                 <div class="form-field">
                     <label for="name">Name: <span>*</span></label>
-                    <input type="text" id="name" name="name" placeholder="ENTER YOUR NAME" required>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
                 </div>
         <div class="form-field">
             <div class="flex items-start justify-start gap-2">
