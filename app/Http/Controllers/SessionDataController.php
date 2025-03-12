@@ -35,7 +35,10 @@ class SessionDataController extends Controller
     }
     public function getPaybleAmount()
     {
+        Session::start();
         $paybleAmount = Session::get('paybleAmount');
+        Session::save(); 
+        Session::reflash();
     
         if ($paybleAmount === null) {
             return response()->json(['error' => 'Payable amount not found'], 404);
