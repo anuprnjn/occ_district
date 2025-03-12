@@ -115,7 +115,7 @@
                             <tbody class="text-sm sm:text-lg dark_form">
                                 <tr class="border-b">
                                     <td class="px-6 py-4 font-semibold uppercase">Application Number</td>
-                                    <td class="px-6 py-4">${data.application_number}</td>
+                                    <td class="px-6 py-4 text-teal-500 font-bold text-xl">${data.application_number}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="px-6 py-4 font-semibold uppercase">Application Date</td>
