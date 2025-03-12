@@ -339,16 +339,21 @@
                                 <i class="bi bi-check-circle-fill"></i> Certified Copy Download Notification sent
                                 successfully.
                             </div>
-                        @elseif ($hcuser->document_status == 1)
-                            <form action="{{ route('hc-web-application.send-ready-notification') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="application_number"
-                                    value="{{ $hcuser->application_number }}">
-                                <button type="submit" class="btn btn-primary mt-3"
-                                    @if ($hcuser->deficit_status == 1 && $hcuser->deficit_payment_status == 0) disabled @endif>
-                                    Send Certified Copy
-                                </button>
-                            </form>
+                         @elseif ($hcuser->document_status == 1 && $totaldiff == 0)
+                                <form action="{{ route('hc-web-application.send-ready-notification') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="application_number"
+                                        value="{{ $hcuser->application_number }}">
+                                    <button type="submit" class="btn btn-primary mt-3">Send Certified Copy</button>
+                                </form>
+                                 @elseif ($hcuser->document_status == 1 && (($hcuser->deficit_status == 1) && ($hcuser->deficit_payment_status  == 1)))
+                                <form action="{{ route('hc-web-application.send-ready-notification') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="application_number"
+                                        value="{{ $hcuser->application_number }}">
+                                    <button type="submit" class="btn btn-primary mt-3">Send Certified Copy</button>
+                                </form>
+                           
                         @endif
 
                     </div>
