@@ -39,11 +39,10 @@ $(document).ready(function() {
     // Retrieve the application number from sessionStorage
     var application_number = sessionStorage.getItem('track_application_number') || url_application_number;
 
-    if(application_number.startsWith('DC')) {
-    sessionStorage.setItem('selectedCourt', 'DC');
+    if(application_number.startsWith('HC')) {
+        sessionStorage.setItem('selectedCourt', 'HC');
     }else{
-    sessionStorage.setItem('selectedCourt', 'HC');
-
+        sessionStorage.setItem('selectedCourt', 'DC');
     }
     if (application_number) {
 
