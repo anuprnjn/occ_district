@@ -25,6 +25,7 @@ class SessionDataController extends Controller
         ]);
     }
     public function setPaybleAmount(Request $request) { 
+        Session::start();
         $paybleAmount = $request->input('paybleAmount'); 
         Session::put('paybleAmount', $paybleAmount);
         Session::save(); 
