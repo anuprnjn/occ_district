@@ -424,12 +424,13 @@
     // Function to fetch payable amount securely from session
     async function getPaybleAmount() {
         try {
-            const response = await fetch('/get-paybleAmount', {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-                }
+        const response = await fetch('/get-paybleAmount', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+            },
+            credentials: 'include' 
             });
 
             if (!response.ok) {
