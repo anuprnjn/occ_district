@@ -5,6 +5,7 @@
 @section('content')
 @php
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon; // Import Carbon for date formatting
 @endphp
 
 <!--begin::App Main-->
@@ -43,6 +44,7 @@ use Illuminate\Support\Facades\Crypt;
                             <th>Case No</th>
                             <th>Filing No</th>
                             <th>Date</th>
+                            <th>Document Status</th> <!-- New Column for Document Status -->
                             <th>View</th> 
                         </tr>
                     </thead>
@@ -55,14 +57,21 @@ use Illuminate\Support\Facades\Crypt;
                             <td>{{ $hcuser->mobile_number }}</td>
                             <td>{{ $hcuser->type_name }}/{{ $hcuser->case_number }}/{{ $hcuser->case_year }}</td>
                             <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}</td>
-                            <td>{{ $hcuser->created_at }}</td>
+                            <td>{{ Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td> <!-- Format the date -->
+                            <td>
+                                @if ($hcuser->document_status == 1)
+                                    <span class="badge bg-success">Uploaded</span>
+                                @else
+                                    <span class="badge bg-warning">Pending</span>
+                                @endif
+                            </td>
                             <td>
                                 <a href="{{ route('hc-web-application.view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i>View</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">No HC Users found</td>
+                            <td colspan="9" class="text-center">No HC Users found</td>
                         </tr>
                     @endforelse
                     </tbody>
@@ -88,7 +97,5 @@ use Illuminate\Support\Facades\Crypt;
     </script>
     
 @endpush
-
-
 
 @endsection

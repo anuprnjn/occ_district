@@ -169,5 +169,10 @@ Route::get('/admin/download-order-copy/{fileName}', [HcWebApplicationController:
 Route::get('/admin/delete-order-copy/{orderNumber}', [HcWebApplicationController::class, 'deleteOrderCopy'])->name('admin.deleteOrderCopy');
 Route::get('/admin/payment-parameter-list-dc', [DCPaymentParameterController::class, 'parameterList'])->name('payment_parameter_list_dc');  
 Route::post('/admin/payment-parameter-dc/update', [DCPaymentParameterController::class, 'update'])->name('payment_parameter_update_dc');
-
+Route::get('/delete-order-copy/{application_number}/{order_number}', [HcWebApplicationController::class, 'deleteOrderCopy'])->name('admin.deleteOrderCopy');
+Route::post('/hc-web-application/send-deficit-notification', [HcWebApplicationController::class, 'sendDeficitNotification'])
+    ->name('hc-web-application.send-deficit-notification');
+    Route::post('/hc-web-application/send-ready-notification', [HcWebApplicationController::class, 'sendReadyNotification'])
+    ->name('hc-web-application.send-ready-notification');  
+    
 });

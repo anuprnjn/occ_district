@@ -1,11 +1,11 @@
 <!--begin::Footer-->
 <footer class="app-footer">
   <!--begin::To the end-->
-  <div class="float-end d-none d-sm-inline">Anything you want</div>
+  <div class="float-end d-none d-sm-inline"></div>
   <!--end::To the end-->
   <!--begin::Copyright-->
   <strong>
-    Copyright &copy; 2020-2030&nbsp;
+    Copyright &copy; 2025 &nbsp;
     <a href="https://adminlte.io" class="text-decoration-none">NIC</a>.
   </strong>
   All rights reserved.
