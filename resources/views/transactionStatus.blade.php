@@ -2,7 +2,7 @@
 
 @section('content')
 
-<section class="content-section p-6 mb-20">
+<section class="content-section p-6 mb-20 h-screen">
     <div class='flex justify-between items-center sm:flex-row flex-col sm:gap-0 gap-4'>
         <h3 class="font-semibold text-xl mb-8 -mt-8">Transaction Status</h3>
         <!-- Button to Trigger Print Dialog -->
