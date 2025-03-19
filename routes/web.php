@@ -124,6 +124,7 @@ Route::middleware([AuthenticateUser::class])->group(function () {
     Route::get('/admin/index', function () {
         return view('admin.dashboard');
     })->name('index');
+
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 Route::get('/admin/menu-list', [MenuController::class, 'MenuList'])->name('menu_list');
 Route::post('/admin/menu-add', [MenuController::class, 'addMenu'])->name('menu_add');
@@ -173,6 +174,11 @@ Route::get('/delete-order-copy/{application_number}/{order_number}', [HcWebAppli
 Route::post('/hc-web-application/send-deficit-notification', [HcWebApplicationController::class, 'sendDeficitNotification'])
     ->name('hc-web-application.send-deficit-notification');
     Route::post('/hc-web-application/send-ready-notification', [HcWebApplicationController::class, 'sendReadyNotification'])
-    ->name('hc-web-application.send-ready-notification');  
+    ->name('hc-web-application.send-ready-notification'); 
+
+ Route::get('/admin/hc-other-copy-view/{encryptedAppNumber}', [HcOtherCopyController::class, 'ViewHcOtherCopy'])->name('hc_other_copy_view');    
+ Route::post('/admin/hc-other-copy/upload', [HcOtherCopyController::class, 'uploadDocument'])->name('upload.document');
+Route::post('/admin/hc-other-copy/delete', [HcOtherCopyController::class, 'deleteDocument'])->name('delete.document');
+Route::post('/admin/hc-other-copy/send-notification', [HcOtherCopyController::class, 'sendNotification'])->name('hc-other-copy.send-notification');
     
 });

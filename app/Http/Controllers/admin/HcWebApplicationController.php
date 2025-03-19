@@ -73,7 +73,7 @@ class HcWebApplicationController extends Controller
 
     // Upload Order PDF and Count Pages
     public function uploadOrderCopy(Request $request)
-{
+{ 
     $request->validate([
         'application_number' => 'required',
         'order_number' => 'required',
@@ -99,8 +99,10 @@ class HcWebApplicationController extends Controller
         if (!$order) {
             return back()->with('error', 'Order details not found.');
         }
-        // Delete File from Storage
-        Storage::disk('public')->delete('order_copies/' . $order->file_name);
+        // Delete old file if exists
+        if ($order->file_name) {
+            Storage::disk('public')->delete('order_copies/' . $order->file_name);
+        }
 
         // Store PDF
         $fileName = $request->application_number . '_' . $request->order_number . '_' . time() . '.pdf';

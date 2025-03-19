@@ -208,7 +208,13 @@
                                                             value="{{ $order->order_number }}">
                                                         <input type="file" name="pdf_file" class="form-control mb-2"
                                                             required>
-                                                        <button type="submit" class="btn btn-sm btn-success">
+                                                       
+                                                            @if ($errors->has('pdf_file') && old('order_number') == $order->order_number)
+                                                                <span
+                                                                    class="text-danger">{{ $errors->first('pdf_file') }}</span>
+                                                            @endif
+                                                        
+                                                        <button type="submit" class="btn btn-sm btn-success" @if ($hcuser->document_status == 1) disabled @endif>
                                                             <i class="bi bi-upload"></i> Upload
                                                         </button>
                                                     </form>
@@ -227,10 +233,11 @@
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number]) }}"
-                                                            class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure?')">
+                                                            class="btn btn-sm btn-danger @if ($hcuser->document_status == 1) disabled @endif"
+                                                            onclick="return confirm('Are you sure?')"
+                                                            @if ($hcuser->document_status == 1) onclick="return false;" @endif>
                                                             <i class="bi bi-trash"></i> Delete
-                                                        </a>
+                                                         </a>
                                                     @else
                                                         <span class="text-muted">No File</span>
                                                     @endif
@@ -339,21 +346,20 @@
                                 <i class="bi bi-check-circle-fill"></i> Certified Copy Download Notification sent
                                 successfully.
                             </div>
-                         @elseif ($hcuser->document_status == 1 && $totaldiff == 0)
-                                <form action="{{ route('hc-web-application.send-ready-notification') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="application_number"
-                                        value="{{ $hcuser->application_number }}">
-                                    <button type="submit" class="btn btn-primary mt-3">Send Certified Copy</button>
-                                </form>
-                                 @elseif ($hcuser->document_status == 1 && (($hcuser->deficit_status == 1) && ($hcuser->deficit_payment_status  == 1)))
-                                <form action="{{ route('hc-web-application.send-ready-notification') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="application_number"
-                                        value="{{ $hcuser->application_number }}">
-                                    <button type="submit" class="btn btn-primary mt-3">Send Certified Copy</button>
-                                </form>
-                           
+                        @elseif ($hcuser->document_status == 1 && $totaldiff == 0)
+                            <form action="{{ route('hc-web-application.send-ready-notification') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="application_number"
+                                    value="{{ $hcuser->application_number }}">
+                                <button type="submit" class="btn btn-primary mt-3">Send Certified Copy</button>
+                            </form>
+                        @elseif ($hcuser->document_status == 1 && ($hcuser->deficit_status == 1 && $hcuser->deficit_payment_status == 1))
+                            <form action="{{ route('hc-web-application.send-ready-notification') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="application_number"
+                                    value="{{ $hcuser->application_number }}">
+                                <button type="submit" class="btn btn-primary mt-3">Send Certified Copy</button>
+                            </form>
                         @endif
 
                     </div>

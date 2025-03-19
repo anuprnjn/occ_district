@@ -45,12 +45,12 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <th>Filing No</th>
                             <th>Date</th>
                             <th>Document Status</th> <!-- New Column for Document Status -->
-                            <th>View</th> 
+                            <th>View</th>  
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($hcuserdata as $index => $hcuser)
-                        <tr>
+                        <tr> 
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $hcuser->application_number }}</td>
                             <td>{{ $hcuser->applicant_name }}</td>

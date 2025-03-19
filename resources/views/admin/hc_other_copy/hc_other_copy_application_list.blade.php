@@ -50,6 +50,7 @@ use Illuminate\Support\Facades\Crypt;
                             <th>Mobile No</th>
                             <th>Case No/Filing No</th>
                             <th>Date</th>
+                            <th>View</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,7 +70,10 @@ use Illuminate\Support\Facades\Crypt;
                                     {{ $hcuser->selected_method }}  {{-- Default fallback --}}
                                 @endif
                             </td>
-                            <td>{{ \Carbon\Carbon::parse($hcuser->created_at)->format('d-m-Y H:i:s') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td>
+                            <td>
+                              <a href="{{ route('hc_other_copy_view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i>View</a>
+                          </td>
                         </tr>
                     @empty
                         <tr>
