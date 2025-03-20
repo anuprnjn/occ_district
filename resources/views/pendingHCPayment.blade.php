@@ -16,10 +16,10 @@
             </div>
         <!-- <pre>{{ print_r(session('PendingCaseInfoDetails'))}}</pre> -->
         <table class="w-full border border-gray-300">
-            <tr>
+            <!-- <tr>
                 <td class="border p-2 font-bold">Application Number</td>
                 <td class="border p-2" colspan=3>{{ session('PendingCaseInfoDetails.case_info.application_number') ?? 'N/A' }}</td>
-            </tr>
+            </tr> -->
             <tr>
                 <td class="border p-2 font-bold">Case Number</td>
                 <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.CASENO') ?? 'N/A' }}</td>
@@ -52,7 +52,7 @@
                     <td class="py-2 px-2 border">{{ $order['order_number'] ?? 'N/A' }}</td>
                     <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
                     <td class="py-2 px-2 border">{{ $order['number_of_page'] ?? '0' }}</td>
-                    <td class="py-2 px-2 border">{{ $order['amount'] ?? '0.00' }}</td>
+                    <td class="py-2 px-2 border text-green-500">₹{{ $order['amount'] ?? '0.0' }}</td>
                 </tr>
                 @empty
                 <tr>
