@@ -66,27 +66,65 @@ use Illuminate\Support\Facades\Crypt;
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
+                            
                                 <tbody>
-                                    @forelse ($submenudata as $index => $submenu)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td><strong>{{ $submenu['menu_name'] }}</strong></td>
-                                        <td>{{ $submenu['submenu_name'] }}</td>
-                                        <td>{{ $submenu['submenu_url'] }}</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm" onclick="editSubMenu({{ $submenu['submenu_id'] }}, '{{ $submenu['menu_id'] }}', '{{ $submenu['submenu_name'] }}', '{{ $submenu['submenu_url'] }}')">Edit</button>
-                                            <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ $submenu['submenu_id'] }})">Delete</button>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center">No Sub Menus found</td>
-                                    </tr>
-                                    @endforelse
+                                    @php 
+                                        $lastMenuName = null;
+                                        $rowspanCounts = [];
+                                    @endphp
+                    
+                                    @foreach ($submenudata as $submenu)
+                                        @php
+                                            $menuName = $submenu['menu_name'];
+                                            if (!isset($rowspanCounts[$menuName])) {
+                                                $rowspanCounts[$menuName] = count(array_filter($submenudata, fn($item) => $item['menu_name'] === $menuName));
+                                            }
+                                        @endphp
+                                    @endforeach
+                    
+                                    @foreach ($submenudata as $index => $submenu)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                    
+                                            @if ($lastMenuName !== $submenu['menu_name'])
+                                                <td rowspan="{{ $rowspanCounts[$submenu['menu_name']] }}">
+                                                    <strong>{{ $submenu['menu_name'] }}</strong>
+                                                </td>
+                                                @php $lastMenuName = $submenu['menu_name']; @endphp
+                                            @else
+                                                <!-- Add an empty td for proper column count -->
+                                                <td style="display: none;"></td>
+                                            @endif
+                    
+                                            <td>{{ $submenu['submenu_name'] }}</td>
+                                            <td>{{ $submenu['submenu_url'] }}</td>
+                                            <td>
+                                                <button class="btn btn-warning btn-sm" 
+                                                    onclick="editSubMenu({{ $submenu['submenu_id'] }}, '{{ $submenu['menu_id'] }}', '{{ $submenu['submenu_name'] }}', '{{ $submenu['submenu_url'] }}')">
+                                                    Edit
+                                                </button>
+                    
+                                                <button class="btn btn-danger btn-sm" 
+                                                    onclick="confirmDelete({{ $submenu['submenu_id'] }})">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                    
+                                    @if (empty($submenudata))
+                                        <tr>
+                                            <td colspan="5" class="text-center">No Sub Menu found</td>
+                                        </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    
+                    
+
+
                 </div>
             </div>
         </div>
