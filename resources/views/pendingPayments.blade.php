@@ -58,11 +58,11 @@ function pendingPayment(event) {
     }
 
     // Store the application number and court in sessionStorage
-    sessionStorage.setItem('pending_payment_application_number', application_number);
+    // sessionStorage.setItem('pending_payment_application_number', application_number);
     sessionStorage.setItem('selectedCourt', selectedCourt);
 
     // Make AJAX request based on selected court
-    var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
+    var url = selectedCourt === 'HC' ? '/fetch-pending-payments-hc' : '/fetch-pending-payments-dc';
 
     $.ajax({
         url: url,
@@ -72,14 +72,32 @@ function pendingPayment(event) {
             application_number: application_number,
         },
         success: function(response) {
-            if (response.success) {
-                trackApplicationForm.reset();
-                // Redirect to the details page
-                window.location.href = '/trackStatusDetails';
-            } else {
-                errorSpan.innerText = response.message || 'Failed to fetch application details.';
-            }
-        },
+        if (response.success) {
+            var caseInfoDetails = response;
+            // console.log(caseInfoDetails.case_info.application_number);
+            $.ajax({
+                url: '/set-caseInformation-PendingData-HC', 
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    caseInfoDetailsPendingPayHC: caseInfoDetails 
+                },
+                success: function(detailsResponse) {
+                    if (detailsResponse) {
+                        // console.log(detailsResponse.session_data.PendingCaseInfoDetails);
+                        window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
+                    } else {
+                        alert(detailsResponse.message || 'Error setting pending payment details HC');
+                    }
+                },
+                error: function() {
+                    console.log('An error occurred while setting pending Payment details.');
+                }
+            });
+        } else {
+            errorSpan.innerText = response.message || 'Failed to fetch application details.';
+        }
+    },
         error: function() {
             errorSpan.innerText = 'An error occurred while fetching the application details.';
         }

@@ -36,6 +36,7 @@ use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
 use App\Http\Middleware\CheckSession;
 use App\Http\Middleware\CheckSessionCd_pay;
+use App\Http\Controllers\PendingPaymentController;
 
 Route::get('/', function () {
     return view('index');
@@ -73,16 +74,17 @@ Route::get('/hc-application-details', function () {
     return view('hc_application_details');
 })->name('hc_application_details');
 
+
 Route::middleware([CheckSession::class])->group(function () {
     Route::get('/caseInformation', function () {
         return view('caseInformation');
     })->name('caseInformation');
 });
-Route::middleware([CheckSessionCd_pay::class])->group(function () {
+// Route::middleware([CheckSessionCd_pay::class])->group(function () {
     Route::get('/occ/cd_pay', function () {
         return view('caseInformationDetails');
     })->name('caseInformationDetails');
-});
+// });
 
 Route::get('/screenReader', function () {
     return view('screenReader');
@@ -117,6 +119,8 @@ Route::get('/clear-session', function () {
     session()->flush(); 
     return response()->json(['success' => true]);
 })->name('clear.session');
+Route::post('/fetch-pending-payments-hc', [PendingPaymentController::class,'fetchPendingPaymentsHC']);
+Route::post('/set-caseInformation-PendingData-HC', [SessionDataController::class, 'setPendingCaseInfoData'])->middleware('web');
 
 //admin routes **************************************************************
 

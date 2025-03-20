@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/trackStatusDetails": "track_app",
         "/caseInformation" : "home",
         "/occ/cd_pay" : "home",
+        // "/occ/cd_pay" : "pendingPayments",
         "/api/occ/gras_resp_cc" : "home",
         // "/screenReader" : "home",
     };
