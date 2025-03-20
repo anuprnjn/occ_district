@@ -16,6 +16,17 @@ class SessionDataController extends Controller
             'session_data' => Session::all() 
         ]);
     }
+    public function setPendingCaseInfoData(Request $request) { 
+        $PendingCaseInfoDetails = $request->input('caseInfoDetailsPendingPayHC'); 
+        Session::put('PendingCaseInfoDetails', $PendingCaseInfoDetails);
+        Session::save();  
+        Session::reflash();
+
+        return response()->json([
+            'message' => 'Case Info Data Stored Successfully!',
+            'session_data' => Session::all() 
+        ]);
+    }
     public function getCaseInfoData() {
         // Ensure session data is saved before retrieving it
         Session::save();

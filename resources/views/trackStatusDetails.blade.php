@@ -11,13 +11,13 @@
         </p>
     </div>
 
-    <h2 id="application-status" class="text-rose-500 text-2xl font-semibold -mt-4 text-center sm:text-left md:text-left"></h2>
+    <h2 id="application-status" class="uppercase text-red-500 text-2xl font-semibold -mt-4 text-center sm:text-left md:text-left"></h2>
     <div id="application-details-section" class="shadow-md rounded-lg mt-10">
         <div id="application-details"></div>
         
     </div>
     <div id="print_container" class="hidden flex flex-col justify-start items-start">
-    <button id="print-application-btn" class="mt-5 p-3 bg-rose-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">Print Application</button> <!-- Print button -->
+    <button id="print-application-btn" class="mt-5 p-3 bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">Print Application</button> <!-- Print button -->
     <div class="sm:mt-4 -mt-10 mb-20 sm:mb-0" id="note">
     <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
     </div>
@@ -126,7 +126,7 @@ function displayApplicationDetails(data) {
     const print_btn_track = document.getElementById('print_container');
     print_btn_track.classList.remove('hidden');
     // Display the application status
-    var applicationStatus = data.status ? `Application Status: ${data.status}` : 'Application Status: Pending';
+    var applicationStatus = data.status ? `Application Status - ${data.status}` : 'Application Status - Pending';
     $('#application-status').text(applicationStatus);
 
     var detailsSection = $('#application-details');

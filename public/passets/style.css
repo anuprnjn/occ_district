@@ -964,6 +964,20 @@ body.dark-mode .loading_hc{
     height: 22px;
     animation: spin 1s linear infinite;
 }
+.caseInfoTable:hover{
+    background: rgb(245, 245, 245);
+}
+.caseInfoShowCaseDetails{
+    background-color: #f5f8fad2;
+}
+body.dark-mode .caseInfoShowCaseDetails{
+    background-color: #202020;
+    color: white;
+}
+
+body.dark-mode .caseInfoTable:hover{
+    background: #202020;
+}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

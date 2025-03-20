@@ -6,16 +6,16 @@
     <!-- First Section -->
     <div class="w-full sm:w-2/3 dark_form p-4 rounded-md">
         
-        <h2 class="text-xl font-semibold mt-6 mb-4">Case Information</h2>
-        <div id="caseDetails" class=" rounded p-4 bg-slate-100/70">
-            <p class="text-gray-600">Loading case details...</p>
+        <h2 class="text-xl font-semibold mt-0 mb-2">Case Information</h2>
+        <div id="caseDetails">
+            <p class="text-green-600">Loading case details...</p>
         </div>
 
         <h2 class="text-lg font-semibold mt-6 mb-4">Orders</h2>
         <div class="overflow-x-auto rounded-md">
             <table class="min-w-full border border-gray-200" id="ordersTable">
                 <thead>
-                    <tr class="text-left">
+                    <tr class="bg-[#4B3D2F] text-white text-left text-md">
                         <th class="py-2 px-4 border">Select</th>
                         <th class="py-2 px-4 border">Order Number</th>
                         <th class="py-2 px-4 border">Order Date</th>
@@ -129,12 +129,59 @@
 
             if (caseInfo) {
                 caseDetailsDiv.innerHTML = `
-                    <p><strong>Filing Number:</strong> ${caseInfo.fillingno || 'N/A'}</p>
-                    <p><strong>Case Number:</strong> ${caseInfo.caseno || 'N/A'}</p>
-                    <p><strong>CNR Number:</strong> ${caseInfo.cino || 'N/A'}</p>
-                    <p><strong>Case Status:</strong> ${caseInfo.casestatus || 'N/A'}</p>
-                    <p><strong>Petitioner Name:</strong> ${caseInfo.pet_name || 'N/A'}</p>
-                    <p><strong>Respondent Name:</strong> ${caseInfo.res_name || 'N/A'}</p>
+                <div class="rounded-xl caseInfoShowCaseDetails p-4 ">
+                    ${caseInfo ? `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-4">
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Filing Number</h6>
+                                    <h6 class="font-semibold">${caseInfo.fillingno || 'N/A'}</h6>
+                                </div>
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
+                                    <h6 class="font-semibold">${caseInfo.caseno || 'N/A'}</h6>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">CNR Number</h6>
+                                    <h6 class="font-semibold break-all">${caseInfo.cino || 'N/A'}</h6>
+                                </div>
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                        caseInfo.casestatus?.toLowerCase() === 'disposed' 
+                                        ? 'bg-red-100 text-red-800' 
+                                        : 'bg-blue-100 text-blue-800'
+                                    }">
+                                        ${caseInfo.casestatus || 'N/A'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h6 class="text-sm text-gray-500 mb-1">Petitioner</h6>
+                                <h6 class="font-semibold">${caseInfo.pet_name || 'N/A'}</h6>
+                            </div>
+                            <div>
+                                <h6 class="text-sm text-gray-500 mb-1">Respondent</h6>
+                                <h6 class="font-semibold">${caseInfo.res_name || 'N/A'}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    ` : `
+                    <div class="text-center py-8">
+                        <div class="text-red-500 inline-flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <span class="font-medium">No case information found!</span>
+                        </div>
+                    </div>
+                    `}
+                </div>
                 `;
             } else {
                 caseDetailsDiv.innerHTML = `<p class="text-red-500">No case information found!</p>`;
@@ -146,16 +193,32 @@
 
             if (responseData.orders && responseData.orders.length > 0) {
                 responseData.orders.forEach(order => {
-                    const row = `
-                        <tr class="border-b">
-                            <td class="py-2 px-4 border"><input type="checkbox"/></td>
-                            <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
-                            <td class="py-2 px-4 border">${order.order_dt || 'N/A'}</td>
-                            <td class="py-2 px-4 border">${order.page_count || 0}</td>
-                            <td class="py-2 px-4 border">₹${order.amount || 0}</td>
-                        </tr>
+                    const row = document.createElement("tr");
+                    row.classList.add("border-b", "cursor-pointer", "caseInfoTable");
+
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border">
+                            <input type="checkbox" class="order-checkbox"/>
+                        </td>
+                        <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
+                        <td class="py-2 px-4 border">${order.order_dt || 'N/A'}</td>
+                        <td class="py-2 px-4 border">${order.page_count || 0}</td>
+                        <td class="py-2 px-4 border font-bold"><span class="text-green-500">₹&nbsp;</span>${order.amount || 0}</td>
                     `;
-                    ordersTable.innerHTML += row;
+
+                    // Attach click event to row
+                    row.addEventListener("click", function (event) {
+                        // Prevent triggering when clicking directly on checkbox
+                        if (event.target.type === "checkbox") return;
+
+                        const checkbox = row.querySelector(".order-checkbox");
+                        if (checkbox) {
+                            checkbox.checked = !checkbox.checked; // Toggle checkbox
+                            // Highlight row
+                        }
+                    });
+
+                    ordersTable.appendChild(row);
                 });
             } else {
                 ordersTable.innerHTML = `<tr><td colspan="5" class="text-center py-2">No orders available</td></tr>`;
@@ -183,138 +246,148 @@
         advocateInput.removeAttribute('required'); // Remove required when hidden
         advocateInput.value = ''; // Clear the field to prevent unwanted submission
     }
-}
-
-function handleCaseInformationSubmit(event) {
-    event.preventDefault();
-
-    const submitBtn = document.getElementById("submitBtn");
-    const btnText = document.getElementById("btnText");
-    const btnSpinner = document.getElementById("btnSpinner");
-
-    // Get form field values
-    const name = document.getElementById("name").value.trim();
-    const mobile = document.getElementById("mobileInput").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const cnfemail = document.getElementById("confirm-email").value.trim();
-    const selectedValue = document.getElementById("apply-by").value;
-    const requestMode = document.querySelector('input[name="request_mode"]:checked')?.value || "";
-    const adv_res = document.getElementById("adv_res")?.value.trim() || "";
-
-    // Validation checks
-    if (name === "") {
-        alert("Please enter your name.");
-        return;
     }
 
-    const mobileRegex = /^[6-9]\d{9}$/;
-    if (!mobileRegex.test(mobile)) {
-        alert("Please enter a valid 10-digit mobile number.");
-        return;
-    }
+    function handleCaseInformationSubmit(event) {
+        event.preventDefault();
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (email === "" || !emailRegex.test(email)) {
-        alert("Please enter a valid email address.");
-        return;
-    }
+        const submitBtn = document.getElementById("submitBtn");
+        const btnText = document.getElementById("btnText");
+        const btnSpinner = document.getElementById("btnSpinner");
 
-    if (cnfemail === "" || cnfemail !== email) {
-        alert("Email and Confirm Email must match.");
-        return;
-    }
+        // Get form field values
+        const name = document.getElementById("name").value.trim();
+        const mobile = document.getElementById("mobileInput").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const cnfemail = document.getElementById("confirm-email").value.trim();
+        const selectedValue = document.getElementById("apply-by").value;
+        const requestMode = document.querySelector('input[name="request_mode"]:checked')?.value || "";
+        const adv_res = document.getElementById("adv_res")?.value.trim() || "";
 
-    if (selectedValue === "") {
-        alert("Please select 'Applied By'.");
-        return;
-    }
-
-    if (selectedValue === "advocate" && adv_res === "") {
-        alert("Please enter the advocate's registration number.");
-        return;
-    }
-
-    if (requestMode === "") {
-        alert("Please select a request mode.");
-        return;
-    }
-
-    const selectedOrders = Array.from(document.querySelectorAll('#ordersTable tbody input[type="checkbox"]:checked')).map(order => {
-        const row = order.closest("tr");
-        return {
-            orderNumber: row.cells[1].textContent.trim(),
-            orderDate: row.cells[2].textContent.trim(),
-            numPages: row.cells[3].textContent.trim(),
-            amount: row.cells[4].textContent.trim()
-        };
-    });
-
-    if (selectedOrders.length === 0) {
-        alert("Please select at least one order.");
-        return;
-    }
-
-    // Show spinner, hide text & disable button
-    btnText.style.display = "none";
-    btnSpinner.classList.remove("hidden");
-    submitBtn.disabled = true;
-
-    // Simulate form processing delay
-    setTimeout(async () => {
-        try {
-            const CaseResponse = await fetch('/get-case-data');
-            if (!CaseResponse.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const CaseData = await CaseResponse.json();
-
-            // Ensure responseData exists
-            const responseData = CaseData?.session_data?.responseData;
-            const petitioner_name = responseData.cases[0].pet_name;
-            const respondent_name = responseData.cases[0].res_name;
-
-            if (!responseData) {
-                throw new Error('Missing responseData!');
-            }
-            const formData = {
-                name, mobile, email, selectedValue, adv_res, requestMode, selectedOrders, petitioner_name, respondent_name
-            };
-
-            console.log(formData);
-
-            // Prepare fetch request
-            const response = await fetch('/set-caseInformation-data', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-                },
-                body: JSON.stringify({ caseInfoDetails: formData })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to store data in session');
-            }
-
-            const data = await response.json();
-            console.log(data.message);
-
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            // Reset button state
-            btnText.style.display = "flex";
-            btnSpinner.classList.add("hidden");
-            submitBtn.disabled = false;
-
-            // Redirect after processing
-            window.location.href = '/occ/cd_pay';
+        // Validation checks
+        if (name === "") {
+            alert("Please enter your name.");
+            return;
         }
-    }, 1500);
-}
 
-// Ensure advocate field updates on dropdown change
-document.getElementById("apply-by").addEventListener("change", toggleAdvocateField);
+        const mobileRegex = /^[6-9]\d{9}$/;
+        if (!mobileRegex.test(mobile)) {
+            alert("Please enter a valid 10-digit mobile number.");
+            return;
+        }
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email === "" || !emailRegex.test(email)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        if (cnfemail === "" || cnfemail !== email) {
+            alert("Email and Confirm Email must match.");
+            return;
+        }
+
+        if (selectedValue === "") {
+            alert("Please select 'Applied By'.");
+            return;
+        }
+
+        if (selectedValue === "advocate" && adv_res === "") {
+            alert("Please enter the advocate's registration number.");
+            return;
+        }
+
+        if (requestMode === "") {
+            alert("Please select a request mode.");
+            return;
+        }
+
+        const selectedOrders = Array.from(document.querySelectorAll('#ordersTable tbody input[type="checkbox"]:checked')).map(order => {
+            const row = order.closest("tr");
+            return {
+                orderNumber: row.cells[1].textContent.trim(),
+                orderDate: row.cells[2].textContent.trim(),
+                numPages: row.cells[3].textContent.trim(),
+                amount: row.cells[4].textContent.trim()
+            };
+        });
+
+        if (selectedOrders.length === 0) {
+            alert("Please select at least one order.");
+            return;
+        }
+
+        // Show spinner, hide text & disable button
+        btnText.style.display = "none";
+        btnSpinner.classList.remove("hidden");
+        submitBtn.disabled = true;
+
+        // Simulate form processing delay
+        setTimeout(async () => {
+            const userConfirmed = confirm("Please review all entered details carefully. Once submitted, you will not be able to edit the details!\n\nDo you want to proceed?");
+            
+            if (!userConfirmed) {
+                btnText.style.display = "flex";
+                btnSpinner.classList.add("hidden");
+                submitBtn.disabled = false;
+                return; 
+            }
+
+            try {
+                const CaseResponse = await fetch('/get-case-data');
+                if (!CaseResponse.ok) {
+                    throw new Error(`HTTP error! Status: ${CaseResponse.status}`);
+                }
+                const CaseData = await CaseResponse.json();
+
+                // Ensure responseData exists
+                const responseData = CaseData?.session_data?.responseData;
+                if (!responseData) {
+                    throw new Error('Missing responseData!');
+                }
+
+                const petitioner_name = responseData.cases[0].pet_name;
+                const respondent_name = responseData.cases[0].res_name;
+
+                const formData = {
+                    name, mobile, email, selectedValue, adv_res, requestMode, selectedOrders, petitioner_name, respondent_name
+                };
+
+                console.log(formData);
+
+                // Prepare fetch request
+                const response = await fetch('/set-caseInformation-data', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                    },
+                    body: JSON.stringify({ caseInfoDetails: formData })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to store data in session');
+                }
+
+                const data = await response.json();
+                console.log(data.message);
+
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                // Reset button state
+                btnText.style.display = "flex";
+                btnSpinner.classList.add("hidden");
+                submitBtn.disabled = false;
+                sessionStorage.setItem("previousPage", window.location.pathname);
+                // Redirect after processing
+                window.location.href = '/occ/cd_pay';
+            }
+        }, 1500);
+    }
+
+    // Ensure advocate field updates on dropdown change
+    document.getElementById("apply-by").addEventListener("change", toggleAdvocateField);
 </script>    
 
 @endpush

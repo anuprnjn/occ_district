@@ -18,6 +18,9 @@ class CheckSessionCd_pay
         if (!Session::has('caseInfoDetails')) {
             return redirect('/caseInformation')->with('error', 'Session not available');
         }
+        if (!Session::has('PendingCaseInfoDetails')) {
+            return redirect('/pendingPayments')->with('error', 'Session not available');
+        }
 
         return $next($request);
     }
