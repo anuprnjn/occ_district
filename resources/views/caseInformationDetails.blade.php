@@ -74,7 +74,10 @@
 
                     @foreach($caseInfoDetails['selectedOrders'] as $order)
                         @php
-                            $amount = isset($order['amount']) ? (float) str_replace('₹', '', $order['amount']) : 0;
+                            $amount = isset($order['amount'])
+                                ? (float) preg_replace('/[^\d.]/', '', $order['amount'])
+                                : 0;
+                           
                             $test += $amount; // Accumulate amount
                         @endphp
                         <tr>
