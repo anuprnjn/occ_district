@@ -68,7 +68,7 @@ class HcOtherCopyController extends Controller
             $parser = new Parser(); // PDF parser instance
     
             foreach ($request->file('documents') as $key => $file) {
-                $filename = $request->application_number . '_' . time();
+                $filename = $request->application_number . '_' . time(). '.pdf';
                 $path = $file->storeAs('highcourt_other_copies', $filename, 'public');
     
                 // Extract page count from PDF
