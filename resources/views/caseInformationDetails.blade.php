@@ -7,7 +7,7 @@
 @else
     <section class="content-section flex flex-col gap-4">
         <!-- Case Information & Orders -->
-        <div class="w-full dark_form rounded-md -mt-10">
+        <div class="w-full rounded-md -mt-10">
             <div class="flex items-center">
                 <h2 class="text-lg font-semibold mb-3 w-[18%]">Case Information</h2>
                 <marquee behavior="" direction="left" class="w-full -mt-1">

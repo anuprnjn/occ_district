@@ -3,10 +3,11 @@
 @section('content')
 <section class="content-section">
     <!-- Case Information Section -->
-    <div class="w-full dark_form rounded-md -mt-8">
-        <span class="text-xl">Payment is Pending for the application number <span class="text-green-500">({{ session('PendingCaseInfoDetails.case_info.application_number') ?? 'N/A' }})</span> </span>
+    <div class="w-full rounded-md -mt-8">
+        
+        <span class="text-xl text-red-500 uppercase font-extrabold">Payment is Pending for the application number &nbsp;<span class="text-teal-500">( {{ session('PendingCaseInfoDetails.case_info.application_number') ?? 'N/A' }} )</span> </span>
         <div class="flex items-center">
-                <h2 class="text-lg font-semibold mb-3 w-[18%]">Case Information</h2>
+                <span class="text-lg font-semibold mb-3 w-[18%] mt-4 text-[#D09A3F]">Case Information</span>
                 <marquee behavior="" direction="left" class="w-full -mt-1">
                     <span class="text-red-500 text-md font-extrabold" style="font-weight: 900;">
                         ( NOTE: It is advised to pay through Netbanking/BHIM UPI with the SBI epay gateway option )

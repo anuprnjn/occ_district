@@ -14,20 +14,32 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get the current page URL
     const currentUrl = window.location.pathname;
 
+    // Store previous page when navigating
+    if (!sessionStorage.getItem("previousPage") || sessionStorage.getItem("previousPage") !== currentUrl) {
+        sessionStorage.setItem("previousPage", document.referrer.split(window.location.origin)[1] || "/");
+    }
+    
     // Define routes
     const routes = {
         "/": "home",
-        "/hc-application-details" : "home",
+        "/hc-application-details": "home",
         "/trackStatus": "track_app",
         "/pendingPayments": "pending_payments",
         "/application-details": "home",
         "/trackStatusDetails": "track_app",
-        "/caseInformation" : "home",
-        "/occ/cd_pay" : "home",
-        // "/occ/cd_pay" : "pendingPayments",
-        "/api/occ/gras_resp_cc" : "home",
-        // "/screenReader" : "home",
+        "/caseInformation": "home",
+        "/occ/cd_pay": "home", // Default behavior for /occ/cd_pay
+        "/api/occ/gras_resp_cc": "home",
     };
+
+    // Special condition for /occ/cd_pay
+    if (currentUrl === "/occ/cd_pay") {
+        const previousPage = sessionStorage.getItem("previousPage");
+
+        if (previousPage === "/pendingPayments") {
+            routes["/occ/cd_pay"] = "pending_payments"; // Show "Pending Payments" active
+        }
+    }
 
     // Remove 'active' from all <li> elements
     navLinks.forEach((li) => li.classList.remove("active"));
@@ -40,5 +52,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
-</script>    
+</script> 
 </html>

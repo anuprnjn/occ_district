@@ -379,7 +379,7 @@
                 btnText.style.display = "flex";
                 btnSpinner.classList.add("hidden");
                 submitBtn.disabled = false;
-
+                sessionStorage.setItem("previousPage", window.location.pathname);
                 // Redirect after processing
                 window.location.href = '/occ/cd_pay';
             }
