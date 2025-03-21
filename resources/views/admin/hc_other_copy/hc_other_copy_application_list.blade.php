@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Crypt;
       <div class="container-fluid">
         <div class="row g-4">
           <div class="col-md-12">
-            <div class="card card-primary card-outline mb-4">
+            <div class="card card-info card-outline mb-4">
               <div class="card-header"><div class="card-title">Highcourt Other Copy Application List</div></div>
               <div class="card-body">
                 @if(session('success'))

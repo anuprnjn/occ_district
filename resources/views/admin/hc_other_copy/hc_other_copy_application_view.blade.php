@@ -31,10 +31,17 @@
                         <div class="card card-info card-outline mb-4">
                             <div class="card-header">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mb-0 me-2">Application Details</h5>
-                                    <button onclick="printDiv('printablearea')" class="btn btn-primary">
-                                        <i class="bi bi-printer"></i> Print
-                                    </button>
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="card-title mb-0 me-2">Application Details</h5>
+                                        <button onclick="printDiv('printablearea')" class="btn btn-primary me-2">
+                                            <i class="bi bi-printer"></i> Print
+                                        </button>
+                                        <button onclick="rejectApplication()" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal"
+                                            @if ($hcuser->document_status == 1) disabled @endif>
+                                            <i class="bi bi-x-circle"></i> Reject Application
+                                        </button>
+                                    </div>
                                     <a href="{{ route('hc_other_copy') }}" class="btn btn-info">
                                         <i class="bi bi-arrow-left"></i> Back
                                     </a>
@@ -144,7 +151,8 @@
                                             </div>
                                         </div>
                                     </fieldset>
-                                    <button type="submit" class="btn btn-primary mt-2" @if ($hcuser->document_status == 1) disabled @endif><i
+                                    <button type="submit" class="btn btn-primary mt-2"
+                                        @if ($hcuser->document_status == 1) disabled @endif><i
                                             class="bi bi-upload"></i>Upload</button>
                                 </form>
                                 <h5 class="card-title mt-4">Uploaded Documents</h5> <!-- Added margin-top -->
@@ -170,7 +178,7 @@
                                                 </td>
                                                 <td>
                                                     <button onclick="deleteDocument({{ $doc->id }})"
-                                                        class="btn btn-danger btn-sm" 
+                                                        class="btn btn-danger btn-sm"
                                                         @if ($hcuser->document_status == 1) disabled @endif>
                                                         <i class="bi bi-trash"></i> Delete
                                                     </button>
@@ -194,7 +202,8 @@
                         @elseif(!$documents->isEmpty())
                             <form action="{{ route('hc-other-copy.send-notification') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="application_number" value="{{ $hcuser->application_number }}">
+                                <input type="hidden" name="application_number"
+                                    value="{{ $hcuser->application_number }}">
 
                                 <button type="submit" class="btn btn-danger mt-3">
                                     <i class="bi bi-bell"></i> Send Notification
@@ -227,6 +236,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Rejction Modal -->
+    <form action="{{ route('hc-other-copy.reject') }}" method="POST">
+        @csrf
+        <input type="hidden" name="application_number" value="{{ $hcuser->application_number }}">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            <i class="bi bi-x-circle"></i> Reject Application
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="rejectionRemarks" class="form-label fw-bold">Rejection Remarks</label>
+                        <textarea class="form-control" id="rejectionRemarks" name="rejection_remarks" rows="4" placeholder="Enter rejection reason here..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x"></i> Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
     @push('scripts')
         <script>
@@ -316,7 +356,7 @@
                             })
                             .done(function(response) {
                                 alert(response.success);
-                               // $("#documentRow_" + id).remove(); // Remove row on success
+                                // $("#documentRow_" + id).remove(); // Remove row on success
                                 location.reload();
                             })
                             .fail(function(xhr) {

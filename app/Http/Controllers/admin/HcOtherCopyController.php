@@ -152,6 +152,59 @@ public function sendNotification(Request $request)
         return redirect()->back()->with('error', 'An error occurred while sending the notification.');
     }
 }
+public function rejectApplication(Request $request)
+{
+    try {
+        $applicationNumber = $request->input('application_number');
+        $rejectionRemarks = $request->input('rejection_remarks');
+
+        // Update the application status to 'rejected' and save rejection remarks
+        DB::table('high_court_applicant_registration')
+            ->where('application_number', $applicationNumber)
+            ->update([
+                'rejection_status' => 1,
+                'rejection_remarks' => $rejectionRemarks,
+                'rejection_date' => now(),
+                'rejected_by' => session('user.id')
+            ]);
+
+        // (Optional) Fetch user details to send notification
+        $user = DB::table('high_court_applicant_registration')
+            ->where('application_number', $applicationNumber)
+            ->first();
+
+        // Example Notification Logic (Email or SMS)
+        if ($user) {
+            // Mail::to($user->email)->send(new ApplicationRejectedMail($user));
+            // Notification::send($user, new ApplicationRejectedNotification());
+        }
+
+        // Redirect to the desired route
+        return redirect()->route('hc_other_copy_rejected_application')->with('success', 'Application rejected successfully.');
+
+    } catch (\Exception $e) {
+        Log::error('Error rejecting application', ['error' => $e->getMessage()]);
+        return redirect()->route('hc_other_copy_rejected_application')->with('error', 'An error occurred while rejecting the application.');
+    }
+}
+
+public function rejectedHcOtherCopy()
+    {
+        try {
+            $hcuserdata = DB::table('high_court_applicant_registration as hc')
+                ->select('hc.*', 'ct.type_name as case_type_name')
+                ->leftJoin('high_court_case_type as ct', 'hc.case_type', '=', 'ct.case_type')
+                ->where('rejection_status',1)
+                ->orderBy('hc.created_at', 'desc')
+                ->get();
+
+            return view('admin.hc_other_copy.hc_other_copy_rejected_list', compact('hcuserdata'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC Other Copy data', ['error' => $e->getMessage()]);
+            return view('admin.hc_other_copy.hc_other_copy_rejected_list', ['hcuserdata' => []])
+                ->with('error', 'An error occurred while fetching data.');
+        }
+    }
 
 
 }

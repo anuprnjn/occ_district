@@ -255,6 +255,12 @@
                       <p>Other Copy</p>
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="{{ route('hc_other_copy_rejected_application') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Rejected Other Copy application</p>
+                    </a>
+                  </li>
                 </ul>
               </li>
 

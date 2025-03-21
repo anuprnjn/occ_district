@@ -184,5 +184,6 @@ Route::post('/hc-web-application/send-deficit-notification', [HcWebApplicationCo
  Route::post('/admin/hc-other-copy/upload', [HcOtherCopyController::class, 'uploadDocument'])->name('upload.document');
 Route::post('/admin/hc-other-copy/delete', [HcOtherCopyController::class, 'deleteDocument'])->name('delete.document');
 Route::post('/admin/hc-other-copy/send-notification', [HcOtherCopyController::class, 'sendNotification'])->name('hc-other-copy.send-notification');
-    
+Route::post('/admin/hc-other-copy/reject', [HcOtherCopyController::class, 'rejectApplication'])->name('hc-other-copy.reject'); 
+Route::get('/admin/hc-other-copy-rejected', [HcOtherCopyController::class, 'rejectedHcOtherCopy'])->name('hc_other_copy_rejected_application');  
 });
