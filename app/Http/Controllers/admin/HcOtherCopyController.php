@@ -19,6 +19,7 @@ class HcOtherCopyController extends Controller
             $hcuserdata = DB::table('high_court_applicant_registration as hc')
                 ->select('hc.*', 'ct.type_name as case_type_name')
                 ->leftJoin('high_court_case_type as ct', 'hc.case_type', '=', 'ct.case_type')
+                ->where('rejection_status',0)
                 ->orderBy('hc.created_at', 'desc')
                 ->get();
 
