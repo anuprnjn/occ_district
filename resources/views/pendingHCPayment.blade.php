@@ -15,11 +15,8 @@
                 </marquee>
             </div>
         <!-- <pre>{{ print_r(session('PendingCaseInfoDetails'))}}</pre> -->
+        @if(session('PendingCaseInfoDetails.order_details'))
         <table class="w-full border border-gray-300">
-            <!-- <tr>
-                <td class="border p-2 font-bold">Application Number</td>
-                <td class="border p-2" colspan=3>{{ session('PendingCaseInfoDetails.case_info.application_number') ?? 'N/A' }}</td>
-            </tr> -->
             <tr>
                 <td class="border p-2 font-bold">Case Number</td>
                 <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.CASENO') ?? 'N/A' }}</td>
@@ -33,34 +30,81 @@
                 <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.respondent_name') ?? 'N/A' }}</td>
             </tr>
         </table>
+        @else
+        <table class="w-full border border-gray-300">
+            <tr>
+                <td class="border p-2 font-bold">
+                    {{ session('PendingCaseInfoDetails.case_info.selected_method') == 'C' ? 'Case Number' : 'Filling Number' }}
+                </td>
+                <td class="border p-2">
+                    {{ session('PendingCaseInfoDetails.case_info.selected_method') == 'C' 
+                        ? session('PendingCaseInfoDetails.case_info.CASENO') ?? 'N/A' 
+                        : session('PendingCaseInfoDetails.case_info.FILLINGNO') ?? 'N/A' 
+                    }}
+                </td>
+            </tr>
+        </table>
+        @endif
     </div>
     <!-- Orders Table -->
+    @if(session('PendingCaseInfoDetails.order_details'))
     <h2 class="text-md font-semibold mt-4 mb-3">Orders</h2>
+    @else
+        <h2 class="text-md font-semibold mt-4 mb-3">Documents</h2>
+    @endif
+
     <div class="overflow-x-auto">
-        <table class="w-full border border-gray-300 text-sm" id="ordersTable">
-            <thead>
-                <tr class="bg-[#4B3D2F] text-white text-left text-md">
-                    <th class="py-2 px-2 border">Order No</th>
-                    <th class="py-2 px-2 border">Order Date</th>
-                    <th class="py-2 px-2 border">Pages</th>
-                    <th class="py-2 px-2 border">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse(session('PendingCaseInfoDetails.order_details') ?? [] as $order)
-                <tr>
-                    <td class="py-2 px-2 border">{{ $order['order_number'] ?? 'N/A' }}</td>
-                    <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
-                    <td class="py-2 px-2 border">{{ $order['number_of_page'] ?? '0' }}</td>
-                    <td class="py-2 px-2 border text-green-500">₹{{ $order['amount'] ?? '0.0' }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="py-2 px-2 border text-center">No orders found</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+            @if(session('PendingCaseInfoDetails.order_details'))
+            <table class="w-full border border-gray-300 text-sm" id="ordersTable">
+                <thead>
+                    <tr class="bg-[#4B3D2F] text-white text-left text-md">
+                        <th class="py-2 px-2 border">Order No</th>
+                        <th class="py-2 px-2 border">Order Date</th>
+                        <th class="py-2 px-2 border">Pages</th>
+                        <th class="py-2 px-2 border">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse(session('PendingCaseInfoDetails.order_details') ?? [] as $order)
+                        <tr>
+                            <td class="py-2 px-2 border">{{ $order['order_number'] ?? 'N/A' }}</td>
+                            <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
+                            <td class="py-2 px-2 border">{{ $order['number_of_page'] ?? '0' }}</td>
+                            <td class="py-2 px-2 border text-green-500">₹{{ $order['amount'] ?? '0.0' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="py-2 px-2 border text-center">No orders found</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        @elseif(session('PendingCaseInfoDetails.document_details'))
+            <table class="w-full border border-gray-300 text-sm" id="documentsTable">
+                <thead>
+                    <tr class="bg-[#4B3D2F] text-white text-left text-md">
+                        <th class="py-2 px-2 border">Document Type</th>
+                        <th class="py-2 px-2 border">Pages</th>
+                        <th class="py-2 px-2 border">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse(session('PendingCaseInfoDetails.document_details') ?? [] as $document)
+                        <tr>
+                            <td class="py-2 px-2 border">{{ $document['document_type'] ?? 'N/A' }}</td>
+                            <td class="py-2 px-2 border">{{ $document['number_of_page'] ?? '0' }}</td>
+                            <td class="py-2 px-2 border text-green-500">₹{{ $document['amount'] ?? '0.0' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="py-2 px-2 border text-center">No documents found</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        @else
+            <p class="text-center text-gray-500 py-4">No pending case information available.</p>
+        @endif
     </div>
 
     <!-- User Details Section -->

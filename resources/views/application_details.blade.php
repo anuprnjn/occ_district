@@ -10,8 +10,8 @@
         </p>
     </div>
     
-    <h1 id="application-title" class="sm:text-2xl text-center sm:text-start text-xl uppercase mb-6 font-semibold"></h1>
-    <div id="application-details-container" class=" shadow-md rounded-lg">
+    <h2 id="application-title" class="sm:text-2xl text-center sm:text-start text-xl uppercase mb-6 font-semibold -mt-6"></h2>
+    <div id="application-details-container" class="">
         <!-- Application data will appear here -->
     </div>
     
@@ -86,73 +86,73 @@
 
                     if (data.selected_method === 'C') {
                         caseDetails = `
-                            <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-[1rem] font-semibold uppercase">Case Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-[1rem]">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
+                            <tr class="border">
+                                <td class="px-6 py-2.5 border text-sm sm:text-[1rem] font-semibold uppercase">Case Number</td>
+                                <td class="px-6 py-2.5 border text-sm sm:text-[1rem]">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                             </tr>
                         `;
                     } else if (data.selected_method === 'F') {
                         caseDetails = `
-                            <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-[1rem] font-semibold uppercase">Filling Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-[1rem]">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
+                            <tr class="border">
+                                <td class="px-6 py-2.5 border text-sm sm:text-[1rem] font-semibold uppercase">Filling Number</td>
+                                <td class="px-6 py-2.5 border text-sm sm:text-[1rem]">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                             </tr>
                         `;
                     }
 
                     container.innerHTML = `
-                        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                        <table class="min-w-full overflow-hidden">
                             <thead>
                                 <tr class="bg-[#D09A3F] text-white">
-                                    <th class="px-6 py-3 text-left text-sm sm:text-lg">Detail</th>
-                                    <th class="px-6 py-3 text-left text-sm sm:text-lg">Information</th>
+                                    <th class="px-6 py-2.5 text-left text-sm sm:text-lg uppercase">Details</th>
+                                    <th class="px-6 py-2.5 text-left text-sm sm:text-lg uppercase">Information</th>
                                 </tr>
                             </thead>
                             <tbody class="text-sm sm:text-[1rem] dark_form">
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Application Number</td>
-                                    <td class="px-6 py-4 text-teal-500 font-bold text-xl">${data.application_number}</td>
+                                    <td class="px-6 py-1 font-semibold uppercase border">Application Number</td>
+                                    <td class="px-6 py-1 border text-teal-500 font-bold text-lg">${data.application_number}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Application Date</td>
-                                    <td class="px-6 py-4">${formatDateTime(data.created_at)}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Application Date</td>
+                                    <td class="px-6 py-2.5 border">${formatDateTime(data.created_at)}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Applicant Name</td>
-                                    <td class="px-6 py-4">${data.applicant_name}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Applicant Name</td>
+                                    <td class="px-6 py-2.5 border capitalize">${data.applicant_name}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Mobile Number</td>
-                                    <td class="px-6 py-4">${data.mobile_number}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Mobile Number</td>
+                                    <td class="px-6 py-2.5 border">${data.mobile_number}</td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Email</td>
-                                    <td class="px-6 py-4">${data.email}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Email</td>
+                                    <td class="px-6 py-2.5 border">${data.email}</td>
                                 </tr>
                                 ${caseDetails}
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Applied By</td>
-                                    <td class="px-6 py-4">${data.applied_by}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Applied By</td>
+                                    <td class="px-6 py-2.5 border capitalize">${data.applied_by}</td>
                                 </tr>
                                 
                                 ${data.applied_by === 'advocate' ? `
                                     <tr class="border-b">
-                                        <td class="px-6 py-4 font-semibold uppercase">Advocate Registration Number</td>
-                                        <td class="px-6 py-4">${data.advocate_registration_number || 'N/A'}</td>
+                                        <td class="px-6 py-2.5 font-semibold uppercase border">Advocate Registration Number</td>
+                                        <td class="px-6 py-2.5 border">${data.advocate_registration_number || 'N/A'}</td>
                                     </tr>
                                 ` : ''}
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Request Type</td>
-                                    <td class="px-6 py-4">${data.request_mode}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Request Type</td>
+                                    <td class="px-6 py-2.5 border capitalize">${data.request_mode}</td>
                                 </tr>
                                 
                                 <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Required Document</td>
-                                    <td class="px-6 py-4">${data.required_document}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Required Document</td>
+                                    <td class="px-6 py-2.5 border capitalize">${data.required_document}</td>
                                 </tr>
                                  <tr>
-                                    <td class="px-6 py-4 font-semibold uppercase">Payment status</td>
-                                    <td class="px-6 py-4 text-red-500">${data.status}</td>
+                                    <td class="px-6 py-2.5 font-semibold uppercase border">Payment status</td>
+                                    <td class="px-6 py-2.5 text-red-500 border capitalize">${data.status}</td>
                                 </tr>
                             </tbody>
                         </table>

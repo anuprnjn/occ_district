@@ -103,7 +103,7 @@ function pendingPayment(event) {
         success: function(response) {
         if (response.success) {
             var caseInfoDetails = response;
-            // console.log(caseInfoDetails.case_info.application_number);
+            // console.log(caseInfoDetails);
             $.ajax({
                 url: '/set-caseInformation-PendingData-HC', 
                 method: 'POST',
@@ -113,6 +113,7 @@ function pendingPayment(event) {
                 },
                 success: function(detailsResponse) {
                    if (detailsResponse) {
+                    console.log(detailsResponse)
                         // Get necessary elements
                         const successTable = document.querySelector(".success_payment_table");
                         const titlePaymentSuccess = document.querySelector(".title_payment_success");
