@@ -80,7 +80,7 @@ use Illuminate\Support\Facades\Crypt;
                                     data-reason="{{ $hcuser->rejection_remarks }}"
                                     data-rejection-date="{{ $hcuser->rejection_date ? \Carbon\Carbon::parse($hcuser->rejection_date)->format('d-m-Y') : 'N/A' }}"
                                     data-required-documents="{{ $hcuser->required_document }}">
-                                    View Reason
+                                    <i class="bi bi-eye"></i>&nbsp;View Reason
                                 </button>
                             </td>
                         </tr>

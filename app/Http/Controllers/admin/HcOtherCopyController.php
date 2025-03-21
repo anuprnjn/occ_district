@@ -82,7 +82,7 @@ class HcOtherCopyController extends Controller
                 // Insert document details into the database
                 DB::table('highcourt_applicant_document_detail')->insert([
                     'application_number' => $request->application_number,
-                    'doucument_type' => $request->document_types[$key],
+                    'document_type' => $request->document_types[$key],
                     'number_of_page' => $numberOfPages,
                     'amount' => $amount,
                     'file_name' => $filename,

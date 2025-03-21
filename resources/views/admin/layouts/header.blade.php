@@ -236,9 +236,9 @@
 
               <li class="nav-item menu-open">
                 <a href="#" class="nav-link" >
-                  <i class="nav-icon bi bi-pencil-square"></i>
+                  <i class="nav-icon bi bi-bank"></i>
                   <p>
-                    Highcourt Request
+                    Highcourt Web Copy
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
@@ -249,6 +249,20 @@
                       <p>Web Copy</p>
                     </a>
                   </li>
+                  
+                </ul>
+              </li>
+
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link" >
+                  <i class="nav-icon bi bi-columns"></i>
+                  <p>
+                    Highcourt Other Copy
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  
                   <li class="nav-item">
                     <a href="{{ route('hc_other_copy') }}" class="nav-link" >
                       <i class="nav-icon bi bi-circle"></i>
@@ -261,8 +275,10 @@
                       <p>Rejected Other Copy application</p>
                     </a>
                   </li>
+                  
                 </ul>
               </li>
+
 
               <li class="nav-item">
                 <a href="#" class="nav-link" >

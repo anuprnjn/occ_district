@@ -169,7 +169,7 @@
                                     <tbody>
                                         @foreach ($documents as $doc)
                                             <tr id="documentRow_{{ $doc->id }}">
-                                                <td>{{ $doc->doucument_type }}</td>
+                                                <td>{{ $doc->document_type }}</td>
                                                 <td>{{ $doc->number_of_page }}</td>
                                                 <td>₹{{ number_format($doc->amount, 2) }}</td>
                                                 <td>
