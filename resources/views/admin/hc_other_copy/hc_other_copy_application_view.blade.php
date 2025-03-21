@@ -163,6 +163,7 @@
                                             <th>Number of Pages</th>
                                             <th>Amount (₹)</th>
                                             <th>File</th>
+                                            <th>Action</th>
                                             
                                         </tr>
                                     </thead>
@@ -176,6 +177,14 @@
                                                     <a href="javascript:void(0)"
                                                         onclick="viewPDF('{{ asset('storage/highcourt_other_copies/' . $doc->file_name) }}')">View</a>
                                                 </td>
+
+                                                <td>
+                                                     <button onclick="deleteDocument({{ $doc->id }})"
+                                                         class="btn btn-danger btn-sm"
+                                                         @if ($hcuser->document_status == 1) disabled @endif>
+                                                         <i class="bi bi-trash"></i> Delete
+                                                     </button>
+                                                 </td>
                                                 
                                             </tr>
                                         @endforeach
