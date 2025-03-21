@@ -25,6 +25,7 @@ use App\Http\Controllers\admin\SubMenuController;
 use App\Http\Controllers\admin\HcUserController;
 use App\Http\Controllers\admin\DcUserController;
 use App\Http\Controllers\admin\HcOtherCopyController;
+use App\Http\Controllers\admin\HcOtherCopyPaidController;
 use App\Http\Controllers\admin\DcOtherCopyController;
 use App\Http\Controllers\admin\HcWebApplicationController;
 use App\Http\Controllers\admin\PaymentParameterController;
@@ -179,11 +180,14 @@ Route::post('/hc-web-application/send-deficit-notification', [HcWebApplicationCo
     ->name('hc-web-application.send-deficit-notification');
     Route::post('/hc-web-application/send-ready-notification', [HcWebApplicationController::class, 'sendReadyNotification'])
     ->name('hc-web-application.send-ready-notification'); 
-
- Route::get('/admin/hc-other-copy-view/{encryptedAppNumber}', [HcOtherCopyController::class, 'ViewHcOtherCopy'])->name('hc_other_copy_view');    
+    
+    Route::get('/admin/hc-other-copy-view/{encryptedAppNumber}', [HcOtherCopyController::class, 'ViewHcOtherCopy'])->name('hc_other_copy_view');    
  Route::post('/admin/hc-other-copy/upload', [HcOtherCopyController::class, 'uploadDocument'])->name('upload.document');
 Route::post('/admin/hc-other-copy/delete', [HcOtherCopyController::class, 'deleteDocument'])->name('delete.document');
 Route::post('/admin/hc-other-copy/send-notification', [HcOtherCopyController::class, 'sendNotification'])->name('hc-other-copy.send-notification');
 Route::post('/admin/hc-other-copy/reject', [HcOtherCopyController::class, 'rejectApplication'])->name('hc-other-copy.reject'); 
 Route::get('/admin/hc-rejected-application', [HcOtherCopyController::class, 'rejectedHcOtherCopy'])->name('hc_other_copy_rejected_application');  
+
+Route::get('/admin/hc-paid-application', [HcOtherCopyPaidController::class, 'paidHcOtherCopyList'])->name('hc_other_copy_paid_application');  
+Route::get('/admin/hc-paid-copy-view/{encryptedAppNumber}', [HcOtherCopyPaidController::class, 'ViewHcOtherCopy'])->name('hc_paid_copy_view');    
 });

@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Crypt;
                 @endif
 
                 <table id="myTable" class="table table-bordered">
-                    <thead class="table-primary">
+                    <thead class="table-danger">
                         <tr>
                             <th>#</th>
                             <th>Application No</th>
