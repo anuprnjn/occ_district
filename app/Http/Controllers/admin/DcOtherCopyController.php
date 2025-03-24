@@ -31,6 +31,8 @@ class DcOtherCopyController extends Controller
                 ->orderBy('dc.created_at', 'desc')
                 ->get();
 
+                //Log::info('DC User Data:', $dcuserdata->toArray());
+
             // Return view with data using compact
             return view('admin.dc_other_copy.dc_other_copy_application_list', compact('dcuserdata'));
 
@@ -206,9 +208,14 @@ public function rejectApplication(Request $request)
 public function rejectedDcOtherCopy()
 {
     try {
+          
+        $dist_code = session('user.dist_code');
+        $estd_code = session('user.estd_code');
         $dcuserdata = DB::table('district_court_applicant_registration as dc')
             ->select('dc.*', 'ct.type_name as case_type_name')
             ->leftJoin('districts_case_type as ct', 'dc.case_type', '=', 'ct.case_type')
+            ->where('dc.district_code', $dist_code)
+            ->where('dc.establishment_code', $estd_code)
             ->where('rejection_status',1)
             ->orderBy('dc.created_at', 'desc')
             ->get();
@@ -226,9 +233,13 @@ public function rejectedDcOtherCopy()
 public function paidDcOtherCopyList()
 {
     try {
+        $dist_code = session('user.dist_code');
+        $estd_code = session('user.estd_code');
         $dcuserdata = DB::table('district_court_applicant_registration as dc')
             ->select('dc.*', 'ct.type_name as case_type_name')
             ->leftJoin('districts_case_type as ct', 'dc.case_type', '=', 'ct.case_type')
+            ->where('dc.district_code', $dist_code)
+            ->where('dc.establishment_code', $estd_code)
             ->where('document_status',1)
             ->where('payment_status',1)
             ->orderBy('dc.created_at', 'desc')
