@@ -38,6 +38,7 @@ use App\Http\Controllers\admin\AuthController;
 use App\Http\Middleware\CheckSession;
 use App\Http\Middleware\CheckSessionCd_pay;
 use App\Http\Controllers\PendingPaymentController;
+use App\Http\Controllers\admin\DcOtherCopyPaidController;
 
 Route::get('/', function () {
     return view('index');
@@ -189,5 +190,22 @@ Route::post('/admin/hc-other-copy/reject', [HcOtherCopyController::class, 'rejec
 Route::get('/admin/hc-rejected-application', [HcOtherCopyController::class, 'rejectedHcOtherCopy'])->name('hc_other_copy_rejected_application');  
 
 Route::get('/admin/hc-paid-application', [HcOtherCopyPaidController::class, 'paidHcOtherCopyList'])->name('hc_other_copy_paid_application');  
-Route::get('/admin/hc-paid-copy-view/{encryptedAppNumber}', [HcOtherCopyPaidController::class, 'ViewHcOtherCopy'])->name('hc_paid_copy_view');    
+
+// Route For DC other copy
+Route::get('/admin/hc-paid-copy-view/{encryptedAppNumber}', [HcOtherCopyPaidController::class, 'ViewHcOtherCopy'])->name('hc_paid_copy_view');   
+
+Route::get('/admin/dc-other-copy-view/{encryptedAppNumber}', [DcOtherCopyController::class, 'ViewDcOtherCopy'])->name('dc_other_copy_view');  
+
+Route::post('/admin/dc-other-copy/upload', [DcOtherCopyController::class, 'uploadDocument'])->name('upload.document');
+
+Route::post('/admin/dc-other-copy/delete', [DcOtherCopyController::class, 'deleteDocument'])->name('delete.document');
+
+Route::post('/admin/dc-other-copy/send-notification', [DcOtherCopyController::class, 'sendNotification'])->name('dc-other-copy.send-notification');
+
+Route::post('/admin/dc-other-copy/reject', [DcOtherCopyController::class, 'rejectApplication'])->name('dc-other-copy.reject'); 
+
+Route::get('/admin/dc-rejected-application', [DcOtherCopyController::class, 'rejectedDcOtherCopy'])->name('dc_other_copy_rejected_application'); 
+
+Route::get('/admin/dc-paid-application', [DcOtherCopyController::class, 'paidDcOtherCopyList'])->name('dc_other_copy_paid_application');
+
 });

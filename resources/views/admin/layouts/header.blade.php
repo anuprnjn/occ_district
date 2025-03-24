@@ -303,7 +303,21 @@
                       <p>New Application</p>
                     </a>
                   </li>
-                  
+
+                  <li class="nav-item">
+                    <a href="{{ route('dc_other_copy_rejected_application') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Rejected Application</p>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a href="{{ route('dc_other_copy_paid_application') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Paid Application</p>
+                    </a>
+                  </li>
+
                 </ul>
               </li>
 
