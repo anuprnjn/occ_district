@@ -196,9 +196,9 @@ Route::get('/admin/hc-paid-copy-view/{encryptedAppNumber}', [HcOtherCopyPaidCont
 // Route For DC other copy
 Route::get('/admin/dc-other-copy-view/{encryptedAppNumber}', [DcOtherCopyController::class, 'ViewDcOtherCopy'])->name('dc_other_copy_view');  
 
-Route::post('/admin/dc-other-copy/upload', [DcOtherCopyController::class, 'uploadDocument'])->name('upload.document');
+Route::post('/admin/dc-other-copy/upload', [DcOtherCopyController::class, 'uploadDocument'])->name('upload.dcdocument');
 
-Route::post('/admin/dc-other-copy/delete', [DcOtherCopyController::class, 'deleteDocument'])->name('delete.document');
+Route::post('/admin/dc-other-copy/delete', [DcOtherCopyController::class, 'deleteDocument'])->name('delete.dcdocument');
 
 Route::post('/admin/dc-other-copy/send-notification', [DcOtherCopyController::class, 'sendNotification'])->name('dc-other-copy.send-notification');
 

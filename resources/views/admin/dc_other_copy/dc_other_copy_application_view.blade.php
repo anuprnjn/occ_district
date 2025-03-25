@@ -323,7 +323,7 @@
                     let formData = new FormData(this);
 
                     $.ajax({
-                        url: "{{ route('upload.document') }}",
+                        url: "{{ route('upload.dcdocument') }}",
                         type: "POST",
                         data: formData,
                         processData: false,
@@ -353,7 +353,7 @@
                 // Delete document function
                 function deleteDocument(id) {
                     if (confirm("Are you sure you want to delete this document?")) {
-                        $.post("{{ route('delete.document') }}", {
+                        $.post("{{ route('delete.dcdocument') }}", {
                                 document_id: id,
                                 _token: "{{ csrf_token() }}"
                             })
