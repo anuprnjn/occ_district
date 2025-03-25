@@ -137,23 +137,23 @@ function pendingPayment(event) {
                             window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
                         } else {
                             // Delay showing the success message and table by 1 second
-                            setTimeout(() => {
-                                // Hide loading animation
-                                loading.classList.add("hidden");
+                        setTimeout(() => {
+                            // Hide loading animation
+                            loading.classList.add("hidden");
 
-                                // Show success message and table
-                                successTable.classList.remove("hidden");
-                                titlePaymentSuccess.classList.remove("hidden");
+                            // Show success message and table
+                            successTable.classList.remove("hidden");
+                            titlePaymentSuccess.classList.remove("hidden");
 
-                                // Update content
-                                document.querySelector(".title_success_payment").innerText = caseInfo.application_number;
-                                document.querySelector(".success_payment_table .applicant-name").innerText = caseInfo.applicant_name;
-                                document.querySelector(".success_payment_table .mobile-number").innerText = caseInfo.mobile_number;
-                                document.querySelector(".success_payment_table .transaction-number").innerText = caseInfo.transaction_no;
-                                document.querySelector(".success_payment_table .transaction-date").innerText = caseInfo.transaction_date;
-                                document.querySelector(".success_payment_table .paid-amount span").innerText = `₹${caseInfo.payable_amount}`;
-                                document.querySelector(".success_payment_table .transaction-status").innerText = caseInfo.transaction_status;
-                            }, 1000);
+                            // Update content
+                            document.querySelector(".title_success_payment").innerText = caseInfo.application_number;
+                            document.querySelector(".success_payment_table .applicant-name").innerText = caseInfo.applicant_name;
+                            document.querySelector(".success_payment_table .mobile-number").innerText = caseInfo.mobile_number;
+                            document.querySelector(".success_payment_table .transaction-number").innerText = caseInfo.transaction_no;
+                            document.querySelector(".success_payment_table .transaction-date").innerText = caseInfo.transaction_date;
+                            document.querySelector(".success_payment_table .paid-amount span").innerText = `₹${caseInfo.payable_amount}`;
+                            document.querySelector(".success_payment_table .transaction-status").innerText = caseInfo.transaction_status;
+                        }, 1000);
                         }
                     } else {
                         alert(detailsResponse.message || "Error showing pending payment details HC");

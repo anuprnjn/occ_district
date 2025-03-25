@@ -144,26 +144,75 @@
         </span>
     @endif
 </td>
-            <td class="border p-2 font-bold">Total Payble Amount</td>
-            <td class="border p-2">
-                <span class="bg-green-600 text-white rounded-md px-4 py-1">₹{{ session('PendingCaseInfoDetails.case_info.payable_amount') ?? 'N/A' }}</span>
-            </td>
-        </tr>
+    <td class="border p-2 font-bold">Total Payble Amount</td>
+    <td class="border p-2">
+        <span class="bg-green-600 text-white rounded-md px-4 py-1">₹{{ session('PendingCaseInfoDetails.case_info.payable_amount') ?? 'N/A' }}</span>
+    </td>
+</tr>
     </table>
-
-    
 
     <!-- Pay Now Button -->
     <div class="flex justify-end items-center mt-4">
-        <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase">
+        <button class="order_btn bg-teal-500 w-[200px] text-white p-3 rounded-md hover:bg-teal-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="paymentToMerchant(event, '{{ session('PendingCaseInfoDetails.case_info.application_number') }}', '{{ session('PendingCaseInfoDetails.case_info.payable_amount') }}')">
             Pay Now
         </button>
     </div>
+    <form name="eGrassClient" method="POST" action="https://finance.jharkhand.gov.in/jegras/payment.aspx">
+        <input type="hidden" name="requestparam" value="">
+        <input type="submit" value="Submit" class="hidden">
+    </form>
 </section>
 @endsection
 
 @push('scripts')
 <script>
-    // Add any necessary JS scripts here
+    async function paymentToMerchant(event, applicationNumber, paybleAmount) {
+    event.preventDefault();
+
+    try {
+        var userData = @json(session('PendingCaseInfoDetails.case_info'));
+
+        if (!userData) {
+            alert('Error fetching applicant details. Please refresh the page and try again!');
+            return;
+        }
+        paybleAmount = parseFloat(paybleAmount);
+    
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        const response = await fetch("/fetch-merchant-details", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify({ userData, paybleAmount, applicationNumber })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            console.error("Payment Error:", data.error);
+            alert("Error processing payment.");
+        } else {
+            console.log("Encrypted Value:", data.enc_val);
+            console.log("Application Number:", data.application_number);
+
+            const form = document.querySelector('form[name="eGrassClient"]');
+            if (form) {
+                form.querySelector('input[name="requestparam"]').value = data.enc_val;
+                alert('Entered to transaction details');
+                // form.submit();
+                window.location.href = '/api/occ/gras_resp_cc';
+            } else {
+                console.error("Form 'eGrassClient' not found!");
+                alert("Payment form not found. Please try again.");
+            }
+        }
+    } catch (error) {
+        console.error("Error in paymentToMerchant:", error);
+        alert("An error occurred while processing the payment.");
+    }
+}
 </script>   
 @endpush

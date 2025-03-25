@@ -37,7 +37,7 @@ class PaymentController extends Controller
         $Requestparameter = implode('|', [
             $merchantDetails[0]['deptid'],
             $merchantDetails[0]['recieptheadcode'],
-            $userData['name'],
+            $userData['name'] ?? $userData['applicant_name'] ?? '', 
             $transaction_no,
             $paybleAmount,
             $depositerId,
@@ -49,7 +49,6 @@ class PaymentController extends Controller
             $merchantDetails[0]['ifmsofficecode'],
             $merchantDetails[0]['securitycode']
         ]);
-
         // Encrypt Requestparameter
         $enc = new clsEncrypt();
         $enc_val = $enc->Encrypt($Requestparameter, $key);
@@ -59,12 +58,12 @@ class PaymentController extends Controller
             'deptid' => $merchantDetails[0]['deptid'] ?? '',
             'application_number' => $applicationNumber, 
             'recieptheadcode' => $merchantDetails[0]['recieptheadcode'] ?? '',
-            'depositername' => $userData['name'] ?? '',
+            'depositername' => $userData['name'] ?? $userData['applicant_name'] ?? '',
             'depttranid' => $transaction_no ?? '',
             'depositerid'=> $depositerId ?? '',
             'amount' => $paybleAmount ?? '',
             'panno' => $PAN ?? '',
-            'urgent_fee' => $urgent_fee ?? '',
+            'urgent_fee' => $urgent_fee ?? "5.00" ?? '',
             'addinfo1' => $ADDINFO1 ?? '',
             'addinfo2' => $ADDINFO2 ?? '',
             'addinfo3' => $ADDINFO3 ?? '',
@@ -73,6 +72,8 @@ class PaymentController extends Controller
             'securitycode' => $merchantDetails[0]['securitycode'] ?? '',
             'response_url' => $responseURL ?? ''
         ];
+        dd($entryData);
+        exit();
         // Send data to entryPayDetails API
         $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request.php', $entryData);
 

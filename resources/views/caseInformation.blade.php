@@ -11,7 +11,7 @@
             <p class="text-green-600">Loading case details...</p>
         </div>
 
-        <h2 class="text-lg font-semibold mt-6 mb-4">Orders</h2>
+        <h2 class="text-lg font-semibold mt-2 mb-2">Orders</h2>
         <div class="overflow-x-auto rounded-md">
             <table class="min-w-full border border-gray-200" id="ordersTable">
                 <thead>
