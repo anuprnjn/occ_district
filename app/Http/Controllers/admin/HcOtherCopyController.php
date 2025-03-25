@@ -68,6 +68,13 @@ class HcOtherCopyController extends Controller
         try {
             $parser = new Parser(); // PDF parser instance
     
+            $perPageAmount = DB::table('fee_master as fm')
+                ->select('fm.amount')
+                ->where('fm.fee_type', 'per_page_fee')
+                ->first();
+            $amount = ($perPageAmount ? $perPageAmount->amount : 5);
+            Log::info('Per Page Amount: ' . $amount);
+
             foreach ($request->file('documents') as $key => $file) {
                 $filename = $request->application_number . '_' . time(). '.pdf';
                 $path = $file->storeAs('highcourt_other_copies', $filename, 'public');
@@ -77,7 +84,7 @@ class HcOtherCopyController extends Controller
                 $numberOfPages = count($pdf->getPages());
     
                 // Automatically calculate amount (Example: ₹5 per page)
-                $amount = $numberOfPages * 5;
+                $amount = $numberOfPages * $amount;
     
                 // Insert document details into the database
                 DB::table('highcourt_applicant_document_detail')->insert([

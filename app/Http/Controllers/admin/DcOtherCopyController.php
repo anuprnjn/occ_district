@@ -74,23 +74,38 @@ class DcOtherCopyController extends Controller
     {
         $request->validate([
             'application_number' => 'required|string',
-            'documents.*' => 'required|mimes:pdf|max:5120', // Only PDFs, max 5MB
+            'documents.*' => 'required|mimes:pdf|max:20480', // Only PDFs, max 5MB
             'document_types.*' => 'required|string|max:200',
         ]);
     
         try {
             $parser = new Parser(); // PDF parser instance
-    
+            $dist_code = session('user.dist_code');
+            $distName = DB::table('district_master as dc')
+            ->select(
+                'dc.dist_name'
+            )
+            ->where('dc.dist_code', $dist_code) 
+            ->first();
+            $folderName = ($distName ? $distName->dist_name : 'default')."_other_copies";
+
+            $perPageAmount = DB::table('fee_master as fm')
+                ->select('fm.amount')
+                ->where('fm.fee_type', 'per_page_fee')
+                ->first();
+              $amount = ($perPageAmount ? $perPageAmount->amount : 5);
+              Log::info('Per Page Amount: ' . $amount);
+           
             foreach ($request->file('documents') as $key => $file) {
                 $filename = $request->application_number . '_' . time(). '.pdf';
-                $path = $file->storeAs('districtcourt_other_copies', $filename, 'public');
+                $path = $file->storeAs($folderName, $filename, 'public');
     
                 // Extract page count from PDF
                 $pdf = $parser->parseFile($file->getPathname());
                 $numberOfPages = count($pdf->getPages());
     
                 // Automatically calculate amount (Example: ₹5 per page)
-                $amount = $numberOfPages * 5;
+                $amount = $numberOfPages * $amount;
     
                 // Insert document details into the database
                 DB::table('civilcourt_applicant_document_detail')->insert([
