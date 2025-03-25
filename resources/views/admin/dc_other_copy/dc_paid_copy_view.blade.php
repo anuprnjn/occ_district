@@ -38,7 +38,7 @@
                                         </button>
                                         
                                     </div>
-                                    <a href="{{ route('hc_other_copy_paid_application') }}" class="btn btn-success">
+                                    <a href="{{ route('dc_other_copy_paid_application') }}" class="btn btn-success">
                                         <i class="bi bi-arrow-left"></i> Back
                                     </a>
                                 </div>
@@ -155,7 +155,7 @@
                         @if ($dcuser->document_status == 1)
                             <p class="text-success mt-3"><i class="bi bi-check-circle"></i> Notification already sent.</p>
                         @elseif(!$documents->isEmpty())
-                            <form action="{{ route('hc-other-copy.send-notification') }}" method="POST">
+                            <form action="{{ route('dc-other-copy.send-notification') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="application_number"
                                     value="{{ $dcuser->application_number }}">

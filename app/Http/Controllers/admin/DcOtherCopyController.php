@@ -74,16 +74,23 @@ class DcOtherCopyController extends Controller
     {
         $request->validate([
             'application_number' => 'required|string',
-            'documents.*' => 'required|mimes:pdf|max:5120', // Only PDFs, max 5MB
+            'documents.*' => 'required|mimes:pdf|max:20480', // Only PDFs, max 5MB
             'document_types.*' => 'required|string|max:200',
         ]);
     
         try {
             $parser = new Parser(); // PDF parser instance
-    
+            $dist_code = session('user.dist_code');
+            $distName = DB::table('district_master as dc')
+            ->select(
+                'dc.dist_name'
+            )
+            ->where('dc.dist_code', $dist_code) 
+            ->first();
+            $folderName = ($distName ? $distName->dist_name : 'default')."_other_copies";
             foreach ($request->file('documents') as $key => $file) {
                 $filename = $request->application_number . '_' . time(). '.pdf';
-                $path = $file->storeAs('districtcourt_other_copies', $filename, 'public');
+                $path = $file->storeAs($folderName, $filename, 'public');
     
                 // Extract page count from PDF
                 $pdf = $parser->parseFile($file->getPathname());

@@ -72,7 +72,7 @@ use Illuminate\Support\Facades\Crypt;
                             </td>
                             <td>{{ \Carbon\Carbon::parse($dcuser->created_at)->format('d-m-Y') }}</td>
                             <td>
-                              <a href="{{ route('hc_paid_copy_view', Crypt::encrypt($dcuser->application_number)) }}" class="btn btn-success btn-sm"><i class="bi bi-eye"></i>View</a>
+                              <a href="{{ route('dc_paid_copy_view', Crypt::encrypt($dcuser->application_number)) }}" class="btn btn-success btn-sm"><i class="bi bi-eye"></i>View</a>
                           </td>
                         </tr>
                     @empty

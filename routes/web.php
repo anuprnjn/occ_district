@@ -191,9 +191,9 @@ Route::get('/admin/hc-rejected-application', [HcOtherCopyController::class, 'rej
 
 Route::get('/admin/hc-paid-application', [HcOtherCopyPaidController::class, 'paidHcOtherCopyList'])->name('hc_other_copy_paid_application');  
 
-// Route For DC other copy
 Route::get('/admin/hc-paid-copy-view/{encryptedAppNumber}', [HcOtherCopyPaidController::class, 'ViewHcOtherCopy'])->name('hc_paid_copy_view');   
 
+// Route For DC other copy
 Route::get('/admin/dc-other-copy-view/{encryptedAppNumber}', [DcOtherCopyController::class, 'ViewDcOtherCopy'])->name('dc_other_copy_view');  
 
 Route::post('/admin/dc-other-copy/upload', [DcOtherCopyController::class, 'uploadDocument'])->name('upload.document');
@@ -207,5 +207,7 @@ Route::post('/admin/dc-other-copy/reject', [DcOtherCopyController::class, 'rejec
 Route::get('/admin/dc-rejected-application', [DcOtherCopyController::class, 'rejectedDcOtherCopy'])->name('dc_other_copy_rejected_application'); 
 
 Route::get('/admin/dc-paid-application', [DcOtherCopyController::class, 'paidDcOtherCopyList'])->name('dc_other_copy_paid_application');
+
+Route::get('/admin/dc-paid-copy-view/{encryptedAppNumber}', [DcOtherCopyController::class, 'ViewDcOtherCopy'])->name('dc_paid_copy_view'); 
 
 });
