@@ -64,8 +64,29 @@
                         <th class="py-2 px-2 border">Amount</th>
                     </tr>
                 </thead>
-                <tbody>
+                <!-- code to loop the orders  -->
+                <!-- <tbody>
                     @forelse(session('PendingCaseInfoDetails.order_details') ?? [] as $order)
+                        <tr>
+                            <td class="py-2 px-2 border">{{ $order['order_number'] ?? 'N/A' }}</td>
+                            <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
+                            <td class="py-2 px-2 border">{{ $order['number_of_page'] ?? '0' }}</td>
+                            <td class="py-2 px-2 border text-green-500">₹{{ $order['amount'] ?? '0.0' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="py-2 px-2 border text-center">No orders found</td>
+                        </tr>
+                    @endforelse
+                </tbody> -->
+                <!-- code to eliminate the duplicate orders to be not used in future -->
+                <tbody>
+                    @php
+                        $uniqueOrders = collect(session('PendingCaseInfoDetails.order_details') ?? [])
+                                        ->unique('order_number');
+                    @endphp
+
+                    @forelse($uniqueOrders as $order)
                         <tr>
                             <td class="py-2 px-2 border">{{ $order['order_number'] ?? 'N/A' }}</td>
                             <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
@@ -139,7 +160,7 @@
     </span>
 
     @if(session('PendingCaseInfoDetails.case_info.request_mode') == 'urgent')
-        <span class="ml-2 text-sm text-gray-600">
+        <span class="ml-2 text-sm text-red-500 text-bold">
             (Urgent Fee: ₹{{ session('PendingCaseInfoDetails.case_info.urgent_fee') ?? 'N/A' }})
         </span>
     @endif
