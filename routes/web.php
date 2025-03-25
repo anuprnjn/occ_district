@@ -82,11 +82,11 @@ Route::middleware([CheckSession::class])->group(function () {
         return view('caseInformation');
     })->name('caseInformation');
 });
-// Route::middleware([CheckSessionCd_pay::class])->group(function () {
+Route::middleware([CheckSessionCd_pay::class])->group(function () {
     Route::get('/occ/cd_pay', function () {
         return view('caseInformationDetails');
     })->name('caseInformationDetails');
-// });
+});
 
 Route::get('/screenReader', function () {
     return view('screenReader');

@@ -50,7 +50,7 @@ function trackApplication(event) {
     }
 
     // Check if the selected court matches the application number prefix
-    if ((selectedCourt === 'HC' && application_number.startsWith('DC')) || 
+    if ((selectedCourt === 'HC' && !application_number.startsWith('HC')) || 
         (selectedCourt === 'DC' && application_number.startsWith('HC'))) {
         errorSpan.innerText = 'Selected court and application number do not match!';
         trackApplicationForm.reset();

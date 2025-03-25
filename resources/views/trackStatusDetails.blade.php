@@ -16,7 +16,7 @@
         <div id="application-details"></div>
     </div>
     <div id="print_container" class="hidden flex flex-col justify-start items-start">
-    <button id="print-application-btn" class="mt-5 p-3 bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">Print Application</button> <!-- Print button -->
+    <button id="print-application-btn" class="flex gap-2 mt-5 p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5"><img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Application</button> <!-- Print button -->
     <div class="sm:mt-4 -mt-10 mb-20 sm:mb-0" id="note">
     <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
     </div>
@@ -120,7 +120,7 @@
                 warningMessage.remove();
             });
         }
-        showWarningMessage();
+        // showWarningMessage();
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
         print_btn_track.classList.remove('hidden');

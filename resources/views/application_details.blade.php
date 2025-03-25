@@ -15,7 +15,11 @@
         <!-- Application data will appear here -->
     </div>
     
-    <button id="print-button" class="hidden sm:mt-10 sm:mb-0 mb-16 mt-4 p-2 bg-rose-700 pl-5 pr-5 text-white rounded" onclick="printApplication()">Print Document</button>
+    <button id="print-button" class="hidden sm:mt-10 sm:mb-0 mb-16 mt-2 p-2 bg-red-600 hover:bg-red-700 pl-5 pr-5 text-white rounded" onclick="printApplication()">
+        <div class="flex gap-2">
+        <img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Document
+        </div>
+    </button>
     <br>
     <div class="sm:mt-4 hidden -mt-10 mb-20 sm:mb-0" id="note">
     <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
@@ -213,7 +217,7 @@
             }
 
             // Call this function when the application details page loads
-            showWarningMessage();
+            // showWarningMessage();
             } catch (error) {
                 console.error('Error fetching application details:', error);
                 document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">An error occurred while fetching application details.</p>';
