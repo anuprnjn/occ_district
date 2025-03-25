@@ -200,7 +200,7 @@ public function rejectApplication(Request $request)
 
     } catch (\Exception $e) {
         Log::error('Error rejecting application', ['error' => $e->getMessage()]);
-        return redirect()->route('hc_other_copy_rejected_application')->with('error', 'An error occurred while rejecting the application.');
+        return redirect()->route('dc_other_copy_rejected_application')->with('error', 'An error occurred while rejecting the application.');
     }
 }
 
