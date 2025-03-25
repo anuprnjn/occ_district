@@ -22,13 +22,13 @@
                 <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="sm:mb-5">
             </div>    
             <div class="form-field">
-                <button type="submit" class="sm:w-[50%] w-[100%] btn-submit order_btn mt-4" onClick="pendingPayment(event)">Submit</button>
+                <button type="submit" class="sm:w-[50%] w-[100%] hover:shadow-md btn-submit order_btn mt-4" onClick="pendingPayment(event)">Submit</button>
             </div>
         </div>
         <span id="error_span" class="text-red-500 font-bold text-sm ml-5 sm:ml-0"></span>
     </form>
     <div class="hidden loading">
-        <span class="text-gray-400 text-lg animate-pulse">Checking details...</span>
+        <span class="text-gray-400 text-lg animate-pulse">Checking details please wait...</span>
     </div>
     <span class="hidden title_payment_success text-[#D09A3F] text-lg font-extrabold">Payment already done for the application number - &nbsp;<span class="title_success_payment text-teal-500"></span></span>
     <table class="w-full border border-gray-300 mt-4 success_payment_table hidden">
@@ -50,10 +50,12 @@
         <tr>
             <td class="border p-2 font-bold">Paid Amount</td>
             <td class="border p-2 paid-amount">
-            <span class="bg-green-500 px-4 py-1 text-white rounded-md"></span>
+            <span class="text-green-600 font-extrabold"></span>
             </td>
             <td class="border p-2 font-bold">Transaction Status</td>
-            <td class="border p-2 transaction-status text-green-500"></td>
+            <td class="border p-2 ">
+                <span class="bg-green-500 text-white rounded-md px-4 py-1 transaction-status"></span>
+            </td>
         </tr>
     </table>
 </section>
