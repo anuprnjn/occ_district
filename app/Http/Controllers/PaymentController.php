@@ -72,8 +72,8 @@ class PaymentController extends Controller
             'securitycode' => $merchantDetails[0]['securitycode'] ?? '',
             'response_url' => $responseURL ?? ''
         ];
-        dd($entryData);
-        exit();
+        // dd($entryData);
+        // exit();
         // Send data to entryPayDetails API
         $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request.php', $entryData);
 
