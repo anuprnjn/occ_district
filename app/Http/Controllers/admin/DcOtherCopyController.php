@@ -88,6 +88,14 @@ class DcOtherCopyController extends Controller
             ->where('dc.dist_code', $dist_code) 
             ->first();
             $folderName = ($distName ? $distName->dist_name : 'default')."_other_copies";
+
+            $perPageAmount = DB::table('fee_master as fm')
+                ->select('fm.amount')
+                ->where('fm.fee_type', 'per_page_fee')
+                ->first();
+              $amount = ($perPageAmount ? $perPageAmount->amount : 5);
+              Log::info('Per Page Amount: ' . $amount);
+           
             foreach ($request->file('documents') as $key => $file) {
                 $filename = $request->application_number . '_' . time(). '.pdf';
                 $path = $file->storeAs($folderName, $filename, 'public');
@@ -97,7 +105,7 @@ class DcOtherCopyController extends Controller
                 $numberOfPages = count($pdf->getPages());
     
                 // Automatically calculate amount (Example: ₹5 per page)
-                $amount = $numberOfPages * 5;
+                $amount = $numberOfPages * $amount;
     
                 // Insert document details into the database
                 DB::table('civilcourt_applicant_document_detail')->insert([
