@@ -123,6 +123,7 @@ Route::get('/clear-session', function () {
 })->name('clear.session');
 Route::post('/fetch-pending-payments-hc', [PendingPaymentController::class,'fetchPendingPaymentsHC']);
 Route::post('/set-caseInformation-PendingData-HC', [SessionDataController::class, 'setPendingCaseInfoData'])->middleware('web');
+Route::post('/fetch-pending-payments-dc', [PendingPaymentController::class,'fetchPendingPaymentsDC']);
 
 //admin routes **************************************************************
 

@@ -65,7 +65,7 @@
                     </tr>
                 </thead>
                 <!-- code to loop the orders  -->
-                <!-- <tbody>
+                <tbody>
                     @forelse(session('PendingCaseInfoDetails.order_details') ?? [] as $order)
                         <tr>
                             <td class="py-2 px-2 border">{{ $order['order_number'] ?? 'N/A' }}</td>
@@ -78,9 +78,9 @@
                             <td colspan="4" class="py-2 px-2 border text-center">No orders found</td>
                         </tr>
                     @endforelse
-                </tbody> -->
+                </tbody>
                 <!-- code to eliminate the duplicate orders to be not used in future -->
-                <tbody>
+                <!-- <tbody>
                     @php
                         $uniqueOrders = collect(session('PendingCaseInfoDetails.order_details') ?? [])
                                         ->unique('order_number');
@@ -98,7 +98,7 @@
                             <td colspan="4" class="py-2 px-2 border text-center">No orders found</td>
                         </tr>
                     @endforelse
-                </tbody>
+                </tbody> -->
             </table>
         @elseif(session('PendingCaseInfoDetails.document_details'))
             <table class="w-full border border-gray-300 text-sm" id="documentsTable">
@@ -160,9 +160,11 @@
     </span>
 
     @if(session('PendingCaseInfoDetails.case_info.request_mode') == 'urgent')
-        <span class="ml-2 text-sm text-red-500 text-bold">
-            (Urgent Fee: ₹{{ session('PendingCaseInfoDetails.transaction_details.urgent_fee') ?? 'N/A' }})
-        </span>
+    <span class="ml-2 text-sm text-red-500 font-bold">
+        (Urgent Fee: ₹{{ session('PendingCaseInfoDetails.transaction_details.urgent_fee') 
+            ?? session('PendingCaseInfoDetails.case_info.urgent_fee') 
+            ?? 'N/A' }})
+    </span>
     @endif
     </td>
         <td class="border p-2 font-bold">Total Payble Amount</td>
@@ -171,15 +173,23 @@
             $transactionDetails = session('PendingCaseInfoDetails.transaction_details');
             $caseInfo = session('PendingCaseInfoDetails.case_info');
 
+            // If transaction_details is not available, use case_info.payable_amount
+            if (!$transactionDetails) {
+                $transactionDetails = ['payable_amount' => $caseInfo['payable_amount'] ?? 'N/A'];
+            }
+
             // Default to payable_amount
             $amountToShow = $transactionDetails['payable_amount'] ?? 'N/A';
-             dd($amountToShow);       
-            // Check conditions to use deficit_amount instead
-            if (($caseInfo['payment_status']) == 1 && ($caseInfo['deficit_payment_status']) == 0) {
-                $amountToShow = $caseInfo['deficit_amount'] ?? 'N/A';
-             dd($amountToShow);       
 
+            // Ensure numeric comparison
+            if (isset($caseInfo['payment_status'], $caseInfo['deficit_payment_status'], $caseInfo['deficit_amount'])) {
+                if ((int)$caseInfo['payment_status'] === 1 && (int)$caseInfo['deficit_payment_status'] === 0) {
+                    $amountToShow = $caseInfo['deficit_amount'] ?? 'N/A';
+                } else {
+                    $amountToShow = $transactionDetails['payable_amount'] ?? 'N/A';
+                }
             }
+            $amountToShow = is_numeric($amountToShow) ? number_format((float)$amountToShow, 2, '.', '') : $amountToShow;
         @endphp
 
         <span class="bg-green-600 text-white rounded-md px-4 py-1">₹{{ $amountToShow }}</span>
