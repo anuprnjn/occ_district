@@ -48,10 +48,10 @@
 
         <!-- Third row: Paid Amount | Transaction Status -->
         <tr>
-            <td class="border p-2 font-bold">Paid Amount</td>
+            <!-- <td class="border p-2 font-bold">Paid Amount</td>
             <td class="border p-2 paid-amount">
             <span class="text-green-600 font-extrabold"></span>
-            </td>
+            </td> -->
             <td class="border p-2 font-bold">Transaction Status</td>
             <td class="border p-2 ">
                 <span class="bg-green-500 text-white rounded-md px-4 py-1 transaction-status"></span>
@@ -115,7 +115,7 @@ function pendingPayment(event) {
                 },
                 success: function(detailsResponse) {
                    if (detailsResponse) {
-                    console.log(detailsResponse)
+                    console.log('this is detailed response',detailsResponse)
                         // Get necessary elements
                         const successTable = document.querySelector(".success_payment_table");
                         const titlePaymentSuccess = document.querySelector(".title_payment_success");
@@ -130,7 +130,9 @@ function pendingPayment(event) {
                         titlePaymentSuccess.classList.add("hidden");
 
                         const caseInfo = detailsResponse.session_data.PendingCaseInfoDetails.case_info;
+                        const transactionInfo = detailsResponse.session_data.PendingCaseInfoDetails.transaction_details;    
                         const paymentStatus = caseInfo.payment_status;
+                        
 
                         if (paymentStatus === "0") {
                             applicationInput.value = "";
@@ -138,8 +140,13 @@ function pendingPayment(event) {
                             // If payment is pending, redirect to the given location
                             window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
                         } else {
+                            if(caseInfo.application_number.startsWith("HCW") && paymentStatus === "1" && caseInfo.deficit_status === "1" && caseInfo.deficit_payment_status === "0"){
+                                window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
+                                return;
+                            }
                             // Delay showing the success message and table by 1 second
                         setTimeout(() => {
+                            console.log('hello');
                             // Hide loading animation
                             loading.classList.add("hidden");
 
@@ -151,10 +158,10 @@ function pendingPayment(event) {
                             document.querySelector(".title_success_payment").innerText = caseInfo.application_number;
                             document.querySelector(".success_payment_table .applicant-name").innerText = caseInfo.applicant_name;
                             document.querySelector(".success_payment_table .mobile-number").innerText = caseInfo.mobile_number;
-                            document.querySelector(".success_payment_table .transaction-number").innerText = caseInfo.transaction_no;
-                            document.querySelector(".success_payment_table .transaction-date").innerText = caseInfo.transaction_date;
-                            document.querySelector(".success_payment_table .paid-amount span").innerText = `₹${caseInfo.payable_amount}`;
-                            document.querySelector(".success_payment_table .transaction-status").innerText = caseInfo.transaction_status;
+                            document.querySelector(".success_payment_table .transaction-number").innerText = transactionInfo.transaction_no;
+                            document.querySelector(".success_payment_table .transaction-date").innerText = transactionInfo.transaction_date;
+                            // document.querySelector(".success_payment_table .paid-amount span").innerText = `₹${transactionInfo.payable_amount}`;
+                            document.querySelector(".success_payment_table .transaction-status").innerText = transactionInfo.transaction_status;
                         }, 1000);
                         }
                     } else {

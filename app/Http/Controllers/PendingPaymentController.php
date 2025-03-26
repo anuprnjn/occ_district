@@ -39,6 +39,7 @@ class PendingPaymentController extends Controller
             // Add order details if it came from the order copy API
             if ($isOrderApi) {
                 $responsePayload['order_details'] = $responseData['order_details'];
+                $responsePayload['transaction_details'] = $responseData['transaction_details'];
             } else {
                 // Add document details if it came from the other copy API
                 $responsePayload['document_details'] = $responseData['document_details'];

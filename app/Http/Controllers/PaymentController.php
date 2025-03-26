@@ -22,13 +22,17 @@ class PaymentController extends Controller
 
         $merchantDetails = $response->json();
         $userData = $request->input('userData');
+        // dd($userData);
+        // exit();
         $urgent_fee = Session::get('urgent_fee');
         $paybleAmount = $request->input('paybleAmount');
         $applicationNumber = $request->input('applicationNumber');
         $transaction_no = $merchantDetails[0]['TransactionNumber'];
         $PAN = 'N/A';
         $ADDINFO1 = $applicationNumber;
-        $ADDINFO2 = 'N/A';
+        $ADDINFO2 = isset($userData["payment_status"]) 
+            ? ($userData["payment_status"] == "1" ? "deficit" : "normal") 
+            : "normal";
         $ADDINFO3 = 'N/A';
         $responseURL = 'http://10.134.9.45/api/occ/gras_resp_cc';
         $key = 'Ky@5432#';

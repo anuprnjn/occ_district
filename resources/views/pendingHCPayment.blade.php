@@ -19,9 +19,9 @@
         <table class="w-full border border-gray-300">
             <tr>
                 <td class="border p-2 font-bold">Case Number</td>
-                <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.CASENO') ?? 'N/A' }}</td>
+                <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.caseno') ?? 'N/A' }}</td>
                 <td class="border p-2 font-bold">Filling Number</td>
-                <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.FILLINGNO') ?? 'N/A' }}</td>
+                <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.filingno') ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="border p-2 font-bold">Petitioner Name</td>
@@ -161,20 +161,35 @@
 
     @if(session('PendingCaseInfoDetails.case_info.request_mode') == 'urgent')
         <span class="ml-2 text-sm text-red-500 text-bold">
-            (Urgent Fee: ₹{{ session('PendingCaseInfoDetails.case_info.urgent_fee') ?? 'N/A' }})
+            (Urgent Fee: ₹{{ session('PendingCaseInfoDetails.transaction_details.urgent_fee') ?? 'N/A' }})
         </span>
     @endif
-</td>
-    <td class="border p-2 font-bold">Total Payble Amount</td>
-    <td class="border p-2">
-        <span class="bg-green-600 text-white rounded-md px-4 py-1">₹{{ session('PendingCaseInfoDetails.case_info.payable_amount') ?? 'N/A' }}</span>
+    </td>
+        <td class="border p-2 font-bold">Total Payble Amount</td>
+        <td class="border p-2">
+        @php
+            $transactionDetails = session('PendingCaseInfoDetails.transaction_details');
+            $caseInfo = session('PendingCaseInfoDetails.case_info');
+
+            // Default to payable_amount
+            $amountToShow = $transactionDetails['payable_amount'] ?? 'N/A';
+             dd($amountToShow);       
+            // Check conditions to use deficit_amount instead
+            if (($caseInfo['payment_status']) == 1 && ($caseInfo['deficit_payment_status']) == 0) {
+                $amountToShow = $caseInfo['deficit_amount'] ?? 'N/A';
+             dd($amountToShow);       
+
+            }
+        @endphp
+
+        <span class="bg-green-600 text-white rounded-md px-4 py-1">₹{{ $amountToShow }}</span>
     </td>
 </tr>
     </table>
 
     <!-- Pay Now Button -->
     <div class="flex justify-end items-center mt-4">
-        <button class="order_btn bg-teal-500 w-[200px] text-white p-3 rounded-md hover:bg-teal-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="paymentToMerchant(event, '{{ session('PendingCaseInfoDetails.case_info.application_number') }}', '{{ session('PendingCaseInfoDetails.case_info.payable_amount') }}')">
+        <button class="order_btn bg-teal-500 w-[200px] text-white p-3 rounded-md hover:bg-teal-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="paymentToMerchant(event, '{{ session('PendingCaseInfoDetails.case_info.application_number') }}', {{ $amountToShow }})">
             Pay Now
         </button>
     </div>
@@ -189,7 +204,7 @@
 <script>
     async function paymentToMerchant(event, applicationNumber, paybleAmount) {
     event.preventDefault();
-
+        console.log(paybleAmount);
     try {
         var userData = @json(session('PendingCaseInfoDetails.case_info'));
 
@@ -224,7 +239,7 @@
                 form.querySelector('input[name="requestparam"]').value = data.enc_val;
                 alert('Entered to transaction details');
                 // form.submit();
-                window.location.href = '/api/occ/gras_resp_cc';
+                // window.location.href = '/api/occ/gras_resp_cc';
             } else {
                 console.error("Form 'eGrassClient' not found!");
                 alert("Payment form not found. Please try again.");
