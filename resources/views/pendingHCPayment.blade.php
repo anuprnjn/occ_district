@@ -37,10 +37,7 @@
                     {{ session('PendingCaseInfoDetails.case_info.selected_method') == 'C' ? 'Case Number' : 'Filling Number' }}
                 </td>
                 <td class="border p-2">
-                    {{ session('PendingCaseInfoDetails.case_info.selected_method') == 'C' 
-                        ? session('PendingCaseInfoDetails.case_info.CASENO') ?? 'N/A' 
-                        : session('PendingCaseInfoDetails.case_info.FILLINGNO') ?? 'N/A' 
-                    }}
+                    {{ session('PendingCaseInfoDetails.case_info.CASENO') ?? 'N/A' }}
                 </td>
             </tr>
         </table>
@@ -54,7 +51,7 @@
     @endif
 
     <div class="overflow-x-auto">
-            @if(session('PendingCaseInfoDetails.order_details'))
+           @if(session('PendingCaseInfoDetails.order_details'))
             <table class="w-full border border-gray-300 text-sm" id="ordersTable">
                 <thead>
                     <tr class="bg-[#4B3D2F] text-white text-left text-md">
@@ -79,26 +76,6 @@
                         </tr>
                     @endforelse
                 </tbody>
-                <!-- code to eliminate the duplicate orders to be not used in future -->
-                <!-- <tbody>
-                    @php
-                        $uniqueOrders = collect(session('PendingCaseInfoDetails.order_details') ?? [])
-                                        ->unique('order_number');
-                    @endphp
-
-                    @forelse($uniqueOrders as $order)
-                        <tr>
-                            <td class="py-2 px-2 border">{{ $order['order_number'] ?? 'N/A' }}</td>
-                            <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
-                            <td class="py-2 px-2 border">{{ $order['number_of_page'] ?? '0' }}</td>
-                            <td class="py-2 px-2 border text-green-500">₹{{ $order['amount'] ?? '0.0' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="py-2 px-2 border text-center">No orders found</td>
-                        </tr>
-                    @endforelse
-                </tbody> -->
             </table>
         @elseif(session('PendingCaseInfoDetails.document_details'))
             <table class="w-full border border-gray-300 text-sm" id="documentsTable">
@@ -247,9 +224,9 @@
             const form = document.querySelector('form[name="eGrassClient"]');
             if (form) {
                 form.querySelector('input[name="requestparam"]').value = data.enc_val;
-                alert('Entered to transaction details');
+                alert('Entered to Transaction Details Master');
                 // form.submit();
-                // window.location.href = '/api/occ/gras_resp_cc';
+                window.location.href = '/api/occ/gras_resp_cc';
             } else {
                 console.error("Form 'eGrassClient' not found!");
                 alert("Payment form not found. Please try again.");

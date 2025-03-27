@@ -22,8 +22,6 @@ class PaymentController extends Controller
 
         $merchantDetails = $response->json();
         $userData = $request->input('userData');
-        // dd($userData);
-        // exit();
         $urgent_fee = Session::get('urgent_fee');
         $paybleAmount = $request->input('paybleAmount');
         $applicationNumber = $request->input('applicationNumber');
@@ -76,10 +74,13 @@ class PaymentController extends Controller
             'securitycode' => $merchantDetails[0]['securitycode'] ?? '',
             'response_url' => $responseURL ?? ''
         ];
-        // dd($entryData);
-        // exit();
+       
         // Send data to entryPayDetails API
-        $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request.php', $entryData);
+        if (str_starts_with($applicationNumber, 'HC')) {
+            $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request.php', $entryData);
+        }else{
+            $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request_dc.php', $entryData);
+        }
 
         // Check if entry API request was successful
         if (!$entryResponse->successful()) {

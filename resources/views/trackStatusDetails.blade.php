@@ -156,11 +156,11 @@
 
         // Define status colors
         var statusColors = {
-            "Rejected": "text-red-500",
-            "Certified copy is ready to be download": "text-cyan-500",
-            "Payment Success": "text-orange-500",
-            "Document Uploaded": "text-emerald-500",
-            "In Progress": "text-green-500"
+            "Rejected": "bg-red-100 text-red-700 font-semibold px-3 py-1 rounded-md border border-red-500 text-center",
+            "Certified copy is ready to be download": "bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-md border border-blue-500 text-center",
+            "Payment Success": "bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-md border border-green-500 text-center",
+            "Document Uploaded": "bg-teal-100 text-teal-700 font-semibold px-3 py-1 rounded-md border border-teal-500 text-center",
+            "In Progress": "bg-yellow-100 text-yellow-700 font-semibold px-3 py-1 rounded-md border border-yellow-500 text-center"
         };
 
         // Determine status text and color
@@ -170,7 +170,11 @@
         var applicationStatusRow = `
             <tr class="border">
                 <td class="px-6 py-2 font-semibold uppercase border">Application Status</td>
-                <td class="px-6 py-2 font-bold ${statusColor}  text-lg">${applicationStatus}</td>
+                <td class="px-6 py-2 font-bold text-lg">
+                <span class="${statusColor}">
+                ${applicationStatus}
+                </span>
+                </td>
             </tr>
         `;
 
