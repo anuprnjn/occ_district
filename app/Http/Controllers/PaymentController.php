@@ -28,7 +28,9 @@ class PaymentController extends Controller
         $transaction_no = $merchantDetails[0]['TransactionNumber'];
         $PAN = 'N/A';
         $ADDINFO1 = $applicationNumber;
-        $ADDINFO2 = 'N/A';
+        $ADDINFO2 = isset($userData["payment_status"]) 
+            ? ($userData["payment_status"] == "1" ? "deficit" : "normal") 
+            : "normal";
         $ADDINFO3 = 'N/A';
         $responseURL = 'http://10.134.9.45/api/occ/gras_resp_cc';
         $key = 'Ky@5432#';
@@ -72,10 +74,13 @@ class PaymentController extends Controller
             'securitycode' => $merchantDetails[0]['securitycode'] ?? '',
             'response_url' => $responseURL ?? ''
         ];
-        // dd($entryData);
-        // exit();
+       
         // Send data to entryPayDetails API
-        $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request.php', $entryData);
+        if (str_starts_with($applicationNumber, 'HC')) {
+            $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request.php', $entryData);
+        }else{
+            $entryResponse = Http::post(config('app.api.transaction_url') . '/jegras_payment_request_dc.php', $entryData);
+        }
 
         // Check if entry API request was successful
         if (!$entryResponse->successful()) {

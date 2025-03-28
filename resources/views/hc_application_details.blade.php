@@ -10,8 +10,8 @@
         </p>
     </div>
     
-    <h1 id="application-title" class="sm:text-2xl text-center sm:text-start text-xl uppercase mb-6 font-semibold"></h1>
-    <div id="application-details-container" class=" shadow-md rounded-lg">
+    <h1 id="application-title" class="sm:text-2xl text-center sm:text-start text-xl uppercase mb-6 font-semibold -mt-6"></h1>
+    <div id="application-details-container" class="">
         <!-- Application data will appear here -->
     </div>
     
@@ -47,6 +47,7 @@
     document.addEventListener('DOMContentLoaded', async function () {
         const applicationNumber = sessionStorage.getItem('application_number');
         
+        // sending page to main page if application number not exists 
         if (!applicationNumber) {
             // Correct implementation of beforeunload for Chrome
             window.location.href = '/'; 
@@ -83,82 +84,82 @@
                     if (data.selected_method === 'C') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Case Year</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_year}</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg font-semibold uppercase border">Case Year</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg border">${data.case_filling_year}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Case Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_number}</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg font-semibold uppercase border">Case Number</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg border">${data.case_filling_number}</td>
                             </tr>
                         `;
                     } else if (data.selected_method === 'F') {
                         caseDetails = `
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Filling Year</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_year}</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg font-semibold uppercase border">Filling Year</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg border">${data.case_filling_year}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="px-6 py-3 text-sm sm:text-lg font-semibold uppercase">Filling Number</td>
-                                <td class="px-6 py-3 text-sm sm:text-lg">${data.case_filling_number}</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg font-semibold uppercase border">Filling Number</td>
+                                <td class="px-6 py-2 text-sm sm:text-lg border">${data.case_filling_number}</td>
                             </tr>
                         `;
                     }
 
                     container.innerHTML = `
-                        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                        <table class="dark_form min-w-full overflow-hidden">
                             <thead>
                                 <tr class="bg-[#D09A3F] text-white">
-                                    <th class="px-6 py-3 text-left text-sm sm:text-lg">Detail</th>
-                                    <th class="px-6 py-3 text-left text-sm sm:text-lg">Information</th>
+                                    <th class="px-6 py-2 text-left text-sm sm:text-lg uppercase border-t border-b border-l">Details</th>
+                                    <th class="px-6 py-2 text-left text-sm sm:text-lg uppercase border-t border-b border-r">Information</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-sm sm:text-lg dark_form">
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Application Number</td>
-                                    <td class="px-6 py-4 text-teal-500 font-bold text-xl">${data.application_number}</td>
+                            <tbody>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Application Number</td>
+                                    <td class="px-6 py-2 text-teal-500 font-bold text-lg">${data.application_number}</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Application Date</td>
-                                    <td class="px-6 py-4">${formatDateTime(data.created_at)}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Application Date</td>
+                                    <td class="px-6 py-2 capitalize">${formatDateTime(data.created_at)}</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Applicant Name</td>
-                                    <td class="px-6 py-4">${data.applicant_name}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Applicant Name</td>
+                                    <td class="px-6 py-2 capitalize">${data.applicant_name}</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Mobile Number</td>
-                                    <td class="px-6 py-4">${data.mobile_number}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Mobile Number</td>
+                                    <td class="px-6 py-2 capitalize">${data.mobile_number}</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Email</td>
-                                    <td class="px-6 py-4">${data.email}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Email</td>
+                                    <td class="px-6 py-2 capitalize">${data.email}</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold">Applied By</td>
-                                    <td class="px-6 py-4">${data.applied_by}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold border">Applied By</td>
+                                    <td class="px-6 py-2 capitalize">${data.applied_by}</td>
                                 </tr>
                                 ${data.applied_by === 'advocate' ? `
-                                    <tr class="border-b">
-                                        <td class="px-6 py-4 font-semibold uppercase">Advocate Registration Number</td>
-                                        <td class="px-6 py-4">${data.advocate_registration_number || 'N/A'}</td>
+                                    <tr class="border">
+                                        <td class="px-6 py-2 font-semibold uppercase border">Advocate Registration Number</td>
+                                        <td class="px-6 py-2 capitalize">${data.advocate_registration_number || 'N/A'}</td>
                                     </tr>
                                 ` : ''}
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Request Type</td>
-                                    <td class="px-6 py-4">${data.request_mode}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Request Type</td>
+                                    <td class="px-6 py-2 capitalize">${data.request_mode}</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Case Type</td>
-                                    <td class="px-6 py-4">${data.case_type}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Case Type</td>
+                                    <td class="px-6 py-2 capitalize">${data.case_type}</td>
                                 </tr>
                                 ${caseDetails}
-                                <tr class="border-b">
-                                    <td class="px-6 py-4 font-semibold uppercase">Required Document</td>
-                                    <td class="px-6 py-4">${data.required_document}</td>
+                                <tr class="border">
+                                    <td class="px-6 py-2 font-semibold uppercase border">Required Document</td>
+                                    <td class="px-6 py-2 capitalize">${data.required_document}</td>
                                 </tr>
                                  <tr>
-                                    <td class="px-6 py-4 font-semibold uppercase">Payment status</td>
-                                    <td class="px-6 py-4 text-red-500">${data.status}</td>
+                                    <td class="px-6 py-2 font-semibold uppercase border">Payment status</td>
+                                    <td class="px-6 py-2 capitalize text-red-500 border">${data.status}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -172,7 +173,7 @@
                 }
 
                 document.getElementById('loading-overlay').style.display = 'none';
-                sessionStorage.removeItem('application_number');
+                // sessionStorage.removeItem('application_number');
 
                 // Show a persistent warning message
                 function showWarningMessage() {
@@ -219,13 +220,13 @@
             }
 
             // Call this function when the application details page loads
-            showWarningMessage();
+            // showWarningMessage();
             } catch (error) {
                 console.error('Error fetching application details:', error);
                 document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">An error occurred while fetching application details.</p>';
                 document.getElementById('loading-overlay').style.display = 'none';
             }
-        }, 2000);
+        }, 1000);
     });
 
     function printApplication() {
