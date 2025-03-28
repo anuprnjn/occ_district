@@ -208,6 +208,8 @@ Route::get('/admin/dc-rejected-application', [DcOtherCopyController::class, 'rej
 
 Route::get('/admin/dc-paid-application', [DcOtherCopyController::class, 'paidDcOtherCopyList'])->name('dc_other_copy_paid_application');
 
-Route::get('/admin/dc-paid-copy-view/{encryptedAppNumber}', [DcOtherCopyController::class, 'ViewDcOtherCopy'])->name('dc_paid_copy_view'); 
+Route::get('/admin/dc-paid-copy-view/{encryptedAppNumber}', [DcOtherCopyPaidController::class, 'ViewDcOtherCopy'])->name('dc_paid_copy_view'); 
+
+Route::post('/upload-certified-copy/{id}', [DcOtherCopyPaidController::class, 'uploadCertifiedCopy'])->name('upload.certified.copy');
 
 });

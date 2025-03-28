@@ -12,7 +12,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6">
-                        <h3 class="mb-0">Civilcourt Other Copy Paid Application Details</h3>
+                        <h3 class="mb-0">DC Other Copy Paid Application Details</h3>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-end">
@@ -115,7 +115,7 @@
                         <!-- Upload Section -->
                         <div class="card card-success card-outline mb-4">
                             <div class="card-header">
-                                <h5 class="card-title">Upload Document (Civilcourt Other Copy)</h5>
+                                <h5 class="card-title">Upload Document (Dc Other Copy)</h5>
                             </div>
                             <div class="card-body">
                                 <table class="table table-bordered" id="documentTable">
@@ -123,8 +123,9 @@
                                         <tr>
                                             <th>Document Type</th>
                                             <th>Number of Pages</th>
-                                          
                                             <th>File</th>
+                                            <th>Select Certified Copy</th>
+                                            <th>Upload Certified Copy</th>
                                            
                                         </tr>
                                     </thead>
@@ -134,8 +135,24 @@
                                                 <td>{{ $doc->document_type }}</td>
                                                 <td>{{ $doc->number_of_page }}</td>
                                                 <td>
-                                                    <a href="javascript:void(0)"
-                                                        onclick="viewPDF('{{ asset('storage/highcourt_other_copies/' . $doc->file_name) }}')">View</a>
+                                                    <a href="{{ asset('storage/district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}" target="_blank">
+                                                        Download
+                                                    </a>
+                                                </td>
+                                                <td> 
+                                                        <input type="file" name="documents[]" class="form-control"
+                                                        accept=".pdf" required>
+                                                </td>
+                                                <td>
+                                               
+                                                <form action="{{ route('upload.certified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <input type="hidden" name="id" value="{{ Crypt::encrypt($doc->id) }}">
+    <input type="hidden" name="application_number" value="{{ $doc->application_number }}">
+    <input type="hidden" name="document_id" value="{{ $doc->id }}">
+    <input type="file" name="document" required>
+    <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-upload"></i> Upload</button>
+</form>
                                                 </td>
                                                 
                                             </tr>
