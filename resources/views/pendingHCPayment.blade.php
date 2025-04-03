@@ -180,7 +180,7 @@
             Pay Now
         </button>
     </div>
-    <form name="eGrassClient" method="POST" action="https://finance.jharkhand.gov.in/jegras/payment.aspx">
+    <form name="eGrassClient" method="POST" action="https://jkuberuat.jharkhand.gov.in/jegras/deptuattest/uatpaymentpg.aspx">
         <input type="hidden" name="requestparam" value="">
         <input type="submit" value="Submit" class="hidden">
     </form>

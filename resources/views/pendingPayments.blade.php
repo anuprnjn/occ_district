@@ -146,7 +146,6 @@ function pendingPayment(event) {
                             }
                             // Delay showing the success message and table by 1 second
                         setTimeout(() => {
-                            console.log('hello');
                             // Hide loading animation
                             loading.classList.add("hidden");
 
