@@ -80,14 +80,8 @@ class DcOtherCopyController extends Controller
     
         try {
             $parser = new Parser(); // PDF parser instance
-            $dist_code = session('user.dist_code');
-            $distName = DB::table('district_master as dc')
-            ->select(
-                'dc.dist_name'
-            )
-            ->where('dc.dist_code', $dist_code) 
-            ->first();
-            $folderName = ($distName ? $distName->dist_name : 'default')."_other_copies";
+            $distName = strtolower(session('user.dist_name'));
+            $monthName = strtolower(now()->format('Fy')); 
 
             $perPageAmount = DB::table('fee_master as fm')
                 ->select('fm.amount')
@@ -97,8 +91,9 @@ class DcOtherCopyController extends Controller
               Log::info('Per Page Amount: ' . $amount);
            
             foreach ($request->file('documents') as $key => $file) {
+                $folderPath = "district_other_copies/{$distName}/{$monthName}";
                 $filename = $request->application_number . '_' . time(). '.pdf';
-                $path = $file->storeAs($folderName, $filename, 'public');
+                $path = $file->storeAs($folderPath, $filename, 'public');
     
                 // Extract page count from PDF
                 $pdf = $parser->parseFile($file->getPathname());
