@@ -5,7 +5,12 @@
     <!-- Case Information Section -->
     <div class="w-full rounded-md -mt-8">
         
-        <span class="text-xl text-red-500 uppercase font-extrabold">Payment is Pending for the application number &nbsp;<span class="text-teal-500">( {{ session('PendingCaseInfoDetails.case_info.application_number') ?? 'N/A' }} )</span> </span>
+        <span class="mb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 py-2 px-3 rounded-xl border uppercase border-red-300 bg-red-50 text-red-800 shadow-sm text-sm sm:text-base leading-snug">
+        Payment is pending for the application number
+        <span class="text-teal-600 font-semibold">
+                ({{ session('PendingCaseInfoDetails.case_info.application_number') ?? 'N/A' }})
+            </span>
+        </span>
         <div class="flex items-center">
                 <span class="text-lg font-semibold mb-3 w-[18%] mt-4 text-[#D09A3F]">Case Information</span>
                 <marquee behavior="" direction="left" class="w-full -mt-1">

@@ -58,11 +58,39 @@
             </td>
         </tr>
     </table>
+    <div id="message" class="mt-2"></div>
 </section>
 
 @endsection
 
 @push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const params = new URLSearchParams(window.location.search);
+    const applicationNumber = params.get('application_number');
+
+    if (applicationNumber) {
+        const input = document.getElementById('application_number');
+        if (input) {
+            input.value = applicationNumber;
+        }
+
+        // Check if it starts with HC or HCW
+        const isHighCourt = applicationNumber.startsWith('HC') || applicationNumber.startsWith('HCW');
+
+        // Set the correct radio button
+        const highCourtRadio = document.querySelector('input[name="search-type"][value="HC"]');
+        const civilCourtRadio = document.querySelector('input[name="search-type"][value="DC"]');
+
+        if (!isHighCourt && civilCourtRadio) {
+            civilCourtRadio.checked = true;
+        } else if (isHighCourt && highCourtRadio) {
+            highCourtRadio.checked = true;
+        }
+    }
+});
+</script>
+
 <script>
 function pendingPayment(event) {
     event.preventDefault();
@@ -105,7 +133,19 @@ function pendingPayment(event) {
         success: function(response) {
         if (response.success) {
             var caseInfoDetails = response;
-            // console.log(caseInfoDetails);
+            var show = caseInfoDetails.document_details[0].amount;
+            if(show === null){
+                const messageSpan = `
+                    <div class="flex items-start gap-2 p-4 rounded-xl border border-red-300 bg-red-50 text-red-800 shadow-sm">
+                        <span class="font-semibold">
+                            Documents are not uploaded by the copying section yet for the application number 
+                            <span class="text-teal-600 font-bold">${application_number}</span>.
+                        </span>
+                    </div>
+                `;
+                document.getElementById('message').innerHTML = messageSpan;
+                return;
+            }else{
             $.ajax({
                 url: '/set-caseInformation-PendingData-HC', 
                 method: 'POST',
@@ -171,6 +211,7 @@ function pendingPayment(event) {
                     console.log('An error occurred while setting pending Payment details.');
                 }
             });
+        }
         } else {
             errorSpan.innerText = response.message || 'Failed to fetch application details.';
         }

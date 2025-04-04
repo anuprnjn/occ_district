@@ -22,7 +22,7 @@
     </button>
     <br>
     <div class="sm:mt-4 hidden -mt-10 mb-20 sm:mb-0" id="note">
-    <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
+    <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <button onclick="detailsPayment()" class="text-blue-500 border-b border-blue-500 ml-1">Pending Payments</button>.</span>
     </div>
     
 </section>
@@ -30,7 +30,11 @@
 
 @push('scripts')  
 <script>
-    
+
+    function detailsPayment(application_number) {
+        window.location.href = "{{ route('pendingPayments') }}?application_number=" + encodeURIComponent(application_number);
+    }
+        
     const formatDateTime = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
@@ -76,9 +80,14 @@
                 const result = await response.json();
 
                 if (result.success) {
+
                 
                     const data = result.data[0]; 
+                    console.log('applied data',data);
                     const container = document.getElementById('application-details-container');
+
+                    const noteButton = document.querySelector('#note button');
+                    noteButton.setAttribute('onclick', `detailsPayment('${data.application_number}')`);
 
                     // Set the dynamic title
                     const title = ` ${data.district_name || districtName} - ${data.establishment_name || establishmentName}`;
@@ -104,6 +113,19 @@
                         `;
                     }
 
+                    let paymentStatus = '';
+
+                    if(data.payment_status === 0){
+                        paymentStatus = ` 
+                    <tr>
+                        <td class="px-6 py-2.5 font-semibold uppercase border">Application Status</td>
+                        <td class="px-6 py-2.5 border font-bold">
+                        <span class="-ml-1.5 bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-md border border-green-500 text-center">Applied Successfully</span>
+                        </td>
+                    </tr>`
+                    }
+                    
+
                     container.innerHTML = `
                         <table class="min-w-full overflow-hidden">
                             <thead>
@@ -113,9 +135,10 @@
                                 </tr>
                             </thead>
                             <tbody class="text-sm sm:text-[1rem] dark_form">
+                            ${paymentStatus}
                                 <tr class="border-b">
                                     <td class="px-6 py-1 font-semibold uppercase border">Application Number</td>
-                                    <td class="px-6 py-1 border text-teal-500 font-bold text-lg">${data.application_number}</td>
+                                    <td class="px-6 py-1 border text-teal-600 font-bold text-lg">${data.application_number}</td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="px-6 py-2.5 font-semibold uppercase border">Application Date</td>
@@ -154,17 +177,16 @@
                                     <td class="px-6 py-2.5 font-semibold uppercase border">Required Document</td>
                                     <td class="px-6 py-2.5 border capitalize">${data.required_document}</td>
                                 </tr>
-                                 <tr>
-                                    <td class="px-6 py-2.5 font-semibold uppercase border">Payment status</td>
-                                    <td class="px-6 py-2.5 text-red-500 border capitalize">${data.status}</td>
-                                </tr>
+                                
                             </tbody>
                         </table>
+                        
                     `;
 
                     // Show print button after data loads
                     document.getElementById('print-button').style.display = 'inline-block';
                     document.getElementById('note').style.display = 'inline-block';
+                    
                 } else {
                     document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">Failed to fetch application details.</p>';
                 }
@@ -223,7 +245,7 @@
                 document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">An error occurred while fetching application details.</p>';
                 document.getElementById('loading-overlay').style.display = 'none';
             }
-        }, 2000);
+        }, 100);
     });
 
     function printApplication() {
@@ -313,7 +335,7 @@
             <h2>${establishmentName}</h2>
             <h3>Online Certified Copy</h3>
             ${content}
-            <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
+            <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Pending Payments</a>.</span>
             <footer>Generated by: ${pageURL}</footer>
         </body>
         </html>

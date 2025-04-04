@@ -18,7 +18,7 @@
     <div id="print_container" class="hidden flex flex-col justify-start items-start">
     <button id="print-application-btn" class="flex gap-2 mt-5 p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5"><img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Application</button> <!-- Print button -->
     <div class="sm:mt-4 -mt-10 mb-20 sm:mb-0" id="note">
-    <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Payment link</a>.</span>
+    <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <button onclick="detailsPayment()" class="text-blue-500 border-b border-blue-500 ml-1">Pending Payments</button>.</span>
     </div>
     </div>
 </section>
@@ -26,6 +26,11 @@
 @endsection
 
 @push('scripts')
+<script>
+    function detailsPayment(application_number) {
+        window.location.href = "{{ route('pendingPayments') }}?application_number=" + encodeURIComponent(application_number);
+    }
+</script>    
 
 <script>
     $(document).ready(function() {
@@ -58,6 +63,9 @@
                 },
                 success: function(response) {
                     if (response.success) {
+                        var app_no = response.data[0].application_number;
+                        const noteButton = document.querySelector('#note button');
+                        noteButton.setAttribute('onclick', `detailsPayment('${app_no}')`);
                         displayApplicationDetails(response.data[0]);
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
@@ -154,26 +162,13 @@
         var createdAt = new Date(data.created_at);
         var formattedCreatedAt = formatDateTime(createdAt);
 
-        // Define status colors
-        var statusColors = {
-            "Rejected": "bg-red-100 text-red-700 font-semibold px-3 py-1 rounded-md border border-red-500 text-center",
-            "Certified copy is ready to be download": "bg-blue-100 text-blue-700 font-semibold px-3 py-1 rounded-md border border-blue-500 text-center",
-            "Payment Success": "bg-green-100 text-green-700 font-semibold px-3 py-1 rounded-md border border-green-500 text-center",
-            "Document Uploaded": "bg-teal-100 text-teal-700 font-semibold px-3 py-1 rounded-md border border-teal-500 text-center",
-            "In Progress": "bg-yellow-100 text-yellow-700 font-semibold px-3 py-1 rounded-md border border-yellow-500 text-center"
-        };
-
-        // Determine status text and color
         var applicationStatus = data.application_status ? data.application_status : 'N/A';
-        var statusColor = statusColors[data.application_status] || "text-gray-500"; // Default color if not matched
 
         var applicationStatusRow = `
             <tr class="border">
                 <td class="px-6 py-2 font-semibold uppercase border">Application Status</td>
-                <td class="px-6 py-2 font-bold text-lg">
-                <span class="${statusColor}">
+                <td class="px-6 py-2 uppercase">
                 ${applicationStatus}
-                </span>
                 </td>
             </tr>
         `;
