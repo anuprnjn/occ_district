@@ -271,7 +271,7 @@
             alert("Error: Data insertion failed.");
         }
         } catch (error) {
-            console.error("Error in submitUserDetails:", error);
+            console.error("Error in submit User Details:", error);
             alert("An error occurred while submitting the request.");
         }
         async function paymentToMerchant(event, applicationNumber) {
