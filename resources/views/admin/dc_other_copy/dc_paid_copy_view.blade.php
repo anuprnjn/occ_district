@@ -143,7 +143,7 @@
                                                 </button>
                                             </td>
                                             <td>
-                                                <form action="{{ route('upload.certified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
+                                            <form class="certified-copy-form" action="{{ route('upload.certified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{ Crypt::encrypt($doc->id) }}">
                                                     <input type="hidden" name="application_number" value="{{ $doc->application_number }}">
@@ -155,8 +155,9 @@
                                             <td>
                                             <button 
                                                 type="button" 
-                                                class="btn btn-link p-0" 
-                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->file_name) }}')"
+                                                class="btn btn-link p-0 view-btn" 
+                                                data-document-id="{{ $doc->id }}"
+                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
                                             >
                                                 <i class="bi bi-eye"></i> View
                                             </button>
@@ -213,11 +214,48 @@
     }
 
     function viewPDF(pdfUrl) {
+        console.log(pdfUrl);
         document.getElementById('pdfViewerFrame').src = pdfUrl;
        
         const myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
         myModal.show();
     }
+
+    $(document).ready(function () {
+        // Handle all forms with class `.certified-copy-form`
+        $('.certified-copy-form').on('submit', function (e) {
+            e.preventDefault();
+
+            const form = this;
+            const formData = new FormData(form);
+
+            $.ajax({
+                url: $(form).attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert(response.success);
+                    const docId = response.id;
+                    const filename = response.certified_copy_file_name;
+
+                    // Build new path
+                    const district = "{{ strtolower(session('user.dist_name')) }}";
+                    const month = "{{ strtolower(now()->format('F')) }}" + "{{ now()->format('y') }}";
+                    const fileUrl = `/storage/district_certified_other_copies/${district}/${month}/${filename}`;
+
+                    // Find the matching view button and update its onclick
+                    const viewBtn = $(`.view-btn[data-document-id="${docId}"]`);
+                    viewBtn.attr('onclick', `viewPDF('${fileUrl}')`);
+                },
+                error: function (xhr) {
+                    const message = xhr.responseJSON?.error || 'Something went wrong!';
+                    alert(message);
+                }
+            });
+        });
+    });
 </script>
 @endpush
 
