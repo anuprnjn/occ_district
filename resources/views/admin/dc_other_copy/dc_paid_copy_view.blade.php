@@ -159,7 +159,7 @@
                                             </div>
                                                 <button 
                                                     type="button" 
-                                                    class="btn btn-link p-0" 
+                                                    class="btn btn-link p-2" 
                                                     onclick="processPDF('{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}','{{ $dcuser->created_at }}')"
                                                 >
                                                     Download
@@ -171,7 +171,7 @@
                                                     <input type="hidden" name="id" value="{{ Crypt::encrypt($doc->id) }}">
                                                     <input type="hidden" name="application_number" value="{{ $doc->application_number }}">
                                                     <input type="hidden" name="document_id" value="{{ $doc->id }}">
-                                                    <input type="file" name="document" required>
+                                                    <input type="file" name="document" required class="mb-2">
                                                     <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-upload"></i> Upload</button>
                                                 </form>
                                             </td>
