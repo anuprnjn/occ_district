@@ -136,10 +136,10 @@ function pendingPayment(event) {
             var show = caseInfoDetails.document_details[0].amount;
             if(show === null){
                 const messageSpan = `
-                    <div class="flex items-start gap-2 p-4 rounded-xl border border-red-300 bg-red-50 text-red-800 shadow-sm">
+                    <div class="dark_form flex items-start gap-2 p-4 rounded-xl border border-red-300 bg-red-50 text-red-500 shadow-sm">
                         <span class="font-semibold">
                             Documents are not uploaded by the copying section yet for the application number 
-                            <span class="text-teal-600 font-bold">${application_number}</span>.
+                            <span class="text-teal-500 font-bold ml-1">${application_number}</span>
                         </span>
                     </div>
                 `;
