@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'd6595d9d31ade0f2b25f09f0c0ace80488a076b1',
+        'reference' => '1d0a134fc51620ac1ed489e118c86c74a253de05',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -388,11 +388,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-<<<<<<< HEAD
-            'reference' => 'd6595d9d31ade0f2b25f09f0c0ace80488a076b1',
-=======
-            'reference' => 'b698f8960dd46a64a0a93f1c146caf9bd56c010c',
->>>>>>> ac4b499597b853bd36a7e7cd2439d2b5e5a74be6
+            'reference' => '1d0a134fc51620ac1ed489e118c86c74a253de05',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -981,6 +977,24 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
+        'setasign/fpdf' => array(
+            'pretty_version' => '1.8.6',
+            'version' => '1.8.6.0',
+            'reference' => '0838e0ee4925716fcbbc50ad9e1799b5edfae0a0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../setasign/fpdf',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'setasign/fpdi' => array(
+            'pretty_version' => 'v2.6.3',
+            'version' => '2.6.3.0',
+            'reference' => '67c31f5e50c93c20579ca9e23035d8c540b51941',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../setasign/fpdi',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'smalot/pdfparser' => array(
             'pretty_version' => 'v2.11.0',
             'version' => '2.11.0.0',
@@ -1277,6 +1291,15 @@
             'install_path' => __DIR__ . '/../symfony/yaml',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'tecnickcom/tcpdf' => array(
+            'pretty_version' => '6.9.1',
+            'version' => '6.9.1.0',
+            'reference' => 'ed27e28a4c478f7f4015b5e7e7b1912af9e85f2b',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../tecnickcom/tcpdf',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'theseer/tokenizer' => array(
             'pretty_version' => '1.2.3',

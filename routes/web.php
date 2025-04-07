@@ -35,6 +35,7 @@ use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
+use App\Http\Controllers\Admin\PdfController;
 use App\Http\Middleware\CheckSession;
 use App\Http\Middleware\CheckSessionCd_pay;
 use App\Http\Controllers\PendingPaymentController;
@@ -212,5 +213,7 @@ Route::get('/admin/dc-paid-application', [DcOtherCopyController::class, 'paidDcO
 Route::get('/admin/dc-paid-copy-view/{encryptedAppNumber}', [DcOtherCopyPaidController::class, 'ViewDcOtherCopy'])->name('dc_paid_copy_view'); 
 
 Route::post('/upload-certified-copy/{id}', [DcOtherCopyPaidController::class, 'uploadCertifiedCopy'])->name('upload.certified.copy');
+
+Route::post('/admin/process-pdf', [PdfController::class, 'attachStampAndHeader'])->name('admin.attachStampAndHeader');
 
 });

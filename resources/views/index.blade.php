@@ -284,35 +284,70 @@ async function refreshCaptcha() {
     const captcha = document.getElementById('captcha').value.trim();
 
     // Validate required fields
-    if (!district_code || !establishment_code || !case_type) {
-        console.error('Missing required session data.');
-        alert('Missing session data. Please select the required options.');
+    if (!district_code) {
+    alert('Please select a district.');
+    return;
+    }
+    if (!establishment_code) {
+        alert('Please select an establishment.');
         return;
     }
-
-    if (!applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by ) {
-        console.error('Missing required form data.');
-        alert('Please fill out all required fields.');
+    if (!case_type) {
+        alert('Please select a case type.');
         return;
     }
-    if (applied_by === 'advocate' && !advocate_registration) {
-        alert('Please enter the advocate registration number.');
-        return false;
+    if (!applicant_name) {
+        alert('Please enter the applicant name.');
+        return;
     }
-
+    if (!mobile_number) {
+        alert('Please enter the mobile number.');
+        return;
+    }
+    if (!email) {
+        alert('Please enter the email address.');
+        return;
+    }
+    if (!cnfemail) {
+        alert('Please confirm the email address.');
+        return;
+    }
     if (email !== cnfemail) {
         alert('Email and Confirm Email do not match.');
         return;
     }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         alert('Please enter a valid email address.');
         return;
     }
+    if (!case_filling_number) {
+        alert('Please enter the case filling number.');
+        return;
+    }
+    if (!case_filling_year) {
+        alert('Please enter the case filling year.');
+        return;
+    }
+    if (!request_mode) {
+        alert('Please select the request mode.');
+        return;
+    }
+    if (!required_document) {
+        alert('Please select the required document.');
+        return;
+    }
+    if (!applied_by) {
+        alert('Please select who is applying (self or advocate).');
+        return;
+    }
+    if (applied_by === 'advocate' && !advocate_registration) {
+        alert('Please enter the advocate registration number.');
+        return;
+    }
     if (!captcha) {
         alert('Please evaluate the CAPTCHA.');
-        return;  // Stop the process if CAPTCHA is not filled
+        return;
     }
     fetch('/validate-captcha', {
         method: 'POST',

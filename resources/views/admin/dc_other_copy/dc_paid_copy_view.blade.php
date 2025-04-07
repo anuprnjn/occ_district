@@ -134,10 +134,33 @@
                                             <td>{{ $doc->document_type }}</td>
                                             <td>{{ $doc->number_of_page }}</td>
                                             <td>
+                                            <div class="mb-2">
+                                                <label for="bottom_stamp_x" class="form-label">Bottom Stamp  Offset (X) (default: centered)</label>
+                                                <input 
+                                                    type="number" 
+                                                    name="bottom_stamp_x" 
+                                                    id="bottom_stamp_x" 
+                                                    class="form-control w-100" 
+                                                    placeholder="+20 = right, -20 = left"
+                                                />
+                                            </div>
+
+                                            <div class="mb-2">
+                                                <label for="bottom_stamp_y" class="form-label">Bottom Stamp Bottom Offset (Y) (default: 40)</label>
+                                                <input 
+                                                    type="number" 
+                                                    name="bottom_stamp_y" 
+                                                    id="bottom_stamp_y" 
+                                                    class="form-control w-100" 
+                                                    value="40" 
+                                                    min="0" 
+                                                    max="300" 
+                                                />
+                                            </div>
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link p-0" 
-                                                    onclick="viewPDF('{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}')"
+                                                    onclick="processPDF('{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}','{{ $dcuser->created_at }}')"
                                                 >
                                                     Download
                                                 </button>
@@ -212,13 +235,54 @@
         document.body.innerHTML = originalContents;
         location.reload();
     }
-
     function viewPDF(pdfUrl) {
-        console.log(pdfUrl);
-        document.getElementById('pdfViewerFrame').src = pdfUrl;
-       
-        const myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
-        myModal.show();
+                document.getElementById('pdfViewerFrame').src = pdfUrl;
+                var myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+                myModal.show();
+            }
+
+    function processPDF(pdfUrl, createdAt) {
+        const date = new Date(createdAt);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        let hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const formattedTime = `${year}-${month}-${day} ${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+
+        const x = document.getElementById("bottom_stamp_x").value;
+        const y = document.getElementById("bottom_stamp_y").value;
+
+        fetch("{{ route('admin.attachStampAndHeader') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                pdf_path: pdfUrl,
+                createdAt: formattedTime,
+                bottom_stamp_y: y !== '' ? Number(y) : 40,
+                bottom_stamp_x: x !== '' ? Number(x) : null
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("PDF processing failed.");
+            return response.blob();
+        })
+        .then(blob => {
+            const pdfBlobUrl = URL.createObjectURL(blob);
+            document.getElementById('pdfViewerFrame').src = pdfBlobUrl;
+            const myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+            myModal.show();
+        })
+        .catch(error => {
+            alert("Something went wrong while processing the PDF.");
+            console.error(error);
+        });
     }
 
     $(document).ready(function () {
@@ -237,6 +301,7 @@
                 processData: false,
                 success: function (response) {
                     alert(response.success);
+                    window.location.reload();
                     const docId = response.id;
                     const filename = response.certified_copy_file_name;
 
@@ -252,6 +317,7 @@
                 error: function (xhr) {
                     const message = xhr.responseJSON?.error || 'Something went wrong!';
                     alert(message);
+                    window.location.reload();
                 }
             });
         });
