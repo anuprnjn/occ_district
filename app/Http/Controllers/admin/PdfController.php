@@ -138,7 +138,7 @@ class PdfController extends Controller
     private function convertPdfToCompatible($originalPdfPath)
     {
         $imagick = new \Imagick();
-        $imagick->setResolution(150, 150);
+        $imagick->setResolution(200, 200);
         $imagick->readImage($originalPdfPath);
         $imagick->setImageFormat('png');
 
