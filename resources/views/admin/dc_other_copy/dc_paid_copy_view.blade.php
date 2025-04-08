@@ -133,34 +133,45 @@
                                         <tr id="documentRow_{{ $doc->id }}">
                                             <td>{{ $doc->document_type }}</td>
                                             <td>{{ $doc->number_of_page }}</td>
-                                            <td>
-                                            <div class="mb-2">
-                                                <label for="bottom_stamp_x" class="form-label">Bottom Stamp  Offset (X) (default: centered)</label>
-                                                <input 
-                                                    type="number" 
-                                                    name="bottom_stamp_x" 
-                                                    id="bottom_stamp_x" 
-                                                    class="form-control w-100" 
-                                                    placeholder="+20 = right, -20 = left"
-                                                />
-                                            </div>
-
-                                            <div class="mb-2">
-                                                <label for="bottom_stamp_y" class="form-label">Bottom Stamp Bottom Offset (Y) (default: 40)</label>
-                                                <input 
-                                                    type="number" 
-                                                    name="bottom_stamp_y" 
-                                                    id="bottom_stamp_y" 
-                                                    class="form-control w-100" 
-                                                    value="40" 
-                                                    min="0" 
-                                                    max="300" 
-                                                />
-                                            </div>
+                                            <td style="min-width: 400px;" class="pdf-row">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Bottom Stamp Offset (X and Y) (Centered default)</label>
+                                                    <div class="d-flex gap-2">
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_x" 
+                                                            class="form-control bottom_stamp_x" 
+                                                            placeholder="X: +20 , X: -20"
+                                                        />
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_y" 
+                                                            class="form-control bottom_stamp_y" 
+                                                            min="0" 
+                                                            max="300" 
+                                                            placeholder="Y: default 60"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Enter Authentication Fee (default: 15Rs)</label>
+                                                    <input 
+                                                        type="number" 
+                                                        name="auth_fee" 
+                                                        class="form-control auth_fee" 
+                                                        value="15" 
+                                                        min="0" 
+                                                        max="300" 
+                                                    />
+                                                </div>
                                                 <button 
                                                     type="button" 
                                                     class="btn btn-link p-2" 
-                                                    onclick="processPDF('{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}','{{ $dcuser->created_at }}')"
+                                                    onclick="processPDF(
+                                                        '{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}',
+                                                        '{{ $dcuser->created_at }}',
+                                                        this
+                                                    )"
                                                 >
                                                     Download
                                                 </button>
@@ -178,7 +189,7 @@
                                             <td>
                                             <button 
                                                 type="button" 
-                                                class="btn btn-link p-0 view-btn" 
+                                                class="btn btn-primary pl-2 pr-2 view-btn" 
                                                 data-document-id="{{ $doc->id }}"
                                                 onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
                                             >
@@ -212,17 +223,28 @@
             </div>
         </div>
     </div>
+    <!-- Loader Overlay -->
+<div id="pdfLoader" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style="z-index: 1050;">
+    <div class="text-center">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <div class="fw-bold text-dark">Processing PDF, please wait...</div>
+    </div>
+</div>
 </main>
 
-<!-- Modal for PDF Viewer -->
-<div class="modal fade" id="pdfViewerModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content"> 
-            <div class="modal-body">
-                <iframe id="pdfViewerFrame" src="" width="100%" height="600px"></iframe>
-            </div>
-        </div>
+<!-- Modal for PDF -->
+<div class="modal fade" id="pdfViewerModal" tabindex="-1" aria-labelledby="pdfViewerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" style="max-width: 80%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Preview PDF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <iframe id="pdfViewerFrame" src="" width="100%" height="600px" frameborder="0"></iframe>
+      </div>
     </div>
+  </div>
 </div>
 
 @push('scripts')
@@ -241,20 +263,45 @@
                 myModal.show();
             }
 
-    function processPDF(pdfUrl, createdAt) {
-        const date = new Date(createdAt);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        let hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12 || 12;
-        const formattedTime = `${year}-${month}-${day} ${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+    function processPDF(pdfUrl, createdAt, button) {
+        const row = button.closest('.pdf-row');
+        const x = row.querySelector(".bottom_stamp_x")?.value || 0;
+        const y = row.querySelector(".bottom_stamp_y")?.value || 60;
+        const auth_fee = row.querySelector(".auth_fee")?.value || 15;
 
-        const x = document.getElementById("bottom_stamp_x").value;
-        const y = document.getElementById("bottom_stamp_y").value;
+        // Check PDF compatibility
+        fetch("{{ route('admin.checkPdfCompatibility') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ pdf_path: pdfUrl })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.compatible) {
+                showPdf(pdfUrl, createdAt, x, y, auth_fee);
+            } else {
+                    document.getElementById('pdfLoader').classList.remove('d-none');
+                    showPdf(pdfUrl, createdAt, x, y, auth_fee, true);
+            }
+        })
+        .catch(err => {
+            alert("Failed to check PDF compatibility.");
+            console.error(err);
+        });
+    }
+
+    function showPdf(pdfUrl, createdAt, x, y, auth_fee, forceConvert = false) {
+        const date = new Date(createdAt);
+
+        const hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHour = String(hours % 12 || 12).padStart(2, '0');
+
+        const formattedTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${formattedHour}:${minutes} ${ampm}`;
 
         fetch("{{ route('admin.attachStampAndHeader') }}", {
             method: "POST",
@@ -265,8 +312,10 @@
             body: JSON.stringify({
                 pdf_path: pdfUrl,
                 createdAt: formattedTime,
-                bottom_stamp_y: y !== '' ? Number(y) : 40,
-                bottom_stamp_x: x !== '' ? Number(x) : null
+                bottom_stamp_y: y !== '' ? Number(y) : 60,
+                bottom_stamp_x: x !== '' ? Number(x) : null,
+                force_convert: forceConvert,
+                auth_fee: Number(auth_fee) || 15  // default to 15 if invalid
             })
         })
         .then(response => {
@@ -276,15 +325,18 @@
         .then(blob => {
             const pdfBlobUrl = URL.createObjectURL(blob);
             document.getElementById('pdfViewerFrame').src = pdfBlobUrl;
+
             const myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
             myModal.show();
         })
         .catch(error => {
             alert("Something went wrong while processing the PDF.");
             console.error(error);
+        })
+        .finally(() => {
+            document.getElementById('pdfLoader').classList.add('d-none');
         });
     }
-
     $(document).ready(function () {
         // Handle all forms with class `.certified-copy-form`
         $('.certified-copy-form').on('submit', function (e) {
