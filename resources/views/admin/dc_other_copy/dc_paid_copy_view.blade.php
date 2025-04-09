@@ -57,7 +57,6 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>
                             @endif
-
                             <div id="printablearea">
                                 <div class="row">
                                     <h4 class="text-center">
@@ -170,7 +169,11 @@
                                                     onclick="processPDF(
                                                         '{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}',
                                                         '{{ $dcuser->created_at }}',
-                                                        this
+                                                        this,
+                                                        '{{ $dcuser->application_number }}',
+                                                        {{ $doc->id }},
+                                                        '{{ $transaction_details->transaction_no }}',
+                                                        '{{ \Carbon\Carbon::parse($transaction_details->transaction_date)->format('Y-m-d') }}'
                                                     )"
                                                 >
                                                     Download
@@ -263,7 +266,7 @@
                 myModal.show();
             }
 
-    function processPDF(pdfUrl, createdAt, button) {
+    function processPDF(pdfUrl, createdAt, button, application_number, id, trn_no, trn_date) {
         const row = button.closest('.pdf-row');
         const x = row.querySelector(".bottom_stamp_x")?.value || 0;
         const y = row.querySelector(".bottom_stamp_y")?.value || 60;
@@ -281,10 +284,10 @@
         .then(res => res.json())
         .then(data => {
             if (data.compatible) {
-                showPdf(pdfUrl, createdAt, x, y, auth_fee);
+                showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, false, id, trn_no, trn_date);
             } else {
-                    document.getElementById('pdfLoader').classList.remove('d-none');
-                    showPdf(pdfUrl, createdAt, x, y, auth_fee, true);
+                document.getElementById('pdfLoader').classList.remove('d-none');
+                showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, true, id, trn_no, trn_date);
             }
         })
         .catch(err => {
@@ -293,7 +296,7 @@
         });
     }
 
-    function showPdf(pdfUrl, createdAt, x, y, auth_fee, forceConvert = false) {
+    function showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, forceConvert = false, id, trn_no, trn_date) {
         const date = new Date(createdAt);
 
         const hours = date.getHours();
@@ -315,7 +318,11 @@
                 bottom_stamp_y: y !== '' ? Number(y) : 60,
                 bottom_stamp_x: x !== '' ? Number(x) : null,
                 force_convert: forceConvert,
-                auth_fee: Number(auth_fee) || 15  // default to 15 if invalid
+                auth_fee: Number(auth_fee) || 15,
+                application_number: application_number,
+                doc_id: id,
+                transaction_no: trn_no,
+                transaction_date: trn_date
             })
         })
         .then(response => {

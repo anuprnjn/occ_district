@@ -13,6 +13,10 @@ class PdfController extends Controller
     {
         $relativeUrl = $request->input('pdf_path');
         $requestDate = $request->input('createdAt');
+        $application_number = $request->input('application_number');
+        $doc_id = $request->input('doc_id');
+        $trn_no = $request->input('transaction_no');
+        $trn_date = $request->input('transaction_date');
         $forceConvert = $request->input('force_convert', false);
 
         $relativePath = str_replace(asset('/'), '', $relativeUrl);
@@ -25,7 +29,7 @@ class PdfController extends Controller
 
         // Force conversion if requested
         if ($forceConvert) {
-            $originalPdfPath = $this->convertPdfToCompatible($originalPdfPath);
+            $originalPdfPath = $this->convertPdfToCompatible($originalPdfPath, $doc_id, $application_number);
             $isTempFile = true;
         }
 
@@ -73,7 +77,8 @@ class PdfController extends Controller
             $pdf->SetLineWidth(0.5);
 
             $pdf->SetXY($xStart, 10);
-            $pdf->Cell($cellWidths[0], $cellHeight, 'Request Date', 1);
+            $pdf->Cell($cellWidths[0], $cellHeight, 'Applied Date', 1);
+            // $pdf->Cell($cellWidths[0], $cellHeight, 'Application Number', 1);
             $pdf->Cell($cellWidths[1], $cellHeight, 'Transaction No', 1);
             $pdf->Cell($cellWidths[2], $cellHeight, 'Transaction Date', 1);
             $pdf->Cell($cellWidths[3], $cellHeight, 'Authentication Fee Payable under court fee act Rs', 1);
@@ -82,8 +87,9 @@ class PdfController extends Controller
             $pdf->SetX($xStart);
             $pdf->SetFont('Arial', 'B', $fontSize);
             $pdf->Cell($cellWidths[0], $cellHeight, $requestDate, 1);
-            $pdf->Cell($cellWidths[1], $cellHeight, 'TR24016060425125943', 1);
-            $pdf->Cell($cellWidths[2], $cellHeight, '06-04-2025 12:59:43', 1);
+            // $pdf->Cell($cellWidths[0], $cellHeight, $application_number, 1);
+            $pdf->Cell($cellWidths[1], $cellHeight, $trn_no, 1);
+            $pdf->Cell($cellWidths[2], $cellHeight, $trn_date, 1);  
             $pdf->Cell($cellWidths[3], $cellHeight, $authFee, 1);
             $pdf->SetTextColor(0, 0, 0);
 
@@ -135,13 +141,28 @@ class PdfController extends Controller
         }
     }
 
-    private function convertPdfToCompatible($originalPdfPath)
+    private function convertPdfToCompatible($originalPdfPath, $doc_id, $application_number)
     {
+        // Define the directory
+        $outputDir = storage_path("app/temp_converted_pdf");
+
+        // Make sure the directory exists
+        if (!file_exists($outputDir)) {
+            mkdir($outputDir, 0755, true);
+        }
+
+        // Delete all previous PDFs in the folder
+        foreach (glob($outputDir . '/*.pdf') as $oldPdf) {
+            unlink($oldPdf);
+        }
+
+        // Convert using Imagick
         $imagick = new \Imagick();
         $imagick->setResolution(200, 200);
         $imagick->readImage($originalPdfPath);
         $imagick->setImageFormat('png');
 
+        // Initialize TCPDF
         $tcpdf = new TCPDF();
         $tcpdf->SetPrintHeader(false);
         $tcpdf->SetPrintFooter(false);
@@ -160,10 +181,9 @@ class PdfController extends Controller
             $i++;
         }
 
-        $uniqueFile = 'converted_' . uniqid() . '.pdf';
-        $outputPath = storage_path("app/$uniqueFile");
+        $uniqueFile = $application_number  . '_' . $doc_id . '.pdf';
+        $outputPath = $outputDir . '/' . $uniqueFile;
         $tcpdf->Output($outputPath, 'F');
-
         return $outputPath;
     }
 }
