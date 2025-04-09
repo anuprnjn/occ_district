@@ -233,7 +233,7 @@
                   </li>
                 </ul>
               </li>
-
+              @if(session('user.caseType') === 'HC')
               <li class="nav-item menu-open">
                 <a href="#" class="nav-link" >
                   <i class="nav-icon bi bi-bank"></i>
@@ -285,8 +285,8 @@
                   
                 </ul>
               </li>
-
-
+              @endif
+              @if(session('user.caseType') === 'DC')
               <li class="nav-item">
                 <a href="#" class="nav-link" >
                   <i class="nav-icon bi bi-pc-display-horizontal"></i>
@@ -320,6 +320,7 @@
 
                 </ul>
               </li>
+              @endif
 
               
             </ul>
