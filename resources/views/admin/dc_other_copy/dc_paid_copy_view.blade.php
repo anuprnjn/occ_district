@@ -57,7 +57,6 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>
                             @endif
-
                             <div id="printablearea">
                                 <div class="row">
                                     <h4 class="text-center">
@@ -133,30 +132,69 @@
                                         <tr id="documentRow_{{ $doc->id }}">
                                             <td>{{ $doc->document_type }}</td>
                                             <td>{{ $doc->number_of_page }}</td>
-                                            <td>
+                                            <td style="min-width: 400px;" class="pdf-row">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Bottom Stamp Offset (X and Y) (Centered default)</label>
+                                                    <div class="d-flex gap-2">
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_x" 
+                                                            class="form-control bottom_stamp_x" 
+                                                            placeholder="X: +20 , X: -20"
+                                                        />
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_y" 
+                                                            class="form-control bottom_stamp_y" 
+                                                            min="0" 
+                                                            max="300" 
+                                                            placeholder="Y: default 60"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Enter Authentication Fee (default: 15Rs)</label>
+                                                    <input 
+                                                        type="number" 
+                                                        name="auth_fee" 
+                                                        class="form-control auth_fee" 
+                                                        value="15" 
+                                                        min="0" 
+                                                        max="300" 
+                                                    />
+                                                </div>
                                                 <button 
                                                     type="button" 
-                                                    class="btn btn-link p-0" 
-                                                    onclick="viewPDF('{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}')"
+                                                    class="btn btn-link p-2" 
+                                                    onclick="processPDF(
+                                                        '{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}',
+                                                        '{{ $dcuser->created_at }}',
+                                                        this,
+                                                        '{{ $dcuser->application_number }}',
+                                                        {{ $doc->id }},
+                                                        '{{ $transaction_details->transaction_no ?? 'TRNTEST12345' }}',
+                                                        '{{ \Carbon\Carbon::parse($transaction_details->transaction_date ?? '2025-04-09')->format('Y-m-d') }}'
+                                                    )"
                                                 >
                                                     Download
                                                 </button>
                                             </td>
                                             <td>
-                                                <form action="{{ route('upload.certified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
+                                            <form class="certified-copy-form" action="{{ route('upload.certified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{ Crypt::encrypt($doc->id) }}">
                                                     <input type="hidden" name="application_number" value="{{ $doc->application_number }}">
                                                     <input type="hidden" name="document_id" value="{{ $doc->id }}">
-                                                    <input type="file" name="document" required>
+                                                    <input type="file" name="document" required class="mb-2">
                                                     <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-upload"></i> Upload</button>
                                                 </form>
                                             </td>
                                             <td>
                                             <button 
                                                 type="button" 
-                                                class="btn btn-link p-0" 
-                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->file_name) }}')"
+                                                class="btn btn-primary pl-2 pr-2 view-btn" 
+                                                data-document-id="{{ $doc->id }}"
+                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
                                             >
                                                 <i class="bi bi-eye"></i> View
                                             </button>
@@ -188,17 +226,28 @@
             </div>
         </div>
     </div>
+    <!-- Loader Overlay -->
+<div id="pdfLoader" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style="z-index: 1050;">
+    <div class="text-center">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <div class="fw-bold text-dark">Processing PDF, please wait...</div>
+    </div>
+</div>
 </main>
 
-<!-- Modal for PDF Viewer -->
-<div class="modal fade" id="pdfViewerModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content"> 
-            <div class="modal-body">
-                <iframe id="pdfViewerFrame" src="" width="100%" height="600px"></iframe>
-            </div>
-        </div>
+<!-- Modal for PDF -->
+<div class="modal fade" id="pdfViewerModal" tabindex="-1" aria-labelledby="pdfViewerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" style="max-width: 80%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Preview PDF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <iframe id="pdfViewerFrame" src="" width="100%" height="600px" frameborder="0"></iframe>
+      </div>
     </div>
+  </div>
 </div>
 
 @push('scripts')
@@ -211,13 +260,127 @@
         document.body.innerHTML = originalContents;
         location.reload();
     }
-
     function viewPDF(pdfUrl) {
-        document.getElementById('pdfViewerFrame').src = pdfUrl;
-       
-        const myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
-        myModal.show();
+                document.getElementById('pdfViewerFrame').src = pdfUrl;
+                var myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+                myModal.show();
+            }
+
+    function processPDF(pdfUrl, createdAt, button, application_number, id, trn_no, trn_date) {
+        const row = button.closest('.pdf-row');
+        const x = row.querySelector(".bottom_stamp_x")?.value || 0;
+        const y = row.querySelector(".bottom_stamp_y")?.value || 60;
+        const auth_fee = row.querySelector(".auth_fee")?.value || 15;
+
+        // Check PDF compatibility
+        fetch("{{ route('admin.checkPdfCompatibility') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ pdf_path: pdfUrl })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.compatible) {
+                showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, false, id, trn_no, trn_date);
+            } else {
+                document.getElementById('pdfLoader').classList.remove('d-none');
+                showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, true, id, trn_no, trn_date);
+            }
+        })
+        .catch(err => {
+            alert("Failed to check PDF compatibility.");
+            console.error(err);
+        });
     }
+
+    function showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, forceConvert = false, id, trn_no, trn_date) {
+        const date = new Date(createdAt);
+
+        const hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHour = String(hours % 12 || 12).padStart(2, '0');
+
+        const formattedTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${formattedHour}:${minutes} ${ampm}`;
+
+        fetch("{{ route('admin.attachStampAndHeader') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                pdf_path: pdfUrl,
+                createdAt: formattedTime,
+                bottom_stamp_y: y !== '' ? Number(y) : 60,
+                bottom_stamp_x: x !== '' ? Number(x) : null,
+                force_convert: forceConvert,
+                auth_fee: Number(auth_fee) || 15,
+                application_number: application_number,
+                doc_id: id,
+                transaction_no: trn_no,
+                transaction_date: trn_date
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("PDF processing failed.");
+            return response.blob();
+        })
+        .then(blob => {
+            const pdfBlobUrl = URL.createObjectURL(blob);
+            document.getElementById('pdfViewerFrame').src = pdfBlobUrl;
+
+            const myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+            myModal.show();
+        })
+        .catch(error => {
+            alert("Something went wrong while processing the PDF.");
+            console.error(error);
+        })
+        .finally(() => {
+            document.getElementById('pdfLoader').classList.add('d-none');
+        });
+    }
+    $(document).ready(function () {
+        // Handle all forms with class `.certified-copy-form`
+        $('.certified-copy-form').on('submit', function (e) {
+            e.preventDefault();
+
+            const form = this;
+            const formData = new FormData(form);
+
+            $.ajax({
+                url: $(form).attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert(response.success);
+                    window.location.reload();
+                    const docId = response.id;
+                    const filename = response.certified_copy_file_name;
+
+                    // Build new path
+                    const district = "{{ strtolower(session('user.dist_name')) }}";
+                    const month = "{{ strtolower(now()->format('F')) }}" + "{{ now()->format('y') }}";
+                    const fileUrl = `/storage/district_certified_other_copies/${district}/${month}/${filename}`;
+
+                    // Find the matching view button and update its onclick
+                    const viewBtn = $(`.view-btn[data-document-id="${docId}"]`);
+                    viewBtn.attr('onclick', `viewPDF('${fileUrl}')`);
+                },
+                error: function (xhr) {
+                    const message = xhr.responseJSON?.error || 'Something went wrong!';
+                    alert(message);
+                    window.location.reload();
+                }
+            });
+        });
+    });
 </script>
 @endpush
 

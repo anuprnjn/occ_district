@@ -60,8 +60,13 @@ class DcOtherCopyPaidController extends Controller
              $documents = DB::table('civilcourt_applicant_document_detail')
                  ->where('application_number', $appNumber)
                  ->get();
+            $transaction_details = DB::table('transaction_master_dc')
+            ->where('application_number', $appNumber)
+            ->where('payment_status', '1')
+            ->first();     
+            //dd($transaction_details);
  
-             return view('admin.dc_other_copy.dc_paid_copy_view', compact('dcuser', 'documents'));
+             return view('admin.dc_other_copy.dc_paid_copy_view', compact('dcuser', 'documents','transaction_details'));
  
          } catch (\Exception $e) {
              Log::error('Error fetching HC Other Copy details', ['error' => $e->getMessage()]);

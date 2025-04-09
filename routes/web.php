@@ -35,10 +35,12 @@ use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
+use App\Http\Controllers\Admin\PdfController;
 use App\Http\Middleware\CheckSession;
 use App\Http\Middleware\CheckSessionCd_pay;
 use App\Http\Controllers\PendingPaymentController;
 use App\Http\Controllers\admin\DcOtherCopyPaidController;
+
 
 Route::get('/', function () {
     return view('index');
@@ -91,6 +93,10 @@ Route::middleware([CheckSessionCd_pay::class])->group(function () {
 Route::get('/screenReader', function () {
     return view('screenReader');
 })->name('screenReader');
+
+// Route::get('/debug-php', function () {
+//     phpinfo();
+// });
 
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 Route::get('/hcPage', [HCCaseTypeController::class, 'showCases']);
@@ -212,5 +218,9 @@ Route::get('/admin/dc-paid-application', [DcOtherCopyController::class, 'paidDcO
 Route::get('/admin/dc-paid-copy-view/{encryptedAppNumber}', [DcOtherCopyPaidController::class, 'ViewDcOtherCopy'])->name('dc_paid_copy_view'); 
 
 Route::post('/upload-certified-copy/{id}', [DcOtherCopyPaidController::class, 'uploadCertifiedCopy'])->name('upload.certified.copy');
+
+Route::post('/admin/process-pdf', [PdfController::class, 'attachStampAndHeader'])->name('admin.attachStampAndHeader');
+
+Route::post('/admin/check-pdf-compatibility', [PdfController::class, 'checkPdfCompatibility'])->name('admin.checkPdfCompatibility');
 
 });
