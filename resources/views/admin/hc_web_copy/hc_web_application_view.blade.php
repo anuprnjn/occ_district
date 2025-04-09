@@ -214,7 +214,7 @@
                                                                     class="text-danger">{{ $errors->first('pdf_file') }}</span>
                                                             @endif
                                                         
-                                                        <button type="submit" class="btn btn-sm btn-success" @if ($hcuser->document_status == 1) disabled @endif>
+                                                        <button type="submit" class="btn btn-sm btn-success" @if ($hcuser->deficit_status == 1 or $hcuser->certified_copy_ready_status) disabled @endif>
                                                             <i class="bi bi-upload"></i> Upload
                                                         </button>
                                                     </form>
@@ -233,9 +233,9 @@
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number]) }}"
-                                                            class="btn btn-sm btn-danger @if ($hcuser->document_status == 1) disabled @endif"
+                                                            class="btn btn-sm btn-danger @if ($hcuser->deficit_status == 1 or $hcuser->certified_copy_ready_status) disabled @endif"
                                                             onclick="return confirm('Are you sure?')"
-                                                            @if ($hcuser->document_status == 1) onclick="return false;" @endif>
+                                                            @if ($hcuser->deficit_status == 1 or $hcuser->certified_copy_ready_status) onclick="return false;" @endif>
                                                             <i class="bi bi-trash"></i> Delete
                                                          </a>
                                                     @else
