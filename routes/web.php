@@ -223,4 +223,5 @@ Route::post('/admin/process-pdf', [PdfController::class, 'attachStampAndHeader']
 
 Route::post('/admin/check-pdf-compatibility', [PdfController::class, 'checkPdfCompatibility'])->name('admin.checkPdfCompatibility');
 
+Route::post('/delete-certified-copy/{id}', [DcOtherCopyPaidController::class, 'deleteCertifiedCopy'])->name('delete.certified.copy');
 });

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser; // Library for extracting PDF page count
+use Carbon\Carbon;
 
 class DcOtherCopyPaidController extends Controller
 {
@@ -61,9 +62,9 @@ class DcOtherCopyPaidController extends Controller
                  ->where('application_number', $appNumber)
                  ->get();
             $transaction_details = DB::table('transaction_master_dc')
-            ->where('application_number', $appNumber)
-            ->where('payment_status', '1')
-            ->first();     
+                ->where('application_number', $appNumber)
+                ->where('payment_status', '1')
+                ->first();     
             //dd($transaction_details);
  
              return view('admin.dc_other_copy.dc_paid_copy_view', compact('dcuser', 'documents','transaction_details'));
@@ -73,30 +74,6 @@ class DcOtherCopyPaidController extends Controller
              return redirect()->back()->with('error', 'An error occurred while fetching application details.');
          }
      }
-
-
-    public function deleteCertifiedCopy(Request $request)
-    {
-        try {
-            $document = DB::table('civilcourt_applicant_document_detail')->where('id', $request->document_id)->first();
-    
-            if (!$document) {
-                return response()->json(['error' => 'Document not found.'], 404);
-            }
-    
-            // Delete file from storage
-            Storage::disk('public')->delete('districtcourt_other_copies/' . $document->file_name);
-    
-            // Remove entry from database
-            DB::table('civilcourt_applicant_document_detail')->where('id', $request->document_id)->delete();
-    
-            return response()->json(['success' => 'Document deleted successfully.']);
-    
-        } catch (\Exception $e) {
-            Log::error('Error deleting document', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while deleting the document.'], 500);
-        }
-    }
 
 
 
@@ -167,9 +144,21 @@ public function uploadCertifiedCopy(Request $request)
                 'certified_copy_uploaded_by' => session('user.id'),
             ]);
 
-        if ($updated) {
-            Log::info('Database updated successfully for ID: ' . $request->id);
-        } else {
+            if ($updated) {
+                Log::info('Database updated successfully for ID: ' . $request->id);
+            
+                // Fetch updated row
+                $updatedData = DB::table('civilcourt_applicant_document_detail')
+                    ->where('id', $id)
+                    ->first();
+            
+                return response()->json([
+                    'success' => 'Certified copy uploaded successfully!',
+                    'id' => $updatedData->id,
+                    'certified_copy_file_name' => $updatedData->certified_copy_file_name,
+                    'certified_copy_upload_status' => $updatedData->certified_copy_upload_status,
+                ]);
+            } else {
             Log::warning('No rows updated. Check if ID exists.', ['id' => $request->id]);
         }
 
@@ -177,6 +166,55 @@ public function uploadCertifiedCopy(Request $request)
     } catch (\Exception $e) {
         Log::error('Error in uploading certified copy:', ['error' => $e->getMessage()]);
         return response()->json(['error' => 'An error occurred while uploading the certified copy.'], 500);
+    }
+}
+
+
+public function deleteCertifiedCopy(Request $request, $id)
+{
+    Log::info('Delete Certified Copy process started.', ['route_id' => $id]);
+
+    try {
+        $decryptedId = Crypt::decrypt($id);
+        Log::info('Delete Certified Copy process started.', ['route_id' => $id]);
+        $distName = strtolower(session('user.dist_name'));
+        $document = DB::table('civilcourt_applicant_document_detail')->where('id', $decryptedId)->first();
+
+       if (!$document) {
+           return response()->json(['error' => 'Document not found.'], 404);
+       }
+       $date=$document->certified_copy_uploaded_date;
+       $monthName = strtolower(Carbon::parse($date)->format('Fy'));
+
+       // Delete file from storage
+       Storage::disk('public')->delete("district_certified_other_copies/{$distName}/{$monthName}/" . $document->certified_copy_file_name);
+        // Update database
+        $updated = DB::table('civilcourt_applicant_document_detail')
+            ->where('id', $decryptedId)
+            ->update([
+                'certified_copy_file_name' => null,
+                'certified_copy_upload_status' => false,
+                'certified_copy_uploaded_date' => null,
+                'certified_copy_uploaded_by' => null,
+            ]);
+
+        if ($updated) {
+            Log::info('Database updated for ID: ' . $decryptedId);
+            $updatedData = DB::table('civilcourt_applicant_document_detail')->where('id', $decryptedId)->first();
+
+            return response()->json([
+                'success' => 'Certified copy deleted successfully!',
+                'id' => $updatedData->id,
+                'certified_copy_file_name' => $updatedData->certified_copy_file_name,
+                'certified_copy_upload_status' => $updatedData->certified_copy_upload_status,
+            ]);
+        } else {
+            Log::warning('No rows updated. Check if ID exists.', ['id' => $decryptedId]);
+            return response()->json(['error' => 'No changes made. ID may be incorrect.'], 404);
+        }
+    } catch (\Exception $e) {
+        Log::error('Error deleting certified copy:', ['error' => $e->getMessage()]);
+        return response()->json(['error' => 'An error occurred while deleting the certified copy.'], 500);
     }
 }
 

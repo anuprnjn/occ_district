@@ -167,7 +167,7 @@
                                                     type="button" 
                                                     class="btn btn-link p-2" 
                                                     onclick="processPDF(
-                                                        '{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('Fy')) . '/' . $doc->file_name) }}',
+                                                        '{{ Storage::url('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(\Carbon\Carbon::parse($doc->uploaded_date)->format('Fy')) . '/' . $doc->file_name) }}',
                                                         '{{ $dcuser->created_at }}',
                                                         this,
                                                         '{{ $dcuser->application_number }}',
@@ -186,7 +186,11 @@
                                                     <input type="hidden" name="application_number" value="{{ $doc->application_number }}">
                                                     <input type="hidden" name="document_id" value="{{ $doc->id }}">
                                                     <input type="file" name="document" required class="mb-2">
-                                                    <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-upload"></i> Upload</button>
+                                                    <!-- <h1>{{$doc->certified_copy_upload_status}}</h1> -->
+                                                    <button type="submit" class="btn btn-success btn-sm" 
+                                                        @if ($doc->certified_copy_upload_status == 1) disabled @endif>
+                                                        <i class="bi bi-upload"></i> Upload
+                                                    </button>
                                                 </form>
                                             </td>
                                             <td>
@@ -195,8 +199,19 @@
                                                 class="btn btn-primary pl-2 pr-2 view-btn" 
                                                 data-document-id="{{ $doc->id }}"
                                                 onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
+                                                @if ($doc->certified_copy_upload_status != 1) disabled @endif
                                             >
                                                 <i class="bi bi-eye"></i> View
+                                            </button>
+                                            </td>
+                                            <td>
+                                            <button 
+                                                type="button" 
+                                                class="btn btn-danger pl-2 pr-2 view-btn delete-btn" 
+                                                data-id="{{ Crypt::encrypt($doc->id) }}"
+                                                @if ($doc->certified_copy_upload_status != 1) disabled @endif
+                                            >
+                                                <i class="bi bi-trash"></i> Delete
                                             </button>
                                             </td>
                                         </tr>
@@ -359,10 +374,11 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
+                    console.log(response);
                     alert(response.success);
-                    window.location.reload();
+                    window.location.reload();    
                     const docId = response.id;
-                    const filename = response.certified_copy_file_name;
+                    const filename = response.certified_copy_file_name; 
 
                     // Build new path
                     const district = "{{ strtolower(session('user.dist_name')) }}";
@@ -380,6 +396,29 @@
                 }
             });
         });
+
+        $('.delete-btn').click(function () {
+        if (!confirm("Are you sure you want to delete this certified copy?")) return;
+
+        const encryptedId = $(this).data('id'); // Already encrypted in Blade
+
+        $.ajax({
+            url: `/delete-certified-copy/${encryptedId}`,
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+            },
+            success: function (response) {
+                alert(response.success);
+                window.location.reload(); 
+            },
+            error: function (xhr) {
+                const message = xhr.responseJSON?.message || 'Failed to delete!';
+                alert(message);
+            }
+        });
+    });
+
     });
 </script>
 @endpush
