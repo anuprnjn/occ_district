@@ -15,8 +15,8 @@ class PdfController extends Controller
         $requestDate = $request->input('createdAt');
         $application_number = $request->input('application_number');
         $doc_id = $request->input('doc_id');
-        $trn_no = $request->input('transaction_no');
-        $trn_date = $request->input('transaction_date');
+        $trn_no = $request->input('transaction_no','TRNTEST12345');
+        $trn_date = $request->input('transaction_date','09-04-2025');
         $forceConvert = $request->input('force_convert', false);
 
         $relativePath = str_replace(asset('/'), '', $relativeUrl);

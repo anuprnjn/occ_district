@@ -172,8 +172,8 @@
                                                         this,
                                                         '{{ $dcuser->application_number }}',
                                                         {{ $doc->id }},
-                                                        '{{ $transaction_details->transaction_no }}',
-                                                        '{{ \Carbon\Carbon::parse($transaction_details->transaction_date)->format('Y-m-d') }}'
+                                                        '{{ $transaction_details->transaction_no ?? 'TRNTEST12345' }}',
+                                                        '{{ \Carbon\Carbon::parse($transaction_details->transaction_date ?? '2025-04-09')->format('Y-m-d') }}'
                                                     )"
                                                 >
                                                     Download
