@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser; // Library for extracting PDF page count
+use Carbon\Carbon;
 
 class HcOtherCopyController extends Controller
 {
@@ -122,7 +123,7 @@ class HcOtherCopyController extends Controller
             $monthName = strtolower(Carbon::parse($date)->format('Fy'));
     
             // Delete file from storage
-            Storage::disk('public')->delete('highcourt_other_copies/{$monthName}' . $document->file_name);
+            Storage::disk('public')->delete("highcourt_other_copies/{$monthName}/" . $document->file_name);
     
             // Remove entry from database
             DB::table('highcourt_applicant_document_detail')->where('id', $request->document_id)->delete();
