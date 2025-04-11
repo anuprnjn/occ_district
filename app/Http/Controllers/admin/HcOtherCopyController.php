@@ -117,9 +117,12 @@ class HcOtherCopyController extends Controller
             if (!$document) {
                 return response()->json(['error' => 'Document not found.'], 404);
             }
+
+            $date=$document->uploaded_date;
+            $monthName = strtolower(Carbon::parse($date)->format('Fy'));
     
             // Delete file from storage
-            Storage::disk('public')->delete('highcourt_other_copies/' . $document->file_name);
+            Storage::disk('public')->delete('highcourt_other_copies/{$monthName}' . $document->file_name);
     
             // Remove entry from database
             DB::table('highcourt_applicant_document_detail')->where('id', $request->document_id)->delete();
