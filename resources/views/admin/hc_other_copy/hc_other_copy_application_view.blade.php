@@ -153,7 +153,7 @@
                                     </fieldset>
                                     <button type="submit" class="btn btn-primary mt-2"
                                         @if ($hcuser->document_status == 1) disabled @endif><i
-                                            class="bi bi-upload"></i>Upload</button>
+                                            class="bi bi-upload me-1"></i>Upload Document</button>
                                 </form>
                                 <h5 class="card-title mt-4">Uploaded Documents</h5> <!-- Added margin-top -->
                                 <table class="table table-bordered" id="documentTable">

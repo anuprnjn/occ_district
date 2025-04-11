@@ -749,6 +749,7 @@ function submitJudgementForm(event) {
         })
         .then(response => response.json())
         .then(data => {
+            // console.log(data);
 
                 // sessionStorage.setItem("caseInfo", JSON.stringify(data));
                 // sessionStorage.setItem("responseData", JSON.stringify(data));

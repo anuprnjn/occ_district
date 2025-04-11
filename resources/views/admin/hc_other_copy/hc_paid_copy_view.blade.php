@@ -118,36 +118,129 @@
                                 <h5 class="card-title">Upload Document (Hc Other Copy)</h5>
                             </div>
                             <div class="card-body">
-                                <table class="table table-bordered" id="documentTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Document Type</th>
-                                            <th>Number of Pages</th>
-                                          
-                                            <th>File</th>
-                                           
+                            <table class="table table-bordered" id="documentTable">
+                                <thead>
+                                    <tr>
+                                        <th>Document Type</th>
+                                        <th>Number of Pages</th>
+                                        <th>File</th>
+                                        <th>Upload Certified Copy</th>
+                                        <th>View Certified Copy</th>
+                                        <th>Delete Certified Copy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($documents as $doc)
+                                        <tr id="documentRow_{{ $doc->id }}">
+                                            <td>{{ $doc->document_type }}</td>
+                                            <td>{{ $doc->number_of_page }}</td>
+                                            <td style="min-width: 400px;" class="pdf-row">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Bottom Stamp Offset (X and Y) (Centered default)</label>
+                                                    <div class="d-flex gap-2">
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_x" 
+                                                            class="form-control bottom_stamp_x" 
+                                                            placeholder="X: +20 , X: -20"
+                                                        />
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_y" 
+                                                            class="form-control bottom_stamp_y" 
+                                                            min="0" 
+                                                            max="300" 
+                                                            placeholder="Y: default 60"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Enter Authentication Fee (default: 15Rs)</label>
+                                                    <input 
+                                                        type="number" 
+                                                        name="auth_fee" 
+                                                        class="form-control auth_fee" 
+                                                        value="15" 
+                                                        min="0" 
+                                                        max="300" 
+                                                    />
+                                                </div>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-link p-2" 
+                                                    onclick="processPDF(
+                                                        '{{ Storage::url('highcourt_other_copies/' . '/' . strtolower(\Carbon\Carbon::parse($doc->uploaded_date)->format('Fy')) . '/' . $doc->file_name) }}',
+                                                        '{{ $hcuser->created_at }}',
+                                                        this,
+                                                        '{{ $hcuser->application_number }}',
+                                                        {{ $doc->id }},
+                                                        '{{ $transaction_details->transaction_no ?? 'TRNTEST12345' }}',
+                                                        '{{ \Carbon\Carbon::parse($transaction_details->transaction_date ?? '2025-04-09')->format('Y-m-d') }}'
+                                                    )"
+                                                >
+                                                    Download
+                                                </button>
+                                            </td>
+                                                <td style="width:250px;">
+                                                <form class="certified-copy-form" action="{{ route('upload.hcothcertified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{ Crypt::encrypt($doc->id) }}">
+                                                    <input type="hidden" name="application_number" value="{{ $doc->application_number }}">
+                                                    <input type="hidden" name="document_id" value="{{ $doc->id }}">
+
+                                                    @if ($doc->certified_copy_upload_status == 1)
+                                                        <div class="text-center">
+                                                        <div class="w-100 fs-6 border border-success text-success rounded py-2 px-3 text-center" style="cursor: not-allowed;">
+                                                <i class="bi bi-check-circle-fill me-1"></i> File uploaded successfully
+                                            </div>
+                                                </div>
+                                                    @else
+                                                        <div class="mb-3">
+                                                            <input 
+                                                                type="file" 
+                                                                name="document" 
+                                                                class="form-control" 
+                                                                required
+                                                            >
+                                                        </div>
+                                                        <button type="submit" class="btn btn-warning w-100 d-flex align-items-center justify-content-center gap-2 py-1.5 rounded-3">
+                                                <i class="bi bi-upload fs-6"></i>
+                                                <span>Click to Upload File</span>
+                                            </button>
+                                                    @endif
+                                                </form>
+                                            </td>
+                                            <td>
+                                            <button 
+                                                type="button" 
+                                                class="w-100 btn btn-primary p-2 view-btn" 
+                                                data-document-id="{{ $doc->id }}"
+                                                onclick="viewPDF('{{ Storage::url('highcourt_certified_other_copies/' . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
+                                                @if ($doc->certified_copy_upload_status != 1) disabled @endif
+                                            >
+                                                <i class="bi bi-eye"></i> View
+                                            </button>
+                                            </td>
+                                            <td>
+                                            <button         
+                                                type="button" 
+                                                class="w-100 btn btn-danger p-2 view-btn delete-btn" 
+                                                data-id="{{ Crypt::encrypt($doc->id) }}"
+                                                @if ($doc->certified_copy_upload_status != 1) disabled @endif
+                                            >
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($documents as $doc)
-                                            <tr id="documentRow_{{ $doc->id }}">
-                                                <td>{{ $doc->document_type }}</td>
-                                                <td>{{ $doc->number_of_page }}</td>
-                                                <td>
-                                                    <a href="javascript:void(0)"
-                                                        onclick="viewPDF('{{ asset('storage/highcourt_other_copies/' . $doc->file_name) }}')">View</a>
-                                                </td>
-                                                
-                                            </tr>
-                                        @endforeach
-                                        @if ($documents->isEmpty())
-                                            <tr>
-                                                <td colspan="5" class="text-center">No documents uploaded.</td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @endforeach
+                                    @if ($documents->isEmpty())
+                                        <tr>
+                                            <td colspan="5" class="text-center">No documents uploaded.</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                         </div>
 
 
@@ -193,23 +286,160 @@
     
 
     @push('scripts')
-        <script>
-            function printDiv(divId) {
-                var printContents = document.getElementById(divId).innerHTML;
-                var originalContents = document.body.innerHTML;
-                document.body.innerHTML = printContents;
-                window.print();
-                document.body.innerHTML = originalContents;
-                location.reload();
-            }
-
-            function viewPDF(pdfUrl) {
+<script>
+    function printDiv(divId) {
+        var printContents = document.getElementById(divId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+        location.reload();
+    }
+    function viewPDF(pdfUrl) {
                 document.getElementById('pdfViewerFrame').src = pdfUrl;
                 var myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
                 myModal.show();
             }
-        </script>
 
-        
-    @endpush
+    function processPDF(pdfUrl, createdAt, button, application_number, id, trn_no, trn_date) {
+        const row = button.closest('.pdf-row');
+        const x = row.querySelector(".bottom_stamp_x")?.value || 0;
+        const y = row.querySelector(".bottom_stamp_y")?.value || 60;
+        const auth_fee = row.querySelector(".auth_fee")?.value || 15;
+
+        // Check PDF compatibility
+        fetch("{{ route('admin.checkPdfCompatibility') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ pdf_path: pdfUrl })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.compatible) {
+                showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, false, id, trn_no, trn_date);
+            } else {
+                document.getElementById('pdfLoader').classList.remove('d-none');
+                showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, true, id, trn_no, trn_date);
+            }
+        })
+        .catch(err => {
+            alert("Failed to check PDF compatibility.");
+            console.error(err);
+        });
+    }
+
+    function showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, forceConvert = false, id, trn_no, trn_date) {
+        const date = new Date(createdAt);
+
+        const hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHour = String(hours % 12 || 12).padStart(2, '0');
+
+        const formattedTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${formattedHour}:${minutes} ${ampm}`;
+
+        fetch("{{ route('admin.attachStampAndHeader') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                pdf_path: pdfUrl,
+                createdAt: formattedTime,
+                bottom_stamp_y: y !== '' ? Number(y) : 60,
+                bottom_stamp_x: x !== '' ? Number(x) : null,
+                force_convert: forceConvert,
+                auth_fee: Number(auth_fee) || 15,
+                application_number: application_number,
+                doc_id: id,
+                transaction_no: trn_no,
+                transaction_date: trn_date
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("PDF processing failed.");
+            return response.blob();
+        })
+        .then(blob => {
+            const pdfBlobUrl = URL.createObjectURL(blob);
+            document.getElementById('pdfViewerFrame').src = pdfBlobUrl;
+
+            const myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+            myModal.show();
+        })
+        .catch(error => {
+            alert("Something went wrong while processing the PDF.");
+            console.error(error);
+        })
+        .finally(() => {
+            document.getElementById('pdfLoader').classList.add('d-none');
+        });
+    }
+    $(document).ready(function () {
+        // Handle all forms with class `.certified-copy-form`
+        $('.certified-copy-form').on('submit', function (e) {
+            e.preventDefault();
+
+            const form = this;
+            const formData = new FormData(form);
+
+            $.ajax({
+                url: $(form).attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log(response);
+                    alert(response.success);
+                    window.location.reload();    
+                    const docId = response.id;
+                    const filename = response.certified_copy_file_name; 
+
+                    // Build new path
+                    const district = "{{ strtolower(session('user.dist_name')) }}";
+                    const month = "{{ strtolower(now()->format('F')) }}" + "{{ now()->format('y') }}";
+                    const fileUrl = `/storage/district_certified_other_copies/${district}/${month}/${filename}`;
+
+                    // Find the matching view button and update its onclick
+                    const viewBtn = $(`.view-btn[data-document-id="${docId}"]`);
+                    viewBtn.attr('onclick', `viewPDF('${fileUrl}')`);
+                },
+                error: function (xhr) {
+                    const message = xhr.responseJSON?.error || 'Something went wrong!';
+                    alert(message);
+                    window.location.reload();
+                }
+            });
+        });
+
+        $('.delete-btn').click(function () {
+        if (!confirm("Are you sure you want to delete this certified copy?")) return;
+
+        const encryptedId = $(this).data('id'); // Already encrypted in Blade
+
+        $.ajax({
+            url: `/delete-certified-copy/${encryptedId}`,
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+            },
+            success: function (response) {
+                // alert(response.success);
+                window.location.reload(); 
+            },
+            error: function (xhr) {
+                const message = xhr.responseJSON?.message || 'Failed to delete!';
+                alert(message);
+            }
+        });
+    });
+
+    });
+</script>
+@endpush
 @endsection

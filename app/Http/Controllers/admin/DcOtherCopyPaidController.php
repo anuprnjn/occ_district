@@ -59,8 +59,9 @@ class DcOtherCopyPaidController extends Controller
  
              // Fetch uploaded documents
              $documents = DB::table('civilcourt_applicant_document_detail')
-                 ->where('application_number', $appNumber)
-                 ->get();
+             ->where('application_number', $appNumber)
+             ->orderBy('id', 'asc')
+             ->get();
             $transaction_details = DB::table('transaction_master_dc')
                 ->where('application_number', $appNumber)
                 ->where('payment_status', '1')

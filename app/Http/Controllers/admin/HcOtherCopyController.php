@@ -56,28 +56,29 @@ class HcOtherCopyController extends Controller
         }
     }
 
-    // Upload Document (Automatically Calculates Pages & Amount)
     public function uploadDocument(Request $request)
     {
         $request->validate([
             'application_number' => 'required|string',
-            'documents.*' => 'required|mimes:pdf|max:5120', // Only PDFs, max 5MB
+            'documents.*' => 'required|mimes:pdf|max:20480', // Only PDFs, max 5MB
             'document_types.*' => 'required|string|max:200',
         ]);
     
         try {
             $parser = new Parser(); // PDF parser instance
-    
+            $monthName = strtolower(now()->format('Fy')); 
+
             $perPageAmount = DB::table('fee_master as fm')
                 ->select('fm.amount')
                 ->where('fm.fee_type', 'per_page_fee')
                 ->first();
-            $amount = ($perPageAmount ? $perPageAmount->amount : 5);
-            Log::info('Per Page Amount: ' . $amount);
-
+              $amount = ($perPageAmount ? $perPageAmount->amount : 5);
+              Log::info('Per Page Amount: ' . $amount);
+           
             foreach ($request->file('documents') as $key => $file) {
+                $folderPath = "highcourt_other_copies/{$monthName}";
                 $filename = $request->application_number . '_' . time(). '.pdf';
-                $path = $file->storeAs('highcourt_other_copies', $filename, 'public');
+                $path = $file->storeAs($folderPath, $filename, 'public');
     
                 // Extract page count from PDF
                 $pdf = $parser->parseFile($file->getPathname());

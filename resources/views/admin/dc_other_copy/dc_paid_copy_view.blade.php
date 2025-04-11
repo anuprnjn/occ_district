@@ -179,24 +179,39 @@
                                                     Download
                                                 </button>
                                             </td>
-                                            <td>
-                                            <form class="certified-copy-form" action="{{ route('upload.certified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
+                                                <td style="width:250px;">
+                                                <form class="certified-copy-form" action="{{ route('upload.certified.copy', ['id' => Crypt::encrypt($doc->id)]) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <input type="hidden" name="id" value="{{ Crypt::encrypt($doc->id) }}">
                                                     <input type="hidden" name="application_number" value="{{ $doc->application_number }}">
                                                     <input type="hidden" name="document_id" value="{{ $doc->id }}">
-                                                    <input type="file" name="document" required class="mb-2">
-                                                    <!-- <h1>{{$doc->certified_copy_upload_status}}</h1> -->
-                                                    <button type="submit" class="btn btn-success btn-sm" 
-                                                        @if ($doc->certified_copy_upload_status == 1) disabled @endif>
-                                                        <i class="bi bi-upload"></i> Upload
-                                                    </button>
+
+                                                    @if ($doc->certified_copy_upload_status == 1)
+                                                        <div class="text-center">
+                                                        <div class="w-100 fs-6 border border-success text-success rounded py-2 px-3 text-center" style="cursor: not-allowed;">
+                                                <i class="bi bi-check-circle-fill me-1"></i> File uploaded successfully
+                                            </div>
+                                                </div>
+                                                    @else
+                                                        <div class="mb-3">
+                                                            <input 
+                                                                type="file" 
+                                                                name="document" 
+                                                                class="form-control" 
+                                                                required
+                                                            >
+                                                        </div>
+                                                        <button type="submit" class="btn btn-warning w-100 d-flex align-items-center justify-content-center gap-2 py-1.5 rounded-3">
+                                                <i class="bi bi-upload fs-6"></i>
+                                                <span>Click to Upload File</span>
+                                            </button>
+                                                    @endif
                                                 </form>
                                             </td>
                                             <td>
                                             <button 
                                                 type="button" 
-                                                class="btn btn-primary pl-2 pr-2 view-btn" 
+                                                class="w-100 btn btn-primary p-2 view-btn" 
                                                 data-document-id="{{ $doc->id }}"
                                                 onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
                                                 @if ($doc->certified_copy_upload_status != 1) disabled @endif
@@ -205,9 +220,9 @@
                                             </button>
                                             </td>
                                             <td>
-                                            <button 
+                                            <button         
                                                 type="button" 
-                                                class="btn btn-danger pl-2 pr-2 view-btn delete-btn" 
+                                                class="w-100 btn btn-danger p-2 view-btn delete-btn" 
                                                 data-id="{{ Crypt::encrypt($doc->id) }}"
                                                 @if ($doc->certified_copy_upload_status != 1) disabled @endif
                                             >
@@ -409,7 +424,7 @@
                 _token: '{{ csrf_token() }}',
             },
             success: function (response) {
-                alert(response.success);
+                // alert(response.success);
                 window.location.reload(); 
             },
             error: function (xhr) {
