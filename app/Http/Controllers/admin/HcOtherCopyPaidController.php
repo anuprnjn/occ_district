@@ -106,13 +106,16 @@ class   HcOtherCopyPaidController extends Controller
     {
         try {
             $document = DB::table('highcourt_applicant_document_detail')->where('id', $request->document_id)->first();
+
+            $date=$document->uploaded_date;
+            $monthName = strtolower(Carbon::parse($date)->format('Fy'));
     
             if (!$document) {
                 return response()->json(['error' => 'Document not found.'], 404);
             }
     
             // Delete file from storage
-            Storage::disk('public')->delete('highcourt_other_copies/' . $document->file_name);
+            Storage::disk('public')->delete('highcourt_other_copies/{$monthName}/' . $document->file_name);
     
             // Remove entry from database
             DB::table('highcourt_applicant_document_detail')->where('id', $request->document_id)->delete();
