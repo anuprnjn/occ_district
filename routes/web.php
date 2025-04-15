@@ -40,6 +40,7 @@ use App\Http\Middleware\CheckSession;
 use App\Http\Middleware\CheckSessionCd_pay;
 use App\Http\Controllers\PendingPaymentController;
 use App\Http\Controllers\admin\DcOtherCopyPaidController;
+use App\Http\Controllers\admin\GetPdfController;
 
 
 Route::get('/', function () {
@@ -229,3 +230,5 @@ Route::post('/upload-hcoth-certified-copy/{id}', [HcOtherCopyPaidController::cla
 
 Route::post('/delete-hcoth-certified-copy/{id}', [HcOtherCopyPaidController::class, 'deleteCertifiedCopy'])->name('delete.hcothcertified.copy');
 });
+
+Route::post('/admin/get-pdf', [GetPdfController::class, 'fetchPdf']);

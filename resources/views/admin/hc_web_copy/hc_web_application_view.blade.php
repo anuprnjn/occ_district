@@ -186,6 +186,7 @@
                                             <th class="fw-bold">Order No</th>
                                             <th class="fw-bold">Order Date</th>
                                             <th class="fw-bold">Page No</th>
+                                            <th class="fw-bold">Download</th>
                                             <th class="fw-bold">Upload</th>
                                             <th class="fw-bold">Status</th>
                                             <th class="fw-bold">Actions</th>
@@ -198,6 +199,9 @@
                                                 <td>{{ $order->order_number }}</td>
                                                 <td>{{ $order->order_date }}</td>
                                                 <td>{{ $order->number_of_page }}</td>
+                                                <td>
+                                                <button class="mt-2 btn btn-outline-info btn-sm" href="#" onclick="getPdf('{{$hcuser->cino}}', '{{ $order->order_number }}')">Download <i class="bi bi-download"></i></button>
+                                                </td>
                                                 <td>
                                                     <form action="{{ route('admin.uploadOrderCopy') }}" method="POST"
                                                         enctype="multipart/form-data">
@@ -388,6 +392,32 @@
 
 
     @push('scripts')
+    <script>
+function getPdf(cino, order_no) {
+    fetch("/admin/get-pdf", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').getAttribute("content")
+        },
+        body: JSON.stringify({ cino, order_no })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message === 'success' && data.pdf_data) {
+            document.getElementById('pdfViewerFrame').src = data.pdf_data;
+            let modal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+            modal.show();
+        } else {
+            alert("PDF not found.");
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Failed to fetch PDF.");
+    });
+}
+</script> 
         <script>
             function printDiv(divId) {
                 var printContents = document.getElementById(divId).innerHTML;

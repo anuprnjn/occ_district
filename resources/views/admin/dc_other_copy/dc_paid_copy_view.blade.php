@@ -176,7 +176,7 @@
                                                         '{{ \Carbon\Carbon::parse($transaction_details->transaction_date ?? '2025-04-09')->format('Y-m-d') }}'
                                                     )"
                                                 >
-                                                    Download
+                                                    View/Download
                                                 </button>
                                             </td>
                                                 <td style="width:250px;">

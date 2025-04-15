@@ -169,7 +169,7 @@
                                                     type="button" 
                                                     class="btn btn-link p-2" 
                                                     onclick="processPDF(
-                                                        '{{ Storage::url('highcourt_other_copies/' . '/' . strtolower(\Carbon\Carbon::parse($doc->uploaded_date)->format('Fy')) . '/' . $doc->file_name) }}',
+                                                        '{{ Storage::url('highcourt_other_copies' . '/' . strtolower(\Carbon\Carbon::parse($doc->uploaded_date)->format('Fy')) . '/' . $doc->file_name) }}',
                                                         '{{ $hcuser->created_at }}',
                                                         this,
                                                         '{{ $hcuser->application_number }}',
@@ -178,7 +178,7 @@
                                                         '{{ \Carbon\Carbon::parse($transaction_details->transaction_date ?? '2025-04-09')->format('Y-m-d') }}'
                                                     )"
                                                 >
-                                                    Download
+                                                    View/Download
                                                 </button>
                                             </td>
                                                 <td style="width:250px;">
@@ -201,6 +201,7 @@
                                                                 name="document" 
                                                                 class="form-control" 
                                                                 required
+                                                                accept=".pdf"
                                                             >
                                                         </div>
                                                         <button type="submit" class="btn btn-warning w-100 d-flex align-items-center justify-content-center gap-2 py-1.5 rounded-3">
@@ -264,6 +265,13 @@
                 </div>
             </div>
         </div>
+            <!-- Loader Overlay -->
+        <div id="pdfLoader" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style="z-index: 1050;">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status"></div>
+                <div class="fw-bold text-dark">Processing PDF, please wait...</div>
+            </div>
+        </div>
     </main>
 
 
@@ -306,7 +314,7 @@
         const x = row.querySelector(".bottom_stamp_x")?.value || 0;
         const y = row.querySelector(".bottom_stamp_y")?.value || 60;
         const auth_fee = row.querySelector(".auth_fee")?.value || 15;
-
+        console.log(pdfUrl,createdAt,application_number,id,trn_no,trn_date);                                                                                                                                                                                                                                             
         // Check PDF compatibility
         fetch("{{ route('admin.checkPdfCompatibility') }}", {
             method: "POST",
@@ -332,6 +340,7 @@
     }
 
     function showPdf(pdfUrl, createdAt, x, y, auth_fee, application_number, forceConvert = false, id, trn_no, trn_date) {
+        console.log('entered');
         const date = new Date(createdAt);
 
         const hours = date.getHours();
@@ -423,7 +432,7 @@
         const encryptedId = $(this).data('id'); // Already encrypted in Blade
 
         $.ajax({
-            url: `/delete-certified-copy/${encryptedId}`,
+            url: `/delete-hcoth-certified-copy/${encryptedId}`,
             type: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',
