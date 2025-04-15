@@ -58,78 +58,6 @@ class   HcOtherCopyPaidController extends Controller
         }
     }
 
-    // Upload Document (Automatically Calculates Pages & Amount)
-    public function uploadDocument(Request $request)
-    {
-        $request->validate([
-            'application_number' => 'required|string',
-            'documents.*' => 'required|mimes:pdf|max:5120', // Only PDFs, max 5MB
-            'document_types.*' => 'required|string|max:200',
-        ]);
-    
-        try {
-            $parser = new Parser(); // PDF parser instance
-    
-            foreach ($request->file('documents') as $key => $file) {
-                $filename = $request->application_number . '_' . time(). '.pdf';
-                $path = $file->storeAs('highcourt_other_copies', $filename, 'public');
-    
-                // Extract page count from PDF
-                $pdf = $parser->parseFile($file->getPathname());
-                $numberOfPages = count($pdf->getPages());
-    
-                // Automatically calculate amount (Example: ₹5 per page)
-                $amount = $numberOfPages * 5;
-    
-                // Insert document details into the database
-                DB::table('highcourt_applicant_document_detail')->insert([
-                    'application_number' => $request->application_number,
-                    'document_type' => $request->document_types[$key],
-                    'number_of_page' => $numberOfPages,
-                    'amount' => $amount,
-                    'file_name' => $filename,
-                    'upload_status' => true,
-                    'uploaded_date' => now(),
-                    'uploaded_by' => session('user.id'), // Replace with actual user ID
-                    'created_at' => now(),
-                ]);
-            }
-    
-            return response()->json(['success' => 'Documents uploaded successfully.']);
-    
-        } catch (\Exception $e) {
-            Log::error('Error uploading documents', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while uploading documents.'], 500);
-        }
-    }
-    
-    public function deleteDocument(Request $request)
-    {
-        try {
-            $document = DB::table('highcourt_applicant_document_detail')->where('id', $request->document_id)->first();
-
-            $date=$document->uploaded_date;
-            $monthName = strtolower(Carbon::parse($date)->format('Fy'));
-    
-            if (!$document) {
-                return response()->json(['error' => 'Document not found.'], 404);
-            }
-    
-            // Delete file from storage
-            Storage::disk('public')->delete('highcourt_other_copies/{$monthName}/' . $document->file_name);
-    
-            // Remove entry from database
-            DB::table('highcourt_applicant_document_detail')->where('id', $request->document_id)->delete();
-    
-            return response()->json(['success' => 'Document deleted successfully.']);
-    
-        } catch (\Exception $e) {
-            Log::error('Error deleting document', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while deleting the document.'], 500);
-        }
-    }
-
-
     public function uploadCertifiedCopy(Request $request)
     {
         Log::info('Upload Certified Copy process started.', ['request_data' => $request->all()]);
@@ -242,35 +170,35 @@ class   HcOtherCopyPaidController extends Controller
         }
     }
 
-public function sendNotification(Request $request)
-{
-    try {
-        $applicationNumber = $request->input('application_number');
+    public function sendNotification(Request $request)
+    {
+        try {
+            $applicationNumber = $request->input('application_number');
 
-        // Update the document_status column to 1
-        DB::table('high_court_applicant_registration')
-            ->where('application_number', $applicationNumber)
-            ->update(['document_status' => 1]);
+            // Update the document_status column to 1
+            DB::table('high_court_applicant_registration')
+                ->where('application_number', $applicationNumber)
+                ->update(['document_status' => 1]);
 
-        // (Optional) Fetch user details to send notification
-        $user = DB::table('high_court_applicant_registration')
-            ->where('application_number', $applicationNumber)
-            ->first();
+            // (Optional) Fetch user details to send notification
+            $user = DB::table('high_court_applicant_registration')
+                ->where('application_number', $applicationNumber)
+                ->first();
 
-        // Example Notification Logic (Email or SMS)
-        if ($user) {
-            // You can send an email or SMS notification here
-            // Mail::to($user->email)->send(new DocumentNotificationMail($user));
-            // or
-            // Notification::send($user, new DocumentStatusNotification());
+            // Example Notification Logic (Email or SMS)
+            if ($user) {
+                // You can send an email or SMS notification here
+                // Mail::to($user->email)->send(new DocumentNotificationMail($user));
+                // or
+                // Notification::send($user, new DocumentStatusNotification());
+            }
+
+            return redirect()->back()->with('success', 'Notification sent successfully and document status updated.');
+        } catch (\Exception $e) {
+            Log::error('Error sending notification', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'An error occurred while sending the notification.');
         }
-
-        return redirect()->back()->with('success', 'Notification sent successfully and document status updated.');
-    } catch (\Exception $e) {
-        Log::error('Error sending notification', ['error' => $e->getMessage()]);
-        return redirect()->back()->with('error', 'An error occurred while sending the notification.');
     }
-}
 public function rejectApplication(Request $request)
 {
     try {
