@@ -139,10 +139,7 @@ class DcOtherCopyController extends Controller
             $monthName = strtolower(Carbon::parse($date)->format('Fy'));
     
             // Delete file from storage
-            Storage::disk('public')->delete("highcourt_other_copies/{distName}/{$monthName}/" . $document->file_name);
-    
-            // Delete file from storage
-            Storage::disk('public')->delete('districtcourt_other_copies/' . $document->file_name);
+            Storage::disk('public')->delete("district_other_copies/{distName}/{$monthName}/" . $document->file_name);
     
             // Remove entry from database
             DB::table('civilcourt_applicant_document_detail')->where('id', $request->document_id)->delete();

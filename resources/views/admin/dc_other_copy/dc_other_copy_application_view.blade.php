@@ -175,7 +175,7 @@
                                                 <td>₹{{ number_format($doc->amount, 2) }}</td>
                                                 <td>
                                                     <a href="javascript:void(0)"
-                                                        onclick="viewPDF('{{ asset('storage/districtcourt_other_copies/' . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->file_name) }}')">View</a>
+                                                        onclick="viewPDF('{{ Storage::url ('district_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->file_name) }}')">View</a>
                                                 </td>
 
                                                 <td>
@@ -281,8 +281,10 @@
                 document.body.innerHTML = originalContents;
                 location.reload();
             }
+            KOD00307042502_1744025140
 
             function viewPDF(pdfUrl) {
+                console.log(pdfUrl);
                 document.getElementById('pdfViewerFrame').src = pdfUrl;
                 var myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
                 myModal.show();
