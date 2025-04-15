@@ -133,6 +133,13 @@ class DcOtherCopyController extends Controller
             if (!$document) {
                 return response()->json(['error' => 'Document not found.'], 404);
             }
+
+            $date=$document->uploaded_date;
+            $distName = strtolower(session('user.dist_name'));
+            $monthName = strtolower(Carbon::parse($date)->format('Fy'));
+    
+            // Delete file from storage
+            Storage::disk('public')->delete("highcourt_other_copies/{distName}/{$monthName}/" . $document->file_name);
     
             // Delete file from storage
             Storage::disk('public')->delete('districtcourt_other_copies/' . $document->file_name);

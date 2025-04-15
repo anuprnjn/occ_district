@@ -175,7 +175,7 @@
                                                 <td>₹{{ number_format($doc->amount, 2) }}</td>
                                                 <td>
                                                     <a href="javascript:void(0)"
-                                                        onclick="viewPDF('{{ asset('storage/districtcourt_other_copies/' . $doc->file_name) }}')">View</a>
+                                                        onclick="viewPDF('{{ asset('storage/districtcourt_other_copies/' . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->file_name) }}')">View</a>
                                                 </td>
 
                                                 <td>
