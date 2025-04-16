@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Admin\SessionEstdController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DistrictController;
@@ -35,12 +36,13 @@ use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\SessionDataController;
 use App\Http\Middleware\AuthenticateUser;
 use App\Http\Controllers\admin\AuthController;
-use App\Http\Controllers\Admin\PdfController;
+use App\Http\Controllers\admin\PdfController;
 use App\Http\Middleware\CheckSession;
 use App\Http\Middleware\CheckSessionCd_pay;
 use App\Http\Controllers\PendingPaymentController;
 use App\Http\Controllers\admin\DcOtherCopyPaidController;
 use App\Http\Controllers\admin\GetPdfController;
+use App\Http\Controllers\admin\HcPdfController;
 
 
 Route::get('/', function () {
@@ -232,3 +234,45 @@ Route::post('/delete-hcoth-certified-copy/{id}', [HcOtherCopyPaidController::cla
 });
 
 Route::post('/admin/get-pdf', [GetPdfController::class, 'fetchPdf']);
+
+Route::post('/admin/hc-process-pdf', [HcPdfController::class, 'attachStampAndHeader'])->name('admin.attachStampAndHeader');
+
+Route::post('/admin/hc-check-pdf-compatibility', [HcPdfController::class, 'checkPdfCompatibility'])->name('admin.checkPdfCompatibility');
+
+Route::post('/admin/save-raw-pdf', function (Request $request) {
+    $file = $request->file('pdf_file');
+    $application_number = $request->input('application_number');
+    $created_at = $request->input('created_at');
+    $order_no = $request->input('order_no');
+    $id = $request->input('id');
+    $auth_fee = $request->input('auth_fee');
+    $x = $request->input('x');
+    $y = $request->input('y');
+    $trn_no = $request->input('trn_no');
+    $trn_date = $request->input('trn_date');
+
+    if (!$file || !$application_number || !$order_no) {
+        return response()->json(['error' => 'Invalid input'], 422);
+    }
+
+    $fileName = $application_number . '_' . $order_no . '.pdf';
+    $path = $file->storeAs('downloaded_pdf_hc', $fileName, 'public');
+    // dd($path);
+    // $relativeUrl = asset(str_replace('public', 'storage', $path));
+    $relativeUrl = Storage::url('downloaded_pdf_hc/' . $fileName);
+
+    return response()->json([
+        'message' => 'saved',
+        'pdf_path' => $relativeUrl,
+        'file_name' => $fileName,
+        'application_number' => $application_number,
+        'created_at' => $created_at,
+        'id' => $id,
+        'auth_fee' => $auth_fee,
+        'x' => $x,
+        'y' => $y,
+        'trn_no' => $trn_no,
+        'trn_date' => $trn_date
+    ]);
+})->name('admin.saveRawPdf');
+

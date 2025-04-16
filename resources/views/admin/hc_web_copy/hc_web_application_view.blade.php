@@ -135,6 +135,39 @@
                                     <!-- Order Details -->
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <p class="fw-bold text-success">Transaction Details</p>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="fw-bold">Transaction Number</th>
+                                                        <th class="fw-bold">Transaction Date</th>
+                                                        <th class="fw-bold">Amount</th>
+                                                        <th class="fw-bold">Payment Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if ($transaction_details)
+                                                        <tr>
+                                                            <td>{{ $transaction_details->transaction_no ?? 'N/A' }}</td>
+                                                            <td>{{ $transaction_details->transaction_date ?? 'N/A' }}</td>
+                                                            <td>₹{{ $transaction_details->amount ?? 'N/A' }}</td>
+                                                            <td class="fw-bold {{ $transaction_details && $transaction_details->transaction_status == 'SUCCESS' ? 'text-success' : 'text-danger' }}">
+                                                                {{ $transaction_details->transaction_status ?? 'N/A' }}
+                                                            </td>
+                                                        </tr>
+                                                    @else
+                                                        <tr>
+                                                            <td colspan="4" class="text-center">No transaction details found for this application.</td>
+                                                        </tr>
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+   
+                                    <!-- Order Details -->
+                                    <div class="row">
+                                        <div class="col-md-12">
                                             <p class="fw-bold text-success">Order Details</p>
                                             <table class="table table-bordered">
                                                 <thead>
@@ -199,9 +232,44 @@
                                                 <td>{{ $order->order_number }}</td>
                                                 <td>{{ $order->order_date }}</td>
                                                 <td>{{ $order->number_of_page }}</td>
-                                                <td>
-                                                <button class="mt-2 btn btn-outline-info btn-sm" href="#" onclick="getPdf('{{$hcuser->cino}}', '{{ $order->order_number }}')">Download <i class="bi bi-download"></i></button>
-                                                </td>
+                                                    <td class="extra-data">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Bottom Stamp Offset (X and Y) (Centered default)</label>
+                                                    <div class="d-flex gap-2">
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_x" 
+                                                            class="form-control bottom_stamp_x" 
+                                                            placeholder="X: +20 , X: -20"
+                                                        />
+                                                        <input 
+                                                            type="number" 
+                                                            name="bottom_stamp_y" 
+                                                            class="form-control bottom_stamp_y" 
+                                                            min="0" 
+                                                            max="300" 
+                                                            placeholder="Y: default 60"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Enter Authentication Fee (default: 15Rs)</label>
+                                                    <input 
+                                                        type="number" 
+                                                        name="auth_fee" 
+                                                        class="form-control auth_fee" 
+                                                        value="15" 
+                                                        min="0" 
+                                                        max="300" 
+                                                    />
+                                                </div>
+                                                <button 
+                                                    id="downloadBtn_{{ $order->order_number }}" 
+                                                    class="mt-2 btn btn-outline-info btn-sm" 
+                                                    onclick="getPdf(this, '{{ $hcuser->cino }}', '{{ $order->order_number }}', '{{ $hcuser->application_number }}', '{{ $hcuser->created_at }}', '{{ $order->order_number }}', '{{ $transaction_details->transaction_no }}', '{{ $transaction_details->transaction_date }}')">
+                                                    Download <i class="bi bi-download"></i>
+                                                </button>
+                                                    </td>
                                                 <td>
                                                     <form action="{{ route('admin.uploadOrderCopy') }}" method="POST"
                                                         enctype="multipart/form-data">
@@ -232,12 +300,12 @@
                                                 </td>
                                                 <td>
                                                     @if ($order->upload_status)
-                                                        <a href="javascript:void(0);" class="btn btn-sm btn-primary"
+                                                        <a href="javascript:void(0);" class="w-100 mb-2 btn btn-sm btn-primary"
                                                             onclick="viewPDF('{{ route('admin.downloadOrderCopy', $order->file_name) }}')">
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number]) }}"
-                                                            class="btn btn-sm btn-danger @if ($hcuser->deficit_status == 1 or $hcuser->certified_copy_ready_status) disabled @endif"
+                                                            class="w-100 btn btn-sm btn-danger @if ($hcuser->deficit_status == 1 or $hcuser->certified_copy_ready_status) disabled @endif"
                                                             onclick="return confirm('Are you sure want to delete ?')"
                                                             @if ($hcuser->deficit_status == 1 or $hcuser->certified_copy_ready_status) onclick="return false;" @endif>
                                                             <i class="bi bi-trash"></i> Delete
@@ -370,7 +438,7 @@
                 </div>
             </div>
         </div>
-
+        
     </main>
 
     <!-- PDF Viewer Modal -->
@@ -389,11 +457,15 @@
             </div>
         </div>
     </div>
-
-
+    
     @push('scripts')
-    <script>
-function getPdf(cino, order_no) {
+<script>
+    function getPdf(buttonEl, cino, order_no, application_number, created_at, id, trn_no, trn_date) {
+    const button = buttonEl;
+    const originalHtml = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`;
+
     fetch("/admin/get-pdf", {
         method: "POST",
         headers: {
@@ -405,18 +477,94 @@ function getPdf(cino, order_no) {
     .then(res => res.json())
     .then(data => {
         if (data.message === 'success' && data.pdf_data) {
-            document.getElementById('pdfViewerFrame').src = data.pdf_data;
-            let modal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
-            modal.show();
+            
+            const row = button.closest("tr");
+            const x = row.querySelector(".bottom_stamp_x")?.value || 0;
+            const y = row.querySelector(".bottom_stamp_y")?.value || 60;
+            const auth_fee = row.querySelector(".auth_fee")?.value || 15;
+
+            const base64Data = data.pdf_data;
+            const blob = base64ToBlob(base64Data.split(',')[1], 'application/pdf');
+            const file = new File([blob], `${application_number}_${order_no}.pdf`, { type: 'application/pdf' });
+
+            const formData = new FormData();
+            formData.append("pdf_file", file);
+            formData.append("application_number", application_number);
+            formData.append("order_no", order_no);
+
+            const formattedDate = new Date(created_at).toLocaleDateString('en-GB').replace(/\//g, '-');
+            formData.append("created_at", formattedDate);
+
+            formData.append("id", id);
+            formData.append("auth_fee", auth_fee);
+            formData.append("x", x);
+            formData.append("y", y);
+            formData.append("trn_no", trn_no);
+
+            const dateParts = trn_date.split("/");
+            const formattedDateTR = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
+            formData.append("trn_date", formattedDateTR);
+
+            return fetch("/admin/save-raw-pdf", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').getAttribute("content")
+                },
+                body: formData
+            });
         } else {
-            alert("PDF not found.");
+            throw new Error("PDF not found.");
         }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message === 'saved' && data.pdf_path) {
+            return fetch("/admin/hc-process-pdf", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').getAttribute("content")
+                },
+                body: JSON.stringify({
+                    pdf_path: data.pdf_path,
+                    application_number: data.application_number,
+                    doc_id: data.id,
+                    createdAt: data.created_at,
+                    auth_fee: data.auth_fee,
+                    transaction_no: data.trn_no,
+                    transaction_date: data.trn_date,
+                    x: data.x,
+                    y: data.y
+                })
+            });
+        } else {
+            throw new Error("PDF save failed.");
+        }
+    })
+    .then(res => res.blob())
+    .then(finalBlob => {
+        const pdfUrl = URL.createObjectURL(finalBlob);
+        document.getElementById('pdfViewerFrame').src = pdfUrl;
+        let modal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+        modal.show();
     })
     .catch(err => {
         console.error(err);
-        alert("Failed to fetch PDF.");
+        alert("Something went wrong.");
+    })
+    .finally(() => {
+        button.disabled = false;
+        button.innerHTML = originalHtml;
     });
 }
+
+    // Helper: Convert base64 to Blob
+    function base64ToBlob(base64, mime) {
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length).fill().map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        return new Blob([byteArray], { type: mime });
+    }
 </script> 
         <script>
             function printDiv(divId) {

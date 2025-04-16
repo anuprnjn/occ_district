@@ -46,6 +46,12 @@ class HcWebApplicationController extends Controller
                 ->where('apr.application_number', $appNumber)
                 ->first();
 
+            $transaction_details = DB::table('transaction_master_hc')
+            ->where('application_number', $appNumber)
+            ->where('payment_status', '1')
+            ->first();     
+           
+
             if (!$hcuser) {
                 return redirect()->route('hc-web-application.list')->with('error', 'Application not found.');
             }
@@ -64,7 +70,7 @@ class HcWebApplicationController extends Controller
             ->where('fee_type', 'per_page_fee')
             ->value('amount');
 
-            return view('admin.hc_web_copy.hc_web_application_view', compact('hcuser', 'ordersdata','totaldiff','perpagefee'));
+            return view('admin.hc_web_copy.hc_web_application_view', compact('hcuser', 'ordersdata','totaldiff','perpagefee','transaction_details'));
         } catch (\Exception $e) {
             Log::error('Error fetching HC User details', ['error' => $e->getMessage()]);
             return redirect()->route('hc-web-application.list')->with('error', 'An error occurred.');
