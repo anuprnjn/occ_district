@@ -227,10 +227,10 @@ try {
     // Update the document_status column to 1
     DB::table('district_court_applicant_registration')
         ->where('application_number', $applicationNumber)
-        ->update(['document_status' => 1]);
+        ->update(['certified_copy_ready_status' => 1]);
 
     // (Optional) Fetch user details to send notification
-    $user = DB::table('districct_court_applicant_registration')
+    $user = DB::table('district_court_applicant_registration')
         ->where('application_number', $applicationNumber)
         ->first();
 
@@ -242,7 +242,7 @@ try {
         // Notification::send($user, new DocumentStatusNotification());
     }
 
-    return redirect()->back()->with('success', 'Notification sent successfully and document status updated.');
+    return redirect()->back()->with('success', 'Notification sent successfully and status updated.');
 } catch (\Exception $e) {
     Log::error('Error sending notification', ['error' => $e->getMessage()]);
     return redirect()->back()->with('error', 'An error occurred while sending the notification.');

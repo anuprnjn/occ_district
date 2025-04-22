@@ -276,3 +276,7 @@ Route::post('/admin/save-raw-pdf', function (Request $request) {
     ]);
 })->name('admin.saveRawPdf');
 
+Route::post('/send-certified-notification', [DcOtherCopyPaidController::class, 'sendCertifiedCopyNotification'])->name('send.certified.notification');
+
+Route::post('/send-hc-certified-notification', [HcOtherCopyPaidController::class, 'sendCertifiedCopyNotification'])->name('send.hc.certified.notification');
+

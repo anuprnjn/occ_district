@@ -227,7 +227,7 @@
                                                 type="button" 
                                                 class="w-100 btn btn-danger p-2 view-btn delete-btn" 
                                                 data-id="{{ Crypt::encrypt($doc->id) }}"
-                                                @if ($doc->certified_copy_upload_status != 1) disabled @endif
+                                                @if ($doc->certified_copy_upload_status != 1 || $hcuser->certified_copy_ready_status == 1) disabled @endif
                                             >
                                                 <i class="bi bi-trash"></i> Delete
                                             </button>
@@ -246,15 +246,16 @@
 
 
 
-                        @if ($hcuser->document_status == 1)
+                        @if ($hcuser->certified_copy_ready_status == 1)
                             <p class="text-success mt-3"><i class="bi bi-check-circle"></i> Notification already sent.</p>
                         @elseif(!$documents->isEmpty())
-                            <form action="{{ route('hc-other-copy.send-notification') }}" method="POST">
+                            <form action="{{ route('send.hc.certified.notification') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="application_number"
                                     value="{{ $hcuser->application_number }}">
 
-                                <button type="submit" class="btn btn-danger mt-3">
+                                <button type="submit" class="btn btn-danger mt-3"
+                                @if ($doc->certified_copy_upload_status != 1 ) disabled @endif>
                                     <i class="bi bi-bell"></i> Send Notification
                                 </button>
                             </form>
