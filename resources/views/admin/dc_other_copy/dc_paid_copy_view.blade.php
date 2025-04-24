@@ -213,7 +213,7 @@
                                                 type="button" 
                                                 class="w-100 btn btn-primary p-2 view-btn" 
                                                 data-document-id="{{ $doc->id }}"
-                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
+                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(\Carbon\Carbon::parse($doc->certified_copy_uploaded_date)->format('Fy')) . '/' . $doc->certified_copy_file_name) }}')"
                                                 @if ($doc->certified_copy_upload_status != 1) disabled @endif
                                             >
                                                 <i class="bi bi-eye"></i> View
@@ -224,7 +224,7 @@
                                                 type="button" 
                                                 class="w-100 btn btn-danger p-2 view-btn delete-btn" 
                                                 data-id="{{ Crypt::encrypt($doc->id) }}"
-                                                @if ($doc->certified_copy_upload_status != 1) disabled @endif
+                                                @if ($doc->certified_copy_upload_status != 1 || $dcuser->certified_copy_ready_status == 1) disabled @endif
                                             >
                                                 <i class="bi bi-trash"></i> Delete
                                             </button>
@@ -241,13 +241,14 @@
                         </div>
                     </div>
 
-                    @if ($dcuser->document_status == 1)
+                    @if ($dcuser->certified_copy_ready_status == 1)
                         <p class="text-success mt-3"><i class="bi bi-check-circle"></i> Notification already sent.</p>
                     @elseif(!$documents->isEmpty())
-                        <form action="{{ route('dc-other-copy.send-notification') }}" method="POST">
+                        <form action="{{ route('send.certified.notification') }}" method="POST">
                             @csrf
                             <input type="hidden" name="application_number" value="{{ $dcuser->application_number }}">
-                            <button type="submit" class="btn btn-danger mt-3">
+                            <button type="submit" class="btn btn-danger mt-3"
+                            @if ($doc->certified_copy_upload_status != 1 ) disabled @endif>
                                 <i class="bi bi-bell"></i> Send Notification
                             </button>
                         </form>

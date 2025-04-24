@@ -276,14 +276,15 @@ Route::post('/admin/save-raw-pdf', function (Request $request) {
     ]);
 })->name('admin.saveRawPdf');
 
-// For showing the page
 Route::get('/admin/digital_signature', [DigitalSignatureController::class, 'addDigitalSignature'])->name('digital_signature');
 
 // For receiving POST data from JS
 Route::post('/admin/digital_signature/pdf', [DigitalSignatureController::class, 'generatePdf'])->name('digital_signature.pdf');
 
 
+Route::post('/send-certified-notification', [DcOtherCopyPaidController::class, 'sendCertifiedCopyNotification'])->name('send.certified.notification');
+
+Route::post('/send-hc-certified-notification', [HcOtherCopyPaidController::class, 'sendCertifiedCopyNotification'])->name('send.hc.certified.notification');
+
+
 });
-
-
-
