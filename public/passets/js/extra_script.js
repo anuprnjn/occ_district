@@ -447,3 +447,42 @@ function getApplicationDetailByMobile(mobileNumber) {
     })
 
 }
+
+// function to toggle the district court form using select box 
+
+function toggleDistForm() {
+    var selectedOption = document.getElementById("civilCourtSelect").value;
+    if (selectedOption === "applyJudgementDC") {
+        document.getElementById("orderJudgementFormDC").style.display = "block";
+        document.getElementById("applyOrdersFormDC").style.display = "none";
+    } else if (selectedOption === "applyOrdersDC") {
+        document.getElementById("applyOrdersFormDC").style.display = "block";
+        document.getElementById("orderJudgementFormDC").style.display = "none";
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    toggleDistForm();  
+});
+
+
+function toggleFieldsDC(radio) {
+    const caseFields = document.querySelectorAll('.case-field');
+    const fillingFields = document.querySelectorAll('.filling-field');
+
+    if (radio.value === 'case') {
+        caseFields.forEach(el => el.style.display = 'block');
+        fillingFields.forEach(el => el.style.display = 'none');
+    } else if (radio.value === 'filling') {
+        caseFields.forEach(el => el.style.display = 'none');
+        fillingFields.forEach(el => el.style.display = 'block');
+    }
+}
+
+// Ensure default view is correct on page load
+document.addEventListener('DOMContentLoaded', function () {
+    const defaultRadio = document.querySelector('input[name="search-type-case"]:checked');
+    if (defaultRadio) {
+        toggleFieldsDC(defaultRadio);
+    }
+});

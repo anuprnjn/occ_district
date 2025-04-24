@@ -43,6 +43,7 @@ use App\Http\Controllers\PendingPaymentController;
 use App\Http\Controllers\admin\DcOtherCopyPaidController;
 use App\Http\Controllers\admin\GetPdfController;
 use App\Http\Controllers\admin\HcPdfController;
+use App\Http\Controllers\admin\DigitalSignatureController;
 
 
 Route::get('/', function () {
@@ -231,7 +232,6 @@ Route::post('/delete-certified-copy/{id}', [DcOtherCopyPaidController::class, 'd
 Route::post('/upload-hcoth-certified-copy/{id}', [HcOtherCopyPaidController::class, 'uploadCertifiedCopy'])->name('upload.hcothcertified.copy');
 
 Route::post('/delete-hcoth-certified-copy/{id}', [HcOtherCopyPaidController::class, 'deleteCertifiedCopy'])->name('delete.hcothcertified.copy');
-});
 
 Route::post('/admin/get-pdf', [GetPdfController::class, 'fetchPdf']);
 
@@ -275,4 +275,15 @@ Route::post('/admin/save-raw-pdf', function (Request $request) {
         'trn_date' => $trn_date
     ]);
 })->name('admin.saveRawPdf');
+
+// For showing the page
+Route::get('/admin/digital_signature', [DigitalSignatureController::class, 'addDigitalSignature'])->name('digital_signature');
+
+// For receiving POST data from JS
+Route::post('/admin/digital_signature/pdf', [DigitalSignatureController::class, 'generatePdf'])->name('digital_signature.pdf');
+
+
+});
+
+
 

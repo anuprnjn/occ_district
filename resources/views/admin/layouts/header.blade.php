@@ -282,9 +282,15 @@
                       <p>Paid Application</p>
                     </a>
                   </li>
-                  
+                 
                 </ul>
-              </li>
+                <li class="nav-item">
+                    <a href="{{ route('digital_signature') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Digital Signature</p>
+                    </a>
+                  </li>
+                </li>
               @endif
               @if(session('user.caseType') === 'DC')
               <li class="nav-item">
