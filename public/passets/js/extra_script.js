@@ -61,6 +61,11 @@
         dropdownMenu.classList.toggle('hidden');
     }
 
+    function toggleDropdownDC() {
+        const dropdownMenu = document.getElementById('dropdownMenuDC');
+        dropdownMenu.classList.toggle('hidden');
+    }
+
     // Filter dropdown options
     function filterOptions() {
         const searchInput = document.getElementById('searchInput').value.toLowerCase();
@@ -71,7 +76,15 @@
             option.style.display = text.toLowerCase().includes(searchInput) ? '' : 'none';
         });
     }
+    function filterOptionsDC() {
+        const searchInput = document.getElementById('searchInputDC').value.toLowerCase();
+        const options = document.querySelectorAll('#dropdownOptionsDC li');
 
+        options.forEach(option => {
+            const text = option.textContent || option.innerText;
+            option.style.display = text.toLowerCase().includes(searchInput) ? '' : 'none';
+        });
+    }
     // Select option
     function selectOption(element) {
         const dropdownToggle = document.getElementById('dropdownToggle');
@@ -87,7 +100,20 @@
         // Trigger additional actions (e.g., fetchEstablishments)
         fetchEstablishments(element.dataset.value);
     }
+    function selectOptionDC(element) {
+        const dropdownToggle = document.getElementById('dropdownToggleDC');
+        const dropdownMenu = document.getElementById('dropdownMenuDC');
 
+        // Set selected value
+        dropdownToggle.innerText = element.innerText;
+        dropdownToggle.dataset.value = element.dataset.value;
+
+        // Close dropdown
+        dropdownMenu.classList.add('hidden');
+
+        // Trigger additional actions (e.g., fetchEstablishments)
+        fetchEstablishmentsDC(element.dataset.value);
+    }
     // // Close dropdown when clicking outside
     // document.addEventListener('click', function (event) {
     //     const dropdown = document.getElementById('dropdown');

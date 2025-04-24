@@ -76,6 +76,49 @@
     }
    
 </script>
+
+<script>
+    function fetchEstablishmentsDC(dist_code) {
+        if (!dist_code) {
+            // If no district is selected, reset the Establishment dropdown
+            $('#selectEstaDC').html('<option value="" selected>Select Establishment</option>');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('get-establishments') }}", // Ensure this route exists in your Laravel app
+            method: 'POST',
+            data: {
+                dist_code: dist_code,
+                _token: "{{ csrf_token() }}" // Include the CSRF token for Laravel
+            },
+            success: function (data) {
+                // Clear and populate the Establishment dropdown
+                let options = '<option value="" selected>Select Establishment</option>';
+                data.forEach(function (establishment) {
+                    options += `<option value="${establishment.est_code}">${establishment.estname}</option>`;
+                });
+                $('#selectEstaDC').html(options);
+            },
+            error: function () {
+                alert('Unable to fetch establishments. Please try again later.');
+            }
+        });
+    }
+
+    // Function to store the selected establishment code in sessionStorage
+    function saveEstCode(selectElement) {
+       
+        var selectedEstCode = selectElement.value; // Get the selected establishment code
+        if (selectedEstCode !== '') {
+            sessionStorage.setItem('selectedEstCode', selectedEstCode);
+        }
+        else{
+            sessionStorage.removeItem('selectedEstCode');
+        }
+    }
+   
+</script>
 <!-- {{-- function for captcha  --}} -->
 <!-- <script>
     function refreshCaptcha() {
@@ -239,6 +282,19 @@ async function refreshCaptcha() {
 <!-- {{-- Function to store the district code in sessionStorage --}} -->
 <script>
     function getDistCode(element) {
+        var distCode = element.getAttribute('data-value');
+        if(distCode !== ''){
+            sessionStorage.setItem('selectedDistCode', distCode); 
+            sessionStorage.removeItem('selectedEstCode');
+        }else{
+            sessionStorage.removeItem('selectedDistCode');
+            sessionStorage.removeItem('selectedEstCode');
+        }
+    }
+    
+</script>
+<script>
+    function getDistCodeDC(element) {
         var distCode = element.getAttribute('data-value');
         if(distCode !== ''){
             sessionStorage.setItem('selectedDistCode', distCode); 

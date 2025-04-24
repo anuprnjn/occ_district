@@ -44,6 +44,7 @@ use App\Http\Controllers\admin\DcOtherCopyPaidController;
 use App\Http\Controllers\admin\GetPdfController;
 use App\Http\Controllers\admin\HcPdfController;
 use App\Http\Controllers\admin\DigitalSignatureController;
+use App\Http\Controllers\admin\RawPdfController;
 
 
 Route::get('/', function () {
@@ -239,42 +240,43 @@ Route::post('/admin/hc-process-pdf', [HcPdfController::class, 'attachStampAndHea
 
 Route::post('/admin/hc-check-pdf-compatibility', [HcPdfController::class, 'checkPdfCompatibility'])->name('admin.checkPdfCompatibility');
 
-Route::post('/admin/save-raw-pdf', function (Request $request) {
-    $file = $request->file('pdf_file');
-    $application_number = $request->input('application_number');
-    $created_at = $request->input('created_at');
-    $order_no = $request->input('order_no');
-    $id = $request->input('id');
-    $auth_fee = $request->input('auth_fee');
-    $x = $request->input('x');
-    $y = $request->input('y');
-    $trn_no = $request->input('trn_no');
-    $trn_date = $request->input('trn_date');
+// Route::post('/admin/save-raw-pdf', function (Request $request) {
+//     $file = $request->file('pdf_file');
+//     $application_number = $request->input('application_number');
+//     $created_at = $request->input('created_at');
+//     $order_no = $request->input('order_no');
+//     $id = $request->input('id');
+//     $auth_fee = $request->input('auth_fee');
+//     $x = $request->input('x');
+//     $y = $request->input('y');
+//     $trn_no = $request->input('trn_no');
+//     $trn_date = $request->input('trn_date');
 
-    if (!$file || !$application_number || !$order_no) {
-        return response()->json(['error' => 'Invalid input'], 422);
-    }
+//     if (!$file || !$application_number || !$order_no) {
+//         return response()->json(['error' => 'Invalid input'], 422);
+//     }
 
-    $fileName = $application_number . '_' . $order_no . '.pdf';
-    $path = $file->storeAs('downloaded_pdf_hc', $fileName, 'public');
-    // dd($path);
-    // $relativeUrl = asset(str_replace('public', 'storage', $path));
-    $relativeUrl = Storage::url('downloaded_pdf_hc/' . $fileName);
+//     $fileName = $application_number . '_' . $order_no . '.pdf';
+//     $path = $file->storeAs('downloaded_pdf_hc', $fileName, 'public');
+//     // dd($path);
+//     // $relativeUrl = asset(str_replace('public', 'storage', $path));
+//     $relativeUrl = Storage::url('downloaded_pdf_hc/' . $fileName);
 
-    return response()->json([
-        'message' => 'saved',
-        'pdf_path' => $relativeUrl,
-        'file_name' => $fileName,
-        'application_number' => $application_number,
-        'created_at' => $created_at,
-        'id' => $id,
-        'auth_fee' => $auth_fee,
-        'x' => $x,
-        'y' => $y,
-        'trn_no' => $trn_no,
-        'trn_date' => $trn_date
-    ]);
-})->name('admin.saveRawPdf');
+//     return response()->json([
+//         'message' => 'saved',
+//         'pdf_path' => $relativeUrl,
+//         'file_name' => $fileName,
+//         'application_number' => $application_number,
+//         'created_at' => $created_at,
+//         'id' => $id,
+//         'auth_fee' => $auth_fee,
+//         'x' => $x,
+//         'y' => $y,
+//         'trn_no' => $trn_no,
+//         'trn_date' => $trn_date
+//     ]);
+// })->name('admin.saveRawPdf');    
+Route::post('/admin/save-raw-pdf', [RawPdfController::class, 'save'])->name('admin.saveRawPdf');
 
 Route::get('/admin/digital_signature', [DigitalSignatureController::class, 'addDigitalSignature'])->name('digital_signature');
 
