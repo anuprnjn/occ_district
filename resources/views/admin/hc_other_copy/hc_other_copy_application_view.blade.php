@@ -175,7 +175,7 @@
                                                 <td>₹{{ number_format($doc->amount, 2) }}</td>
                                                 <td>
                                                     <a href="javascript:void(0)"
-                                                        onclick="viewPDF('{{ Storage::url ('highcourt_other_copies/' . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->file_name) }}')">View</a>
+                                                        onclick="viewPDF('{{ Storage::url ('highcourt_other_copies' . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->file_name) }}')">View</a>
                                                 </td>
 
                                                 <td>
@@ -284,6 +284,7 @@
 
             function viewPDF(pdfUrl) {
                 document.getElementById('pdfViewerFrame').src = pdfUrl;
+                console.log('PDF URL:', pdfUrl);
                 var myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
                 myModal.show();
             }

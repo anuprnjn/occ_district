@@ -213,7 +213,7 @@
                                                 type="button" 
                                                 class="w-100 btn btn-primary p-2 view-btn" 
                                                 data-document-id="{{ $doc->id }}"
-                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
+                                                onclick="viewPDF('{{ Storage::url('district_certified_other_copies/' . strtolower(session('user.dist_name')) . '/' . strtolower(\Carbon\Carbon::parse($doc->certified_copy_uploaded_date)->format('Fy')) . '/' . $doc->certified_copy_file_name) }}')"
                                                 @if ($doc->certified_copy_upload_status != 1) disabled @endif
                                             >
                                                 <i class="bi bi-eye"></i> View

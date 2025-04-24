@@ -284,7 +284,7 @@
             KOD00307042502_1744025140
 
             function viewPDF(pdfUrl) {
-                console.log(pdfUrl);
+                console.log('PDF URL:', pdfUrl);
                 document.getElementById('pdfViewerFrame').src = pdfUrl;
                 var myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
                 myModal.show();

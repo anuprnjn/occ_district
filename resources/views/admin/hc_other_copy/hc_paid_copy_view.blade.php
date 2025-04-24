@@ -216,7 +216,7 @@
                                                 type="button" 
                                                 class="w-100 btn btn-primary p-2 view-btn" 
                                                 data-document-id="{{ $doc->id }}"
-                                                onclick="viewPDF('{{ Storage::url('highcourt_certified_other_copies/' . '/' . strtolower(now()->format('F')) . now()->format('y') . '/' . $doc->certified_copy_file_name) }}')"
+                                                onclick="viewPDF('{{ Storage::url('highcourt_certified_other_copies' . '/' . strtolower(\Carbon\Carbon::parse($doc->certified_copy_uploaded_date)->format('Fy')) . '/' . $doc->certified_copy_file_name) }}')"
                                                 @if ($doc->certified_copy_upload_status != 1) disabled @endif
                                             >
                                                 <i class="bi bi-eye"></i> View
@@ -306,6 +306,7 @@
     }
     function viewPDF(pdfUrl) {
                 document.getElementById('pdfViewerFrame').src = pdfUrl;
+                console.log('PDF URL:', pdfUrl);
                 var myModal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
                 myModal.show();
             }
