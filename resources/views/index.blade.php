@@ -64,16 +64,16 @@
     }
 
     // Function to store the selected establishment code in sessionStorage
-    function saveEstCode(selectElement) {
+    // function saveEstCode(selectElement) {
        
-        var selectedEstCode = selectElement.value; // Get the selected establishment code
-        if (selectedEstCode !== '') {
-            sessionStorage.setItem('selectedEstCode', selectedEstCode);
-        }
-        else{
-            sessionStorage.removeItem('selectedEstCode');
-        }
-    }
+    //     var selectedEstCode = selectElement.value; // Get the selected establishment code
+    //     if (selectedEstCode !== '') {
+    //         sessionStorage.setItem('selectedEstCode', selectedEstCode);
+    //     }
+    //     else{
+    //         sessionStorage.removeItem('selectedEstCode');
+    //     }
+    // }
    
 </script>
 
@@ -108,12 +108,29 @@
 
     // Function to store the selected establishment code in sessionStorage
     function saveEstCode(selectElement) {
-       
-        var selectedEstCode = selectElement.value; // Get the selected establishment code
+        var selectedEstCode = selectElement.value;
+
         if (selectedEstCode !== '') {
             sessionStorage.setItem('selectedEstCode', selectedEstCode);
-        }
-        else{
+
+            // Make an AJAX call to Laravel controller
+            fetch('/get-dc-case-type-napix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ est_code: selectedEstCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Case Types Response:', data);  // <-- only console.log the data
+            })
+            .catch(error => {
+                console.error('Error fetching case types:', error);
+            });
+
+        } else {
             sessionStorage.removeItem('selectedEstCode');
         }
     }

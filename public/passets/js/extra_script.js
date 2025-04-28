@@ -512,3 +512,8 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleFieldsDC(defaultRadio);
     }
 });
+
+
+document.addEventListener('DOMContentLoaded',function(){
+    
+})

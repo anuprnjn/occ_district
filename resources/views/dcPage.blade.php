@@ -223,73 +223,70 @@
            </div>
            <div class="dark_form flex sm:flex-row flex-col justify-center items-center w-full rounded-md gap-4 mb-4 mt-2">
 
-<div class="w-full sm:w-1/2">
-    <label for="selectDist" class="mb-2 block">Please Select District:<span>*</span></label>
-    <div class="relative w-full dark_select">
-        <!-- Custom Dropdown -->
-        <div id="dropdownDC" class="w-full p-[8px] border rounded ">
-            <div id="dropdownToggleDC" class="cursor-pointer" onclick="toggleDropdownDC()">Please Select District</div>
-            <div id="dropdownMenuDC" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
-                <!-- Search Box -->
-                <div class="p-2">
-                    <input type="text" id="searchInputDC" class="w-full p-[8px] border border-gray-300 rounded" placeholder="Search District..." onkeyup="filterOptionsDC()">
+    <div class="w-full sm:w-1/2">
+        <label for="selectDist" class="mb-2 block">Please Select District:<span>*</span></label>
+        <div class="relative w-full dark_select">
+            <!-- Custom Dropdown -->
+            <div id="dropdownDC" class="w-full p-[8px] border rounded ">
+                <div id="dropdownToggleDC" class="cursor-pointer" onclick="toggleDropdownDC()">Please Select District</div>
+                <div id="dropdownMenuDC" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
+                    <!-- Search Box -->
+                    <div class="p-2">
+                        <input type="text" id="searchInputDC" class="w-full p-[8px] border border-gray-300 rounded" placeholder="Search District..." onkeyup="filterOptionsDC()">
+                    </div>
+                    <!-- Options -->
+                    <ul id="dropdownOptionsDC" class="list-none p-0 m-0">
+                        <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOptionDC(this); getDistCodeDC(this)">Please Select District</li>
+                        @foreach ($districts as $district)
+                            <li data-value="{{ $district['dist_code'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOptionDC(this); getDistCodeDC(this)">
+                                {{ $district['dist_name'] }}
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
-                <!-- Options -->
-                <ul id="dropdownOptionsDC" class="list-none p-0 m-0">
-                    <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOptionDC(this); getDistCodeDC(this)">Please Select District</li>
-                    @foreach ($districts as $district)
-                        <li data-value="{{ $district['dist_code'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectOptionDC(this); getDistCodeDC(this)">
-                            {{ $district['dist_name'] }}
-                        </li>
-                    @endforeach
-                </ul>
             </div>
         </div>
+        
     </div>
-    
-</div>
-<div class="w-full sm:w-1/2">
-    <label for="selectEstaDC" class="mb-2 block mt-4 sm:mt-0">Select Establishment:<span>*</span></label>
-    <select id="selectEstaDC" class="w-full p-[10px] border border-gray-300 rounded" onchange="saveEstCode(this)">
-        <option value="" selected>Select Establishment</option>
-    </select>
-</div>
+    <div class="w-full sm:w-1/2">
+        <label for="selectEstaDC" class="mb-2 block mt-4 sm:mt-0">Select Establishment:<span>*</span></label>
+        <select id="selectEstaDC" class="w-full p-[10px] border border-gray-300 rounded" onchange="saveEstCode(this)">
+            <option value="" selected>Select Establishment</option>
+        </select>
+    </div>
 
-</div>
+    </div>
 
            <div class="form-row">
-           <div class="form-field">
+    <div class="form-field">
            <label for="case-type">Case Type: <span>*</span></label>
            <div class="relative w-full dark_select">
                <!-- Custom Dropdown -->
-               <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border border-[#ccc] rounded relative">
-        <div id="caseTypeToggleForOrderJudgementForm" 
+               <div id="caseTypeDropdownForOrderJudgementDC" class="w-full p-[10px] border border-[#ccc] rounded relative">
+        <div id="caseTypeToggleForOrderJudgementFormDC" 
                 class="cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis" 
-                onclick="toggleCaseTypeDropdownForOrderJudgement()">Please Select Case Type</div>
-        <div id="caseTypeMenuForOrderJudgementForm" 
+                onclick="toggleCaseTypeDropdownForOrderJudgementDC()">Please Select Case Type</div>
+        <div id="caseTypeMenuForOrderJudgementFormDC" 
         class="hidden absolute top-full left-0 w-full max-h-60 border border-[#ccc] dark_select overflow-y-auto rounded shadow-lg z-10">
        <!-- Search Box -->
        <div class="p-2">
            <input type="text" id="caseTypeSearchInputForOrderJudgementForm" 
                   class="w-full p-[10px] border border-[#ccc] rounded" 
                   placeholder="Search Case Type..." 
-                  onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
+                  onkeyup="filterCaseTypeOptionsForOrderJudgementFormDC()">
                    </div>
                    <!-- Options -->
-                   <ul id="caseTypeOptionsForOrderJudgementForm" class="list-none p-0 m-0">
-                       <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
-                           onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">Please Select Case Type</li>
-                       @if (!empty($caseTypes) && is_array($caseTypes))
-                           @foreach ($caseTypes as $caseType)
-                               <li data-value="{{ $caseType['case_type'] }}" 
-                                   class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap" 
-                                   onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">
-                                   {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
-                               </li>
-                           @endforeach
-                       @else
-                           <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
-                       @endif
+                   <ul id="caseTypeOptions" class="list-none p-0 m-0">
+                        <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">Please Select Case Type</li>
+                        @if (!empty($caseTypes) && is_array($caseTypes))
+                            @foreach ($caseTypes as $caseType)
+                                <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
+                                    {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
+                                </li>
+                            @endforeach
+                        @else
+                            <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
+                        @endif
                    </ul>
                </div>
            </div>
@@ -341,3 +338,4 @@
 
 </section>
 @endsection
+

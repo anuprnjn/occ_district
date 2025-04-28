@@ -45,6 +45,7 @@ use App\Http\Controllers\admin\GetPdfController;
 use App\Http\Controllers\admin\HcPdfController;
 use App\Http\Controllers\admin\DigitalSignatureController;
 use App\Http\Controllers\admin\RawPdfController;
+use App\Http\Controllers\DcCaseTypeNapixController;
 
 
 Route::get('/', function () {
@@ -135,6 +136,7 @@ Route::get('/clear-session', function () {
 Route::post('/fetch-pending-payments-hc', [PendingPaymentController::class,'fetchPendingPaymentsHC']);
 Route::post('/set-caseInformation-PendingData-HC', [SessionDataController::class, 'setPendingCaseInfoData'])->middleware('web');
 Route::post('/fetch-pending-payments-dc', [PendingPaymentController::class,'fetchPendingPaymentsDC']);
+Route::post('/get-dc-case-type-napix', [DcCaseTypeNapixController::class, 'fetchNapixDcCaseType']);
 
 //admin routes **************************************************************
 
