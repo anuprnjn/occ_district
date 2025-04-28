@@ -232,7 +232,7 @@
                 <div id="dropdownMenuDC" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
                     <!-- Search Box -->
                     <div class="p-2">
-                        <input type="text" id="searchInputDC" class="w-full p-[8px] border border-gray-300 rounded" placeholder="Search District..." onkeyup="filterOptionsDC()">
+                        <input type="text" id="searchInputDC" class="w-full p-[8.5px] border border-gray-300 rounded" placeholder="Search District..." onkeyup="filterOptionsDC()">
                     </div>
                     <!-- Options -->
                     <ul id="dropdownOptionsDC" class="list-none p-0 m-0">
@@ -257,57 +257,36 @@
 
     </div>
 
-           <div class="form-row">
+ <div class="form-row">
     <div class="form-field">
-           <label for="case-type">Case Type: <span>*</span></label>
-           <div class="relative w-full dark_select">
-               <!-- Custom Dropdown -->
-               <div id="caseTypeDropdownForOrderJudgementDC" class="w-full p-[10px] border border-[#ccc] rounded relative">
-        <div id="caseTypeToggleForOrderJudgementFormDC" 
-                class="cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis" 
-                onclick="toggleCaseTypeDropdownForOrderJudgementDC()">Please Select Case Type</div>
-        <div id="caseTypeMenuForOrderJudgementFormDC" 
-        class="hidden absolute top-full left-0 w-full max-h-60 border border-[#ccc] dark_select overflow-y-auto rounded shadow-lg z-10">
-       <!-- Search Box -->
-       <div class="p-2">
-           <input type="text" id="caseTypeSearchInputForOrderJudgementForm" 
-                  class="w-full p-[10px] border border-[#ccc] rounded" 
-                  placeholder="Search Case Type..." 
-                  onkeyup="filterCaseTypeOptionsForOrderJudgementFormDC()">
-                   </div>
-                   <!-- Options -->
-                   <ul id="caseTypeOptions" class="list-none p-0 m-0">
-                        <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">Please Select Case Type</li>
-                        @if (!empty($caseTypes) && is_array($caseTypes))
-                            @foreach ($caseTypes as $caseType)
-                                <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
-                                    {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
-                                </li>
-                            @endforeach
-                        @else
-                            <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
-                        @endif
-                   </ul>
-               </div>
-           </div>
-           </div>
-       </div>
+        <label for="case-type">Case Type: <span>*</span></label>
+        <div class="relative w-full dark_select">
+            <select id="caseTypeSelectForOrderJudgementFormDC" 
+                    class="w-full p-[10px] border border-[#ccc] rounded" 
+                    onchange="selectCaseTypeOption(this)">
+                <option value="">Please Select Case Type</option>
+            </select>
+            <div id="loadingSpinner" class="hidden absolute inset-0 flex justify-end items-center bg-white bg-opacity-50 rounded-md">
+                <div class="loader mr-8"></div>
+            </div>
+        </div>
+    </div>
               
        <div class="form-field case-field space-y-3.5" style="display: block;">
             <label for="case-no">Case Number: <span>*</span></label>
-            <input type="text" id="case-no" name="case-no" placeholder="Enter Case Number" data-value="C" required>
+            <input type="text" id="case-no-dc" name="case-no" placeholder="Enter Case Number" data-value="C" required>
         </div>
         <div class="form-field case-field space-y-3.5" style="display: block;">
             <label for="case-year">Case Year: <span>*</span></label>
-            <input type="text" id="case-year" name="case-year" placeholder="Enter Case Year" data-value="C" required>
+            <input type="text" id="case-year-dc" name="case-year" placeholder="Enter Case Year" data-value="C" required>
         </div>
         <div class="form-field filling-field space-y-3.5" style="display: none;">
             <label for="filling-no">Filing Number: <span>*</span></label>
-            <input type="text" id="filling-no" name="filling-no" placeholder="Enter Filing Number" data-value="F" required>
+            <input type="text" id="filling-no-dc" name="filling-no" placeholder="Enter Filing Number" data-value="F" required>
         </div>
         <div class="form-field filling-field space-y-3.5" style="display: none;">
             <label for="filling-year">Filing Year: <span>*</span></label>
-            <input type="text" id="filling-year" name="filling-year" placeholder="Enter Filing Year" data-value="F" required>
+            <input type="text" id="filling-year-dc" name="filling-year" placeholder="Enter Filing Year" data-value="F" required>
         </div>
            </div>
            <div class="form-row">
@@ -324,13 +303,29 @@
            </div>
        </div>
        <div class="form-field mt-10">
-           <button type="submit" class="btn btn-search flex items-center justify-center gap-2" onclick="submitJudgementForm(event)" id="searchBtn">
+           <button type="submit" class="btn btn-search flex items-center justify-center gap-2" onclick="submitDCJudgementForm(event)" id="searchBtn">
                <span id="btnText">Search</span>
                <span id="btnSpinner" class=" animate-spin hidden border-2 border-white border-t-transparent rounded-full w-6 h-6"></span>
            </button>
        </div>
            </div>
     </form>
+    <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
+
+            <h3 class="p-3 font-semibold sm:text-xl text-lg -mb-4">Order and Judgement Copy Details (Civil Court) :</h3>
+
+            <!-- Table -->
+            <div class="w-full">
+                <table class="w-full rounded-lg">
+                    <tbody id="orderTableBody">
+                        <!-- dynamically getting data from the api here -->
+                    </tbody>
+                </table>
+            </div>
+    </div>
+    <span id='case_err' class="hidden text-lg text-center flex items-center justify-center bg-slate-100/70 text-rose-500 p-4 rounded-md mb-12 sm:mb-0 "></span>
+
+     <!-- response data of order and judgement copy div end  -->
 
 </div>
 

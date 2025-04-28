@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
-class DcCaseTypeNapixController extends Controller
+class DcGetCaseNapixController extends Controller
 {
-    public function fetchNapixDcCaseType(Request $request)
+    public function fetchCaseDetailsNapixDc(Request $request)
     {
-        $dc_est_code = $request->input('est_code');
+        $requestData = $request->input('request_data');
+        $dc_est_code = $requestData['selectedEstablishment'];
+        $search_type = $requestData['searchType'];
+        $case_type = $requestData['selectedCaseType'];
+        $reg_no = $requestData['caseNo'] ?? '';
+        $reg_year = $requestData['caseYear'] ?? '';
+        $fil_no = $requestData['filingNo'] ?? '';
+        $fil_year = $requestData['filingYear'] ?? '';
     
         // === Static credentials ===
         $dept_id = env('DEPT_ID');
@@ -37,14 +44,27 @@ class DcCaseTypeNapixController extends Controller
         $accessToken = $tokenData['access_token'];
     
         // === Prepare request string ===
-        $input_str = "est_code={$dc_est_code}";
+        if($search_type === "filling"){
+            $input_str = "est_code={$dc_est_code}|case_type={$case_type}|fil_no={$fil_no}|fil_year={$fil_year}";
+        }else{
+            $input_str = "est_code={$dc_est_code}|case_type={$case_type}|reg_no={$reg_no}|reg_year={$reg_year}";
+        }
+
         $request_token = hash_hmac('sha256', $input_str, $hmac_secret);
+
         $encrypted_str = $this->encryptString($input_str, $aes_key, $iv);
         $request_str = urlencode($encrypted_str);
     
         // === Call the API ===
-        $url = "https://delhigw.napix.gov.in/nic/ecourts/dc-casetype-master-api/casetypeMaster?dept_id={$dept_id}&request_str={$request_str}&request_token={$request_token}&version={$version}";
+        if($search_type === "filling"){
+
+            $url = "https://delhigw.napix.gov.in/nic/ecourts/dc-filing-number-api?dept_id={$dept_id}&request_str={$request_str}&request_token={$request_token}&version={$version}";
     
+        }else{
+            $url = "https://delhigw.napix.gov.in/nic/ecourts/dc-case-number-api/caseSearch?dept_id={$dept_id}&request_str={$request_str}&request_token={$request_token}&version={$version}";
+    
+        }
+        
         $response = $this->makeNapixApiCall($url, $accessToken);
 
     
@@ -61,7 +81,6 @@ class DcCaseTypeNapixController extends Controller
     
         $decryptedData = $this->decryptString($responseArray['response_str'], $aes_key, $iv);
         
-    
         return response()->json([
             'status' => true,
             'data' => json_decode($decryptedData, true)

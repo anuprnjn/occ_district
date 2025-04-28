@@ -357,6 +357,13 @@ function toggleCaseTypeDropdownForOrderJudgement() {
     caseTypeMenu.classList.toggle('hidden');
 }
 
+function toggleCaseTypeDropdownForOrderJudgementDC() {
+    const dropdownMenu = document.getElementById('caseTypeMenuForOrderJudgementFormDC');
+    
+    // Toggle the visibility of the dropdown menu
+    dropdownMenu.classList.toggle('hidden');
+}
+
 
 // Filter dropdown options
 function filterCaseTypeOptionsForOrderJudgementForm() {

@@ -106,34 +106,6 @@
         });
     }
 
-    // Function to store the selected establishment code in sessionStorage
-    function saveEstCode(selectElement) {
-        var selectedEstCode = selectElement.value;
-
-        if (selectedEstCode !== '') {
-            sessionStorage.setItem('selectedEstCode', selectedEstCode);
-
-            // Make an AJAX call to Laravel controller
-            fetch('/get-dc-case-type-napix', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ est_code: selectedEstCode })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Case Types Response:', data);  // <-- only console.log the data
-            })
-            .catch(error => {
-                console.error('Error fetching case types:', error);
-            });
-
-        } else {
-            sessionStorage.removeItem('selectedEstCode');
-        }
-    }
    
 </script>
 <!-- {{-- function for captcha  --}} -->
@@ -1024,6 +996,317 @@ function submitJudgementForm(event) {
     window.location.href = '/caseInformation';
   }
 </script> 
+
+<script>
+        // Function to store the selected establishment code in sessionStorage and call napix api to get case type
+    // function saveEstCode(selectElement) {
+    //     var selectedEstCode = selectElement.value;
+
+    //     if (selectedEstCode !== '') {
+    //         sessionStorage.setItem('selectedEstCode', selectedEstCode);
+
+    //         // Make an AJAX call to Laravel controller
+    //         fetch('/get-dc-case-type-napix', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    //             },
+    //             body: JSON.stringify({ est_code: selectedEstCode })
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log('Case Types Response:', data);  // Logs the entire response here
+    //         })
+    //         .catch(error => {
+    //             console.error('Error fetching case types:', error);
+    //         });
+
+    //     } else {
+    //         sessionStorage.removeItem('selectedEstCode');
+    //     }
+    // }
+   
+
+function saveEstCode(selectElement) {
+    var selectedEstCode = selectElement.value;
+
+    if (selectedEstCode !== '') {
+        sessionStorage.setItem('selectedEstCode', selectedEstCode);
+
+        // Show the loading spinner while fetching data
+        document.getElementById('loadingSpinner').classList.remove('hidden');
+
+        // Make an AJAX call to Laravel controller
+        fetch('/get-dc-case-type-napix', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ est_code: selectedEstCode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Case Types Response:', data); // Logs the entire response
+
+            var caseTypes = Object.values(data.data); // Convert object to array
+
+            // Populate the dropdown
+            populateSelectDropdown(caseTypes);
+
+            // Hide loading spinner
+            document.getElementById('loadingSpinner').classList.add('hidden');
+        })
+        .catch(error => {
+            console.error('Error fetching case types:', error);
+
+            // Hide loading spinner if an error occurs
+            document.getElementById('loadingSpinner').classList.add('hidden');
+        });
+
+    } else {
+        sessionStorage.removeItem('selectedEstCode');
+    }
+}
+
+function populateSelectDropdown(caseTypes) {
+    const selectElement = document.getElementById('caseTypeSelectForOrderJudgementFormDC');
+
+    if (!selectElement) {
+        console.error('caseTypeSelectForOrderJudgementFormDC element not found!');
+        return;
+    }
+
+    // Clear existing options
+    selectElement.innerHTML = '<option value="">Please Select Case Type</option>';
+
+    caseTypes.forEach(caseType => {
+        const optionElement = document.createElement('option');
+        optionElement.value = caseType.case_type;
+        optionElement.textContent = `${caseType.type_name}`;
+        selectElement.appendChild(optionElement);
+    });
+
+    // Attach change event listener (to save selected case type in sessionStorage)
+    selectElement.addEventListener('change', function() {
+        const selectedCaseType = this.value;
+        sessionStorage.setItem('selectedCaseTypeDCNapix', selectedCaseType);
+        console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
+    });
+}
+</script>   
+<script>
+function submitDCJudgementForm(e) {
+    e.preventDefault();
+
+    // Step 1: Get the selected values
+    const selectedDistrict = document.getElementById('dropdownToggleDC')?.innerText.trim();
+    const selectedEstablishment = document.getElementById('selectEstaDC')?.value.trim();
+    const selectedCaseType = document.getElementById('caseTypeSelectForOrderJudgementFormDC')?.value.trim();
+    const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
+
+    // Step 2: Validate District, Establishment, CaseType
+    if (!selectedDistrict || selectedDistrict === 'Please Select District') {
+        alert('Please select District.');
+        return;
+    }
+    if (!selectedEstablishment) {
+        alert('Please select Establishment.');
+        return;
+    }
+    if (!selectedCaseType) {
+        alert('Please select Case Type.');
+        return;
+    }
+    if (!selectedRadio) {
+        alert('Please choose Case Number or Filing Number.');
+        return;
+    }
+
+    let caseNo, caseYear, filingNo, filingYear;
+
+    // Step 3: Validate based on selected search type
+    if (selectedRadio.value === "case") {
+        caseNo = document.getElementById('case-no-dc')?.value.trim();
+        caseYear = document.getElementById('case-year-dc')?.value.trim();
+
+        if (!caseNo) {
+            alert("Please enter Case Number.");
+            return;
+        }
+        if (!caseYear) {
+            alert("Please enter Case Year.");
+            return;
+        }
+    } else if (selectedRadio.value === "filling") {
+        filingNo = document.getElementById('filling-no-dc')?.value.trim();
+        filingYear = document.getElementById('filling-year-dc')?.value.trim();
+
+        if (!filingNo) {
+            alert("Please enter Filing Number.");
+            return;
+        }
+        if (!filingYear) {
+            alert("Please enter Filing Year.");
+            return;
+        }
+    }
+
+    // Step 4: Validate CAPTCHA
+    const captcha = document.getElementById('captcha-hc-orderJudgement')?.value.trim();
+    if (!captcha) {
+        alert('Please evaluate the CAPTCHA.');
+        return;
+    }
+
+    // Step 5: CAPTCHA API Validation
+    fetch('/validate-captcha', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ captcha: captcha })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert('CAPTCHA validation failed. Please try again.');
+            refreshCaptchaForOrderJudgement();
+            document.getElementById('captcha-hc-orderJudgement').value = '';
+            return;
+        }
+
+        // Step 6: Prepare request data
+        const requestData = {
+            selectedDistrict,
+            selectedEstablishment,
+            selectedCaseType,
+            searchType: selectedRadio.value,
+        };
+
+        if (selectedRadio.value === "case") {
+            requestData.caseNo = caseNo;
+            requestData.caseYear = caseYear;
+        } else {
+            requestData.filingNo = filingNo;
+            requestData.filingYear = filingYear;
+        }
+
+        // Step 7: Disable Search button and show loading
+        const searchBtn = document.getElementById('searchBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        if (searchBtn && btnText && btnSpinner) {
+            searchBtn.disabled = true;
+            btnText.textContent = " ";
+            btnSpinner.classList.remove("hidden");
+        }
+
+        // console.log(requestData);
+        fetch('/get-dc-case-search-napix', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ request_data: requestData })
+        })
+        .then(response => response.json())
+        .then(data => {
+        //    console.log('case search details',data);
+           btnText.textContent = "Search";
+           btnSpinner.classList.add("hidden");
+           populateTable(data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+    })
+    .catch(error => {
+        console.error('Error validating CAPTCHA:', error);
+    });
+
+    function populateTable(responseData) {
+    const orderDetailsDiv = document.getElementById("orderDetails");
+    const tableBody = document.getElementById("orderTableBody");
+    const caseErrElement = document.getElementById('case_err');
+
+    // Clear previous table data
+    tableBody.innerHTML = '';
+    caseErrElement.classList.add('hidden');
+
+    // Check if data exists
+    if (responseData && responseData.data) {
+        const caseData = responseData.data;
+
+        const applyText = "Apply for Order Copy";  // you can customize this
+        const applyText2 = "Apply for";
+        const buttonAction = "alert('Apply button clicked!')";  // You can customize the onclick
+
+        tableBody.innerHTML += `
+            <tr class="border-b">
+                <td class="p-3 font-bold uppercase">Filing Number</td>
+                <td class="p-3">${caseData.filingno ?? 'N/A'}</td>
+            </tr>
+            <tr class="border-b">
+                <td class="p-3 font-bold uppercase">Case Number</td>
+                <td class="p-3">${caseData.caseno ?? 'N/A'}</td>
+            </tr>
+            <tr class="border-b">
+                <td class="p-3 font-bold uppercase">CIN Number</td>
+                <td class="p-3">${caseData.cino ?? 'N/A'}</td>
+            </tr>
+            <tr class="border-b">
+                <td class="p-3 font-bold uppercase">Petitioner Name</td>
+                <td class="p-3">${caseData.pet_name ?? 'N/A'}</td>
+            </tr>
+            <tr class="border-b">
+                <td class="p-3 font-bold uppercase">Respondent Name</td>
+                <td class="p-3">${caseData.res_name ?? 'N/A'}</td>
+            </tr>
+            <tr class="border-b">
+                <td class="p-3 font-bold uppercase">Case Status</td>
+                <td class="p-3">${caseData.casestatus ?? 'N/A'}</td>
+            </tr>
+            <tr>
+                <td class="p-3 font-bold uppercase">${applyText2}</td>
+                <td class="p-3">
+                    <button onclick="${buttonAction}" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
+                        ${applyText}
+                    </button>
+                </td>
+            </tr>
+        `;
+
+        // Show the order details div
+        orderDetailsDiv.classList.remove("hidden");
+    } else {
+        // If no case data found
+        caseErrElement.classList.remove('hidden');
+        caseErrElement.innerHTML = 'No Cases found !!!';
+    }
+
+    resetButton();
+}
+function resetButton() {
+    const searchBtn = document.getElementById('searchBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    if (searchBtn && btnText && btnSpinner) {
+        searchBtn.disabled = false;
+        btnText.textContent = "Search";
+        btnSpinner.classList.add("hidden");
+    }
+}
+}
+</script>
+
 
 
 @endpush
