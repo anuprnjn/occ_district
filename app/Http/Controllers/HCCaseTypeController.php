@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Mews\Captcha\Facades\Captcha;
 use Gregwar\Captcha\CaptchaBuilder;
 use Illuminate\Support\Facades\Session;
+use App\Helpers\Utility;
 
 class HCCaseTypeController extends Controller
 {
@@ -17,9 +18,10 @@ class HCCaseTypeController extends Controller
             Session::start();
         }
     
-        // Fetch case types
-        $caseTypeResponse = Http::get(config('app.api.hc_base_url') . '/high_court_case_type.php');
-        $caseTypes = $caseTypeResponse->successful() ? $caseTypeResponse->json() : [];
+        $caseTypes = $this->fetchNapixHcCaseType();
+        // Fallback to empty array if failed
+        $caseTypes = $caseTypes ?? [];
+
     
         // Generate a simple math equation
         $num1 = rand(1, 9);
@@ -73,6 +75,68 @@ class HCCaseTypeController extends Controller
     
         // Return base64-encoded image
         return 'data:image/png;base64,' . base64_encode($imageData);
+    }
+
+
+
+    public function fetchNapixHcCaseType()
+    {
+        $hc_est_code = env('HC_EST_CODE');
+    
+        // === Static credentials ===
+        $dept_id = env('DEPT_ID');
+        $version = env('VERSION');
+        $hmac_secret = env('NAPIX_HMAC_SECRET');
+        $aes_key = env('NAPIX_AES_KEY');
+        $iv = env('NAPIX_AES_IV');
+    
+        // === Generate access token ===
+        $apikey = env('NAPIX_API_KEY');
+        $secret_key = env('NAPIX_SECRET_KEY');
+        $basicAuth = base64_encode($apikey . ':' . $secret_key);
+    
+        $tokenResponse = Utility::getNapixAccessToken($basicAuth);
+        $tokenData = json_decode($tokenResponse, true);
+    
+        if (!isset($tokenData['access_token'])) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to fetch access token',
+                'data' => $tokenData
+            ], 500);
+        }
+    
+        $accessToken = $tokenData['access_token'];
+    
+        // === Prepare request string ===
+        $input_str = "est_code={$hc_est_code}";
+        $request_token = hash_hmac('sha256', $input_str, $hmac_secret);
+        $encrypted_str = Utility::encryptString($input_str, $aes_key, $iv);
+        $request_str = urlencode($encrypted_str);
+    
+        // === Call the API ===
+        $url = "https://delhigw.napix.gov.in/nic/ecourts/hc-case-type-master-api/casetypemaster?dept_id={$dept_id}&request_str={$request_str}&request_token={$request_token}&version={$version}";
+    
+        $response = Utility::makeNapixApiCall($url, $accessToken);
+        $responseArray = json_decode($response, true);
+    
+        if (!isset($responseArray['response_str'])) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid response from NAPIX API',
+                'data' => $responseArray
+            ], 500);
+        }
+    
+        $decryptedData = Utility::decryptString($responseArray['response_str'], $aes_key, $iv);
+        
+        $parsedData = json_decode($decryptedData, true);
+
+        if (!is_array($parsedData)) {
+            return [];
+        }
+        
+        return array_values($parsedData); 
     }
  
 }

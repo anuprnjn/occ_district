@@ -154,43 +154,184 @@
         <!--begin::Sidebar Wrapper-->
         <div class="sidebar-wrapper">
           <nav class="mt-2">
-  <!--begin::Sidebar Menu-->
-  <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
-
-    <li class="nav-item">
-      <a href="{{ route('index') }}" class="nav-link">
-        <i class="nav-icon bi bi-speedometer"></i>
-        <p>Dashboard </p>
-      </a>
-    </li>
-
-    @foreach($menus as $menu)
-      @if(count($menu['submenus']) > 0)
-        <li class="nav-item"> 
-          <a href="#" class="nav-link">
-            <i class="nav-icon {{ $menu['menu_icon'] }}"></i>
-            <p>
-              {{ $menu['menu_name'] }}
-              <i class="nav-arrow bi bi-chevron-right"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            @foreach($menu['submenus'] as $submenu)
+            <!--begin::Sidebar Menu-->
+            <ul
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="menu"
+              data-accordion="false"
+            >
+              
               <li class="nav-item">
-                <a href="{{ url($submenu->url) }}" class="nav-link">
-                  <i class="nav-icon bi bi-circle"></i>
-                  <p>{{ $submenu->name }}</p>
+                <a href="{{ route('index') }}" class="nav-link">
+                  <i class="nav-icon bi bi-speedometer"></i>
+                  <p>Dashboard</p>
                 </a>
               </li>
-            @endforeach
-          </ul>
-        </li>
-      @endif
-    @endforeach
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-box-seam-fill"></i>
+                  <p>
+                    Master Data  
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('menu_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Main Menu</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('submenu_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Sub Menu</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('payment_parameter_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Hc Payment Parameter</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('payment_parameter_list_dc') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>DC Payment Parameter</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-person-circle"></i>
+                  <p>
+                    User And Permission
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('role_list') }}" class="nav-link active">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Role And Permission</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('hc_user_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Highcourt User</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('dc_user_list') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>District Court User</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              @if(session('user.caseType') === 'HC')
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link" >
+                  <i class="nav-icon bi bi-bank"></i>
+                  <p>
+                    Highcourt Order And Judgment Copy 
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('hc_web_application_list') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>New Application </p>
+                    </a>
+                  </li>
+                  
+                </ul>
+              </li>
 
-  </ul>
-  <!--end::Sidebar Menu-->
-</nav>
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link" >
+                  <i class="nav-icon bi bi-columns"></i>
+                  <p>
+                    Highcourt Other Copy
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  
+                  <li class="nav-item">
+                    <a href="{{ route('hc_other_copy') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>New Application</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('hc_other_copy_rejected_application') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Rejected Application</p>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a href="{{ route('hc_other_copy_paid_application') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Paid Application</p>
+                    </a>
+                  </li>
+                 
+                </ul>
+                <li class="nav-item">
+                    <a href="{{ route('digital_signature') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Digital Signature</p>
+                    </a>
+                  </li>
+                </li>
+              @endif
+              @if(session('user.caseType') === 'DC')
+              <li class="nav-item">
+                <a href="#" class="nav-link" >
+                  <i class="nav-icon bi bi-pc-display-horizontal"></i>
+                  <p>
+                    District Court Request
+                    <!--<span class="nav-badge badge text-bg-secondary me-3">6</span>-->
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="{{ route('dc_other_copy') }}" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>New Application</p>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a href="{{ route('dc_other_copy_rejected_application') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Rejected Application</p>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a href="{{ route('dc_other_copy_paid_application') }}" class="nav-link" >
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Paid Application</p>
+                    </a>
+                  </li>
+
+                </ul>
+              </li>
+              @endif
+
+              
+            </ul>
+            <!--end::Sidebar Menu-->
+          </nav>
         </div>
         <!--end::Sidebar Wrapper-->
       </aside>

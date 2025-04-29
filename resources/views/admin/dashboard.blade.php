@@ -4,476 +4,451 @@
 
 @section('content')
 
-  <!--begin::App Main-->
-  <main class="app-main">
-    <!--begin::App Content Header-->
-    <div class="app-content-header">
-      <!--begin::Container-->
-      <div class="container-fluid">
-        <!--begin::Row-->
-        <div class="row">
-          <div class="col-sm-6"><h3 class="mb-0">General Form</h3></div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">General Form</li>
-            </ol>
+   <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
+        <div class="app-content-header">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">Dashboard</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                </ol>
+              </div>
+            </div>
+            <!--end::Row-->
           </div>
+          <!--end::Container-->
         </div>
-        <!--end::Row-->
-      </div>
-      <!--end::Container-->
-    </div>
-    <!--end::App Content Header-->
-    <!--begin::App Content-->
-    <div class="app-content">
-      <!--begin::Container-->
-      <div class="container-fluid">
-        <!--begin::Row-->
-        <div class="row g-4">
-          <!--begin::Col-->
-          <div class="col-12">
-            <div class="callout callout-info">
-              For detailed documentation of Form visit
-              <a
-                href="https://getbootstrap.com/docs/5.3/forms/overview/"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="callout-link"
-              >
-                Bootstrap Form
-              </a>
-            </div>
-          </div>
-          <!--end::Col-->
-          <!--begin::Col-->
-          <div class="col-md-6">
-            <!--begin::Quick Example-->
-            <div class="card card-primary card-outline mb-4">
-              <!--begin::Header-->
-              <div class="card-header"><div class="card-title">Quick Example</div></div>
-              <!--end::Header-->
-              <!--begin::Form-->
-              <form>
-                <!--begin::Body-->
-                <div class="card-body">
-                  <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Email address</label>
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="exampleInputEmail1"
-                      aria-describedby="emailHelp"
-                    />
-                    <div id="emailHelp" class="form-text">
-                      We'll never share your email with anyone else.
-                    </div>
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
+        <div class="app-content">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <!--begin::Col-->
+              <div class="col-lg-3 col-6">
+                <!--begin::Small Box Widget 1-->
+                <div class="small-box text-bg-primary">
+                  <div class="inner">
+                    <h3>150</h3>
+                    <p>New Orders</p>
                   </div>
-                  <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" />
-                  </div>
-                  <div class="input-group mb-3">
-                    <input type="file" class="form-control" id="inputGroupFile02" />
-                    <label class="input-group-text" for="inputGroupFile02">Upload</label>
-                  </div>
-                  <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
                 </div>
-                <!--end::Body-->
-                <!--begin::Footer-->
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-                <!--end::Footer-->
-              </form>
-              <!--end::Form-->
-            </div>
-            <!--end::Quick Example-->
-            <!--begin::Input Group-->
-            <div class="card card-success card-outline mb-4">
-              <!--begin::Header-->
-              <div class="card-header"><div class="card-title">Input Group</div></div>
-              <!--end::Header-->
-              <!--begin::Body-->
-              <div class="card-body">
-                <div class="input-group mb-3">
-                  <span class="input-group-text" id="basic-addon1">@</span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Username"
-                    aria-label="Username"
-                    aria-describedby="basic-addon1"
-                  />
-                </div>
-                <div class="input-group mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Recipient's username"
-                    aria-label="Recipient's username"
-                    aria-describedby="basic-addon2"
-                  />
-                  <span class="input-group-text" id="basic-addon2">@example.com</span>
-                </div>
-                <div class="mb-3">
-                  <label for="basic-url" class="form-label">Your vanity URL</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="basic-addon3"
-                      >https://example.com/users/</span
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="basic-url"
-                      aria-describedby="basic-addon3 basic-addon4"
-                    />
-                  </div>
-                  <div class="form-text" id="basic-addon4">
-                    Example help text goes outside the input group.
-                  </div>
-                </div>
-                <div class="input-group mb-3">
-                  <span class="input-group-text">$</span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    aria-label="Amount (to the nearest dollar)"
-                  />
-                  <span class="input-group-text">.00</span>
-                </div>
-                <div class="input-group mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Username"
-                    aria-label="Username"
-                  />
-                  <span class="input-group-text">@</span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Server"
-                    aria-label="Server"
-                  />
-                </div>
-                <div class="input-group">
-                  <span class="input-group-text">With textarea</span>
-                  <textarea class="form-control" aria-label="With textarea"></textarea>
-                </div>
+                <!--end::Small Box Widget 1-->
               </div>
-              <!--end::Body-->
-              <!--begin::Footer-->
-              <div class="card-footer">
-                <button type="submit" class="btn btn-success">Submit</button>
+              <!--end::Col-->
+              <div class="col-lg-3 col-6">
+                <!--begin::Small Box Widget 2-->
+                <div class="small-box text-bg-success">
+                  <div class="inner">
+                    <h3>53<sup class="fs-5">%</sup></h3>
+                    <p>Bounce Rate</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+                <!--end::Small Box Widget 2-->
               </div>
-              <!--end::Footer-->
+              <!--end::Col-->
+              <div class="col-lg-3 col-6">
+                <!--begin::Small Box Widget 3-->
+                <div class="small-box text-bg-warning">
+                  <div class="inner">
+                    <h3>44</h3>
+                    <p>User Registrations</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+                <!--end::Small Box Widget 3-->
+              </div>
+              <!--end::Col-->
+              <div class="col-lg-3 col-6">
+                <!--begin::Small Box Widget 4-->
+                <div class="small-box text-bg-danger">
+                  <div class="inner">
+                    <h3>65</h3>
+                    <p>Unique Visitors</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      clip-rule="evenodd"
+                      fill-rule="evenodd"
+                      d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z"
+                    ></path>
+                    <path
+                      clip-rule="evenodd"
+                      fill-rule="evenodd"
+                      d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+                <!--end::Small Box Widget 4-->
+              </div>
+              <!--end::Col-->
             </div>
-            <!--end::Input Group-->
-            <!--begin::Horizontal Form-->
-            <div class="card card-warning card-outline mb-4">
-              <!--begin::Header-->
-              <div class="card-header"><div class="card-title">Horizontal Form</div></div>
-              <!--end::Header-->
-              <!--begin::Form-->
-              <form>
-                <!--begin::Body-->
-                <div class="card-body">
-                  <div class="row mb-3">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-10">
-                      <input type="email" class="form-control" id="inputEmail3" />
+            <!--end::Row-->
+            <!--begin::Row-->
+            <div class="row">
+              <!-- Start col -->
+              <div class="col-lg-7 connectedSortable">
+                <div class="card mb-4">
+                  <div class="card-header"><h3 class="card-title">Sales Value</h3></div>
+                  <div class="card-body"><div id="revenue-chart"></div></div>
+                </div>
+                <!-- /.card -->
+                <!-- DIRECT CHAT -->
+                <div class="card direct-chat direct-chat-primary mb-4">
+                  <div class="card-header">
+                    <h3 class="card-title">Direct Chat</h3>
+                    <div class="card-tools">
+                      <span title="3 New Messages" class="badge text-bg-primary"> 3 </span>
+                      <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                        <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                        <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-tool"
+                        title="Contacts"
+                        data-lte-toggle="chat-pane"
+                      >
+                        <i class="bi bi-chat-text-fill"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
                     </div>
                   </div>
-                  <div class="row mb-3">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
-                    <div class="col-sm-10">
-                      <input type="password" class="form-control" id="inputPassword3" />
-                    </div>
-                  </div>
-                  <fieldset class="row mb-3">
-                    <legend class="col-form-label col-sm-2 pt-0">Radios</legend>
-                    <div class="col-sm-10">
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gridRadios"
-                          id="gridRadios1"
-                          value="option1"
-                          checked
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <!-- Conversations are loaded here -->
+                    <div class="direct-chat-messages">
+                      <!-- Message. Default to the start -->
+                      <div class="direct-chat-msg">
+                        <div class="direct-chat-infos clearfix">
+                          <span class="direct-chat-name float-start"> Alexander Pierce </span>
+                          <span class="direct-chat-timestamp float-end"> 23 Jan 2:00 pm </span>
+                        </div>
+                        <!-- /.direct-chat-infos -->
+                        <img
+                          class="direct-chat-img"
+                          src="../../dist/assets/img/user1-128x128.jpg"
+                          alt="message user image"
                         />
-                        <label class="form-check-label" for="gridRadios1"> First radio </label>
+                        <!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">
+                          Is this template really for free? That's unbelievable!
+                        </div>
+                        <!-- /.direct-chat-text -->
                       </div>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gridRadios"
-                          id="gridRadios2"
-                          value="option2"
+                      <!-- /.direct-chat-msg -->
+                      <!-- Message to the end -->
+                      <div class="direct-chat-msg end">
+                        <div class="direct-chat-infos clearfix">
+                          <span class="direct-chat-name float-end"> Sarah Bullock </span>
+                          <span class="direct-chat-timestamp float-start"> 23 Jan 2:05 pm </span>
+                        </div>
+                        <!-- /.direct-chat-infos -->
+                        <img
+                          class="direct-chat-img"
+                          src="../../dist/assets/img/user3-128x128.jpg"
+                          alt="message user image"
                         />
-                        <label class="form-check-label" for="gridRadios2"> Second radio </label>
+                        <!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">You better believe it!</div>
+                        <!-- /.direct-chat-text -->
                       </div>
-                      <div class="form-check disabled">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gridRadios"
-                          id="gridRadios3"
-                          value="option3"
-                          disabled
+                      <!-- /.direct-chat-msg -->
+                      <!-- Message. Default to the start -->
+                      <div class="direct-chat-msg">
+                        <div class="direct-chat-infos clearfix">
+                          <span class="direct-chat-name float-start"> Alexander Pierce </span>
+                          <span class="direct-chat-timestamp float-end"> 23 Jan 5:37 pm </span>
+                        </div>
+                        <!-- /.direct-chat-infos -->
+                        <img
+                          class="direct-chat-img"
+                          src="../../dist/assets/img/user1-128x128.jpg"
+                          alt="message user image"
                         />
-                        <label class="form-check-label" for="gridRadios3">
-                          Third disabled radio
-                        </label>
+                        <!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">
+                          Working with AdminLTE on a great new app! Wanna join?
+                        </div>
+                        <!-- /.direct-chat-text -->
                       </div>
-                    </div>
-                  </fieldset>
-                  <div class="row mb-3">
-                    <div class="col-sm-10 offset-sm-2">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="gridCheck1" />
-                        <label class="form-check-label" for="gridCheck1">
-                          Example checkbox
-                        </label>
+                      <!-- /.direct-chat-msg -->
+                      <!-- Message to the end -->
+                      <div class="direct-chat-msg end">
+                        <div class="direct-chat-infos clearfix">
+                          <span class="direct-chat-name float-end"> Sarah Bullock </span>
+                          <span class="direct-chat-timestamp float-start"> 23 Jan 6:10 pm </span>
+                        </div>
+                        <!-- /.direct-chat-infos -->
+                        <img
+                          class="direct-chat-img"
+                          src="../../dist/assets/img/user3-128x128.jpg"
+                          alt="message user image"
+                        />
+                        <!-- /.direct-chat-img -->
+                        <div class="direct-chat-text">I would love to.</div>
+                        <!-- /.direct-chat-text -->
                       </div>
+                      <!-- /.direct-chat-msg -->
                     </div>
-                  </div>
-                </div>
-                <!--end::Body-->
-                <!--begin::Footer-->
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-warning">Sign in</button>
-                  <button type="submit" class="btn float-end">Cancel</button>
-                </div>
-                <!--end::Footer-->
-              </form>
-              <!--end::Form-->
-            </div>
-            <!--end::Horizontal Form-->
-          </div>
-          <!--end::Col-->
-          <!--begin::Col-->
-          <div class="col-md-6">
-            <!--begin::Different Height-->
-            <div class="card card-secondary card-outline mb-4">
-              <!--begin::Header-->
-              <div class="card-header"><div class="card-title">Different Height</div></div>
-              <!--end::Header-->
-              <!--begin::Body-->
-              <div class="card-body">
-                <input
-                  class="form-control form-control-lg"
-                  type="text"
-                  placeholder=".form-control-lg"
-                  aria-label=".form-control-lg example"
-                />
-                <br />
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="Default input"
-                  aria-label="default input example"
-                />
-                <br />
-                <input
-                  class="form-control form-control-sm"
-                  type="text"
-                  placeholder=".form-control-sm"
-                  aria-label=".form-control-sm example"
-                />
-              </div>
-              <!--end::Body-->
-            </div>
-            <!--end::Different Height-->
-            <!--begin::Different Width-->
-            <div class="card card-danger card-outline mb-4">
-              <!--begin::Header-->
-              <div class="card-header"><div class="card-title">Different Width</div></div>
-              <!--end::Header-->
-              <!--begin::Body-->
-              <div class="card-body">
-                <!--begin::Row-->
-                <div class="row">
-                  <!--begin::Col-->
-                  <div class="col-3">
-                    <input type="text" class="form-control" placeholder=".col-3" />
-                  </div>
-                  <!--end::Col-->
-                  <!--begin::Col-->
-                  <div class="col-4">
-                    <input type="text" class="form-control" placeholder=".col-4" />
-                  </div>
-                  <!--end::Col-->
-                  <!--begin::Col-->
-                  <div class="col-5">
-                    <input type="text" class="form-control" placeholder=".col-5" />
-                  </div>
-                  <!--end::Col-->
-                </div>
-                <!--end::Row-->
-              </div>
-              <!--end::Body-->
-            </div>
-            <!--end::Different Width-->
-            <!--begin::Form Validation-->
-            <div class="card card-info card-outline mb-4">
-              <!--begin::Header-->
-              <div class="card-header"><div class="card-title">Form Validation</div></div>
-              <!--end::Header-->
-              <!--begin::Form-->
-              <form class="needs-validation" novalidate>
-                <!--begin::Body-->
-                <div class="card-body">
-                  <!--begin::Row-->
-                  <div class="row g-3">
-                    <!--begin::Col-->
-                    <div class="col-md-6">
-                      <label for="validationCustom01" class="form-label">First name</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="validationCustom01"
-                        value="Mark"
-                        required
-                      />
-                      <div class="valid-feedback">Looks good!</div>
+                    <!-- /.direct-chat-messages-->
+                    <!-- Contacts are loaded here -->
+                    <div class="direct-chat-contacts">
+                      <ul class="contacts-list">
+                        <li>
+                          <a href="#">
+                            <img
+                              class="contacts-list-img"
+                              src="../../dist/assets/img/user1-128x128.jpg"
+                              alt="User Avatar"
+                            />
+                            <div class="contacts-list-info">
+                              <span class="contacts-list-name">
+                                Count Dracula
+                                <small class="contacts-list-date float-end"> 2/28/2023 </small>
+                              </span>
+                              <span class="contacts-list-msg"> How have you been? I was... </span>
+                            </div>
+                            <!-- /.contacts-list-info -->
+                          </a>
+                        </li>
+                        <!-- End Contact Item -->
+                        <li>
+                          <a href="#">
+                            <img
+                              class="contacts-list-img"
+                              src="../../dist/assets/img/user7-128x128.jpg"
+                              alt="User Avatar"
+                            />
+                            <div class="contacts-list-info">
+                              <span class="contacts-list-name">
+                                Sarah Doe
+                                <small class="contacts-list-date float-end"> 2/23/2023 </small>
+                              </span>
+                              <span class="contacts-list-msg"> I will be waiting for... </span>
+                            </div>
+                            <!-- /.contacts-list-info -->
+                          </a>
+                        </li>
+                        <!-- End Contact Item -->
+                        <li>
+                          <a href="#">
+                            <img
+                              class="contacts-list-img"
+                              src="../../dist/assets/img/user3-128x128.jpg"
+                              alt="User Avatar"
+                            />
+                            <div class="contacts-list-info">
+                              <span class="contacts-list-name">
+                                Nadia Jolie
+                                <small class="contacts-list-date float-end"> 2/20/2023 </small>
+                              </span>
+                              <span class="contacts-list-msg"> I'll call you back at... </span>
+                            </div>
+                            <!-- /.contacts-list-info -->
+                          </a>
+                        </li>
+                        <!-- End Contact Item -->
+                        <li>
+                          <a href="#">
+                            <img
+                              class="contacts-list-img"
+                              src="../../dist/assets/img/user5-128x128.jpg"
+                              alt="User Avatar"
+                            />
+                            <div class="contacts-list-info">
+                              <span class="contacts-list-name">
+                                Nora S. Vans
+                                <small class="contacts-list-date float-end"> 2/10/2023 </small>
+                              </span>
+                              <span class="contacts-list-msg"> Where is your new... </span>
+                            </div>
+                            <!-- /.contacts-list-info -->
+                          </a>
+                        </li>
+                        <!-- End Contact Item -->
+                        <li>
+                          <a href="#">
+                            <img
+                              class="contacts-list-img"
+                              src="../../dist/assets/img/user6-128x128.jpg"
+                              alt="User Avatar"
+                            />
+                            <div class="contacts-list-info">
+                              <span class="contacts-list-name">
+                                John K.
+                                <small class="contacts-list-date float-end"> 1/27/2023 </small>
+                              </span>
+                              <span class="contacts-list-msg"> Can I take a look at... </span>
+                            </div>
+                            <!-- /.contacts-list-info -->
+                          </a>
+                        </li>
+                        <!-- End Contact Item -->
+                        <li>
+                          <a href="#">
+                            <img
+                              class="contacts-list-img"
+                              src="../../dist/assets/img/user8-128x128.jpg"
+                              alt="User Avatar"
+                            />
+                            <div class="contacts-list-info">
+                              <span class="contacts-list-name">
+                                Kenneth M.
+                                <small class="contacts-list-date float-end"> 1/4/2023 </small>
+                              </span>
+                              <span class="contacts-list-msg"> Never mind I found... </span>
+                            </div>
+                            <!-- /.contacts-list-info -->
+                          </a>
+                        </li>
+                        <!-- End Contact Item -->
+                      </ul>
+                      <!-- /.contacts-list -->
                     </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-md-6">
-                      <label for="validationCustom02" class="form-label">Last name</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="validationCustom02"
-                        value="Otto"
-                        required
-                      />
-                      <div class="valid-feedback">Looks good!</div>
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-md-6">
-                      <label for="validationCustomUsername" class="form-label">Username</label>
-                      <div class="input-group has-validation">
-                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                    <!-- /.direct-chat-pane -->
+                  </div>
+                  <!-- /.card-body -->
+                  <div class="card-footer">
+                    <form action="#" method="post">
+                      <div class="input-group">
                         <input
                           type="text"
+                          name="message"
+                          placeholder="Type Message ..."
                           class="form-control"
-                          id="validationCustomUsername"
-                          aria-describedby="inputGroupPrepend"
-                          required
                         />
-                        <div class="invalid-feedback">Please choose a username.</div>
+                        <span class="input-group-append">
+                          <button type="button" class="btn btn-primary">Send</button>
+                        </span>
                       </div>
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-md-6">
-                      <label for="validationCustom03" class="form-label">City</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="validationCustom03"
-                        required
-                      />
-                      <div class="invalid-feedback">Please provide a valid city.</div>
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-md-6">
-                      <label for="validationCustom04" class="form-label">State</label>
-                      <select class="form-select" id="validationCustom04" required>
-                        <option selected disabled value="">Choose...</option>
-                        <option>...</option>
-                      </select>
-                      <div class="invalid-feedback">Please select a valid state.</div>
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-md-6">
-                      <label for="validationCustom05" class="form-label">Zip</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="validationCustom05"
-                        required
-                      />
-                      <div class="invalid-feedback">Please provide a valid zip.</div>
-                    </div>
-                    <!--end::Col-->
-                    <!--begin::Col-->
-                    <div class="col-12">
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="invalidCheck"
-                          required
-                        />
-                        <label class="form-check-label" for="invalidCheck">
-                          Agree to terms and conditions
-                        </label>
-                        <div class="invalid-feedback">You must agree before submitting.</div>
-                      </div>
-                    </div>
-                    <!--end::Col-->
+                    </form>
                   </div>
-                  <!--end::Row-->
+                  <!-- /.card-footer-->
                 </div>
-                <!--end::Body-->
-                <!--begin::Footer-->
-                <div class="card-footer">
-                  <button class="btn btn-info" type="submit">Submit form</button>
+                <!-- /.direct-chat -->
+              </div>
+              <!-- /.Start col -->
+              <!-- Start col -->
+              <div class="col-lg-5 connectedSortable">
+                <div class="card text-white bg-primary bg-gradient border-primary mb-4">
+                  <div class="card-header border-0">
+                    <h3 class="card-title">Sales Value</h3>
+                    <div class="card-tools">
+                      <button
+                        type="button"
+                        class="btn btn-primary btn-sm"
+                        data-lte-toggle="card-collapse"
+                      >
+                        <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                        <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body"><div id="world-map" style="height: 220px"></div></div>
+                  <div class="card-footer border-0">
+                    <!--begin::Row-->
+                    <div class="row">
+                      <div class="col-4 text-center">
+                        <div id="sparkline-1" class="text-dark"></div>
+                        <div class="text-white">Visitors</div>
+                      </div>
+                      <div class="col-4 text-center">
+                        <div id="sparkline-2" class="text-dark"></div>
+                        <div class="text-white">Online</div>
+                      </div>
+                      <div class="col-4 text-center">
+                        <div id="sparkline-3" class="text-dark"></div>
+                        <div class="text-white">Sales</div>
+                      </div>
+                    </div>
+                    <!--end::Row-->
+                  </div>
                 </div>
-                <!--end::Footer-->
-              </form>
-              <!--end::Form-->
-              <!--begin::JavaScript-->
-              <script>
-                // Example starter JavaScript for disabling form submissions if there are invalid fields
-                (() => {
-                  'use strict';
-
-                  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                  const forms = document.querySelectorAll('.needs-validation');
-
-                  // Loop over them and prevent submission
-                  Array.from(forms).forEach((form) => {
-                    form.addEventListener(
-                      'submit',
-                      (event) => {
-                        if (!form.checkValidity()) {
-                          event.preventDefault();
-                          event.stopPropagation();
-                        }
-
-                        form.classList.add('was-validated');
-                      },
-                      false,
-                    );
-                  });
-                })();
-              </script>
-              <!--end::JavaScript-->
+              </div>
+              <!-- /.Start col -->
             </div>
-            <!--end::Form Validation-->
+            <!-- /.row (main row) -->
           </div>
-          <!--end::Col-->
+          <!--end::Container-->
         </div>
-        <!--end::Row-->
-      </div>
-      <!--end::Container-->
-    </div>
-    <!--end::App Content-->
-  </main>
-  <!--end::App Main-->
+        <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
+
+
+
   @push('scripts')
   <script>
     $(document).ready(function () { 
