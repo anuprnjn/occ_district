@@ -28,9 +28,13 @@ class MenuController extends Controller
     {
         $validated = $request->validate([
             'menu_name' => 'required|string|max:255',
+            'menu_icon' => 'required|string|max:255'
         ]);
 
-        $data = ['menu_name' => $validated['menu_name']];
+        $data = [
+            'menu_name' => $validated['menu_name'],
+            'menu_icon' => $validated['menu_icon']
+          ];
 
         try {
             $response = Http::post(config('app.api.admin_url') . '/add_menu.php', $data);
@@ -50,11 +54,13 @@ class MenuController extends Controller
         $validated = $request->validate([
             'menu_id' => 'required|integer',
             'menu_name' => 'required|string|max:255',
+            'menu_icon' => 'required|string|max:255'
         ]);
 
         $data = [
             'menu_id' => $validated['menu_id'],
             'menu_name' => $validated['menu_name'],
+            'menu_icon' => $validated['menu_icon']
         ];
 
         try {
