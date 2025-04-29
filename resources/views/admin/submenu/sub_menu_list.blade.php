@@ -56,7 +56,7 @@ use Illuminate\Support\Facades\Crypt;
                     <div class="card card-primary card-outline mb-4">
                         <div class="card-header"><div class="card-title">Sub Menu List</div></div>
                         <div class="card-body">
-                            <table id="submenuTable" class="table table-bordered">
+                            <table id="submenuTablee" class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>#</th>

@@ -48,6 +48,10 @@
                                     <label for="menu_name" class="form-label">Menu Name</label>
                                     <input type="text" class="form-control" id="menu_name" placeholder="Enter Menu Name" name="menu_name" required>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="menu_icon" class="form-label">Menu Icon</label>
+                                    <input type="text" class="form-control" id="menu_icon" placeholder="Enter Menu Icon" name="menu_icon" required>
+                                </div>
                                 <button type="submit" class="btn btn-primary">Add Menu</button>
                             </form>
                         </div>
@@ -64,6 +68,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Menu Name</th>
+                                        <th>Menu Icon</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -72,6 +77,7 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $menu['menu_name'] }}</td>
+                                            <td>{{ $menu['menu_icon'] }}</td>
                                             <td>
                                                 <button class="btn btn-warning btn-sm" onclick="editMenu({{ $menu['menu_id'] }}, '{{ $menu['menu_name'] }}')">Edit</button>
                                             </td>
@@ -107,6 +113,10 @@
                         <label for="edit_menu_name" class="form-label">Menu Name</label>
                         <input type="text" class="form-control" id="edit_menu_name" name="menu_name" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="edit_menu_icon" class="form-label">Menu Icon</label>
+                        <input type="text" class="form-control" id="edit_menu_icon" name="menu_icon" required>
+                    </div>
                     <button type="submit" class="btn btn-primary">Update Menu</button>
                 </form>
             </div>
@@ -123,9 +133,10 @@
         $('#menuTable').DataTable(); // Initialize DataTables
     });
 
-    function editMenu(id, name) {
+    function editMenu(id, name,menu_icon) {
         $('#edit_menu_id').val(id);
         $('#edit_menu_name').val(name);
+         $('#edit_menu_icon').val(menu_icon);
         $('#editMenuModal').modal('show');
     }
 </script>
