@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Helpers\Utility;
 
 class DcGetCaseNapixController extends Controller
 {
@@ -30,7 +31,7 @@ class DcGetCaseNapixController extends Controller
         $secret_key = env('NAPIX_SECRET_KEY');
         $basicAuth = base64_encode($apikey . ':' . $secret_key);
     
-        $tokenResponse = $this->getNapixAccessToken($basicAuth);
+        $tokenResponse = Utility::getNapixAccessToken($basicAuth);
         $tokenData = json_decode($tokenResponse, true);
     
         if (!isset($tokenData['access_token'])) {
@@ -52,7 +53,7 @@ class DcGetCaseNapixController extends Controller
 
         $request_token = hash_hmac('sha256', $input_str, $hmac_secret);
 
-        $encrypted_str = $this->encryptString($input_str, $aes_key, $iv);
+        $encrypted_str = Utility::encryptString($input_str, $aes_key, $iv);
         $request_str = urlencode($encrypted_str);
     
         // === Call the API ===
@@ -65,7 +66,7 @@ class DcGetCaseNapixController extends Controller
     
         }
         
-        $response = $this->makeNapixApiCall($url, $accessToken);
+        $response = Utility::makeNapixApiCall($url, $accessToken);
 
     
         $responseArray = json_decode($response, true);
@@ -79,7 +80,7 @@ class DcGetCaseNapixController extends Controller
             ], 500);
         }
     
-        $decryptedData = $this->decryptString($responseArray['response_str'], $aes_key, $iv);
+        $decryptedData = Utility::decryptString($responseArray['response_str'], $aes_key, $iv);
         
         return response()->json([
             'status' => true,
@@ -87,56 +88,4 @@ class DcGetCaseNapixController extends Controller
         ]);
     }
     
-    private function getNapixAccessToken($basicAuth)
-    {
-        $url = env('NAPIX_TOKEN_URL');
-        $postFields = "grant_type=client_credentials&scope=napix";
-    
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $postFields,
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Basic {$basicAuth}",
-                "Content-Type: application/x-www-form-urlencoded"
-            ],
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false,
-        ]);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        return $response;
-    }
-    
-    private function makeNapixApiCall($url, $accessToken)
-    {
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer {$accessToken}",
-            ],
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false,
-        ]);
-        $response = curl_exec($ch);
-        curl_close($ch);
-    
-        return $response;
-    }
-    
-    private function encryptString($string, $key, $iv)
-    {
-        $encrypted = openssl_encrypt($string, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
-        return base64_encode($encrypted);
-    }
-    
-    private function decryptString($encrypted_base64, $key, $iv)
-    {
-        $encryptedData = base64_decode($encrypted_base64);
-        return openssl_decrypt($encryptedData, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);
-    }
 }
