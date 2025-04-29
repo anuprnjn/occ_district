@@ -1028,16 +1028,16 @@ function submitJudgementForm(event) {
     // }
    
 
-function saveEstCode(selectElement) {
+    function saveEstCode(selectElement) {
     var selectedEstCode = selectElement.value;
 
     if (selectedEstCode !== '') {
         sessionStorage.setItem('selectedEstCode', selectedEstCode);
 
-        // Show the loading spinner while fetching data
+        // Show loading spinner
         document.getElementById('loadingSpinner').classList.remove('hidden');
 
-        // Make an AJAX call to Laravel controller
+        // Make AJAX call
         fetch('/get-dc-case-type-napix', {
             method: 'POST',
             headers: {
@@ -1046,22 +1046,32 @@ function saveEstCode(selectElement) {
             },
             body: JSON.stringify({ est_code: selectedEstCode })
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Case Types Response:', data); // Logs the entire response
+        .then(response => response.json()
+            .then(data => ({ status: response.status, body: data }))) // combine HTTP status with JSON body
+        .then(({ status, body }) => {
+            console.log('Case Types Response:', body);
 
-            var caseTypes = Object.values(data.data); // Convert object to array
+            if (!body.status) {
+                if (body.message === 'Failed to fetch access token') {
+                    alert('Failed to fetch access token. Try again.');
+                } else if (body.message === 'Invalid response from NAPIX API') {
+                    alert('Invalid response from NAPIX. Try refreshing the page.');
+                } else {
+                    alert('An unexpected error occurred. Please try again.');
+                }
 
-            // Populate the dropdown
+                // Hide loading spinner
+                document.getElementById('loadingSpinner').classList.add('hidden');
+                return;
+            }
+
+            var caseTypes = Object.values(body.data); // Convert object to array
             populateSelectDropdown(caseTypes);
-
-            // Hide loading spinner
             document.getElementById('loadingSpinner').classList.add('hidden');
         })
         .catch(error => {
             console.error('Error fetching case types:', error);
-
-            // Hide loading spinner if an error occurs
+            alert('An error occurred while connecting to the server.');
             document.getElementById('loadingSpinner').classList.add('hidden');
         });
 
@@ -1092,11 +1102,41 @@ function populateSelectDropdown(caseTypes) {
     selectElement.addEventListener('change', function() {
         const selectedCaseType = this.value;
         sessionStorage.setItem('selectedCaseTypeDCNapix', selectedCaseType);
-        console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
+        // console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
     });
 }
 </script>   
 <script>
+
+function setcaseDetailsToPhpSession(caseDataStr, caseType) {
+    try {
+        const caseDetails = JSON.parse(caseDataStr);
+        caseDetails.case_type = caseType;
+
+        fetch('/store-case-details', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ caseDetails })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.redirectLocation) {
+                console.log('Case data is set to the php session storage');
+                window.location.href = data.redirectLocation;
+            } else {
+                console.log(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } catch (err) {
+        console.error("Error parsing case data:", err);
+    }
+}
+
+
 function submitDCJudgementForm(e) {
     e.preventDefault();
 
@@ -1206,7 +1246,6 @@ function submitDCJudgementForm(e) {
             btnSpinner.classList.remove("hidden");
         }
 
-        // console.log(requestData);
         fetch('/get-dc-case-search-napix', {
             method: 'POST',
             headers: {
@@ -1218,6 +1257,7 @@ function submitDCJudgementForm(e) {
         .then(response => response.json())
         .then(data => {
         //    console.log('case search details',data);
+        setTimeout(() => window.scrollBy(0, 350), 200);
            btnText.textContent = "Search";
            btnSpinner.classList.add("hidden");
            populateTable(data);
@@ -1231,79 +1271,122 @@ function submitDCJudgementForm(e) {
         console.error('Error validating CAPTCHA:', error);
     });
 
-    function populateTable(responseData) {
+    function resetForm() {
+    // Reset case and filing inputs
+    document.getElementById('case-no-dc').value = '';
+    document.getElementById('case-year-dc').value = '';
+    document.getElementById('filling-no-dc').value = '';
+    document.getElementById('filling-year-dc').value = '';
+
+    // Reset district dropdown text and ensure all options are visible
+    const dropdownToggle = document.getElementById("dropdownToggleDC");
+    dropdownToggle.innerText = "Please Select District";
+    document.getElementById("searchInputDC").value = ''; // Clear search filter
+    filterOptionsDC(); // Re-show all district options
+    // Optional: clear any stored value
+    document.getElementById("dropdownToggleDC").dataset.value = "";
+
+    // Reset establishment dropdown
+    const establishmentSelect = document.getElementById("selectEstaDC");
+    establishmentSelect.selectedIndex = 0;
+    establishmentSelect.innerHTML = '<option value="">Select Establishment</option>';
+
+    // Reset case type dropdown
+    const caseTypeSelect = document.getElementById("caseTypeSelectForOrderJudgementFormDC");
+    caseTypeSelect.selectedIndex = 0;
+
+    // Reset radio buttons and toggle respective fields
+    document.querySelector('input[value="case"]').checked = true;
+    toggleFieldsDC(document.querySelector('input[name="search-type-case"]:checked'));
+
+    // Reset captcha field
+    document.getElementById('captcha-hc-orderJudgement').value = '';
+    refreshCaptchaForOrderJudgement(); // call specific refresh for this captcha
+
+    // Reset search button UI
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const searchBtn = document.getElementById('searchBtn');
+
+    btnText.classList.remove('hidden');
+    btnSpinner.classList.add('hidden');
+    searchBtn.disabled = false;
+}
+
+function populateTable(responseData) {
+    const case_type = responseData.case_type;
+    const search_type = responseData.search_type;
     const orderDetailsDiv = document.getElementById("orderDetails");
     const tableBody = document.getElementById("orderTableBody");
     const caseErrElement = document.getElementById('case_err');
 
-    // Clear previous table data
     tableBody.innerHTML = '';
     caseErrElement.classList.add('hidden');
 
-    // Check if data exists
-    if (responseData && responseData.data) {
-        const caseData = responseData.data;
+    if (responseData && responseData.data && responseData.data.casenos) {
+        const cases = responseData.data.casenos;
 
-        const applyText = "Apply for Order Copy";  // you can customize this
-        const applyText2 = "Apply for";
-        const buttonAction = "alert('Apply button clicked!')";  // You can customize the onclick
+        Object.keys(cases).forEach((key, index) => {
+            const caseData = cases[key];
 
-        tableBody.innerHTML += `
-            <tr class="border-b">
-                <td class="p-3 font-bold uppercase">Filing Number</td>
-                <td class="p-3">${caseData.filingno ?? 'N/A'}</td>
-            </tr>
-            <tr class="border-b">
-                <td class="p-3 font-bold uppercase">Case Number</td>
-                <td class="p-3">${caseData.caseno ?? 'N/A'}</td>
-            </tr>
-            <tr class="border-b">
-                <td class="p-3 font-bold uppercase">CIN Number</td>
-                <td class="p-3">${caseData.cino ?? 'N/A'}</td>
-            </tr>
-            <tr class="border-b">
-                <td class="p-3 font-bold uppercase">Petitioner Name</td>
-                <td class="p-3">${caseData.pet_name ?? 'N/A'}</td>
-            </tr>
-            <tr class="border-b">
-                <td class="p-3 font-bold uppercase">Respondent Name</td>
-                <td class="p-3">${caseData.res_name ?? 'N/A'}</td>
-            </tr>
-            <tr class="border-b">
-                <td class="p-3 font-bold uppercase">Case Status</td>
-                <td class="p-3">${caseData.casestatus ?? 'N/A'}</td>
-            </tr>
-            <tr>
-                <td class="p-3 font-bold uppercase">${applyText2}</td>
-                <td class="p-3">
-                    <button onclick="${buttonAction}" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
-                        ${applyText}
-                    </button>
-                </td>
-            </tr>
-        `;
+            // Determine labels and values based on search_type
+            const numberLabel = search_type === 'case' ? 'Case Number' : 'Filing Number';
+            const yearLabel = search_type === 'case' ? 'Case Year' : 'Filing Year';
+            const numberValue = search_type === 'case' ? (caseData.reg_no ?? 'N/A') : (caseData.fil_no ?? 'N/A');
+            const yearValue = search_type === 'case' ? (caseData.reg_year ?? 'N/A') : (caseData.fil_year ?? 'N/A');
 
-        // Show the order details div
+            const combinedCaseDetail = `${caseData.type_name ?? 'N/A'}/${numberValue}/${yearValue}`;
+
+            const caseDataStr = JSON.stringify(caseData).replace(/"/g, '&quot;');
+            const caseTypeStr = case_type.replace(/"/g, '&quot;');
+
+            tableBody.innerHTML += `
+                <tr class="border-b">
+                    <td class="p-2 font-bold uppercase">Establishment</td>
+                    <td class="p-2">${responseData.data.establishment_name ?? 'N/A'}</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-2 font-bold uppercase">${search_type === 'case' ? 'Case Details' : 'Filing Details'}</td>
+                    <td class="p-2">${combinedCaseDetail}</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-2 font-bold uppercase">CIN Number</td>
+                    <td class="p-2">${caseData.cino ?? 'N/A'}</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-2 font-bold uppercase">Petitioner Name</td>
+                    <td class="p-2">${caseData.pet_name ?? 'N/A'}</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="p-2 font-bold uppercase">Respondent Name</td>
+                    <td class="p-2">${caseData.res_name ?? 'N/A'}</td>
+                </tr>
+                <tr>
+                    <td class="p-2 font-bold uppercase">Apply Link</td>
+                    <td class="p-2">
+                        <button 
+                            onclick="setcaseDetailsToPhpSession('${caseDataStr}', '${caseTypeStr}')" 
+                            class="p-[10px] w-full sm:w-[250px] bg-teal-600 hover:bg-teal-700 text-white rounded-md uppercase text-sm tracking-wider transition duration-200">
+                            Apply
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
         orderDetailsDiv.classList.remove("hidden");
+        resetForm(); 
     } else {
-        // If no case data found
+        const title = document.getElementById('orderDetails');
+        title.classList.add('hidden');
         caseErrElement.classList.remove('hidden');
         caseErrElement.innerHTML = 'No Cases found !!!';
-    }
-
-    resetButton();
-}
-function resetButton() {
-    const searchBtn = document.getElementById('searchBtn');
-    const btnText = document.getElementById('btnText');
-    const btnSpinner = document.getElementById('btnSpinner');
-
-    if (searchBtn && btnText && btnSpinner) {
-        searchBtn.disabled = false;
-        btnText.textContent = "Search";
-        btnSpinner.classList.add("hidden");
+        resetForm(); 
     }
 }
+
+
+
 }
 </script>
 
