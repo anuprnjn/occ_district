@@ -76,7 +76,7 @@
     // }
    
 </script>
-
+<!--Fetch Establishment-->
 <script>
     function fetchEstablishmentsDC(dist_code) {
         if (!dist_code) {
@@ -306,7 +306,7 @@ async function refreshCaptcha() {
         }
     }
 </script>    
-<!-- {{-- function for setting on submit  --}} -->
+<!-- {{-- function for submit application for Civil Court Other Copy --}} -->
 <script>
     function handleFormSubmit(event) {
     event.preventDefault();
@@ -498,7 +498,7 @@ function submitFormData() {
 }
 </script>    
 
-
+<!-- {{-- function for submit application for High Court Other Copy --}} -->
 <script>
     function handleFormSubmitForHighCourt(event) {
     event.preventDefault();
@@ -689,6 +689,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 </script>
 
+<!--Case Search For High court Order Copy--> 
 <script>
 function submitJudgementForm(event) {
     event.preventDefault(); 
@@ -1095,7 +1096,8 @@ function populateSelectDropdown(caseTypes) {
         console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
     });
 }
-</script>   
+</script>  
+<!--Case Search For Civil court Order Copy--> 
 <script>
 function submitDCJudgementForm(e) {
     e.preventDefault();
