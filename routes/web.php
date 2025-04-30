@@ -47,6 +47,7 @@ use App\Http\Controllers\admin\DigitalSignatureController;
 use App\Http\Controllers\admin\RawPdfController;
 use App\Http\Controllers\DcCaseTypeNapixController;
 use App\Http\Controllers\DcGetCaseNapixController;
+use App\Http\Controllers\StoreDCCaseDataController;
 
 
 
@@ -85,6 +86,10 @@ Route::get('/application-details', function () {
 Route::get('/hc-application-details', function () {
     return view('hc_application_details');
 })->name('hc_application_details');
+
+Route::get('/caseInformationDc', function () {
+    return view('caseInformationDC');
+})->name('caseInformationDC');
 
 
 Route::middleware([CheckSession::class])->group(function () {
@@ -140,6 +145,7 @@ Route::post('/set-caseInformation-PendingData-HC', [SessionDataController::class
 Route::post('/fetch-pending-payments-dc', [PendingPaymentController::class,'fetchPendingPaymentsDC']);
 Route::post('/get-dc-case-type-napix', [DcCaseTypeNapixController::class, 'fetchNapixDcCaseType']);
 Route::post('/get-dc-case-search-napix', [DcGetCaseNapixController::class, 'fetchCaseDetailsNapixDc']);
+Route::post('/store-case-details', [StoreDCCaseDataController::class, 'storeCaseDetails']);
 
 //admin routes **************************************************************
 

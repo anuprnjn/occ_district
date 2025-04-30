@@ -84,6 +84,8 @@ class DcGetCaseNapixController extends Controller
         
         return response()->json([
             'status' => true,
+            'search_type' => $search_type,
+            'case_type' => $case_type,
             'data' => json_decode($decryptedData, true)
         ]);
     }

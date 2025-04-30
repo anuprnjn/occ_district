@@ -310,7 +310,7 @@
        </div>
            </div>
     </form>
-    <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
+    <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-2 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
 
             <h3 class="p-3 font-semibold sm:text-xl text-lg -mb-4">Order and Judgement Copy Details (Civil Court) :</h3>
 
