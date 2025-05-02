@@ -42,7 +42,7 @@
         </div>
         <div class="w-full sm:w-1/2">
             <label for="selectEsta" class="mb-2 block mt-4 sm:mt-0">Select Establishment:<span>*</span></label>
-            <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded" onchange="saveEstCode(this)">
+            <select id="selectEsta" class="w-full p-[10px] border border-gray-300 rounded" onchange="saveEstCodeDcOtherCopy(this)">
                 <option value="" selected>Select Establishment</option>
             </select>
         </div>
@@ -116,33 +116,18 @@
             </div>
         </div>
         <div class="form-field">
-            <label for="case-type">Case Type: <span>*</span></label>
-            <div class="relative w-full dark_select">
-                <!-- Custom Dropdown -->
-                <div id="caseTypeDropdown" class="w-full p-[10px] border rounded ">
-                    <div id="caseTypeToggle" class="cursor-pointer" onclick="toggleCaseTypeDropdown()">Please Select Case Type</div>
-                    <div id="caseTypeMenu" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
-                        <!-- Search Box -->
-                        <div class="p-2">
-                            <input type="text" id="caseTypeSearchInput" class="w-full p-[10px] border border-gray-300 rounded" placeholder="Search Case Type..." onkeyup="filterCaseTypeOptions()">
-                        </div>
-                        <!-- Options -->
-                        <ul id="caseTypeOptions" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">Please Select Case Type</li>
-                            @if (!empty($caseTypes) && is_array($caseTypes))
-                                @foreach ($caseTypes as $caseType)
-                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
-                                        {{ $caseType['type_name'] }} ( {{ $caseType['full_form'] }} )
-                                    </li>
-                                @endforeach
-                            @else
-                                <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
+        <label for="case-type">Case Type: <span>*</span></label>
+        <div class="relative w-full dark_select">
+            <select id="caseTypeSelectForOyherCopyDC" 
+                    class="w-full p-[10px] border border-[#ccc] rounded" 
+                    onchange="selectCaseTypeOption(this)">
+                <option value="">Please Select Case Type</option>
+            </select>
+            <div id="loadingSpinnerOtherCopyDc" class="hidden absolute inset-0 flex justify-end items-center bg-white bg-opacity-50 rounded-md">
+                <div class="loader mr-8"></div>
             </div>
         </div>
+    </div>
     </div>
 
     <div class="form-row">
@@ -310,7 +295,7 @@
        </div>
            </div>
     </form>
-    <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-2 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
+    <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
 
             <h3 class="p-3 font-semibold sm:text-xl text-lg -mb-4">Order and Judgement Copy Details (Civil Court) :</h3>
 

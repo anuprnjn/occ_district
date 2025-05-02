@@ -1448,6 +1448,87 @@ function populateTableDCOrderCopy(responseData, interimOrderGlobal) {
 }
 </script> 
 
+<!--This fuction is used for get case type on the basis of selected establishment in civil court other copy-->
+<script>
+ function saveEstCodeDcOtherCopy(selectElement) {
+    var selectedEstCode = selectElement.value;
+
+    if (selectedEstCode !== '') {
+        sessionStorage.setItem('selectedEstCodeDC', selectedEstCode);
+
+        // Show loading spinner
+        document.getElementById('loadingSpinnerOtherCopyDc').classList.remove('hidden');
+
+        // Make AJAX call
+        fetch('/get-dc-case-type-napix', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ est_code: selectedEstCode })
+        })
+        .then(response => response.json()
+            .then(data => ({ status: response.status, body: data }))) // combine HTTP status with JSON body
+        .then(({ status, body }) => {
+            console.log('Case Types Response:', body);
+
+            if (!body.status) {
+                if (body.message === 'Failed to fetch access token') {
+                    alert('Failed to fetch access token. Try again.');
+                } else if (body.message === 'Invalid response from NAPIX API') {
+                    alert('Invalid response from NAPIX. Try refreshing the page.');
+                } else {
+                    alert('An unexpected error occurred. Please try again.');
+                }
+
+                // Hide loading spinner
+                document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+                return;
+            }
+
+            var caseTypes = Object.values(body.data); // Convert object to array
+            populateSelectDropdownDCOtherCopy(caseTypes);
+            document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+        })
+        .catch(error => {
+            console.error('Error fetching case types:', error);
+            alert('An error occurred while connecting to the server.');
+            document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+        });
+
+    } else {
+        sessionStorage.removeItem('selectedEstCodeDC');
+    }
+}
+
+function populateSelectDropdownDCOtherCopy(caseTypes) {
+    const selectElement = document.getElementById('caseTypeSelectForOyherCopyDC');
+
+    if (!selectElement) {
+        console.error('caseTypeSelectForOtherCopyFormDC element not found!');
+        return;
+    }
+
+    // Clear existing options
+    selectElement.innerHTML = '<option value="">Please Select Case Type</option>';
+
+    caseTypes.forEach(caseType => {
+        const optionElement = document.createElement('option');
+        optionElement.value = caseType.case_type;
+        optionElement.textContent = `${caseType.type_name}`;
+        selectElement.appendChild(optionElement);
+    });
+
+    // Attach change event listener (to save selected case type in sessionStorage)
+    selectElement.addEventListener('change', function() {
+        const selectedCaseType = this.value;
+        sessionStorage.setItem('selectedCaseTypeDCNapix', selectedCaseType);
+        // console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
+    });
+}
+</script>
+
 
 
 
