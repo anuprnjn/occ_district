@@ -1241,6 +1241,7 @@ function submitDCJudgementForm(e) {
         const searchBtn = document.getElementById('searchBtn');
         const btnText = document.getElementById('btnText');
         const btnSpinner = document.getElementById('btnSpinner');
+        let interimOrderGlobal = [];
 
         if (searchBtn && btnText && btnSpinner) {
             searchBtn.disabled = true;
@@ -1258,11 +1259,35 @@ function submitDCJudgementForm(e) {
         })
         .then(response => response.json())
         .then(data => {
-        //    console.log('case search details',data);
-        setTimeout(() => window.scrollBy(0, 350), 200);
+            const cino = data.data.casenos.case1.cino;
+            const originalData = data;
+            console.log("CINO:", cino);
+            const requestData = {
+            cino,
+        };
+        fetch('/get-dc-case-search-cnr-napix', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ request_data: requestData })
+        })
+        .then(response => response.json())
+        .then(responsedata => {
+            console.log("DATA",responsedata);
+            console.log("OrderDetails", responsedata.data?.interimorder ?? []);
+            interimOrderGlobal = responsedata.data?.interimorder ?? [];
+
+
+          setTimeout(() => window.scrollBy(0, 350), 200);
            btnText.textContent = "Search";
            btnSpinner.classList.add("hidden");
-           populateTable(data);
+           console.log("error",interimOrderGlobal);
+           const orderDetailsCount = Object.keys(interimOrderGlobal).length;
+           populateTableDCOrderCopy(originalData,orderDetailsCount);
+        })
+
         })
         .catch(error => {
             console.log(error);
@@ -1315,7 +1340,8 @@ function submitDCJudgementForm(e) {
     searchBtn.disabled = false;
 }
 
-function populateTable(responseData) {
+function populateTableDCOrderCopy(responseData,orderDetailsCount) {
+    console.log("count2",orderDetailsCount);
     const case_type = responseData.case_type;
     const search_type = responseData.search_type;
     const orderDetailsDiv = document.getElementById("orderDetails");
@@ -1327,6 +1353,13 @@ function populateTable(responseData) {
 
     if (responseData && responseData.data && responseData.data.casenos) {
         const cases = responseData.data.casenos;
+
+        let applyText = orderDetailsCount === 0 ? "Apply for Others Copy" : "Click Here";
+        let applyText2 = orderDetailsCount === 0 ? "No Order Found" : "Apply Link";
+
+        let buttonAction = orderDetailsCount === 0
+                                ? `handleApplyForOthersDC()`
+                                : `handleApplyForOthersHavingOrdersDC()`;
 
         Object.keys(cases).forEach((key, index) => {
             const caseData = cases[key];
@@ -1363,16 +1396,14 @@ function populateTable(responseData) {
                     <td class="p-2 font-bold uppercase">Respondent Name</td>
                     <td class="p-2">${caseData.res_name ?? 'N/A'}</td>
                 </tr>
-                <tr>
-                    <td class="p-2 font-bold uppercase">Apply Link</td>
-                    <td class="p-2">
-                        <button 
-                            onclick="setcaseDetailsToPhpSession('${caseDataStr}', '${caseTypeStr}')" 
-                            class="p-[10px] w-full sm:w-[250px] bg-teal-600 hover:bg-teal-700 text-white rounded-md uppercase text-sm tracking-wider transition duration-200">
-                            Apply
-                        </button>
-                    </td>
-                </tr>
+                                               <tr>
+                                    <td class="p-3 font-bold uppercase">${applyText2}</td>
+                                    <td class="p-3">
+                                        <button onclick="${buttonAction}" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
+                                            ${applyText}
+                                        </button>
+                                    </td>
+                                </tr>
             `;
         });
 
@@ -1391,6 +1422,39 @@ function populateTable(responseData) {
 
 }
 </script>
+<!--Script for Civil Court when in order copy order is not available-->
+<script>
+    function handleApplyForOthersDC() {
+    
+    const orderDetailsDiv = document.getElementById("orderDetails");
+
+    orderDetailsDiv.classList.add("hidden");
+
+    var selectedOption = document.getElementById("civilCourtSelect").value = "applyOrdersDC";
+    document.getElementById("orderJudgementFormDC").style.display = "none";
+    document.getElementById("applyOrdersFormDC").style.display = "block";
+}
+</script> 
+
+<!--Script for Civil Court when in order copy order is available-->
+<script>
+  function handleApplyForOthersHavingOrdersDC() {
+      // Get the stored response data from sessionStorage
+      const storedData = sessionStorage.getItem("responseData");
+      console.log('stored',storedData)
+    const parsedData = storedData ? JSON.parse(storedData) : null;
+
+    if (parsedData && parsedData.cases) {
+        // Store the full response data (if not already stored)
+        sessionStorage.setItem("caseInfo", JSON.stringify(parsedData));
+        console.log(parsedData);
+    }
+
+    // Hide order details and navigate to the next page
+    document.getElementById("orderDetails").classList.add("hidden");
+    window.location.href = '/caseInformationDc';
+  }
+</script> 
 
 
 

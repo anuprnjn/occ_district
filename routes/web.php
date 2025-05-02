@@ -145,6 +145,7 @@ Route::post('/set-caseInformation-PendingData-HC', [SessionDataController::class
 Route::post('/fetch-pending-payments-dc', [PendingPaymentController::class,'fetchPendingPaymentsDC']);
 Route::post('/get-dc-case-type-napix', [DcCaseTypeNapixController::class, 'fetchNapixDcCaseType']);
 Route::post('/get-dc-case-search-napix', [DcGetCaseNapixController::class, 'fetchCaseDetailsNapixDc']);
+Route::post('/get-dc-case-search-cnr-napix', [DcGetCaseNapixController::class, 'fetchCaseDetailsOrderDetailsNapixDc']);
 Route::post('/store-case-details', [StoreDCCaseDataController::class, 'storeCaseDetails']);
 
 //admin routes **************************************************************
