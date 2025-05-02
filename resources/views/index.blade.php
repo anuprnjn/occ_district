@@ -1110,32 +1110,41 @@ function populateSelectDropdown(caseTypes) {
 <!--Case Search For Civil court Order Copy--> 
 <script>
 
-function setcaseDetailsToPhpSession(caseDataStr, caseType) {
+function handleSetPhpSession(button) {
     try {
-        const caseDetails = JSON.parse(caseDataStr);
-        caseDetails.case_type = caseType;
+        const caseData = JSON.parse(button.dataset.case);
+        const caseType = JSON.parse(button.dataset.type);
+        const interimOrder = JSON.parse(button.dataset.interim);
 
-        fetch('/store-case-details', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ caseDetails })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.redirectLocation) {
-                console.log('Case data is set to the php session storage');
-                window.location.href = data.redirectLocation;
-            } else {
-                console.log(data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    } catch (err) {
-        console.error("Error parsing case data:", err);
+        // Add to caseDetails object if needed
+        caseData.case_type = caseType;
+        caseData.interim = interimOrder;
+
+        setcaseDetailsToPhpSession(caseData);
+    } catch (error) {
+        console.error("Error parsing button data attributes:", error);
     }
+}
+
+function setcaseDetailsToPhpSession(caseDetails) {
+    fetch('/store-case-details', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ caseDetails })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.redirectLocation) {
+            console.log('Case data set in PHP session');
+            window.location.href = data.redirectLocation;
+        } else {
+            console.log(data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 
@@ -1283,9 +1292,8 @@ function submitDCJudgementForm(e) {
           setTimeout(() => window.scrollBy(0, 350), 200);
            btnText.textContent = "Search";
            btnSpinner.classList.add("hidden");
-           console.log("error",interimOrderGlobal);
            const orderDetailsCount = Object.keys(interimOrderGlobal).length;
-           populateTableDCOrderCopy(originalData,orderDetailsCount);
+           populateTableDCOrderCopy(originalData,interimOrderGlobal);
         })
 
         })
@@ -1298,7 +1306,7 @@ function submitDCJudgementForm(e) {
         console.error('Error validating CAPTCHA:', error);
     });
 
-    function resetForm() {
+function resetForm() {
     // Reset case and filing inputs
     document.getElementById('case-no-dc').value = '';
     document.getElementById('case-year-dc').value = '';
@@ -1340,8 +1348,10 @@ function submitDCJudgementForm(e) {
     searchBtn.disabled = false;
 }
 
-function populateTableDCOrderCopy(responseData,orderDetailsCount) {
-    console.log("count2",orderDetailsCount);
+function populateTableDCOrderCopy(responseData, interimOrderGlobal) {
+    const orderDetailsCount = Object.keys(interimOrderGlobal).length;
+
+    // console.log("count2", orderDetailsCount);
     const case_type = responseData.case_type;
     const search_type = responseData.search_type;
     const orderDetailsDiv = document.getElementById("orderDetails");
@@ -1357,23 +1367,28 @@ function populateTableDCOrderCopy(responseData,orderDetailsCount) {
         let applyText = orderDetailsCount === 0 ? "Apply for Others Copy" : "Click Here";
         let applyText2 = orderDetailsCount === 0 ? "No Order Found" : "Apply Link";
 
-        let buttonAction = orderDetailsCount === 0
-                                ? `handleApplyForOthersDC()`
-                                : `handleApplyForOthersHavingOrdersDC()`;
-
         Object.keys(cases).forEach((key, index) => {
             const caseData = cases[key];
 
-            // Determine labels and values based on search_type
-            const numberLabel = search_type === 'case' ? 'Case Number' : 'Filing Number';
-            const yearLabel = search_type === 'case' ? 'Case Year' : 'Filing Year';
             const numberValue = search_type === 'case' ? (caseData.reg_no ?? 'N/A') : (caseData.fil_no ?? 'N/A');
             const yearValue = search_type === 'case' ? (caseData.reg_year ?? 'N/A') : (caseData.fil_year ?? 'N/A');
 
             const combinedCaseDetail = `${caseData.type_name ?? 'N/A'}/${numberValue}/${yearValue}`;
 
             const caseDataStr = JSON.stringify(caseData).replace(/"/g, '&quot;');
-            const caseTypeStr = case_type.replace(/"/g, '&quot;');
+            const caseTypeStr = JSON.stringify(case_type).replace(/"/g, '&quot;');
+            const interimOrderStr = JSON.stringify(interimOrderGlobal).replace(/"/g, '&quot;');
+
+            const buttonHtml = orderDetailsCount === 0
+                ? `<button onclick="handleApplyForOthersDC()" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">${applyText}</button>`
+                : `<button 
+                      onclick="handleSetPhpSession(this)" 
+                      data-case='${caseDataStr}' 
+                      data-type='${caseTypeStr}' 
+                      data-interim='${interimOrderStr}' 
+                      class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
+                      ${applyText}
+                   </button>`;
 
             tableBody.innerHTML += `
                 <tr class="border-b">
@@ -1396,22 +1411,19 @@ function populateTableDCOrderCopy(responseData,orderDetailsCount) {
                     <td class="p-2 font-bold uppercase">Respondent Name</td>
                     <td class="p-2">${caseData.res_name ?? 'N/A'}</td>
                 </tr>
-                                               <tr>
-                                    <td class="p-3 font-bold uppercase">${applyText2}</td>
-                                    <td class="p-3">
-                                        <button onclick="${buttonAction}" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
-                                            ${applyText}
-                                        </button>
-                                    </td>
-                                </tr>
+                <tr>
+                    <td class="p-3 font-bold uppercase">${applyText2}</td>
+                    <td class="p-3">
+                        ${buttonHtml}
+                    </td>
+                </tr>
             `;
         });
 
         orderDetailsDiv.classList.remove("hidden");
         resetForm(); 
     } else {
-        const title = document.getElementById('orderDetails');
-        title.classList.add('hidden');
+        orderDetailsDiv.classList.add('hidden');
         caseErrElement.classList.remove('hidden');
         caseErrElement.innerHTML = 'No Cases found !!!';
         resetForm(); 
@@ -1436,25 +1448,6 @@ function populateTableDCOrderCopy(responseData,orderDetailsCount) {
 }
 </script> 
 
-<!--Script for Civil Court when in order copy order is available-->
-<script>
-  function handleApplyForOthersHavingOrdersDC() {
-      // Get the stored response data from sessionStorage
-      const storedData = sessionStorage.getItem("responseData");
-      console.log('stored',storedData)
-    const parsedData = storedData ? JSON.parse(storedData) : null;
-
-    if (parsedData && parsedData.cases) {
-        // Store the full response data (if not already stored)
-        sessionStorage.setItem("caseInfo", JSON.stringify(parsedData));
-        console.log(parsedData);
-    }
-
-    // Hide order details and navigate to the next page
-    document.getElementById("orderDetails").classList.add("hidden");
-    window.location.href = '/caseInformationDc';
-  }
-</script> 
 
 
 
