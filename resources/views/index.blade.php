@@ -1268,9 +1268,30 @@ function submitDCJudgementForm(e) {
         })
         .then(response => response.json())
         .then(data => {
+            if (!data.status) {
+                if (data.message === "Failed to fetch access token") {
+                    alert("Failed to search case. Please refresh the page and try again !");
+                } else if (data.message === "Invalid response from NAPIX API") {
+                    const orderDetailsDiv = document.getElementById("orderDetails");
+                    orderDetailsDiv.classList.add('hidden');
+                    const caseErrElement = document.getElementById('case_err');
+                    caseErrElement.classList.remove('hidden');
+                    caseErrElement.innerHTML = 'No Cases found !!!';
+                } else {
+                    alert(data.message || "An unknown error occurred");
+                }
+                
+                btnText.textContent = "Search";
+                document.getElementById('captcha-hc-orderJudgement').value = '';
+                refreshCaptchaForOrderJudgement(); 
+                btnSpinner.classList.add("hidden");
+                searchBtn.disabled = false;
+                return;
+            }
+
             const cino = data.data.casenos.case1.cino;
             const originalData = data;
-            console.log("CINO:", cino);
+            // console.log("CINO:", cino);
             const requestData = {
             cino,
         };
@@ -1284,7 +1305,7 @@ function submitDCJudgementForm(e) {
         })
         .then(response => response.json())
         .then(responsedata => {
-            console.log("DATA",responsedata);
+            // console.log("DATA",responsedata);
             console.log("OrderDetails", responsedata.data?.interimorder ?? []);
             interimOrderGlobal = responsedata.data?.interimorder ?? [];
 
@@ -1298,7 +1319,7 @@ function submitDCJudgementForm(e) {
 
         })
         .catch(error => {
-            console.log(error);
+            console.warn(error);
         });
 
     })
@@ -1306,129 +1327,129 @@ function submitDCJudgementForm(e) {
         console.error('Error validating CAPTCHA:', error);
     });
 
-function resetForm() {
-    // Reset case and filing inputs
-    document.getElementById('case-no-dc').value = '';
-    document.getElementById('case-year-dc').value = '';
-    document.getElementById('filling-no-dc').value = '';
-    document.getElementById('filling-year-dc').value = '';
+    function resetForm() {
+        // Reset case and filing inputs
+        document.getElementById('case-no-dc').value = '';
+        document.getElementById('case-year-dc').value = '';
+        document.getElementById('filling-no-dc').value = '';
+        document.getElementById('filling-year-dc').value = '';
 
-    // Reset district dropdown text and ensure all options are visible
-    const dropdownToggle = document.getElementById("dropdownToggleDC");
-    dropdownToggle.innerText = "Please Select District";
-    document.getElementById("searchInputDC").value = ''; // Clear search filter
-    filterOptionsDC(); // Re-show all district options
-    // Optional: clear any stored value
-    document.getElementById("dropdownToggleDC").dataset.value = "";
+        // Reset district dropdown text and ensure all options are visible
+        const dropdownToggle = document.getElementById("dropdownToggleDC");
+        dropdownToggle.innerText = "Please Select District";
+        document.getElementById("searchInputDC").value = ''; // Clear search filter
+        filterOptionsDC(); // Re-show all district options
+        // Optional: clear any stored value
+        document.getElementById("dropdownToggleDC").dataset.value = "";
 
-    // Reset establishment dropdown
-    const establishmentSelect = document.getElementById("selectEstaDC");
-    establishmentSelect.selectedIndex = 0;
-    establishmentSelect.innerHTML = '<option value="">Select Establishment</option>';
+        // Reset establishment dropdown
+        const establishmentSelect = document.getElementById("selectEstaDC");
+        establishmentSelect.selectedIndex = 0;
+        establishmentSelect.innerHTML = '<option value="">Select Establishment</option>';
 
-    // Reset case type dropdown
-    const caseTypeSelect = document.getElementById("caseTypeSelectForOrderJudgementFormDC");
-    caseTypeSelect.selectedIndex = 0;
+        // Reset case type dropdown
+        const caseTypeSelect = document.getElementById("caseTypeSelectForOrderJudgementFormDC");
+        caseTypeSelect.selectedIndex = 0;
 
-    // Reset radio buttons and toggle respective fields
-    document.querySelector('input[value="case"]').checked = true;
-    toggleFieldsDC(document.querySelector('input[name="search-type-case"]:checked'));
+        // Reset radio buttons and toggle respective fields
+        document.querySelector('input[value="case"]').checked = true;
+        toggleFieldsDC(document.querySelector('input[name="search-type-case"]:checked'));
 
-    // Reset captcha field
-    document.getElementById('captcha-hc-orderJudgement').value = '';
-    refreshCaptchaForOrderJudgement(); // call specific refresh for this captcha
+        // Reset captcha field
+        document.getElementById('captcha-hc-orderJudgement').value = '';
+        refreshCaptchaForOrderJudgement(); // call specific refresh for this captcha
 
-    // Reset search button UI
-    const btnText = document.getElementById('btnText');
-    const btnSpinner = document.getElementById('btnSpinner');
-    const searchBtn = document.getElementById('searchBtn');
+        // Reset search button UI
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const searchBtn = document.getElementById('searchBtn');
 
-    btnText.classList.remove('hidden');
-    btnSpinner.classList.add('hidden');
-    searchBtn.disabled = false;
-}
-
-function populateTableDCOrderCopy(responseData, interimOrderGlobal) {
-    const orderDetailsCount = Object.keys(interimOrderGlobal).length;
-
-    // console.log("count2", orderDetailsCount);
-    const case_type = responseData.case_type;
-    const search_type = responseData.search_type;
-    const orderDetailsDiv = document.getElementById("orderDetails");
-    const tableBody = document.getElementById("orderTableBody");
-    const caseErrElement = document.getElementById('case_err');
-
-    tableBody.innerHTML = '';
-    caseErrElement.classList.add('hidden');
-
-    if (responseData && responseData.data && responseData.data.casenos) {
-        const cases = responseData.data.casenos;
-
-        let applyText = orderDetailsCount === 0 ? "Apply for Others Copy" : "Click Here";
-        let applyText2 = orderDetailsCount === 0 ? "No Order Found" : "Apply Link";
-
-        Object.keys(cases).forEach((key, index) => {
-            const caseData = cases[key];
-
-            const numberValue = search_type === 'case' ? (caseData.reg_no ?? 'N/A') : (caseData.fil_no ?? 'N/A');
-            const yearValue = search_type === 'case' ? (caseData.reg_year ?? 'N/A') : (caseData.fil_year ?? 'N/A');
-
-            const combinedCaseDetail = `${caseData.type_name ?? 'N/A'}/${numberValue}/${yearValue}`;
-
-            const caseDataStr = JSON.stringify(caseData).replace(/"/g, '&quot;');
-            const caseTypeStr = JSON.stringify(case_type).replace(/"/g, '&quot;');
-            const interimOrderStr = JSON.stringify(interimOrderGlobal).replace(/"/g, '&quot;');
-
-            const buttonHtml = orderDetailsCount === 0
-                ? `<button onclick="handleApplyForOthersDC()" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">${applyText}</button>`
-                : `<button 
-                      onclick="handleSetPhpSession(this)" 
-                      data-case='${caseDataStr}' 
-                      data-type='${caseTypeStr}' 
-                      data-interim='${interimOrderStr}' 
-                      class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
-                      ${applyText}
-                   </button>`;
-
-            tableBody.innerHTML += `
-                <tr class="border-b">
-                    <td class="p-2 font-bold uppercase">Establishment</td>
-                    <td class="p-2">${responseData.data.establishment_name ?? 'N/A'}</td>
-                </tr>
-                <tr class="border-b">
-                    <td class="p-2 font-bold uppercase">${search_type === 'case' ? 'Case Details' : 'Filing Details'}</td>
-                    <td class="p-2">${combinedCaseDetail}</td>
-                </tr>
-                <tr class="border-b">
-                    <td class="p-2 font-bold uppercase">CIN Number</td>
-                    <td class="p-2">${caseData.cino ?? 'N/A'}</td>
-                </tr>
-                <tr class="border-b">
-                    <td class="p-2 font-bold uppercase">Petitioner Name</td>
-                    <td class="p-2">${caseData.pet_name ?? 'N/A'}</td>
-                </tr>
-                <tr class="border-b">
-                    <td class="p-2 font-bold uppercase">Respondent Name</td>
-                    <td class="p-2">${caseData.res_name ?? 'N/A'}</td>
-                </tr>
-                <tr>
-                    <td class="p-3 font-bold uppercase">${applyText2}</td>
-                    <td class="p-3">
-                        ${buttonHtml}
-                    </td>
-                </tr>
-            `;
-        });
-
-        orderDetailsDiv.classList.remove("hidden");
-        resetForm(); 
-    } else {
-        orderDetailsDiv.classList.add('hidden');
-        caseErrElement.classList.remove('hidden');
-        caseErrElement.innerHTML = 'No Cases found !!!';
-        resetForm(); 
+        btnText.classList.remove('hidden');
+        btnSpinner.classList.add('hidden');
+        searchBtn.disabled = false;
     }
-}
+
+    function populateTableDCOrderCopy(responseData, interimOrderGlobal) {
+        const orderDetailsCount = Object.keys(interimOrderGlobal).length;
+
+        // console.log("count2", orderDetailsCount);
+        const case_type = responseData.case_type;
+        const search_type = responseData.search_type;
+        const orderDetailsDiv = document.getElementById("orderDetails");
+        const tableBody = document.getElementById("orderTableBody");
+        const caseErrElement = document.getElementById('case_err');
+
+        tableBody.innerHTML = '';
+        caseErrElement.classList.add('hidden');
+
+        if (responseData && responseData.data && responseData.data.casenos) {
+            const cases = responseData.data.casenos;
+
+            let applyText = orderDetailsCount === 0 ? "Apply for Others Copy" : "Click Here";
+            let applyText2 = orderDetailsCount === 0 ? "No Order Found" : "Apply Link";
+
+            Object.keys(cases).forEach((key, index) => {
+                const caseData = cases[key];
+
+                const numberValue = search_type === 'case' ? (caseData.reg_no ?? 'N/A') : (caseData.fil_no ?? 'N/A');
+                const yearValue = search_type === 'case' ? (caseData.reg_year ?? 'N/A') : (caseData.fil_year ?? 'N/A');
+
+                const combinedCaseDetail = `${caseData.type_name ?? 'N/A'}/${numberValue}/${yearValue}`;
+
+                const caseDataStr = JSON.stringify(caseData).replace(/"/g, '&quot;');
+                const caseTypeStr = JSON.stringify(case_type).replace(/"/g, '&quot;');
+                const interimOrderStr = JSON.stringify(interimOrderGlobal).replace(/"/g, '&quot;');
+
+                const buttonHtml = orderDetailsCount === 0
+                    ? `<button onclick="handleApplyForOthersDC()" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">${applyText}</button>`
+                    : `<button 
+                        onclick="handleSetPhpSession(this)" 
+                        data-case='${caseDataStr}' 
+                        data-type='${caseTypeStr}' 
+                        data-interim='${interimOrderStr}' 
+                        class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">
+                        ${applyText}
+                    </button>`;
+
+                tableBody.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-2 font-bold uppercase">Establishment</td>
+                        <td class="p-2">${responseData.data.establishment_name ?? 'N/A'}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="p-2 font-bold uppercase">${search_type === 'case' ? 'Case Details' : 'Filing Details'}</td>
+                        <td class="p-2">${combinedCaseDetail}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="p-2 font-bold uppercase">CIN Number</td>
+                        <td class="p-2">${caseData.cino ?? 'N/A'}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="p-2 font-bold uppercase">Petitioner Name</td>
+                        <td class="p-2">${caseData.pet_name ?? 'N/A'}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="p-2 font-bold uppercase">Respondent Name</td>
+                        <td class="p-2">${caseData.res_name ?? 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-bold uppercase">${applyText2}</td>
+                        <td class="p-3">
+                            ${buttonHtml}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            orderDetailsDiv.classList.remove("hidden");
+            resetForm(); 
+        } else {
+            orderDetailsDiv.classList.add('hidden');
+            caseErrElement.classList.remove('hidden');
+            caseErrElement.innerHTML = 'No Cases found !!!';
+            resetForm(); 
+        }
+    }
 
 
 
@@ -1529,7 +1550,11 @@ function populateSelectDropdownDCOtherCopy(caseTypes) {
 }
 </script>
 
-
+<script>
+    @if (!empty($error))
+        alert("{{ $error }}");
+    @endif
+</script>
 
 
 @endpush

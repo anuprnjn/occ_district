@@ -72,7 +72,18 @@
             </div>
         <div class="form-field case-field space-y-[14px]">
             <label for="case-year">Case Year: <span>*</span></label>
-            <input type="text" id="case-year" name="case-year" placeholder="Enter Case Year" data-value="C" required>
+            <input 
+                type="text" 
+                id="case-year" 
+                name="case-year" 
+                placeholder="Enter Case Year" 
+                data-value="C" 
+                required 
+                maxlength="4" 
+                pattern="\d{4}" 
+                inputmode="numeric" 
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)"
+            />
         </div>
         <div class="form-field filling-field space-y-[14px]">
             <label for="filling-no">Filing Number: <span>*</span></label>
@@ -80,7 +91,18 @@
         </div>
         <div class="form-field filling-field space-y-[14px]">
             <label for="filling-year">Filing Year: <span>*</span></label>
-            <input type="text" id="filling-year" name="filling-year" placeholder="Enter Filing Year" data-value="F" required>
+            <input 
+                type="text" 
+                id="filling-year" 
+                name="filling-year" 
+                placeholder="Enter Filing Year" 
+                data-value="F" 
+                required 
+                maxlength="4" 
+                pattern="\d{4}" 
+                inputmode="numeric" 
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)" 
+            />
         </div>
             </div>
             <div class="form-row">
@@ -130,7 +152,8 @@
                 </table>
             </div>
         </div>
-        <span id='case_err' class="hidden text-lg text-center flex items-center justify-center bg-slate-100/70 text-rose-500 p-4 rounded-md mb-12 sm:mb-0 "></span>
+        <span id="case_err" class="hidden w-full block text-base sm:text-lg text-center bg-rose-100 text-rose-700 p-4 rounded-md font-semibold">
+        </span>
 
      <!-- response data of order and judgement copy div end  -->
 
