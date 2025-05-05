@@ -62,7 +62,51 @@ class DcCaseTypeNapixController extends Controller
     
         $decryptedData = Utility::decryptString($responseArray['response_str'], $aes_key, $iv);
         
-    
+        // $parsedData = json_decode($decryptedData, true);
+        // $flatCases = [];
+
+        // foreach ($parsedData as $key => $value) {
+        //     if (is_array($value) && isset($value['case_type'], $value['type_name'])) {
+        //         $flatCases[] = [
+        //             'case_type' => $value['case_type'],
+        //             'type_name' => $value['type_name']
+        //         ];
+        //     }
+        // }
+
+        // // Now rebuild parsedData in expected format
+        // $payload = [
+        //     'est_code' => $dc_est_code,
+        //     'cases' => $flatCases,
+        // ];
+
+        // $baseUrl = config('app.api.base_url');
+        // \Log::info('Payload to API:', $payload);
+
+        // try {
+        //     $response = Http::post($baseUrl . '/update_district_court_case_master.php', $payload);
+        //     $baseUrl = config('app.api.base_url');
+
+        //     if ($response->successful()) {
+        //         return response()->json([
+        //             'success' => true,
+        //             'message' => 'Application registered successfully!',
+        //             'data' => $response->json(),
+        //         ]);
+        //     } else {
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Failed to register application.',
+        //             'error' => $response->body(),
+        //         ], $response->status());
+        //     }
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Error while connecting to external API.',
+        //         'error' => $e->getMessage(),
+        //     ], 500);
+        // }
         return response()->json([
             'status' => true,
             'data' => json_decode($decryptedData, true)
