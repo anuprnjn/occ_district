@@ -305,7 +305,17 @@ async function refreshCaptcha() {
             sessionStorage.removeItem('selectedCaseType');
         }
     }
-</script>    
+</script> 
+<!-- <script>
+    function getCaseTypeDC(element){
+        var caseType = element.getAttribute('data-value');
+        if(caseType !== ''){
+            sessionStorage.setItem('selectedCaseTypeDC', caseType); 
+        }else{
+            sessionStorage.removeItem('selectedCaseTypeDC');
+        }
+    }
+</script>     -->
 <!-- {{-- function for submit application for Civil Court Other Copy --}} -->
 <script>
     function handleFormSubmit(event) {
@@ -313,12 +323,12 @@ async function refreshCaptcha() {
 
     // Collect form data
     var district_code = sessionStorage.getItem('selectedDistCode');
-    var establishment_code = sessionStorage.getItem('selectedEstCode');
+    var establishment_code = sessionStorage.getItem('selectedEstCodeDC');
     var applicant_name = document.getElementById('name').value;
     var mobile_number = document.getElementById('mobileInput').value;
     var email = document.getElementById('email').value;
     const cnfemail = document.getElementById('confirm-email').value.trim();
-    var case_type = sessionStorage.getItem('selectedCaseType');
+    var case_type = sessionStorage.getItem('selectedCaseTypeDCNapix');
     var case_filling_number = document.getElementById('case-no').value;
     var case_filling_year = document.getElementById('case-year').value;
     var request_mode = document.querySelector('input[name="request_mode"]:checked')?.value;
@@ -433,11 +443,11 @@ function submitFormData() {
 
     var formData = {
         district_code: sessionStorage.getItem('selectedDistCode'),
-        establishment_code: sessionStorage.getItem('selectedEstCode'),
+        establishment_code: sessionStorage.getItem('selectedEstCodeDC'),
         applicant_name: document.getElementById('name').value,
         mobile_number: document.getElementById('mobileInput').value,
         email: document.getElementById('email').value,
-        case_type: sessionStorage.getItem('selectedCaseType'),
+        case_type: sessionStorage.getItem('selectedCaseTypeDCNapix'),
         case_filling_number: document.getElementById('case-no').value,
         case_filling_year: document.getElementById('case-year').value,
         request_mode: document.querySelector('input[name="request_mode"]:checked')?.value,
@@ -461,7 +471,7 @@ function submitFormData() {
     .then(data => {
         if (data.success) {
             sessionStorage.setItem('application_number', data.application_number);
-            document.getElementById('applyOrdersForm').reset();
+            document.getElementById('applyOrdersFormDC').reset();
             const dropdownToggle = document.getElementById('dropdownToggle');
             const dropdownMenu = document.getElementById('dropdownMenu');
             const searchInput = document.getElementById('searchInput');
@@ -1464,6 +1474,7 @@ function submitDCJudgementForm(e) {
 
     if (selectedEstCode !== '') {
         sessionStorage.setItem('selectedEstCodeDC', selectedEstCode);
+        // sessionStorage.setItem('selectedEstCodeDCOtherCopy', selectedEstCode);
 
         // Show loading spinner
         document.getElementById('loadingSpinnerOtherCopyDc').classList.remove('hidden');
