@@ -62,18 +62,6 @@
             }
         });
     }
-
-    // Function to store the selected establishment code in sessionStorage
-    // function saveEstCode(selectElement) {
-       
-    //     var selectedEstCode = selectElement.value; // Get the selected establishment code
-    //     if (selectedEstCode !== '') {
-    //         sessionStorage.setItem('selectedEstCode', selectedEstCode);
-    //     }
-    //     else{
-    //         sessionStorage.removeItem('selectedEstCode');
-    //     }
-    // }
    
 </script>
 <!--Fetch Establishment-->
@@ -108,33 +96,7 @@
 
    
 </script>
-<!-- {{-- function for captcha  --}} -->
-<!-- <script>
-    function refreshCaptcha() {
-        const refresh = document.querySelector(".refresh-btn");
-        const captchaImg = document.getElementById('captchaImage');
-        
-        // Add animation class to the refresh button
-        refresh.classList.add("animate-spin");
 
-        // Make an AJAX request to the route that generates the CAPTCHA
-        fetch('/refresh-captcha')
-            .then(response => response.json())
-            .then(data => {
-                // Update the CAPTCHA image with the new source URL
-                captchaImg.src = data.captcha_src + '?' + new Date().getTime(); 
-            })
-            .catch(error => {
-                console.error('Error refreshing CAPTCHA:', error);
-            })
-            .finally(() => {
-                // Remove the spin animation after the request
-                setTimeout(function() {
-                    refresh.classList.remove("animate-spin");
-                }, 1000);
-            });
-    }
-</script> -->
 <script>
 async function refreshCaptcha() {
     const refreshBtn = document.querySelector(".refresh-btn img");
@@ -191,44 +153,6 @@ async function refreshCaptcha() {
     }
 </script>
 
-
-<!-- {{-- function for captcha for order judgement --}} -->
-<!-- <script>
-    function refreshCaptchaForOrderJudgement() {
-        const refresh = document.querySelector(".refresh-btn-orderJudgement");
-        const captchaImg = document.getElementById('captchaImageOrderJudgement');
-        
-        // Add animation class to the refresh button
-        refresh.classList.add("animate-spin");
-
-        // Make an AJAX request to the route that generates the CAPTCHA
-        fetch('/refresh-captcha')
-            .then(response => response.json())
-            .then(data => {
-                // Update the CAPTCHA image with the new source URL
-                captchaImg.src = data.captcha_src + '?' + new Date().getTime(); 
-            })
-            .catch(error => {
-                console.error('Error refreshing CAPTCHA:', error);
-            })
-            .finally(() => {
-                // Remove the spin animation after the request
-                setTimeout(function() {
-                    refresh.classList.remove("animate-spin");
-                }, 1000);
-            });
-    }
-</script> -->
-<!-- <script>
-    function refreshCaptchaForOrderJudgement() {
-     fetch('/refresh-captcha')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('captchaImageOrderJudgement').src = data.captcha_src;
-            })
-            .catch(error => console.error('Error refreshing CAPTCHA:', error));
-        }
- </script> -->
 <!-- {{-- function for change the input based on applied by  --}} -->
 <script>
     function toggleAdvocateField() {
@@ -306,16 +230,7 @@ async function refreshCaptcha() {
         }
     }
 </script> 
-<!-- <script>
-    function getCaseTypeDC(element){
-        var caseType = element.getAttribute('data-value');
-        if(caseType !== ''){
-            sessionStorage.setItem('selectedCaseTypeDC', caseType); 
-        }else{
-            sessionStorage.removeItem('selectedCaseTypeDC');
-        }
-    }
-</script>     -->
+
 <!-- {{-- function for submit application for Civil Court Other Copy --}} -->
 <script>
     function handleFormSubmit(event) {
@@ -688,6 +603,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+
+<!--get Case Type From High court case type drop down --> 
 <script>
    function getHcCaseType(element) {
         var caseType = element.getAttribute('data-value');
@@ -826,19 +743,6 @@ function submitJudgementForm(event) {
                 .then(data => console.log(data.message))  // Logs success message
                 .catch(error => console.error('Error:', error));
                 
-                // sessionStorage.setItem('urgent_fee', data.urgent_fee);
-                // fetch('/set-urgent-fee', {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json",
-                //         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-                //     },
-                //     body: JSON.stringify({ urgent_fee: data.urgent_fee}) 
-                // })
-                // .then(response => response.json())
-                // .then(data => console.log('Data fetched'))
-                // .catch(error => console.error('Error:', error));
-                
                 setTimeout(() => window.scrollBy(0, 350), 200);
 
                 // Remove selected case type from session storage
@@ -949,9 +853,6 @@ function submitJudgementForm(event) {
                         btnText.textContent = "Search";
                         btnSpinner.classList.add("hidden");
                     }
-                    // setTimeout(() => {
-                    //     loadingOverlay.classList.add("hidden");
-                    // }, 2000);
                 }
 
                 // Fetch response data and populate table
@@ -978,6 +879,8 @@ function submitJudgementForm(event) {
     });
 }
 </script>
+
+<!--Script for High court when in order copy order is not available-->
 <script>
     function handleApplyForOthers() {
     const orderDetailsDiv = document.getElementById("orderDetails");
@@ -989,6 +892,8 @@ function submitJudgementForm(event) {
     document.getElementById("otherForm").style.display = "block";
 }
 </script>  
+
+<!--Script for High court when in order copy order is available-->
 <script>
   function handleApplyForOthersHavingOrders(index) {
       // Get the stored response data from sessionStorage
@@ -1008,37 +913,8 @@ function submitJudgementForm(event) {
   }
 </script> 
 
+<!--This script is used for get case type on the basis of selected establishment in civil court other copy-->
 <script>
-        // Function to store the selected establishment code in sessionStorage and call napix api to get case type
-    // function saveEstCode(selectElement) {
-    //     var selectedEstCode = selectElement.value;
-
-    //     if (selectedEstCode !== '') {
-    //         sessionStorage.setItem('selectedEstCode', selectedEstCode);
-
-    //         // Make an AJAX call to Laravel controller
-    //         fetch('/get-dc-case-type-napix', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    //             },
-    //             body: JSON.stringify({ est_code: selectedEstCode })
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             console.log('Case Types Response:', data);  // Logs the entire response here
-    //         })
-    //         .catch(error => {
-    //             console.error('Error fetching case types:', error);
-    //         });
-
-    //     } else {
-    //         sessionStorage.removeItem('selectedEstCode');
-    //     }
-    // }
-   
-
     function saveEstCode(selectElement) {
         var selectedEstCode = selectElement.value;
 
@@ -1079,33 +955,34 @@ function submitJudgementForm(event) {
         }
     }
 
-function populateSelectDropdown(caseTypes) {
-    const selectElement = document.getElementById('caseTypeSelectForOrderJudgementFormDC');
+    function populateSelectDropdown(caseTypes) {
+        const selectElement = document.getElementById('caseTypeSelectForOrderJudgementFormDC');
 
-    if (!selectElement) {
-        console.error('caseTypeSelectForOrderJudgementFormDC element not found!');
-        return;
+        if (!selectElement) {
+            console.error('caseTypeSelectForOrderJudgementFormDC element not found!');
+            return;
+        }
+
+        // Clear existing options
+        selectElement.innerHTML = '<option value="">Please Select Case Type</option>';
+
+        caseTypes.forEach(caseType => {
+            const optionElement = document.createElement('option');
+            optionElement.value = caseType.case_type;
+            optionElement.textContent = `${caseType.type_name}`;
+            selectElement.appendChild(optionElement);
+        });
+
+        // Attach change event listener (to save selected case type in sessionStorage)
+        selectElement.addEventListener('change', function() {
+            const selectedCaseType = this.value;
+            sessionStorage.setItem('selectedCaseTypeDCNapix', selectedCaseType);
+            // console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
+        });
     }
-
-    // Clear existing options
-    selectElement.innerHTML = '<option value="">Please Select Case Type</option>';
-
-    caseTypes.forEach(caseType => {
-        const optionElement = document.createElement('option');
-        optionElement.value = caseType.case_type;
-        optionElement.textContent = `${caseType.type_name}`;
-        selectElement.appendChild(optionElement);
-    });
-
-    // Attach change event listener (to save selected case type in sessionStorage)
-    selectElement.addEventListener('change', function() {
-        const selectedCaseType = this.value;
-        sessionStorage.setItem('selectedCaseTypeDCNapix', selectedCaseType);
-        // console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
-    });
-}
 </script>  
-<!--Case Search For Civil court Order Copy--> 
+
+
 <script>
 
 function handleSetPhpSession(button) {
@@ -1144,7 +1021,6 @@ function setcaseDetailsToPhpSession(caseDetails) {
     })
     .catch(error => console.error('Error:', error));
 }
-
 
 function submitDCJudgementForm(e) {
     e.preventDefault();
@@ -1467,7 +1343,7 @@ function submitDCJudgementForm(e) {
 }
 </script> 
 
-<!--This fuction is used for get case type on the basis of selected establishment in civil court other copy-->
+<!--This script is used for get case type on the basis of selected establishment in civil court other copy-->
 <script>
  function saveEstCodeDcOtherCopy(selectElement) {
     const selectedEstCode = selectElement.value;
