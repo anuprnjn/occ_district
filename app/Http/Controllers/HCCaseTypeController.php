@@ -8,6 +8,9 @@ use Mews\Captcha\Facades\Captcha;
 use Gregwar\Captcha\CaptchaBuilder;
 use Illuminate\Support\Facades\Session;
 use App\Helpers\Utility;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class HCCaseTypeController extends Controller
 {
@@ -17,39 +20,11 @@ class HCCaseTypeController extends Controller
         if (!Session::isStarted()) {
             Session::start();
         }
-    
-        $caseTypes = $this->fetchNapixHcCaseType();
-        // Fallback to empty array if failed
-        $caseTypes = $caseTypes ?? [];
 
-
-          // Get the API base URL from the config
-        //   $baseUrl = config('app.api.hc_base_url');
-
-        //     try {
-        //         $response = Http::post($baseUrl . '/update_high_court_case_master.php', $caseTypes);
-
-        //         if ($response->successful()) {
-        //             return response()->json([
-        //                 'success' => true,
-        //                 'message' => 'Application registered successfully!',
-        //                 'data' => $response->json(),
-        //             ]);
-        //         } else {
-        //             return response()->json([
-        //                 'success' => false,
-        //                 'message' => 'Failed to register application.',
-        //                 'error' => $response->body(),
-        //             ], $response->status());
-        //         }
-        //     } catch (\Exception $e) {
-        //         return response()->json([
-        //             'success' => false,
-        //             'message' => 'Error while connecting to external API.',
-        //             'error' => $e->getMessage(),
-        //         ], 500);
-        //     }
-
+        $caseTypes = DB::table('high_court_case_master')->get()->map(function ($item) {
+            return (array) $item;
+        })->toArray();
+         
     
         // Generate a simple math equation
         $num1 = rand(1, 9);
@@ -63,6 +38,113 @@ class HCCaseTypeController extends Controller
         $captcha = $this->generateCaptchaImage($mathEquation);
     
         return view('hcPage', compact('caseTypes', 'captcha'));
+    }
+
+    // public function updateCaseTypeMasterNapix()
+    // {
+    //     $caseTypesNapix = $this->fetchNapixHcCaseType();
+    //     // Fallback to empty array if failed
+    //     $caseTypesNapix = $caseTypesNapix ?? [];
+
+    //      // Get the API base URL from the config
+    //       $baseUrl = config('app.api.hc_base_url');
+
+    //         try {
+    //             $response = Http::post($baseUrl . '/update_high_court_case_master.php', $caseTypes);
+
+    //             if ($response->successful()) {
+    //                 return response()->json([
+    //                     'success' => true,
+    //                     'message' => 'Application registered successfully!',
+    //                     'data' => $response->json(),
+    //                 ]);
+    //             } else {
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'Failed to register application.',
+    //                     'error' => $response->body(),
+    //                 ], $response->status());
+    //             }
+    //         } catch (\Exception $e) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Error while connecting to external API.',
+    //                 'error' => $e->getMessage(),
+    //             ], 500);
+    //         }
+
+    // }
+    public function updateCaseTypeMasterNapix()
+    {
+        $result = $this->syncCaseTypesFromApi();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Update complete. New records inserted: {$result['inserted']}",
+        ]);
+    }
+    // public function updateCaseTypeMasterNapix()
+    // {
+    //     $caseTypesNapix = $this->fetchNapixHcCaseType();
+    //     $caseTypesNapix = $caseTypesNapix ?? [];
+
+    //     $insertedCount = 0;
+
+    //     foreach ($caseTypesNapix as $napixCaseType) {
+    //         // Check if the case type already exists
+    //         $exists = DB::table('high_court_case_master')->where('type_code', $napixCaseType['type_code'])->exists();
+
+    //         if (!$exists) {
+    //             DB::table('high_court_case_master')->insert([
+    //                 'type_code' => $napixCaseType['type_code'],
+    //                 'type_name' => $napixCaseType['type_name'],
+    //                 'created_at' => now(),
+    //                 'updated_at' => now()
+    //             ]);
+    //             $insertedCount++;
+    //         }
+    //     }
+
+    //     \Log::info("Napix Scheduler: Added {$insertedCount} new case types to the database.");
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => "Update complete. New records inserted: {$insertedCount}",
+    //     ]);
+    // }
+    public function syncCaseTypesFromApi()
+    {
+        $caseTypesNapix = $this->fetchNapixHcCaseType();
+        $caseTypesNapix = $caseTypesNapix ?? [];
+    
+        $insertedCount = 0;
+    
+        foreach ($caseTypesNapix as $napixCaseType) {
+            // Skip if essential keys are missing
+            if (!isset($napixCaseType['case_type']) || !isset($napixCaseType['type_name'])) {
+                Log::warning('[Scheduler] Skipped invalid case type record: ' . json_encode($napixCaseType));
+                continue;
+            }
+    
+            $exists = DB::table('high_court_case_master')
+                ->where('case_type', $napixCaseType['case_type'])
+                ->exists();
+    
+            if (!$exists) {
+                DB::table('high_court_case_master')->insert([
+                    'case_type'  => $napixCaseType['case_type'],
+                    'type_name'  => $napixCaseType['type_name'],
+                ]);
+                $insertedCount++;
+            }
+        }
+    
+        Log::info("Napix Scheduler: Added {$insertedCount} new case types to the database.");
+    
+        return [
+            'inserted' => $insertedCount,
+            'data'     => $caseTypesNapix
+        ];
     }
    
     private function generateCaptchaImage($text)
