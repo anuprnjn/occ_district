@@ -10,12 +10,12 @@ Artisan::command('inspire', function () {
 
 // Define macro for NAPIX case type sync
 Schedule::macro('napixScheduler', function () {
-    // $this->command('napix:update-case-types')
-    //     ->everyTenSeconds()
-    //     ->appendOutputTo(storage_path('logs/scheduler.log'));
+    $this->command('napix:update-case-types')
+        ->daily()
+        ->appendOutputTo(storage_path('logs/scheduler.log'));
 
     $this->command('napix:sync-dc-case-types')
-        ->everyTenSeconds()
+        ->daily()
         ->appendOutputTo(storage_path('logs/scheduler.log'));
 });
 

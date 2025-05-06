@@ -1542,11 +1542,5 @@ function populateSelectDropdownDCOtherCopy(caseTypes) {
 }
 </script>
 
-<script>
-    @if (!empty($error))
-        alert("{{ $error }}");
-    @endif
-</script>
-
 
 @endpush

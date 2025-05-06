@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/application-details": "home",
         "/trackStatusDetails": "track_app",
         "/caseInformation": "home",
+        "/caseInformationDc": "home",
         "/occ/cd_pay": "home", // Default behavior for /occ/cd_pay
         "/api/occ/gras_resp_cc": "home",
     };

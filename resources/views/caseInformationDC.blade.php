@@ -117,71 +117,59 @@
             const data = await response.json();
 
             // Ensure responseData exists
-            const responseData = data?.session_data?.responseData;
-            if (!responseData) {
+            const responseDataDC = data?.session_data?.DcCaseDetailsNapix;
+            console.log(responseDataDC);
+            // return;
+
+            if (!responseDataDC) {
                 throw new Error('Missing responseData!');
             }
 
             // ** Display Case Details **
             const caseDetailsDiv = document.getElementById("caseDetails");
-            const caseInfo = responseData.cases?.[0];
+            const caseInfo = responseDataDC;
 
             if (caseInfo) {
+                
                 caseDetailsDiv.innerHTML = `
-                <div class="rounded-xl caseInfoShowCaseDetails p-4 ">
-                    ${caseInfo ? `
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-4">
-                                <div>
-                                    <h6 class="text-sm text-gray-500 mb-1">Filing Number</h6>
-                                    <h6 class="font-semibold">${caseInfo.fillingno || 'N/A'}</h6>
-                                </div>
-                                <div>
-                                    <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
-                                    <h6 class="font-semibold">${caseInfo.caseno || 'N/A'}</h6>
-                                </div>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <h6 class="text-sm text-gray-500 mb-1">CNR Number</h6>
-                                    <h6 class="font-semibold break-all">${caseInfo.cino || 'N/A'}</h6>
-                                </div>
-                                <div>
-                                    <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                                        caseInfo.casestatus?.toLowerCase() === 'disposed' 
-                                        ? 'bg-red-100 text-red-800' 
-                                        : 'bg-blue-100 text-blue-800'
-                                    }">
-                                        ${caseInfo.casestatus || 'N/A'}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <h6 class="text-sm text-gray-500 mb-1">Petitioner</h6>
-                                <h6 class="font-semibold">${caseInfo.pet_name || 'N/A'}</h6>
-                            </div>
-                            <div>
-                                <h6 class="text-sm text-gray-500 mb-1">Respondent</h6>
-                                <h6 class="font-semibold">${caseInfo.res_name || 'N/A'}</h6>
-                            </div>
-                        </div>
+    <div class="rounded-xl caseInfoShowCaseDetails p-4">
+        ${caseInfo ? `
+        <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-4">
+                    <div>
+                        <h6 class="text-sm text-gray-500 mb-1">CNR Number</h6>
+                        <h6 class="font-semibold break-all">${caseInfo.cino || 'N/A'}</h6>
                     </div>
-                    ` : `
-                    <div class="text-center py-8">
-                        <div class="text-red-500 inline-flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <span class="font-medium">No case information found!</span>
-                        </div>
+                    <div>
+                        <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
+                        <h6 class="font-semibold">${caseInfo.type_name || 'N/A'}/${caseInfo.reg_no || 'N/A'}/${caseInfo.reg_year || 'N/A'}</h6>
                     </div>
-                    `}
                 </div>
-                `;
+                <div class="space-y-4">
+                    <div>
+                        <h6 class="text-sm text-gray-500 mb-1">Petitioner</h6>
+                        <h6 class="font-semibold">${caseInfo.pet_name || 'N/A'}</h6>
+                    </div>
+                    <div>
+                        <h6 class="text-sm text-gray-500 mb-1">Respondent</h6>
+                        <h6 class="font-semibold">${caseInfo.res_name || 'N/A'}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        ` : `
+        <div class="text-center py-8">
+            <div class="text-red-500 inline-flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span class="font-medium">No case information found!</span>
+            </div>
+        </div>
+        `}
+    </div>
+`;
             } else {
                 caseDetailsDiv.innerHTML = `<p class="text-red-500">No case information found!</p>`;
             }
