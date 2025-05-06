@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Helpers\Utility;
+use Illuminate\Support\Facades\DB;
 
 class DcCaseTypeNapixController extends Controller
 {
@@ -111,6 +112,33 @@ class DcCaseTypeNapixController extends Controller
             'status' => true,
             'data' => json_decode($decryptedData, true)
         ]);
+    }
+
+    public function fetchDcCaseType(Request $request)
+    {
+        try {
+            $dc_est_code = $request->input('est_code');
+    
+            // Validate input
+            if (!$dc_est_code) {
+                return response()->json(['success' => false, 'error' => 'est_code is required'], 400);
+            }
+    
+            // Fetch data from the database
+            $caseTypes = DB::table('district_court_case_master')
+                        ->select('case_type', 'type_name')
+                        ->where('est_code', $dc_est_code)
+                        ->get();
+    
+            return response()->json(['success' => true, 'data' => $caseTypes]);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Something went wrong while fetching case types.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
     
 }
