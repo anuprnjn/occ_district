@@ -120,7 +120,7 @@
         <div class="relative w-full dark_select">
             <select id="caseTypeSelectForOyherCopyDC" 
                     class="w-full p-[10px] border border-[#ccc] rounded" 
-                    onchange="selectCaseTypeOption(this)">
+                    onchange="selectCaseTypeOption(this);">
                 <option value="">Please Select Case Type</option>
             </select>
             <div id="loadingSpinnerOtherCopyDc" class="hidden absolute inset-0 flex justify-end items-center bg-white bg-opacity-50 rounded-md">
