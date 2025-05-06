@@ -25,7 +25,7 @@ class DcOtherCopyController extends Controller
                     'dc.*', // Select all columns from dc
                     'ct.type_name as case_type_name' // Fetch case type name from case type table
                 )
-                ->leftJoin('districts_case_type as ct', 'dc.case_type', '=', 'ct.case_type')
+                ->leftJoin('district_court_case_master as ct', 'dc.case_type', '=', 'ct.case_type')
                 ->where('dc.district_code', $dist_code) // Filter by district_code
                 ->where('dc.establishment_code', $estd_code) // Filter by establishment_code
                 ->orderBy('dc.created_at', 'desc')
@@ -52,7 +52,7 @@ class DcOtherCopyController extends Controller
  
              $dcuser = DB::table('district_court_applicant_registration as dc')
                  ->select('dc.*', 'ct.type_name as case_type_name')
-                 ->leftJoin('districts_case_type as ct', 'dc.case_type', '=', 'ct.case_type')
+                 ->leftJoin('district_court_case_master as ct', 'dc.case_type', '=', 'ct.case_type')
                  ->where('dc.application_number', $appNumber)
                  ->first();
  
@@ -227,7 +227,7 @@ public function rejectedDcOtherCopy()
         $estd_code = session('user.estd_code');
         $dcuserdata = DB::table('district_court_applicant_registration as dc')
             ->select('dc.*', 'ct.type_name as case_type_name')
-            ->leftJoin('districts_case_type as ct', 'dc.case_type', '=', 'ct.case_type')
+            ->leftJoin('district_court_case_master as ct', 'dc.case_type', '=', 'ct.case_type')
             ->where('dc.district_code', $dist_code)
             ->where('dc.establishment_code', $estd_code)
             ->where('rejection_status',1)
@@ -251,7 +251,7 @@ public function paidDcOtherCopyList()
         $estd_code = session('user.estd_code');
         $dcuserdata = DB::table('district_court_applicant_registration as dc')
             ->select('dc.*', 'ct.type_name as case_type_name')
-            ->leftJoin('districts_case_type as ct', 'dc.case_type', '=', 'ct.case_type')
+            ->leftJoin('district_court_case_master as ct', 'dc.case_type', '=', 'ct.case_type')
             ->where('dc.district_code', $dist_code)
             ->where('dc.establishment_code', $estd_code)
             ->where('document_status',1)

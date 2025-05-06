@@ -19,7 +19,7 @@ class   HcOtherCopyPaidController extends Controller
         try {
             $hcuserdata = DB::table('high_court_applicant_registration as hc')
                 ->select('hc.*', 'ct.type_name as case_type_name')
-                ->leftJoin('high_court_case_type as ct', 'hc.case_type', '=', 'ct.case_type')
+                ->leftJoin('high_court_case_master as ct', 'hc.case_type', '=', 'ct.case_type')
                 ->where('document_status',1)
                 ->where('payment_status',1)
                 ->orderBy('hc.created_at', 'desc')
@@ -41,7 +41,7 @@ class   HcOtherCopyPaidController extends Controller
 
             $hcuser = DB::table('high_court_applicant_registration as hc')
                 ->select('hc.*', 'ct.type_name as case_type_name')
-                ->leftJoin('high_court_case_type as ct', 'hc.case_type', '=', 'ct.case_type')
+                ->leftJoin('high_court_case_master as ct', 'hc.case_type', '=', 'ct.case_type')
                 ->where('hc.application_number', $appNumber)
                 ->first();
 
