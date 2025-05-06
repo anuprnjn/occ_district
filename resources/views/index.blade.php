@@ -1030,56 +1030,44 @@ function submitJudgementForm(event) {
    
 
     function saveEstCode(selectElement) {
-    var selectedEstCode = selectElement.value;
+        var selectedEstCode = selectElement.value;
 
-    if (selectedEstCode !== '') {
-        sessionStorage.setItem('selectedEstCode', selectedEstCode);
+        if (selectedEstCode !== '') {
+            sessionStorage.setItem('selectedEstCode', selectedEstCode);
 
-        // Show loading spinner
-        document.getElementById('loadingSpinner').classList.remove('hidden');
+            // Show loading spinner
+            document.getElementById('loadingSpinner').classList.remove('hidden');
 
-        // Make AJAX call
-        fetch('/get-dc-case-type-napix', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ est_code: selectedEstCode })
-        })
-        .then(response => response.json()
-            .then(data => ({ status: response.status, body: data }))) // combine HTTP status with JSON body
-        .then(({ status, body }) => {
-            console.log('Case Types Response:', body);
+            fetch('/get-dc-case-master', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ est_code: selectedEstCode })
+            })
+            .then(response => response.json())
+            .then(body => {
+                console.log('Case Types Response:', body);
 
-            if (!body.status) {
-                if (body.message === 'Failed to fetch access token') {
-                    alert('Failed to fetch access token. Try again.');
-                } else if (body.message === 'Invalid response from NAPIX API') {
-                    alert('Invalid response from NAPIX. Try refreshing the page.');
-                } else {
-                    alert('An unexpected error occurred. Please try again.');
+                if (!body.success) {
+                    alert(body.message);
+                    document.getElementById('loadingSpinner').classList.add('hidden');
+                    return;
                 }
 
-                // Hide loading spinner
+                populateSelectDropdown(body.data);
                 document.getElementById('loadingSpinner').classList.add('hidden');
-                return;
-            }
-
-            var caseTypes = Object.values(body.data); // Convert object to array
-            populateSelectDropdown(caseTypes);
-            document.getElementById('loadingSpinner').classList.add('hidden');
-        })
-        .catch(error => {
-            console.error('Error fetching case types:', error);
-            alert('An error occurred while connecting to the server.');
-            document.getElementById('loadingSpinner').classList.add('hidden');
-        });
-
-    } else {
-        sessionStorage.removeItem('selectedEstCode');
+            })
+            .catch(error => {
+                console.error('Error fetching case types:', error);
+                alert('An error occurred while connecting to the server.');
+                document.getElementById('loadingSpinner').classList.add('hidden');
+            });
+        } else {
+            sessionStorage.removeItem('selectedEstCode');
+        }
     }
-}
 
 function populateSelectDropdown(caseTypes) {
     const selectElement = document.getElementById('caseTypeSelectForOrderJudgementFormDC');
@@ -1472,7 +1460,7 @@ function submitDCJudgementForm(e) {
 <!--This fuction is used for get case type on the basis of selected establishment in civil court other copy-->
 <script>
  function saveEstCodeDcOtherCopy(selectElement) {
-    var selectedEstCode = selectElement.value;
+    const selectedEstCode = selectElement.value;
 
     if (selectedEstCode !== '') {
         sessionStorage.setItem('selectedEstCodeDC', selectedEstCode);
@@ -1480,8 +1468,8 @@ function submitDCJudgementForm(e) {
         // Show loading spinner
         document.getElementById('loadingSpinnerOtherCopyDc').classList.remove('hidden');
 
-        // Make AJAX call
-        fetch('/get-dc-case-type-napix', {
+        // Make AJAX call to fetch case types
+        fetch('/get-dc-case-master', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1489,28 +1477,21 @@ function submitDCJudgementForm(e) {
             },
             body: JSON.stringify({ est_code: selectedEstCode })
         })
-        .then(response => response.json()
-            .then(data => ({ status: response.status, body: data }))) // combine HTTP status with JSON body
+        .then(response => response.json().then(data => ({ status: response.status, body: data })))
         .then(({ status, body }) => {
             console.log('Case Types Response:', body);
 
-            if (!body.status) {
-                if (body.message === 'Failed to fetch access token') {
-                    alert('Failed to fetch access token. Try again.');
-                } else if (body.message === 'Invalid response from NAPIX API') {
-                    alert('Invalid response from NAPIX. Try refreshing the page.');
-                } else {
-                    alert('An unexpected error occurred. Please try again.');
-                }
+            // Hide spinner regardless of result
+            document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
 
-                // Hide loading spinner
-                document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+            if (!body.success) {
+                alert(body.message);
                 return;
             }
 
-            var caseTypes = Object.values(body.data); // Convert object to array
+            const caseTypes = Array.isArray(body.data) ? body.data : Object.values(body.data);
             populateSelectDropdownDCOtherCopy(caseTypes);
-            document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+
         })
         .catch(error => {
             console.error('Error fetching case types:', error);
