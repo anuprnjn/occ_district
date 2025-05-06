@@ -1521,7 +1521,7 @@ function populateSelectDropdownDCOtherCopy(caseTypes) {
         optionElement.textContent = `${caseType.type_name}`;
         selectElement.appendChild(optionElement);
     });
-
+  
     // Attach change event listener (to save selected case type in sessionStorage)
     selectElement.addEventListener('change', function() {
         const selectedCaseType = this.value;
