@@ -22,6 +22,34 @@ class HCCaseTypeController extends Controller
         // Fallback to empty array if failed
         $caseTypes = $caseTypes ?? [];
 
+
+          // Get the API base URL from the config
+        //   $baseUrl = config('app.api.hc_base_url');
+
+        //     try {
+        //         $response = Http::post($baseUrl . '/update_high_court_case_master.php', $caseTypes);
+
+        //         if ($response->successful()) {
+        //             return response()->json([
+        //                 'success' => true,
+        //                 'message' => 'Application registered successfully!',
+        //                 'data' => $response->json(),
+        //             ]);
+        //         } else {
+        //             return response()->json([
+        //                 'success' => false,
+        //                 'message' => 'Failed to register application.',
+        //                 'error' => $response->body(),
+        //             ], $response->status());
+        //         }
+        //     } catch (\Exception $e) {
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Error while connecting to external API.',
+        //             'error' => $e->getMessage(),
+        //         ], 500);
+        //     }
+
     
         // Generate a simple math equation
         $num1 = rand(1, 9);
