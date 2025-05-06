@@ -21,8 +21,8 @@ class HcWebApplicationController extends Controller
                     'apr.*',
                     DB::raw('COALESCE(ct1.type_name, ct2.type_name) AS type_name')
                 )
-                ->leftJoin('high_court_case_type as ct1', 'ct1.case_type', '=', 'apr.case_type')
-                ->leftJoin('high_court_case_type as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
+                ->leftJoin('high_court_case_master as ct1', 'ct1.case_type', '=', 'apr.case_type')
+                ->leftJoin('high_court_case_master as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
                 ->orderBy('apr.created_at', 'desc')
                 ->get();
 
@@ -41,8 +41,8 @@ class HcWebApplicationController extends Controller
 
             $hcuser = DB::table('hc_order_copy_applicant_registration as apr')
                 ->select('apr.*', DB::raw('COALESCE(ct1.type_name, ct2.type_name) AS type_name'))
-                ->leftJoin('high_court_case_type as ct1', 'ct1.case_type', '=', 'apr.case_type')
-                ->leftJoin('high_court_case_type as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
+                ->leftJoin('high_court_case_master as ct1', 'ct1.case_type', '=', 'apr.case_type')
+                ->leftJoin('high_court_case_master as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
                 ->where('apr.application_number', $appNumber)
                 ->first();
 
