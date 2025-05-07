@@ -870,10 +870,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     tableBody.innerHTML += `
                         <tr class="border-b">
-                            <td class="p-2 font-bold uppercase">Establishment</td>
-                            <td class="p-2">${responseData.data.establishment_name ?? 'N/A'}</td>
-                        </tr>
-                        <tr class="border-b">
                             <td class="p-2 font-bold uppercase">${search_type === 'case' ? 'Case Details' : 'Filing Details'}</td>
                             <td class="p-2">${combinedCaseDetail}</td>
                         </tr>
@@ -888,6 +884,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         <tr class="border-b">
                             <td class="p-2 font-bold uppercase">Respondent Name</td>
                             <td class="p-2">${caseData.res_name ?? 'N/A'}</td>
+                        </tr>
+                         <tr class="border-b">
+                            <td class="p-2 font-bold uppercase">Case Status</td>
+                            <td class="p-2">${caseStatus  === 'D' ? 'DISPOSED' : 'PENDING'}</td>
                         </tr>
                         <tr>
                             <td class="p-3 font-bold uppercase">${applyText2}</td>
