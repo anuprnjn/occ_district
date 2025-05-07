@@ -48,6 +48,7 @@ use App\Http\Controllers\admin\RawPdfController;
 use App\Http\Controllers\DcCaseTypeNapixController;
 use App\Http\Controllers\DcGetCaseNapixController;
 use App\Http\Controllers\StoreDCCaseDataController;
+use App\Http\Controllers\StoreHCCaseDataController;
 
 
 
@@ -128,7 +129,7 @@ Route::post('/validate-captcha', [CaptchaController::class, 'validateCaptcha']);
 Route::post('/fetch-application-details', [ApplicationController::class, 'fetchApplicationDetails'])->name('fetch_application_details');
 Route::post('/hc-register-application', [HCApplicationRegistrationController::class, 'hcRegisterApplication']);
 Route::post('/fetch-hc-application-details', [ApplicationController::class, 'fetchHcApplicationDetails'])->name('fetch_hc_application_details');
-Route::post('/fetch-judgement-data', [JudgementController::class, 'fetchJudgementData']);
+Route::post('/get-hc-case-search-napix', [JudgementController::class, 'fetchCaseDetailsNapixHcOrderCopy']);
 Route::post('/submit-order-copy', [OrderCopyController::class, 'submitOrderCopy']);
 Route::post('/set-response-data', [SessionDataController::class, 'setResponseData'])->middleware('web');
 Route::post('/set-paybleAmount', [SessionDataController::class, 'setPaybleAmount'])->middleware('web');
@@ -147,7 +148,9 @@ Route::post('/get-dc-case-type-napix', [DcCaseTypeNapixController::class, 'fetch
 Route::post('/get-dc-case-master', [DcCaseTypeNapixController::class, 'fetchDcCaseType']);
 Route::post('/get-dc-case-search-napix', [DcGetCaseNapixController::class, 'fetchCaseDetailsNapixDc']);
 Route::post('/get-dc-case-search-cnr-napix', [DcGetCaseNapixController::class, 'fetchCaseDetailsOrderDetailsNapixDc']);
+Route::post('/get-hc-case-search-cnr-napix', [JudgementController::class, 'fetchCaseDetailsOrderDetailsNapixHc']);
 Route::post('/store-case-details', [StoreDCCaseDataController::class, 'storeCaseDetails']);
+Route::post('/store-hc-case-details', [StoreHCCaseDataController::class, 'storeHCCaseDetails']);
 
 //admin routes **************************************************************
 
