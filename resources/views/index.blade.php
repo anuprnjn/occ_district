@@ -616,137 +616,362 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 </script>
 
-<!--Case Search For High court Order Copy--> 
+<!--Script for Search High court order copy From Napix-->
 <script>
-function submitJudgementForm(event) {
-    event.preventDefault(); 
 
-    // Step 1: Get the Case Type from the selected element (if any)
-    const selectedCaseTypeHc = sessionStorage.getItem('selectedHcCaseType');
-    
-    // Ensure Case Type is selected before proceeding
-    if (!selectedCaseTypeHc) {
-        alert("Please select Case Type.");
-        return;
-    }
+    function submitJudgementForm(e) {
+        e.preventDefault();
 
-    // Step 2: Check if the user selected a Case Type for the search form.
-    const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
-    if (!selectedRadio) {
-        alert("Please choose Case Number or Filling Number.");
-        return;
-    }
-
-    let caseNo, caseYear, filingNo, filingYear;
-    
-    // Step 3: Validate Case No / Filing No based on the selected search type.
-    if (selectedRadio.value === "case") {
-        caseNo = document.getElementById('case-no').value.trim();
-        caseYear = document.getElementById('case-year').value.trim();
+        // Step 1: Get the Case Type from the selected element (if any)
+        const selectedCaseTypeHc = sessionStorage.getItem('selectedHcCaseType');
         
-        if (!caseNo) {
-            alert("Please enter Case Number.");
+        // Ensure Case Type is selected before proceeding
+        if (!selectedCaseTypeHc) {
+            alert("Please select Case Type.");
             return;
         }
-        if (!caseYear) {
-            alert("Please enter Case Year.");
+
+        // Step 2: Check if the user selected a Case Type for the search form.
+        const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
+        if (!selectedRadio) {
+            alert("Please choose Case Number or Filling Number.");
             return;
         }
-    } else if (selectedRadio.value === "filling") {
-        filingNo = document.getElementById('filling-no').value.trim();
-        filingYear = document.getElementById('filling-year').value.trim();
+
+        let caseNo, caseYear, filingNo, filingYear;
         
-        if (!filingNo) {
-            alert("Please enter Filing Number.");
-            return;
-        }
-        if (!filingYear) {
-            alert("Please enter Filing Year.");
-            return;
-        }
-    }
-
-    // Step 4: Validate CAPTCHA.
-    const captcha = document.getElementById('captcha-hc-orderJudgement').value.trim();
-    if (!captcha) {
-        alert('Please evaluate the CAPTCHA.');
-        return;
-    }
-
-    // Step 5: Now that all validations are passed, validate CAPTCHA via API.
-    fetch('/validate-captcha', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({ captcha: captcha })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            alert('CAPTCHA validation failed. Please try again.');
-            refreshCaptchaForOrderJudgement();
-            document.getElementById('captcha-hc-orderJudgement').value = '';
-            return;
-        }
-
-        // Step 6: Proceed with submitting the form data after CAPTCHA is validated.
-        let requestData = { selectedCaseTypeHc };
-        requestData.search_type = sessionStorage.getItem('search_type');  
+        // Step 3: Validate Case No / Filing No based on the selected search type.
         if (selectedRadio.value === "case") {
-            requestData.HcCaseNo = caseNo;
-            requestData.HcCaseYear = caseYear;
+            caseNo = document.getElementById('case-no').value.trim();
+            caseYear = document.getElementById('case-year').value.trim();
+            
+            if (!caseNo) {
+                alert("Please enter Case Number.");
+                return;
+            }
+            if (!caseYear) {
+                alert("Please enter Case Year.");
+                return;
+            }
         } else if (selectedRadio.value === "filling") {
-            requestData.HcFillingNo = filingNo;
-            requestData.HcFillingYear = filingYear;
+            filingNo = document.getElementById('filling-no').value.trim();
+            filingYear = document.getElementById('filling-year').value.trim();
+            
+            if (!filingNo) {
+                alert("Please enter Filing Number.");
+                return;
+            }
+            if (!filingYear) {
+                alert("Please enter Filing Year.");
+                return;
+            }
         }
 
-        const searchBtn = document.getElementById('searchBtn');
-        const btnText = document.getElementById('btnText');
-        const btnSpinner = document.getElementById('btnSpinner');
-        searchBtn.disabled = true;
-        btnText.textContent = " ";
-        btnSpinner.classList.remove("hidden");
+        // Step 4: Validate CAPTCHA.
+        const captcha = document.getElementById('captcha-hc-orderJudgement').value.trim();
+        if (!captcha) {
+            alert('Please evaluate the CAPTCHA.');
+            return;
+        }
 
-        fetch('/fetch-judgement-data', {
+        // Step 5: CAPTCHA API Validation
+        fetch('/validate-captcha', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            
-            body: JSON.stringify(requestData)
+            body: JSON.stringify({ captcha: captcha })
         })
         .then(response => response.json())
         .then(data => {
-            // console.log(data);
+            if (!data.success) {
+                alert('CAPTCHA validation failed. Please try again.');
+                refreshCaptchaForOrderJudgement();
+                document.getElementById('captcha-hc-orderJudgement').value = '';
+                return;
+            }
 
-                // sessionStorage.setItem("caseInfo", JSON.stringify(data));
-                // sessionStorage.setItem("responseData", JSON.stringify(data));
-                fetch('/set-response-data', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-                    },
-                    body: JSON.stringify({ respData: data, urgent_fee: data.urgent_fee }) 
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to store data in session');
-                    }
-                    return response.json();
-                })
-                .then(data => console.log(data.message))  // Logs success message
-                .catch(error => console.error('Error:', error));
+            // Step 6: Proceed with submitting the form data after CAPTCHA is validated.
+            let requestData = { selectedCaseTypeHc };
+            requestData.search_type = sessionStorage.getItem('search_type');  
+            if (selectedRadio.value === "case") {
+                requestData.HcCaseNo = caseNo;
+                requestData.HcCaseYear = caseYear;
+            } else if (selectedRadio.value === "filling") {
+                requestData.HcFillingNo = filingNo;
+                requestData.HcFillingYear = filingYear;
+            }
+
+            const searchBtn = document.getElementById('searchBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            searchBtn.disabled = true;
+            btnText.textContent = " ";
+            btnSpinner.classList.remove("hidden");
+
+            fetch('/get-hc-case-search-napix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
                 
-                setTimeout(() => window.scrollBy(0, 350), 200);
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.status) {
+                    if (data.message === "Failed to fetch access token") {
+                        alert("Failed to search case. Please refresh the page and try again !");
+                    } else if (data.message === "Invalid response from NAPIX API") {
+                        const orderDetailsDiv = document.getElementById("orderDetails");
+                        orderDetailsDiv.classList.add('hidden');
+                        const caseErrElement = document.getElementById('case_err');
+                        caseErrElement.classList.remove('hidden');
+                        caseErrElement.innerHTML = 'No Cases found !!!';
+                    } else {
+                        alert(data.message || "An unknown error occurred");
+                    }
+                    
+                    btnText.textContent = "Search";
+                    document.getElementById('captcha-hc-orderJudgement').value = '';
+                    refreshCaptchaForOrderJudgement(); 
+                    btnSpinner.classList.add("hidden");
+                    searchBtn.disabled = false;
+                    return;
+                }
 
-                // Remove selected case type from session storage
-                sessionStorage.removeItem('selectedHcCaseType');
+                const cino = data.data.casenos.case1.cino;
+                const originalData = data;
+                // console.log("CINO:", cino);
+                const requestData = {
+                cino,
+            };
+            fetch('/get-hc-case-search-cnr-napix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ request_data: requestData })
+            })
+            .then(response => response.json())
+            .then(responsedata => {
+                console.log("OrderDetails", responsedata.data?.interimorder ?? []);
+                interimOrderGlobal = responsedata.data?.interimorder ?? [];
+                const caseStatus =  responsedata.data.pend_disp;
+
+
+            setTimeout(() => window.scrollBy(0, 350), 200);
+                
+            btnText.textContent = "Search";
+            btnSpinner.classList.add("hidden");
+            const orderDetailsCount = Object.keys(interimOrderGlobal).length;
+            populateTableHCOrderCopy(originalData,interimOrderGlobal,caseStatus);
+            })
+
+            })
+            .catch(error => {
+                console.warn(error);
+            });
+
+        })
+        .catch(error => {
+            console.error('Error validating CAPTCHA:', error);
+        });
+
+        function resetForm() {
+            // Reset case and filing inputs
+            document.getElementById('case-no-dc').value = '';
+            document.getElementById('case-year-dc').value = '';
+            document.getElementById('filling-no-dc').value = '';
+            document.getElementById('filling-year-dc').value = '';
+
+            // Reset district dropdown text and ensure all options are visible
+            const dropdownToggle = document.getElementById("dropdownToggleDC");
+            dropdownToggle.innerText = "Please Select District";
+            document.getElementById("searchInputDC").value = ''; // Clear search filter
+            filterOptionsDC(); // Re-show all district options
+            // Optional: clear any stored value
+            document.getElementById("dropdownToggleDC").dataset.value = "";
+
+            // Reset establishment dropdown
+            const establishmentSelect = document.getElementById("selectEstaDC");
+            establishmentSelect.selectedIndex = 0;
+            establishmentSelect.innerHTML = '<option value="">Select Establishment</option>';
+
+            // Reset case type dropdown
+            const caseTypeSelect = document.getElementById("caseTypeSelectForOrderJudgementFormDC");
+            caseTypeSelect.selectedIndex = 0;
+
+            // Reset radio buttons and toggle respective fields
+            document.querySelector('input[value="case"]').checked = true;
+            toggleFieldsDC(document.querySelector('input[name="search-type-case"]:checked'));
+
+            // Reset captcha field
+            document.getElementById('captcha-hc-orderJudgement').value = '';
+            refreshCaptchaForOrderJudgement(); // call specific refresh for this captcha
+
+            // Reset search button UI
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const searchBtn = document.getElementById('searchBtn');
+
+            btnText.classList.remove('hidden');
+            btnSpinner.classList.add('hidden');
+            searchBtn.disabled = false;
+        }
+
+        function populateTableHCOrderCopy(responseData, interimOrderGlobal,caseStatus) {
+            const orderDetailsCount = Object.keys(interimOrderGlobal).length;
+
+            console.log("count2", orderDetailsCount);
+            const case_type = responseData.case_type;
+            const search_type = responseData.search_type;
+            const orderDetailsDiv = document.getElementById("orderDetails");
+            const tableBody = document.getElementById("orderTableBody");
+            const caseErrElement = document.getElementById('case_err');
+
+            tableBody.innerHTML = '';
+            caseErrElement.classList.add('hidden');
+
+            if (responseData && responseData.data && responseData.data.casenos) {
+                const cases = responseData.data.casenos;
+
+                let applyText = orderDetailsCount === 0 ? "Apply for Others Copy" : "Click Here";
+                let applyText2 = orderDetailsCount === 0 ? "No Order Found" : "Apply Link";
+
+                Object.keys(cases).forEach((key, index) => {
+                    const caseData = cases[key];
+
+                    const numberValue = search_type === 'case' ? (caseData.reg_no ?? 'N/A') : (caseData.fil_no ?? 'N/A');
+                    const yearValue = search_type === 'case' ? (caseData.reg_year ?? 'N/A') : (caseData.fil_year ?? 'N/A');
+
+                    const combinedCaseDetail = `${caseData.type_name ?? 'N/A'}/${numberValue}/${yearValue}`;
+
+                    const caseDataStr = JSON.stringify(caseData).replace(/"/g, '&quot;');
+                    const caseTypeStr = JSON.stringify(case_type).replace(/"/g, '&quot;');
+                    const interimOrderStr = JSON.stringify(interimOrderGlobal).replace(/"/g, '&quot;');
+
+                    const buttonHtml = orderDetailsCount === 0
+                        ? `<button onclick="handleApplyForOthers()" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">${applyText}</button>`
+                        : `<button 
+                            onclick="handleSetHcPhpSession(this)" 
+                            data-case='${caseDataStr}' 
+                            data-type='${caseTypeStr}' 
+                            data-interim='${interimOrderStr}' 
+                            data-status='${caseStatus}' 
+                            class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">
+                            ${applyText}
+                        </button>`;
+
+                    tableBody.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-2 font-bold uppercase">${search_type === 'case' ? 'Case Details' : 'Filing Details'}</td>
+                            <td class="p-2">${combinedCaseDetail}</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2 font-bold uppercase">CIN Number</td>
+                            <td class="p-2">${caseData.cino ?? 'N/A'}</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2 font-bold uppercase">Petitioner Name</td>
+                            <td class="p-2">${caseData.pet_name ?? 'N/A'}</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2 font-bold uppercase">Respondent Name</td>
+                            <td class="p-2">${caseData.res_name ?? 'N/A'}</td>
+                        </tr>
+                         <tr class="border-b">
+                            <td class="p-2 font-bold uppercase">Case Status</td>
+                            <td class="p-2">${caseStatus  === 'D' ? 'DISPOSED' : 'PENDING'}</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold uppercase">${applyText2}</td>
+                            <td class="p-3">
+                                ${buttonHtml}
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                orderDetailsDiv.classList.remove("hidden");
+                resetFormHc(); 
+            } else {
+                orderDetailsDiv.classList.add('hidden');
+                caseErrElement.classList.remove('hidden');
+                caseErrElement.innerHTML = 'No Cases found !!!';
+                resetFormHc(); 
+            }
+        }
+
+
+
+    }
+
+    function handleSetHcPhpSession(button) {
+        try {
+            const caseData = JSON.parse(button.dataset.case);
+            const caseType = JSON.parse(button.dataset.type);
+            const caseStatus = JSON.parse(button.dataset.type);
+            const interimOrder = JSON.parse(button.dataset.interim);
+            const status = button.getAttribute('data-status');
+
+            // Add to caseDetails object if needed
+            caseData.case_type = caseType;
+            caseData.interim = interimOrder;
+            caseData.case_status = status;
+
+            setHccaseDetailsToPhpSession(caseData);
+        } catch (error) {
+            console.error("Error parsing button data attributes:", error);
+        }
+    }
+
+    function setHccaseDetailsToPhpSession(caseDetails) {
+        fetch('/store-hc-case-details', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ caseDetails })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.redirectLocation) {
+                console.log('Case data set in PHP session');
+                window.location.href = data.redirectLocation;
+            } else {
+                console.log(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+
+    function resetFormHc() {
+        // Reset case and filing inputs
+
+        // Reset district dropdown text and ensure all options are visible
+
+        // Reset captcha field
+        document.getElementById('captcha-hc-orderJudgement').value = '';
+        refreshCaptchaForOrderJudgement(); // call specific refresh for this captcha
+
+        // Reset search button UI
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const searchBtn = document.getElementById('searchBtn');
+
+        btnText.classList.remove('hidden');
+        btnSpinner.classList.add('hidden');
+        searchBtn.disabled = false;
+     
+        sessionStorage.removeItem('selectedHcCaseType');
                 refreshCaptchaForOrderJudgement();
 
                 // Clear input fields
@@ -770,116 +995,8 @@ function submitJudgementForm(event) {
 
                 // Clear search input
                 searchInput.value = '';
-
-                // Get all list items and reset their visibility
-                const optionItems = caseTypeOptions.querySelectorAll('li');
-                optionItems.forEach(item => {
-                    item.classList.remove('bg-gray-100'); // Remove any highlight
-                    item.style.display = 'block'; // Ensure all items are visible
-                });
-
-                // Set default highlight (if needed)
-                if (optionItems.length > 0) {
-                    optionItems[0].classList.add('bg-gray-100');
-                }
-            
-
-                function populateTable(responseData, count_data) {
-                    const orderDetailsDiv = document.getElementById("orderDetails");
-                    const tableBody = document.getElementById("orderTableBody");
-                    const caseErrElement = document.getElementById('case_err');
-
-                    // Clear previous table data
-                    tableBody.innerHTML = "";
-
-                    if (responseData.cases && responseData.cases.length > 0) {
-                        responseData.cases.forEach((caseData, index) => {
-                            caseErrElement.classList.add('hidden');
-
-                            let applyText = count_data === 0 ? "Apply for Others Copy" : "Click Here";
-                            let applyText2 = count_data === 0 ? "No Order Found" : "Apply Link";
-
-                            let buttonAction = count_data === 0
-                                ? `handleApplyForOthers()`
-                                : `handleApplyForOthersHavingOrders(${index})`;
-
-                            tableBody.innerHTML += `
-                               
-                                <tr class="border-b">
-                                    <td class="p-3 font-bold uppercase">Filling Number</td>
-                                    <td class="p-3">${caseData?.fillingno || 'N/A'}</td>
-                                </tr>
-                                 <tr class="border-b">
-                                    <td class="p-3 font-bold uppercase">Case Number</td>
-                                    <td class="p-3">${caseData?.caseno || 'N/A'}</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="p-3 font-bold uppercase">CIN Number</td>
-                                    <td class="p-3">${caseData.cino}</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="p-3 font-bold uppercase">Petitioner Name</td>
-                                    <td class="p-3">${caseData.pet_name}</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="p-3 font-bold uppercase">Respondent Name</td>
-                                    <td class="p-3">${caseData.res_name}</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="p-3 font-bold uppercase">Case Status</td>
-                                    <td class="p-3">${caseData.casestatus}</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3 font-bold uppercase">${applyText2}</td>
-                                    <td class="p-3">
-                                        <button onclick="${buttonAction}" class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase">
-                                            ${applyText}
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                        resetButton();
-                        orderDetailsDiv.classList.remove("hidden");
-                    } else {
-                        
-                            caseErrElement.classList.remove('hidden');
-                            caseErrElement. innerHTML = 'No Cases found !!!';
-                            resetButton();
-                    }
-                   
-                    function resetButton() {
-                        searchBtn.disabled = false;
-                        btnText.textContent = "Search";
-                        btnSpinner.classList.add("hidden");
-                    }
-                }
-
-                // Fetch response data and populate table
-                const responseData = data;
-                // sessionStorage.setItem('urgent_fee',data.urgent_fee);
-                const count_data = data.order_count;
-
-                populateTable(responseData, count_data);
-            })
-        .catch(error => {
-            const tableBody = document.getElementById("orderTableBody");
-            tableBody.innerHTML += `
-                <tr class="border-b">
-                    <td class="p-3 font-bold uppercase text-red-500">No Data found !!!</td>
-                </tr>`
-            sessionStorage.removeItem('selectedHcCaseType');
-            refreshCaptchaForOrderJudgement();
-            document.getElementById('captcha-hc-orderJudgement').value = '';
-            console.error('Error fetching judgement data:', error);
-        });
-    })
-    .catch(error => {
-        alert('An error occurred while validating the CAPTCHA.');
-    });
-}
+    }
 </script>
-
 <!--Script for High court when in order copy order is not available-->
 <script>
     function handleApplyForOthers() {

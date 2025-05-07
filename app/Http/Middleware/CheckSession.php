@@ -15,7 +15,7 @@ class CheckSession
     public function handle(Request $request, Closure $next)
     {
 
-        if (!Session::has('responseData')) {
+        if (!Session::has('HcCaseDetailsNapix')) {
             return redirect('/')->with('error', 'Session not available');
         }
 
