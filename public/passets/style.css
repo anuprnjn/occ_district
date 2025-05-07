@@ -493,19 +493,35 @@ main h2{
 .content-section{
     padding: min(30px, 7%);
 }
-.footer{
-    margin-top: 40px;
+.footer {
+    margin-top: 60px;
     background-color: var(--accent-clr);
-    height:100px;
+    padding: 20px 15px;
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    gap:5px;
+    gap: 100px;
+    text-align: center;
+    color: white;
 }
-.footer span{
-    color: var(--secondary-text-clr) !important;
-    font-weight: bold;
+
+.footer span {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+.nic-highlight {
+    font-weight: 700;
+    color: #4B3D2F;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.footer img {
+    height: 32px;
+    margin-top: 8px;
 }
 .line-animation {
     position: sticky; 
@@ -1005,6 +1021,23 @@ body.dark-mode .caseInfoTable:hover{
     width: 30px;
     height: 30px;
     animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Spinner Style */
+.spinnerDc {
+    border: 2px solid #f3f3f3; /* Light gray */
+    border-top: 2px solid #D09A3F; /* Spinner color */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin: 0 auto;
 }
 
 @keyframes spin {

@@ -4,16 +4,16 @@
 
 <section class="content-section flex flex-wrap sm:flex-nowrap items-start justify-between gap-6 p-4 border-t">
     <!-- First Section -->
-    <div class="w-full sm:w-2/3 dark_form p-4 rounded-md">
+    <div class="w-full sm:w-2/3 dark_form p-4 rounded-md" id="main-content">
         
-        <h2 class="text-xl font-semibold mt-0 mb-2">Case Information</h2>
+        <h2 class="text-xl font-semibold mt-0 mb-2">Case Information ( Civil Court )</h2>
         <div id="caseDetails">
             <p class="text-green-500 animate-pulse">Loading case details...</p>
         </div>
 
-        <h2 class="text-lg font-semibold mt-2 mb-2">Orders</h2>
+        <h2 class="text-lg font-semibold mt-2 mb-2">Order Details</h2>
         <div class="overflow-x-auto rounded-md">
-            <table class="min-w-full border border-gray-200" id="ordersTable">
+            <table class="min-w-full border border-gray-200" id="ordersTableDC">
                 <thead>
                     <tr class="bg-[#4B3D2F] text-white text-left text-md">
                         <th class="py-2 px-4 border">Select</th>
@@ -23,19 +23,17 @@
                         <th class="py-2 px-4 border">Amount</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="interimOrdersBody"></tbody>
             </table>
         </div>
     </div>
     <!-- First Section Ends -->
 
     <!-- Second Section -->
-    <div class=" dark_form w-full bg-slate-100/70 sm:w-1/3 p-4 rounded-md mt-10 sm:mb-0 mb-[100px]">
+    <div class=" dark_form w-full bg-slate-100/70 sm:w-1/3 p-4 rounded-lg mt-10 sm:mb-0 mb-[100px]">
         <h2 class="text-xl font-bold mb-4">User Details</h2>
-        
         <form action="#" class=" space-y-4">
             @csrf
-
             <div class="form-field">
                 <label for="name" class="block font-medium">Name: <span class="text-red-500">*</span></label>
                 <input type="text" id="name" name="name" placeholder="Enter your name" required  class="w-full p-2 border rounded-md">
@@ -91,10 +89,10 @@
             </div>
 
             <div class="form-field">
-            <button type="submit" id="submitBtn" class="hidden mt-4 order_btn w-full bg-[#4B3E2F] text-white p-3 rounded-md hover:bg-[#D09A3F] flex items-center justify-center gap-2"
-                    onclick="alert('Clicked button)">
+            <button type="submit" id="submitBtn" class=" mt-4 order_btn w-full bg-[#4B3E2F] text-white p-3 rounded-md hover:bg-[#D09A3F] flex items-center justify-center gap-2"
+                    onclick="submitDcUserOrderDetails()">
                 <span id="btnText">Submit</span>
-                <span id="btnSpinner" class="hidden loader"></span>
+                <span id="btnspinnerDc" class="hidden loader"></span>
             </button>
             </div>
         </form>
@@ -105,82 +103,240 @@
 @endsection
 
 @push('scripts')
+
+<!-- importing extra script for OTP  -->
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
+
+<!-- script to show the case details  -->
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
         try {
-            // Fetch case data asynchronously
             const response = await fetch('/get-case-data');
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const data = await response.json();
 
-            // Ensure responseData exists
             const responseDataDC = data?.session_data?.DcCaseDetailsNapix;
-            console.log(responseDataDC);
-            // return;
+            console.log('Case Info:', responseDataDC);
 
-            if (!responseDataDC) {
-                throw new Error('Missing responseData!');
+            const caseDetailsDiv = document.getElementById("caseDetails");
+            if (!caseDetailsDiv) {
+                console.warn('Missing #caseDetails element.');
+                return;
             }
 
-            // ** Display Case Details **
-            const caseDetailsDiv = document.getElementById("caseDetails");
-            const caseInfo = responseDataDC;
-
-            if (caseInfo) {
-                
+            // Display Case Info
+            if (responseDataDC) {
                 caseDetailsDiv.innerHTML = `
-    <div class="rounded-xl caseInfoShowCaseDetails p-4">
-        ${caseInfo ? `
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-4">
-                    <div>
-                        <h6 class="text-sm text-gray-500 mb-1">CNR Number</h6>
-                        <h6 class="font-semibold break-all">${caseInfo.cino || 'N/A'}</h6>
+                <div class="rounded-xl caseInfoShowCaseDetails p-4">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-4">
+                            <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">District Name</h6>
+                                    <h6 class="font-semibold uppercase">${responseDataDC.establishment_name || 'N/A'}</h6>
+                                </div>
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">CNR Number</h6>
+                                    <h6 class="font-semibold break-all">${responseDataDC.cino || 'N/A'}</h6>
+                                </div>
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
+                                    <h6 class="font-semibold">${responseDataDC.type_name || 'N/A'}/${responseDataDC.reg_no || 'N/A'}/${responseDataDC.reg_year || 'N/A'}</h6>
+                                </div>
+                            <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
+                                    <span class="-ml-1 inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold tracking-wide ${
+                                        responseDataDC.case_status?.toUpperCase() === 'P' 
+                                            ? 'bg-blue-100 text-blue-800' 
+                                            : responseDataDC.case_status?.toUpperCase() === 'D'
+                                                ? 'bg-red-100 text-red-800' 
+                                                : 'bg-gray-100 text-gray-800'
+                                    }">
+                                        ${
+                                            responseDataDC.case_status?.toUpperCase() === 'P'
+                                                ? 'PENDING'
+                                                : responseDataDC.case_status?.toUpperCase() === 'D'
+                                                    ? 'DISPOSED'
+                                                    : responseDataDC.case_status || 'N/A'
+                                        }
+                                    </span>
+                                </div>
+                            
+                            
+                            </div>
+                            <div class="space-y-4">
+                            <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Establishment Name</h6>
+                                    <h6 class="font-semibold">${responseDataDC.district_name || 'N/A'}</h6>
+                                </div>
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Petitioner Name</h6>
+                                    <h6 class="font-semibold">${responseDataDC.pet_name || 'N/A'}</h6>
+                                </div>
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Respondent Name</h6>
+                                    <h6 class="font-semibold">${responseDataDC.res_name || 'N/A'}</h6>
+                                </div>
+                                
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
-                        <h6 class="font-semibold">${caseInfo.type_name || 'N/A'}/${caseInfo.reg_no || 'N/A'}/${caseInfo.reg_year || 'N/A'}</h6>
-                    </div>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <h6 class="text-sm text-gray-500 mb-1">Petitioner</h6>
-                        <h6 class="font-semibold">${caseInfo.pet_name || 'N/A'}</h6>
-                    </div>
-                    <div>
-                        <h6 class="text-sm text-gray-500 mb-1">Respondent</h6>
-                        <h6 class="font-semibold">${caseInfo.res_name || 'N/A'}</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-        ` : `
-        <div class="text-center py-8">
-            <div class="text-red-500 inline-flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <span class="font-medium">No case information found!</span>
-            </div>
-        </div>
-        `}
-    </div>
-`;
+                </div>`;
             } else {
                 caseDetailsDiv.innerHTML = `<p class="text-red-500">No case information found!</p>`;
             }
 
         } catch (error) {
-            console.error('Fetch Error:', error);
-            document.getElementById("caseDetails").innerHTML = `
-                <p class="text-red-500">Error: ${error.message}</p>
-            `;
+            alert('Error fetching or rendering case data:', error);
         }
     });
 </script>
+
+<!-- script to get the pdf from the napix api  -->
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            // Step 1: Fetch case data
+            const response = await fetch('/get-case-data');
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const data = await response.json();
+            const responseDataDC = data?.session_data?.DcCaseDetailsNapix;
+
+            if (!responseDataDC) throw new Error('No case info available');
+            const cino = responseDataDC.cino;
+            const interimOrders = responseDataDC.interim || {};
+
+            // Step 2: Render Orders Table
+            const ordersTable = document.getElementById("ordersTableDC")?.querySelector("tbody");
+            if (!ordersTable) {
+                console.warn("ordersTableDC tbody not found");
+                return;
+            }
+
+            ordersTable.innerHTML = "";
+
+            const interimEntries = Object.values(interimOrders);
+            if (interimEntries.length > 0) {
+                interimEntries.forEach(order => {
+                    const row = document.createElement("tr");
+                    row.classList.add("border-b", "cursor-pointer", "caseInfoTable");
+
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border">
+                            <input type="checkbox" class="order-checkbox"/>
+                        </td>
+                        <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
+                        <td class="py-2 px-4 border">${order.order_date || 'N/A'}</td>
+                        <td class="py-2 px-4 border pages-cell">
+                            <div class="spinnerDc"></div>
+                        </td>
+                        <td class="py-2 px-4 border font-bold amount-cell">
+                            <div class="spinnerDc"></div>
+                        </td>
+                    `;
+
+                    row.addEventListener("click", function (event) {
+                        if (event.target.type === "checkbox" || event.target.tagName.toLowerCase() === "button") return;
+
+                        // Prevent selection if any button is present in the row
+                        if (row.querySelector("button")) return;
+
+                        const checkbox = row.querySelector(".order-checkbox");
+                        if (checkbox) checkbox.checked = !checkbox.checked;
+                    });
+
+                    ordersTable.appendChild(row);
+                });
+
+                // Step 3: Fetch PDF info for each order row
+                const tableRows = ordersTable.querySelectorAll("tr");
+
+                interimEntries.forEach((order, index) => {
+                    const payload = {
+                        order_no: order.order_no,
+                        order_date: order.order_date,
+                        cino: cino
+                    };
+
+                    const currentRow = tableRows[index];
+                    const pageCell = currentRow.querySelector(".pages-cell");
+                    const amountCell = currentRow.querySelector(".amount-cell");
+
+                    async function fetchPdfAndUpdateUI() {
+                        pageCell.innerHTML = `<div class="spinnerDc"></div>`;
+                        amountCell.innerHTML = `<div class="spinnerDc"></div>`;
+
+                        try {
+                            const res = await fetch('/get-order-pdf-napix', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify(payload)
+                            });
+
+                            const result = await res.json();
+
+                            if (result.status === 'success') {
+                                pageCell.innerHTML = result.pages || '0';
+                                amountCell.innerHTML = `<span class="text-green-500">₹&nbsp;</span>${result.amount || 0}`;
+                            } else {
+                                showRetryButton();
+                                console.error(`Order #${order.order_no} PDF fetch failed: ${result.message}`);
+                            }
+                        } catch (error) {
+                            showRetryButton();
+                            console.error(`Order #${order.order_no} PDF fetch error:`, error);
+                        }
+                    }
+
+                    function showRetryButton() {
+                        // Show "-" for pages
+                        pageCell.innerHTML = `-`;
+
+                        // Show Reload Amount button
+                        amountCell.innerHTML = `
+                            <button class="flex bg-[#D09A3F] text-white get-pdf-btn text-white text-sm px-3 py-1 rounded">
+                                Click to get amount
+                            </button>
+                        `;
+
+                        const retryBtn = amountCell.querySelector('.get-pdf-btn');
+                        if (retryBtn) {
+                            retryBtn.addEventListener('click', async function () {
+                                retryBtn.disabled = true;
+                                retryBtn.innerText = 'Loading...';
+                                await fetchPdfAndUpdateUI();
+                            });
+                        }
+                    }
+
+                    // Initial attempt
+                    fetchPdfAndUpdateUI();
+                });
+
+            } else {
+                ordersTable.innerHTML = `<tr><td colspan="5" class="text-center py-2">No orders available</td></tr>`;
+            }
+
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            const caseDetailsDiv = document.getElementById("caseDetails");
+            if (caseDetailsDiv) {
+                caseDetailsDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        }
+    });
+</script>
+
+<!-- sending the user details and order details script  -->
+
+<script>
+    function submitDcUserOrderDetails(){
+        
+    }
+</script>    
+
 
 @endpush

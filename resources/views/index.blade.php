@@ -988,12 +988,19 @@ function submitJudgementForm(event) {
 function handleSetPhpSession(button) {
     try {
         const caseData = JSON.parse(button.dataset.case);
+
+        // joining all comming data to the caseData json
         const caseType = JSON.parse(button.dataset.type);
         const interimOrder = JSON.parse(button.dataset.interim);
-
-        // Add to caseDetails object if needed
+        const caseStatus = button.getAttribute('data-status');
+        const districtName = button.getAttribute('data-dist');
+        const establishmentName = button.getAttribute('data-est');
+        
         caseData.case_type = caseType;
         caseData.interim = interimOrder;
+        caseData.case_status = caseStatus;
+        caseData.district_name = districtName;
+        caseData.establishment_name = establishmentName;
 
         setcaseDetailsToPhpSession(caseData);
     } catch (error) {
@@ -1182,13 +1189,16 @@ function submitDCJudgementForm(e) {
             // console.log("DATA",responsedata);
             console.log("OrderDetails", responsedata.data?.interimorder ?? []);
             interimOrderGlobal = responsedata.data?.interimorder ?? [];
-
+            const case_status = responsedata.data?.pend_disp;
+            const est_name_napix = responsedata.data?.establishment_name;
+            const dist_name_napix = responsedata.data?.dist_name;
+            
 
           setTimeout(() => window.scrollBy(0, 350), 200);
            btnText.textContent = "Search";
            btnSpinner.classList.add("hidden");
            const orderDetailsCount = Object.keys(interimOrderGlobal).length;
-           populateTableDCOrderCopy(originalData,interimOrderGlobal);
+           populateTableDCOrderCopy(originalData,interimOrderGlobal,case_status,est_name_napix,dist_name_napix);
         })
 
         })
@@ -1243,7 +1253,7 @@ function submitDCJudgementForm(e) {
         searchBtn.disabled = false;
     }
 
-    function populateTableDCOrderCopy(responseData, interimOrderGlobal) {
+    function populateTableDCOrderCopy(responseData, interimOrderGlobal,case_status,dist_name_napix,est_name_napix) {
         const orderDetailsCount = Object.keys(interimOrderGlobal).length;
 
         // console.log("count2", orderDetailsCount);
@@ -1281,6 +1291,9 @@ function submitDCJudgementForm(e) {
                         data-case='${caseDataStr}' 
                         data-type='${caseTypeStr}' 
                         data-interim='${interimOrderStr}' 
+                        data-status='${case_status ?? ''}'
+                        data-dist='${dist_name_napix ?? ''}'
+                        data-est='${est_name_napix ?? ''}'
                         class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">
                         ${applyText}
                     </button>`;
@@ -1324,8 +1337,6 @@ function submitDCJudgementForm(e) {
             resetForm(); 
         }
     }
-
-
 
 }
 </script>

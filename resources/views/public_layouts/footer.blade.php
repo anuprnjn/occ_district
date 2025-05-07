@@ -1,9 +1,28 @@
 <footer class="footer">
-    <span>Content Owned and managed by High Court of Jharkhand</span>
-    <span style="color: white !important;font-weight:normal !important;">© Copyright reserved by High Court of Jharkhand</span>
+<span>
+    Developed and hosted by 
+    <a href="https://www.nic.in" target="_blank" class="nic-highlight" onclick="return confirmRedirect(event, 'https://www.nic.in')">
+        National Informatics Centre,
+    </a><br>
+    <a href="https://www.meity.gov.in" target="_blank" class="nic-highlight" onclick="return confirmRedirect(event, 'https://www.meity.gov.in')">
+        Ministry of Electronics & Information Technology,
+    </a> Government of India.
+</span>
+
+    <img src="{{ asset('passets/images/niclogow.png') }}" alt="NIC Logo">
 </footer>
 </main>
 </body>
+<script>
+function confirmRedirect(event, url) {
+    event.preventDefault(); // stop immediate navigation
+    const proceed = confirm("The website you want to open will take you to an external website. Do you want to continue?");
+    if (proceed) {
+        window.open(url, '_blank');
+    }
+    return false; // prevent default anchor behavior
+}
+</script>
 <script type="text/javascript" src="{{ asset('passets/js/script.js')}}" defer></script>
 <script type="text/javascript" src="{{ asset('passets/js/jspdf.js')}}" defer></script>
 

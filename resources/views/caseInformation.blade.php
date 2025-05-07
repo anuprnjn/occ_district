@@ -4,6 +4,7 @@
 
 <section class="content-section flex flex-wrap sm:flex-nowrap items-start justify-between gap-6 p-4 border-t">
     <!-- First Section -->
+     
     <div class="w-full sm:w-2/3 dark_form p-4 rounded-md">
         
         <h2 class="text-xl font-semibold mt-0 mb-2">Case Information</h2>

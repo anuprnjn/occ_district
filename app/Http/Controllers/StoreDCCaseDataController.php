@@ -12,6 +12,7 @@ class StoreDCCaseDataController extends Controller
       
         $caseDetails = $request->input('caseDetails');
         Session::put('DcCaseDetailsNapix', $caseDetails);
+       
       
         return response()->json([
             'message' => 'Case details stored in session successfully',

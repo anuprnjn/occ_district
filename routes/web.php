@@ -48,6 +48,7 @@ use App\Http\Controllers\admin\RawPdfController;
 use App\Http\Controllers\DcCaseTypeNapixController;
 use App\Http\Controllers\DcGetCaseNapixController;
 use App\Http\Controllers\StoreDCCaseDataController;
+use App\Http\Controllers\DcOrderNapixController;
 
 
 
@@ -148,6 +149,7 @@ Route::post('/get-dc-case-master', [DcCaseTypeNapixController::class, 'fetchDcCa
 Route::post('/get-dc-case-search-napix', [DcGetCaseNapixController::class, 'fetchCaseDetailsNapixDc']);
 Route::post('/get-dc-case-search-cnr-napix', [DcGetCaseNapixController::class, 'fetchCaseDetailsOrderDetailsNapixDc']);
 Route::post('/store-case-details', [StoreDCCaseDataController::class, 'storeCaseDetails']);
+Route::post('/get-order-pdf-napix', [DcOrderNapixController::class, 'getDcOrderPdf']);
 
 //admin routes **************************************************************
 
