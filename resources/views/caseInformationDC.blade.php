@@ -74,12 +74,12 @@
             </div>
             <div class="form-field" id="advocateField" style="display: none;">
                 <label for="adv_res" class="mt-2">Advocate Registration No <span>*</span></label>
-                <input type="text" id="adv_res" name="adv_res" class="mt-5" placeholder="Enter Advocate Registration No">
+                <input type="text" id="adv_res" name="adv_res" class="mt-3" placeholder="Enter Advocate Registration No">
             </div>
 
 
             <div class="form-field">
-                <label class="block font-medium">Request Mode: <span class="text-red-500">*</span></label>
+                <label class="block font-medium mt-2">Request Mode: <span class="text-red-500">*</span></label>
                 <div class="flex items-center gap-4">
                     <input type="radio" id="urgent" name="request_mode" value="urgent" required >
                     <label for="urgent">Urgent</label>
@@ -90,7 +90,7 @@
 
             <div class="form-field">
             <button type="submit" id="submitBtn" class=" mt-4 order_btn w-full bg-[#4B3E2F] text-white p-3 rounded-md hover:bg-[#D09A3F] flex items-center justify-center gap-2"
-                    onclick="submitDcUserOrderDetails()">
+                    onclick="submitDcUserOrderDetails(event)">
                 <span id="btnText">Submit</span>
                 <span id="btnspinnerDc" class="hidden loader"></span>
             </button>
@@ -192,7 +192,7 @@
     });
 </script>
 
-<!-- script to get the pdf from the napix api  -->
+<!-- script to get the pdf from the napix api and order details  -->
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
         try {
@@ -223,17 +223,17 @@
 
                     row.innerHTML = `
                         <td class="py-2 px-4 border">
-                            <input type="checkbox" class="order-checkbox"/>
+                            <input type="checkbox" class="order-checkbox" onchange="handleCheckboxChange(this)"/>
                         </td>
-                        <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
-                        <td class="py-2 px-4 border">${order.order_date || 'N/A'}</td>
+                        <td class="py-2 px-4 border order-no">${order.order_no || 'N/A'}</td>
+                        <td class="py-2 px-4 border order-date">${order.order_date || 'N/A'}</td>
                         <td class="py-2 px-4 border pages-cell">
-                            <div class="spinnerDc"></div>
+                            ${order.pages || '<div class="spinnerDc"></div>'}
                         </td>
                         <td class="py-2 px-4 border font-bold amount-cell">
-                            <div class="spinnerDc"></div>
+                            ${order.amount || '<div class="spinnerDc"></div>'}
                         </td>
-                    `;
+                        `;
 
                     row.addEventListener("click", function (event) {
                         if (event.target.type === "checkbox" || event.target.tagName.toLowerCase() === "button") return;
@@ -330,13 +330,118 @@
     });
 </script>
 
+<!-- toggle function to to show and hide the advocate input based on select  -->
+
+<script>
+  function toggleAdvocateField() {
+    const appliedBy = document.getElementById("apply-by").value;
+    const advocateField = document.getElementById("advocateField");
+    const advResInput = document.getElementById("adv_res");
+
+    if (appliedBy === "advocate") {
+      advocateField.style.display = "block";
+    } else {
+      advocateField.style.display = "none";
+      advResInput.value = ""; 
+    }
+  }
+</script>
+
 <!-- sending the user details and order details script  -->
 
 <script>
-    function submitDcUserOrderDetails(){
-        
+    async function submitDcUserOrderDetails(event) {
+        event.preventDefault(); 
+
+        // Get form input values
+        const name = document.getElementById("name").value.trim();
+        const mobile = document.getElementById("mobileInput").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const cnfEmail = document.getElementById("confirm-email").value.trim();
+        const appliedBy = document.getElementById("apply-by").value;
+        const advRes = document.getElementById("adv_res").value.trim();
+        const requestModeElement = document.querySelector('input[name="request_mode"]:checked');
+        const requestMode = requestModeElement ? requestModeElement.value : null;
+
+        // Check required fields
+        if (name === '') return alert("Please enter your name.");
+        if (mobile === '') return alert("Please enter your mobile number.");
+        if (!/^\d{10}$/.test(mobile)) return alert("Mobile number must be exactly 10 digits.");
+        if (email === '') return alert("Please enter your email.");
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) return alert("Please enter a valid email address.");
+        if (cnfEmail === '') return alert("Please confirm your email.");
+        if (email !== cnfEmail) return alert("Email and confirm email do not match.");
+        if (appliedBy === '') return alert("Please select 'Applied By'.");
+        if (appliedBy === 'advocate' && advRes === '') return alert("Please enter Advocate Registration No.");
+        if (!requestMode) return alert("Please select a request mode (Urgent or Ordinary).");
+
+        // Get checked order checkboxes
+        const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
+        if (checkedBoxes.length === 0) return alert("Please select at least one order.");
+
+        // Get session data (Blade-rendered)
+        const dcCaseDetailsNapix = @json(session('DcCaseDetailsNapix'));
+
+        // Build selectedOrders array
+        const selectedOrders = [];
+        checkedBoxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
+            selectedOrders.push({
+                order_no: row.cells[1]?.textContent.trim(),
+                order_date: row.cells[2]?.textContent.trim(),
+                case_no: dcCaseDetailsNapix.reg_no,
+                fil_no: dcCaseDetailsNapix.fil_no
+            });
+        });
+
+        // Combine all data
+        const formData = {
+            name,
+            mobile,
+            email,
+            confirm_email: cnfEmail,
+            applied_by: appliedBy,
+            adv_reg_no: advRes,
+            request_mode: requestMode,
+            selected_orders: selectedOrders, 
+
+            // From session
+            case_details: {
+                case_no: dcCaseDetailsNapix.reg_no,
+                case_year: dcCaseDetailsNapix.reg_year,
+                fil_no: dcCaseDetailsNapix.fil_no,
+                fil_year: dcCaseDetailsNapix.fil_year,
+                case_type: dcCaseDetailsNapix.case_type,
+                pet_name: dcCaseDetailsNapix.pet_name,
+                res_name: dcCaseDetailsNapix.res_name,
+                dist_code: dcCaseDetailsNapix.dist_code,
+                establishment_code: dcCaseDetailsNapix.establishment_code,
+                cino: dcCaseDetailsNapix.cino
+            }
+        };
+
+        // Send to controller to calculate and store in session
+        const response = await fetch("{{ route('dc.store.session') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            // console.log(result.location);
+            window.location.href = result.location;
+        } else {
+            const error = await response.text();
+            console.error("Server error:", error);
+            // alert("Something went wrong. Please try again.");
+        }
     }
-</script>    
+</script>
 
 
 @endpush

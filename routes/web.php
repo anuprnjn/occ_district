@@ -94,16 +94,16 @@ Route::get('/caseInformationDc', function () {
 })->name('caseInformationDC');
 
 
-Route::middleware([CheckSession::class])->group(function () {
+// Route::middleware([CheckSession::class])->group(function () {
     Route::get('/caseInformation', function () {
         return view('caseInformation');
     })->name('caseInformation');
-});
-Route::middleware([CheckSessionCd_pay::class])->group(function () {
+// });
+// Route::middleware([CheckSessionCd_pay::class])->group(function () {
     Route::get('/occ/cd_pay', function () {
         return view('caseInformationDetails');
     })->name('caseInformationDetails');
-});
+// });
 
 Route::get('/screenReader', function () {
     return view('screenReader');
@@ -153,6 +153,7 @@ Route::post('/get-hc-case-search-cnr-napix', [JudgementController::class, 'fetch
 Route::post('/store-case-details', [StoreDCCaseDataController::class, 'storeCaseDetails']);
 Route::post('/get-order-pdf-napix', [DcOrderNapixController::class, 'getDcOrderPdf']);
 Route::post('/store-hc-case-details', [StoreHCCaseDataController::class, 'storeHCCaseDetails']);
+Route::post('/dc/store-case-session', [StoreDCCaseDataController::class, 'store'])->name('dc.store.session');
 
 //admin routes **************************************************************
 
