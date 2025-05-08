@@ -50,6 +50,7 @@ use App\Http\Controllers\DcGetCaseNapixController;
 use App\Http\Controllers\StoreDCCaseDataController;
 use App\Http\Controllers\DcOrderNapixController;
 use App\Http\Controllers\StoreHCCaseDataController;
+use App\Http\Controllers\HcOrderNapixController;
 
 
 
@@ -153,6 +154,7 @@ Route::post('/get-hc-case-search-cnr-napix', [JudgementController::class, 'fetch
 Route::post('/store-case-details', [StoreDCCaseDataController::class, 'storeCaseDetails']);
 Route::post('/get-order-pdf-napix', [DcOrderNapixController::class, 'getDcOrderPdf']);
 Route::post('/store-hc-case-details', [StoreHCCaseDataController::class, 'storeHCCaseDetails']);
+Route::post('/get-hc-order-pdf-napix', [HcOrderNapixController::class, 'getHcOrderPdf']);
 
 //admin routes **************************************************************
 
