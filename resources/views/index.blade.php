@@ -1112,12 +1112,16 @@ function handleSetPhpSession(button) {
         const caseStatus = button.getAttribute('data-status');
         const districtName = button.getAttribute('data-dist');
         const establishmentName = button.getAttribute('data-est');
+        const establishmentCode = button.getAttribute('data-est-code');
+        const distCode = button.getAttribute('data-dist-code');
         
         caseData.case_type = caseType;
         caseData.interim = interimOrder;
         caseData.case_status = caseStatus;
         caseData.district_name = districtName;
         caseData.establishment_name = establishmentName;
+        caseData.establishment_code = establishmentCode;
+        caseData.dist_code = distCode;
 
         setcaseDetailsToPhpSession(caseData);
     } catch (error) {
@@ -1304,18 +1308,21 @@ function submitDCJudgementForm(e) {
         .then(response => response.json())
         .then(responsedata => {
             // console.log("DATA",responsedata);
+
             console.log("OrderDetails", responsedata.data?.interimorder ?? []);
             interimOrderGlobal = responsedata.data?.interimorder ?? [];
             const case_status = responsedata.data?.pend_disp;
             const est_name_napix = responsedata.data?.establishment_name;
             const dist_name_napix = responsedata.data?.dist_name;
+            const dist_code = responsedata.data?.district_code;
+            const est_code = responsedata.data?.est_code;
             
 
           setTimeout(() => window.scrollBy(0, 350), 200);
            btnText.textContent = "Search";
            btnSpinner.classList.add("hidden");
            const orderDetailsCount = Object.keys(interimOrderGlobal).length;
-           populateTableDCOrderCopy(originalData,interimOrderGlobal,case_status,est_name_napix,dist_name_napix);
+           populateTableDCOrderCopy(originalData,interimOrderGlobal,case_status,est_name_napix,dist_name_napix,dist_code,est_code);
         })
 
         })
@@ -1370,7 +1377,7 @@ function submitDCJudgementForm(e) {
         searchBtn.disabled = false;
     }
 
-    function populateTableDCOrderCopy(responseData, interimOrderGlobal,case_status,dist_name_napix,est_name_napix) {
+    function populateTableDCOrderCopy(responseData, interimOrderGlobal,case_status,dist_name_napix,est_name_napix,dist_code,est_code) {
         const orderDetailsCount = Object.keys(interimOrderGlobal).length;
 
         // console.log("count2", orderDetailsCount);
@@ -1411,6 +1418,8 @@ function submitDCJudgementForm(e) {
                         data-status='${case_status ?? ''}'
                         data-dist='${dist_name_napix ?? ''}'
                         data-est='${est_name_napix ?? ''}'
+                        data-est-code='${est_code ?? ''}'
+                        data-dist-code='${dist_code ?? ''}'
                         class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">
                         ${applyText}
                     </button>`;
