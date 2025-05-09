@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 
 class StoreDCCaseDataController extends Controller
 {
+
+    // function to store the case details of initial page of dc 
+
     public function storeCaseDetails(Request $request)
     {
       
@@ -21,6 +24,9 @@ class StoreDCCaseDataController extends Controller
             'redirectLocation' => url('/caseInformationDc') 
         ]);
     }
+
+    // function to store the details of orders and users in the session 
+
     public function store(Request $request)
     {
         // Get all incoming data
@@ -84,6 +90,10 @@ class StoreDCCaseDataController extends Controller
                 'fil_no' => $filNo
             ];
         }
+        $urgentFee = \DB::table('fee_master')
+        ->where('fee_type', 'urgent_fee')
+        ->value('amount');
+
     
         // Store the processed data in the session
         session([
@@ -98,8 +108,10 @@ class StoreDCCaseDataController extends Controller
                     'request_mode' => $data['request_mode']
                 ],
                 'case_details' => $data['case_details'],
-                'orders' => $orders
-            ]
+                'orders' => $orders,
+                'urgent_fee' => $urgentFee
+            ],
+            'active_payment_source' => 'dc_review_form_userDetails' // set this flag
         ]);
             // dd(Session::all());
 
@@ -107,6 +119,68 @@ class StoreDCCaseDataController extends Controller
             'status' => 'success',
             'message' => 'Data processed and stored in session successfully.',
             'location' => '/occ/cd_pay'
+        ]);
+    }
+
+    // function to calculate the total amount on server side 
+
+    public function calculateFinalAmount(Request $request)
+    {
+        $orders = $request->input('orders');
+        $request_mode = $request->input('request_mode');
+    
+        // Step 1: Sum all amounts from orders
+        $totalAmount = 0;
+        foreach ($orders as $order) {
+            $totalAmount += $order['amount'];
+        }
+    
+        // Step 2: Get urgent_fee from the DB
+        $urgentFee = \DB::table('fee_master')
+            ->where('fee_type', 'urgent_fee')
+            ->value('amount');
+    
+        // Step 3: Add urgent_fee to total
+        if ($request_mode === 'urgent') {
+            $finalAmount = $totalAmount + $urgentFee;
+        } else {
+            $finalAmount = $totalAmount;
+            $urgentFee = 0; // no urgent fee in ordinary mode
+        }
+    
+        // Step 4: Store total and fee in session
+        session([
+            'dc_final_amount_summary' => [
+                'orders_total' => $totalAmount,
+                'urgent_fee' => $urgentFee,
+                'final_total_amount_DC' => $finalAmount
+            ]
+        ]);
+    
+        // Step 5: Return success response with data
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Total amount is calculated successfully',
+            'data' => session('dc_final_amount_summary')
+        ]);
+    }
+
+    // function to initialte the final amount with security 
+
+    public function initiatePayment()
+    {
+        $amount = session('dc_final_amount_summary.final_total_amount_DC');
+
+        if (!$amount) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Payment amount not found in session.'
+            ], 422);
+        }
+
+        return response()->json([
+            'status' => 'ready',
+            'amount' => $amount
         ]);
     }
 }

@@ -1272,7 +1272,7 @@ function submitDCJudgementForm(e) {
         .then(data => {
             if (!data.status) {
                 if (data.message === "Failed to fetch access token") {
-                    alert("Failed to search case. Please refresh the page and try again !");
+                    alert("Failed to search. Please try again !");
                 } else if (data.message === "Invalid response from NAPIX API") {
                     const orderDetailsDiv = document.getElementById("orderDetails");
                     orderDetailsDiv.classList.add('hidden');
@@ -1308,6 +1308,7 @@ function submitDCJudgementForm(e) {
         .then(response => response.json())
         .then(responsedata => {
             // console.log("DATA",responsedata);
+            // return;
 
             console.log("OrderDetails", responsedata.data?.interimorder ?? []);
             interimOrderGlobal = responsedata.data?.interimorder ?? [];

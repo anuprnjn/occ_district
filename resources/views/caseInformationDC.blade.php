@@ -413,10 +413,13 @@
                 fil_no: dcCaseDetailsNapix.fil_no,
                 fil_year: dcCaseDetailsNapix.fil_year,
                 case_type: dcCaseDetailsNapix.case_type,
+                type_name: dcCaseDetailsNapix.type_name,
                 pet_name: dcCaseDetailsNapix.pet_name,
                 res_name: dcCaseDetailsNapix.res_name,
                 dist_code: dcCaseDetailsNapix.dist_code,
+                dist_name: dcCaseDetailsNapix.establishment_name,
                 establishment_code: dcCaseDetailsNapix.establishment_code,
+                establishment_name: dcCaseDetailsNapix.district_name,
                 cino: dcCaseDetailsNapix.cino
             }
         };
