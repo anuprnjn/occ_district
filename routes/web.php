@@ -51,6 +51,7 @@ use App\Http\Controllers\StoreDCCaseDataController;
 use App\Http\Controllers\DcOrderNapixController;
 use App\Http\Controllers\StoreHCCaseDataController;
 use App\Http\Controllers\DCOrderController;
+use App\Http\Controllers\HcOrderNapixController;
 
 
 Route::get('/', function () {
@@ -157,6 +158,7 @@ Route::post('/dc/store-case-session', [StoreDCCaseDataController::class, 'store'
 Route::post('/calculate-dc-final-amount', [StoreDCCaseDataController::class, 'calculateFinalAmount'])->name('calculate-dc-final-amount');
 Route::post('/dc/initiate-payment', [StoreDCCaseDataController::class, 'initiatePayment'])->name('initiate.dc.payment');
 Route::post('/submit-dc-order-details', [App\Http\Controllers\DCOrderController::class, 'submit'])->name('dc-order.submit');
+Route::post('/get-hc-order-pdf-napix', [HcOrderNapixController::class, 'getHcOrderPdf']);
 
 //admin routes **************************************************************
 
