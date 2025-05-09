@@ -20,6 +20,10 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Unable to fetch merchant details'], 500);
         }
 
+        $Dc_userName = $request->input('Dc_userName');
+        $Dc_application_number = $request->input('Dc_application_number');
+        $Dc_totalAmount = $request->input('Dc_totalAmount');
+
         $merchantDetails = $response->json();
         $userData = $request->input('userData');
         $urgent_fee = Session::get('urgent_fee');
@@ -39,9 +43,9 @@ class PaymentController extends Controller
         $Requestparameter = implode('|', [
             $merchantDetails[0]['deptid'],
             $merchantDetails[0]['recieptheadcode'],
-            $userData['name'] ?? $userData['applicant_name'] ?? '', 
+            $userData['name'] ?? $userData['applicant_name'] ?? $Dc_userName ?? '', 
             $transaction_no,
-            $paybleAmount,
+            $paybleAmount ?? $Dc_totalAmount,
             $depositerId,
             $PAN,
             $ADDINFO1,
@@ -58,12 +62,12 @@ class PaymentController extends Controller
         // Prepare data for entryPayDetails API
         $entryData = [
             'deptid' => $merchantDetails[0]['deptid'] ?? '',
-            'application_number' => $applicationNumber, 
+            'application_number' => $applicationNumber ?? $Dc_application_number, 
             'recieptheadcode' => $merchantDetails[0]['recieptheadcode'] ?? '',
-            'depositername' => $userData['name'] ?? $userData['applicant_name'] ?? '',
+            'depositername' => $userData['name'] ?? $userData['applicant_name'] ?? $Dc_userName ?? '',
             'depttranid' => $transaction_no ?? '',
             'depositerid'=> $depositerId ?? '',
-            'amount' => $paybleAmount ?? '',
+            'amount' => $paybleAmount ?? $Dc_totalAmount ?? '',
             'panno' => $PAN ?? '',
             'urgent_fee' => $urgent_fee ?? "5.00" ?? '',
             'addinfo1' => $ADDINFO1 ?? '',
