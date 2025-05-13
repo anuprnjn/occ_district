@@ -16,7 +16,6 @@ class OrderCopyController extends Controller
             // Convert numeric values to string before validation
             $request->merge([
                 'case_type' => (string) $request->case_type,
-                'filingcase_type' => (string) $request->filingcase_type
             ]);
 
             // Validate request data
@@ -27,11 +26,10 @@ class OrderCopyController extends Controller
                 'petitioner_name' => 'required|string',
                 'respondent_name' => 'required|string',
                 'case_type' => 'required|string',
-                'filingcase_type' => 'required|string',
-                'case_number' => 'required|string',
-                'case_year' => 'required|string',
-                'filing_number' => 'required|string',
-                'filing_year' => 'required|string',
+                'case_number' => 'nullable|string',
+                'case_year' => 'nullable|string',
+                'filing_number' => 'nullable|string',
+                'filing_year' => 'nullable|string',
                 'request_mode' => 'required|string',
                 'applied_by' => 'required|string',
                 'cino' => 'required|string',
@@ -39,13 +37,14 @@ class OrderCopyController extends Controller
                 'order_details' => 'required|array',
                 'order_details.*.order_no' => 'required|integer',
                 'order_details.*.order_date' => 'required|date',
-                'order_details.*.case_number' => 'required|string',
-                'order_details.*.filing_number' => 'required|string',
+                'order_details.*.case_number' => 'nullable|string',
+                'order_details.*.filing_number' => 'nullable|string',
                 'order_details.*.page_count' => 'required|integer',
                 'order_details.*.amount' => 'required|numeric'
             ]);
 
             Log::info('Validated Data:', $validatedData);
+
 
             // Make external API call
             $apiResponse = Http::post('http://localhost/occ_api/high_court_order_copy/hc_order_copy_applicant_registration.php', $validatedData);

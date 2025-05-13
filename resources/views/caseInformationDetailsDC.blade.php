@@ -18,6 +18,7 @@
                     </span>
                 </marquee>
             </div>
+            
         <!-- <pre>{{ print_r(session('PendingCaseInfoDetails'))}}</pre> -->
         @if(session('dc_review_form_userDetails.orders'))
         <table class="w-full border border-gray-300">
