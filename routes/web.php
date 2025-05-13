@@ -137,7 +137,7 @@ Route::post('/set-response-data', [SessionDataController::class, 'setResponseDat
 Route::post('/set-paybleAmount', [SessionDataController::class, 'setPaybleAmount'])->middleware('web');
 Route::get('/get-case-data', [SessionDataController::class, 'getCaseData'])->middleware('web');
 Route::get('/get-paybleAmount', [SessionDataController::class, 'getPaybleAmount']);
-Route::post('/set-caseInformation-data', [SessionDataController::class, 'setCaseInfoData'])->middleware('web');
+Route::post('/set-caseInformation-data', [StoreHCCaseDataController::class, 'setHcCaseInfoData'])->middleware('web');
 Route::get('/get-caseInformation-data', [SessionDataController::class, 'getCaseInfoData'])->middleware('web');
 Route::get('/clear-session', function () {
     session()->flush(); 
@@ -159,6 +159,8 @@ Route::post('/calculate-dc-final-amount', [StoreDCCaseDataController::class, 'ca
 Route::post('/dc/initiate-payment', [StoreDCCaseDataController::class, 'initiatePayment'])->name('initiate.dc.payment');
 Route::post('/submit-dc-order-details', [App\Http\Controllers\DCOrderController::class, 'submit'])->name('dc-order.submit');
 Route::post('/get-hc-order-pdf-napix', [HcOrderNapixController::class, 'getHcOrderPdf']);
+// Route::post('/store-hc-case-session', [StoreHCCaseDataController::class, 'store'])->name('hc.store.session');
+Route::post('/calculate-hc-final-amount', [StoreHCCaseDataController::class, 'calculateFinalPayableAmount'])->name('calculate-hc-final-amount');
 
 //admin routes **************************************************************
 

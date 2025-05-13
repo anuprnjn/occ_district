@@ -320,20 +320,66 @@
     async function paymentToMerchant(event, dc_application_number_oc) {
         event.preventDefault();
 
-        fetch("{{ route('initiate.dc.payment') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+        try {
+            const initiateResponse = await fetch("{{ route('initiate.dc.payment') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                },
+                body: JSON.stringify({
+                    dc_application_number: dc_application_number_oc
+                })
+            });
+
+            const data = await initiateResponse.json();
+
+            const Dc_totalAmount = data.amount;
+            const Dc_userName = @json(session('dc_review_form_userDetails.user_info.name'));
+            const Dc_application_number = dc_application_number_oc;
+
+            const payload = {
+                Dc_userName,
+                Dc_totalAmount,
+                Dc_application_number,
+                paybleAmount: Dc_totalAmount,
+                applicationNumber: Dc_application_number
+                // optionally add userData if available
+            };
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            const merchantResponse = await fetch("/fetch-merchant-details", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const merchantData = await merchantResponse.json();
+            console.log("Merchant Response:", merchantData);
+
+            if (merchantData.enc_val && merchantData.application_number) {
+                const form = document.querySelector('form[name="eGrassClient"]');
+                if (form) {
+                    form.querySelector('input[name="requestparam"]').value = merchantData.enc_val;
+                    alert('Entered to transaction details');
+                    form.submit();
+                    // window.location.href='/api/occ/gras_resp_cc';
+                } else {
+                    console.error("Form 'eGrassClient' not found!");
+                    alert("Payment form not found. Please try again.");
+                }
+            } else {
+                console.error("Invalid merchant response:", merchantData);
             }
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log("DC User application number:", dc_application_number_oc);
-            console.log("Server-confirmed amount:", data.amount);
-        })
-        .catch(err => console.error("Payment init error:", err));
+
+        } catch (err) {
+            console.error("Payment init error:", err);
+        }
     }
-</script>    
+</script>  
 
 @endpush

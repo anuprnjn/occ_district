@@ -92,7 +92,7 @@
             </div>
 
             <div class="form-field">
-            <button type="submit" id="submitBtn" class="hidden mt-4 order_btn w-full bg-[#4B3E2F] text-white p-3 rounded-md hover:bg-[#D09A3F] flex items-center justify-center gap-2"
+            <button type="submit" id="submitBtn" class=" mt-4 order_btn w-full bg-[#4B3E2F] text-white p-3 rounded-md hover:bg-[#D09A3F] flex items-center justify-center gap-2"
                     onclick="handleCaseInformationSubmit(event)">
                 <span id="btnText">Submit</span>
                 <span id="btnSpinner" class="hidden loader"></span>
@@ -108,6 +108,8 @@
 @push('scripts')
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
 
+<!-- to show case details  -->
+
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
         try {
@@ -120,6 +122,7 @@
 
             // Ensure responseData exists
             const responseData = data?.session_data?.HcCaseDetailsNapix;
+            console.log(responseData);
             if (!responseData) {
                 throw new Error('Missing responseData!');
             }
@@ -145,10 +148,24 @@
                                         <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
                                         <h6 class="font-semibold">${caseInfo.type_name || 'N/A'}/${caseInfo.reg_no || 'N/A'}/${caseInfo.reg_year || 'N/A'}</h6>
                                     </div>
-                                    <div>
-                                        <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
-                                        <h6 class="font-semibold break-all"> ${caseInfo.case_status === 'D' ? 'DISPOSED' : 'PENDING'}</h6>
-                                    </div>
+                                                               <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
+                                    <span class="-ml-1 inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold tracking-wide ${
+                                        caseInfo.case_status?.toUpperCase() === 'P' 
+                                            ? 'bg-blue-100 text-blue-800' 
+                                            : caseInfo.case_status?.toUpperCase() === 'D'
+                                                ? 'bg-red-100 text-red-800' 
+                                                : 'bg-gray-100 text-gray-800'
+                                    }">
+                                        ${
+                                            caseInfo.case_status?.toUpperCase() === 'P'
+                                                ? 'PENDING'
+                                                : caseInfo.case_status?.toUpperCase() === 'D'
+                                                    ? 'DISPOSED'
+                                                    : caseInfo.case_status || 'N/A'
+                                        }
+                                    </span>
+                                </div>
                                 </div>
                                 <div class="space-y-4">
                                     <div>
@@ -178,43 +195,6 @@
                 caseDetailsDiv.innerHTML = `<p class="text-red-500">No case information found!</p>`;
             }
 
-            // ** Display Orders Table **
-            const ordersTable = document.getElementById("ordersTable").querySelector("tbody");
-            ordersTable.innerHTML = ""; // Clear existing content
-
-            if (responseData.orders && responseData.orders.length > 0) {
-                responseData.orders.forEach(order => {
-                    const row = document.createElement("tr");
-                    row.classList.add("border-b", "cursor-pointer", "caseInfoTable");
-
-                    row.innerHTML = `
-                        <td class="py-2 px-4 border">
-                            <input type="checkbox" class="order-checkbox"/>
-                        </td>
-                        <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
-                        <td class="py-2 px-4 border">${order.order_dt || 'N/A'}</td>
-                        <td class="py-2 px-4 border">${order.page_count || 0}</td>
-                        <td class="py-2 px-4 border font-bold"><span class="text-green-500">₹&nbsp;</span>${order.amount || 0}</td>
-                    `;
-
-                    // Attach click event to row
-                    row.addEventListener("click", function (event) {
-                        // Prevent triggering when clicking directly on checkbox
-                        if (event.target.type === "checkbox") return;
-
-                        const checkbox = row.querySelector(".order-checkbox");
-                        if (checkbox) {
-                            checkbox.checked = !checkbox.checked; // Toggle checkbox
-                            // Highlight row
-                        }
-                    });
-
-                    ordersTable.appendChild(row);
-                });
-            } else {
-                ordersTable.innerHTML = `<tr><td colspan="5" class="text-center py-2">No orders available</td></tr>`;
-            }
-
         } catch (error) {
             console.error('Fetch Error:', error);
             document.getElementById("caseDetails").innerHTML = `
@@ -223,6 +203,146 @@
         }
     });
 </script>
+
+<!-- show orders script  -->
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            // Step 1: Fetch case data
+            const response = await fetch('/get-case-data');
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const data = await response.json();
+            const responseDataHC = data?.session_data?.HcCaseDetailsNapix;
+
+            if (!responseDataHC) throw new Error('No case info available');
+            const cino = responseDataHC.cino;
+            const interimOrders = responseDataHC.interim || {};
+
+            // Step 2: Render Orders Table
+            const ordersTable = document.getElementById("ordersTable")?.querySelector("tbody");
+            if (!ordersTable) {
+                console.warn("ordersTable tbody not found");
+                return;
+            }
+
+            ordersTable.innerHTML = "";
+
+            const interimEntries = Object.values(interimOrders);
+            if (interimEntries.length > 0) {
+                interimEntries.forEach(order => {
+                    const row = document.createElement("tr");
+                    row.classList.add("border-b", "cursor-pointer", "caseInfoTable");
+
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border">
+                            <input type="checkbox" class="order-checkbox"/>
+                        </td>
+                        <td class="py-2 px-4 border">${order.order_no || 'N/A'}</td>
+                        <td class="py-2 px-4 border">${order.order_date || 'N/A'}</td>
+                        <td class="py-2 px-4 border pages-cell">
+                            <div class="spinnerDc"></div>
+                        </td>
+                        <td class="py-2 px-4 border font-bold amount-cell">
+                            <div class="spinnerDc"></div>
+                        </td>
+                    `;
+
+                    row.addEventListener("click", function (event) {
+                        if (event.target.type === "checkbox" || event.target.tagName.toLowerCase() === "button") return;
+
+                        // Prevent selection if any button is present in the row
+                        if (row.querySelector("button")) return;
+
+                        const checkbox = row.querySelector(".order-checkbox");
+                        if (checkbox) checkbox.checked = !checkbox.checked;
+                    });
+
+                    ordersTable.appendChild(row);
+                });
+
+                // Step 3: Fetch PDF info for each order row
+                const tableRows = ordersTable.querySelectorAll("tr");
+
+                interimEntries.forEach((order, index) => {
+                    const payload = {
+                        order_no: order.order_no,
+                        order_date: order.order_date,
+                        cino: cino
+                    };
+
+                    const currentRow = tableRows[index];
+                    const pageCell = currentRow.querySelector(".pages-cell");
+                    const amountCell = currentRow.querySelector(".amount-cell");
+
+                    async function fetchPdfAndUpdateUI() {
+                        pageCell.innerHTML = `<div class="spinnerDc"></div>`;
+                        amountCell.innerHTML = `<div class="spinnerDc"></div>`;
+
+                        try {
+                            const res = await fetch('/get-hc-order-pdf-napix', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify(payload)
+                            });
+
+                            const result = await res.json();
+
+                            if (result.status === 'success') {
+                                pageCell.innerHTML = result.pages || '0';
+                                amountCell.innerHTML = `<span class="text-green-500">₹&nbsp;</span>${result.amount || 0}`;
+                            } else {
+                                showRetryButton();
+                                console.error(`Order #${order.order_no} PDF fetch failed: ${result.message}`);
+                            }
+                        } catch (error) {
+                            showRetryButton();
+                            console.error(`Order #${order.order_no} PDF fetch error:`, error);
+                        }
+                    }
+
+                    function showRetryButton() {
+                        // Show "-" for pages
+                        pageCell.innerHTML = `-`;
+
+                        // Show Reload Amount button
+                        amountCell.innerHTML = `
+                            <button class="flex bg-[#D09A3F] text-white get-pdf-btn text-white text-sm px-3 py-1 rounded">
+                                Click to get amount
+                            </button>
+                        `;
+
+                        const retryBtn = amountCell.querySelector('.get-pdf-btn');
+                        if (retryBtn) {
+                            retryBtn.addEventListener('click', async function () {
+                                retryBtn.disabled = true;
+                                retryBtn.innerText = 'Loading...';
+                                await fetchPdfAndUpdateUI();
+                            });
+                        }
+                    }
+
+                    // Initial attempt
+                    fetchPdfAndUpdateUI();
+                });
+
+            } else {
+                ordersTable.innerHTML = `<tr><td colspan="5" class="text-center py-2">No orders available</td></tr>`;
+            }
+
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            const caseDetailsDiv = document.getElementById("caseDetails");
+            if (caseDetailsDiv) {
+                caseDetailsDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        }
+    });
+</script>
+
+<!-- toggle adv input  -->
 <script>
     function toggleAdvocateField() {
     const advocateField = document.getElementById('advocateField');
@@ -238,8 +358,13 @@
         advocateInput.value = ''; // Clear the field to prevent unwanted submission
     }
     }
+</script>
 
-    function handleCaseInformationSubmit(event) {
+<!-- submit user details to session  -->
+
+<script>
+    async function handleCaseInformationSubmit(event) {
+    
         event.preventDefault();
 
         const submitBtn = document.getElementById("submitBtn");
@@ -293,88 +418,55 @@
             return;
         }
 
-        const selectedOrders = Array.from(document.querySelectorAll('#ordersTable tbody input[type="checkbox"]:checked')).map(order => {
-            const row = order.closest("tr");
-            return {
-                orderNumber: row.cells[1].textContent.trim(),
-                orderDate: row.cells[2].textContent.trim(),
-                numPages: row.cells[3].textContent.trim(),
-                amount: row.cells[4].textContent.trim()
-            };
-        });
+        // Get checked order checkboxes
+        const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
+        if (checkedBoxes.length === 0) return alert("Please select at least one order.");
 
-        if (selectedOrders.length === 0) {
-            alert("Please select at least one order.");
-            return;
-        }
+        // Get session data (Blade-rendered)
+        const hcCaseDetailsNapix = @json(session('HcCaseDetailsNapix'));
+        // console.log('details', hcCaseDetailsNapix);
+         // Build selectedOrders array
+         const selectedOrders = [];
+          checkedBoxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
+            selectedOrders.push({
+                order_no: row.cells[1]?.textContent.trim(),
+                order_date: row.cells[2]?.textContent.trim(),
+                case_no: hcCaseDetailsNapix.reg_no,
+                fil_no: hcCaseDetailsNapix.fil_no
+            });
+        });
 
         // Show spinner, hide text & disable button
         btnText.style.display = "none";
         btnSpinner.classList.remove("hidden");
         submitBtn.disabled = true;
 
-        // Simulate form processing delay
-        setTimeout(async () => {
-            const userConfirmed = confirm("Please review all entered details carefully. Once submitted, you will not be able to edit the details!\n\nDo you want to proceed?");
-            
-            if (!userConfirmed) {
-                btnText.style.display = "flex";
-                btnSpinner.classList.add("hidden");
-                submitBtn.disabled = false;
-                return; 
-            }
+        const petitioner_name = hcCaseDetailsNapix.pet_name;
+        const respondent_name = hcCaseDetailsNapix.res_name;
 
-            try {
-                const CaseResponse = await fetch('/get-case-data');
-                if (!CaseResponse.ok) {
-                    throw new Error(`HTTP error! Status: ${CaseResponse.status}`);
-                }
-                const CaseData = await CaseResponse.json();
+        const formData = {
+            name, mobile, email, selectedValue, adv_res, requestMode, selectedOrders, petitioner_name, respondent_name
+        };
 
-                // Ensure responseData exists
-                const responseData = CaseData?.session_data?.responseData;
-                if (!responseData) {
-                    throw new Error('Missing responseData!');
-                }
+        // Prepare fetch request
+        const response = await fetch('/set-caseInformation-data', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+            },
+            body: JSON.stringify({ caseInfoDetails: formData })
+        });
+        console.log("response",response)
 
-                const petitioner_name = responseData.cases[0].pet_name;
-                const respondent_name = responseData.cases[0].res_name;
+        if (!response.ok) {
+            throw new Error('Failed to store data in session');
+        }
 
-                const formData = {
-                    name, mobile, email, selectedValue, adv_res, requestMode, selectedOrders, petitioner_name, respondent_name
-                };
-
-                console.log(formData);
-
-                // Prepare fetch request
-                const response = await fetch('/set-caseInformation-data', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-                    },
-                    body: JSON.stringify({ caseInfoDetails: formData })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to store data in session');
-                }
-
-                const data = await response.json();
-                console.log(data.message);
-
-            } catch (error) {
-                console.error('Error:', error);
-            } finally {
-                // Reset button state
-                btnText.style.display = "flex";
-                btnSpinner.classList.add("hidden");
-                submitBtn.disabled = false;
-                sessionStorage.setItem("previousPage", window.location.pathname);
-                // Redirect after processing
-                window.location.href = '/occ/cd_pay';
-            }
-        }, 1500);
+        const data = await response.json();
+        console.log('controller resp',data.message);
+        window.location.href=data.location;
     }
 
     // Ensure advocate field updates on dropdown change

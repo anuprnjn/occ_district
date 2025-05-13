@@ -2,20 +2,11 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
+use setasign\Fpdi\Fpdi;
 
 class SessionDataController extends Controller
 {   
-    public function setCaseInfoData(Request $request) { 
-        $caseInfoDetails = $request->input('caseInfoDetails'); 
-        Session::put('caseInfoDetails', $caseInfoDetails);
-        Session::save();  
-        Session::reflash();
-
-        return response()->json([
-            'message' => 'Case Info Data Stored Successfully!',
-            'session_data' => Session::all() 
-        ]);
-    }
     public function setPendingCaseInfoData(Request $request) { 
         $PendingCaseInfoDetails = $request->input('caseInfoDetailsPendingPayHC'); 
         Session::put('PendingCaseInfoDetails', $PendingCaseInfoDetails);
