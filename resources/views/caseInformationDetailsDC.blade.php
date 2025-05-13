@@ -365,7 +365,7 @@
                 if (form) {
                     form.querySelector('input[name="requestparam"]').value = merchantData.enc_val;
                     alert('Entered to transaction details');
-                    form.submit();
+                    // form.submit();
                     // window.location.href='/api/occ/gras_resp_cc';
                 } else {
                     console.error("Form 'eGrassClient' not found!");
