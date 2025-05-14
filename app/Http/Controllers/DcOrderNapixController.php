@@ -17,7 +17,7 @@ class DcOrderNapixController extends Controller
         $order_date = $request->input('order_date');
         $order_no = $request->input('order_no');
 
-        $folder = "napix_pdf/{$cino}";
+        $folder = "napix_pdf/district_court/{$cino}";
         $filename = "{$cino}_{$order_no}_napix.pdf";
         $relativePath = "{$folder}/{$filename}";
         $pdfPath = storage_path("app/public/{$relativePath}");

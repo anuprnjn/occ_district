@@ -25,7 +25,7 @@ class HcWebApplicationController extends Controller
                 ->leftJoin('high_court_case_master as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
                 ->orderBy('apr.created_at', 'desc')
                 ->get();
-
+                  
             return view('admin.hc_web_copy.hc_web_application_list', compact('hcuserdata'));
         } catch (\Exception $e) {
             Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);

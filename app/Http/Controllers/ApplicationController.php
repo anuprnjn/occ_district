@@ -10,6 +10,7 @@ class ApplicationController extends Controller
     public function fetchApplicationDetails(Request $request)
     {
         $applicationNumber = $request->input('application_number');
+
         if (!$applicationNumber) {
             return response()->json(['success' => false, 'message' => 'Application number is required.']);
         }
