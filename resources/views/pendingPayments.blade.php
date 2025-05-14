@@ -209,15 +209,21 @@ function pendingPayment(event) {
                 },
                 error: function() {
                     console.log('An error occurred while setting pending Payment details.');
+                    var hide_message_span = document.getElementById("message");
+                    hide_message_span.classList.add("hidden");
                 }
             });
         }
         } else {
             errorSpan.innerText = response.message || 'Failed to fetch application details.';
+            var hide_message_span = document.getElementById("message");
+            hide_message_span.classList.add("hidden");
         }
     },
         error: function() {
             errorSpan.innerText = 'Application number not found.';
+            var hide_message_span = document.getElementById("message");
+            hide_message_span.classList.add("hidden");
         }
     });
 }

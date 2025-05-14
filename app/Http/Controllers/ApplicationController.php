@@ -17,17 +17,22 @@ class ApplicationController extends Controller
 
         $baseUrl = config('app.api.base_url'); 
 
+        // Determine which endpoint to use based on 4th character
+        $endpoint = (strlen($applicationNumber) >= 4 && strtoupper($applicationNumber[3]) === 'W')
+            ? dd("hi") 
+            : '/track_district_court_application.php';
+
         try {
-            $response = Http::post($baseUrl . '/track_district_court_application.php', [
+            $response = Http::post($baseUrl . $endpoint, [
                 'application_number' => $applicationNumber,
             ]);
+
             if ($response->successful()) {
                 return response()->json($response->json());
             }
 
             return response()->json(['success' => false, 'message' => 'Failed to fetch application details.']);
         } catch (\Exception $e) {
-            // If an exception occurs, return an error message
             return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }

@@ -53,34 +53,79 @@ class PendingPaymentController extends Controller
             ]);
         }
     }
+    // public function fetchPendingPaymentsDC(Request $request)
+    // {
+    //     $application_number = $request->input('application_number');
+     
+    //     $apiUrl = 'http://localhost/occ_api/transaction/pending_payment_dc_other_copy.php';
+    //     // Send a POST request to the selected API
+    //     $response = Http::post($apiUrl, [
+    //         'application_number' => $application_number,
+    //     ]);
+    
+    //     $responseData = $response->json();
+    //     // dd($responseData);
+    //     // exit();
+    
+    //     if ($responseData['success']) {
+    //         $responsePayload = [
+    //             'success' => true,
+    //             'case_info' => $responseData['case_info'],
+    //             'location' => '/occ/cd_pay',
+    //         ];
+           
+    //         $responsePayload['document_details'] = $responseData['document_details'];
+    
+    //         return response()->json($responsePayload);
+    //     } else {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'No data found for this application number.',
+    //         ]);
+    //     }
+    // }
     public function fetchPendingPaymentsDC(Request $request)
     {
         $application_number = $request->input('application_number');
-     
-        $apiUrl = 'http://localhost/occ_api/transaction/pending_payment_dc_other_copy.php';
-        // Send a POST request to the selected API
-        $response = Http::post($apiUrl, [
-            'application_number' => $application_number,
-        ]);
-    
-        $responseData = $response->json();
-        // dd($responseData);
-        // exit();
-    
-        if ($responseData['success']) {
-            $responsePayload = [
-                'success' => true,
-                'case_info' => $responseData['case_info'],
-                'location' => '/occ/cd_pay',
-            ];
-           
-            $responsePayload['document_details'] = $responseData['document_details'];
-    
-            return response()->json($responsePayload);
-        } else {
+
+        if (!$application_number) {
             return response()->json([
                 'success' => false,
-                'message' => 'No data found for this application number.',
+                'message' => 'Application number is required.',
+            ]);
+        }
+
+        // Choose API endpoint based on whether the 4th character is 'W'
+        $isOrderCopy = strlen($application_number) >= 4 && strtoupper($application_number[3]) === 'W';
+        $apiEndpoint = $isOrderCopy ? 'pending_payment_dc_other_copy' : 'pending_payment_dc_other_copy.php';
+        $apiUrl = 'http://localhost/occ_api/transaction/' . $apiEndpoint;
+
+        try {
+            $response = Http::post($apiUrl, [
+                'application_number' => $application_number,
+            ]);
+
+            $responseData = $response->json();
+
+            if ($responseData['success']) {
+                $responsePayload = [
+                    'success' => true,
+                    'case_info' => $responseData['case_info'],
+                    'location' => '/occ/cd_pay',
+                    'document_details' => $responseData['document_details'],
+                ];
+
+                return response()->json($responsePayload);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No data found for this application number.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching pending payment data.',
             ]);
         }
     }
