@@ -97,7 +97,7 @@ class PendingPaymentController extends Controller
 
         // Choose API endpoint based on whether the 4th character is 'W'
         $isOrderCopy = strlen($application_number) >= 4 && strtoupper($application_number[3]) === 'W';
-        $apiEndpoint = $isOrderCopy ? 'pending_payment_dc_other_copy' : 'pending_payment_dc_other_copy.php';
+        $apiEndpoint = $isOrderCopy ? dd("Hello") : 'pending_payment_dc_other_copy.php';
         $apiUrl = 'http://localhost/occ_api/transaction/' . $apiEndpoint;
 
         try {
