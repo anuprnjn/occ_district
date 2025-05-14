@@ -48,9 +48,9 @@ class StoreDCCaseDataController extends Controller
         }
     
         // Check if per_page_fee is available in the database
-        $feePerPage = DB::table('fee_master')->where('fee_type', 'per_page_fee')->value('amount') ?? 5; // Default to 5 if not found
+        $feePerPage = DB::table('fee_master')->where('fee_type', 'per_page_fee')->value('amount'); // Default to 5 if not found
         $cino = $data['case_details']['cino'];
-        $pdfFolder = storage_path("app/public/napix_pdf/{$cino}");
+        $pdfFolder = storage_path("app/public/napix_pdf/district_court/{$cino}");
     
         $orders = [];
     
