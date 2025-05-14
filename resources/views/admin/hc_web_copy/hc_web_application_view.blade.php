@@ -94,15 +94,18 @@
                                         <div class="col-md-4">
                                             <p class="fw-bold text-success">Case Details</p>
                                             <table class="table table-bordered">
+                                               
                                                 <tr>
-                                                    <th class="fw-bold">Case No</th>
+                                                @if ($hcuser->case_number)
+                                                <th class="fw-bold">Case No</th>
                                                     <td>{{ $hcuser->type_name }}/{{ $hcuser->case_number }}/{{ $hcuser->case_year }}
                                                     </td>
-                                                </tr>
-                                                <tr>
+                                                @else
                                                     <th class="fw-bold">Filing No</th>
-                                                    <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
-                                                    </td>
+                                                                        <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
+                                                                        </td>
+                                                @endif
+                                                   
                                                 </tr>
                                                 <tr>
                                                     <th class="fw-bold">Request Mode</th>
@@ -476,6 +479,7 @@
     })
     .then(res => res.json())
     .then(data => {
+
         if (data.message === 'success' && data.pdf_data) {
             
             const row = button.closest("tr");

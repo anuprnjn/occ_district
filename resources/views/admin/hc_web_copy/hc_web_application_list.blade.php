@@ -55,8 +55,20 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <td>{{ $hcuser->application_number }}</td>
                             <td>{{ $hcuser->applicant_name }}</td>
                             <td>{{ $hcuser->mobile_number }}</td>
-                            <td>{{ $hcuser->type_name }}/{{ $hcuser->case_number }}/{{ $hcuser->case_year }}</td>
-                            <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}</td>
+                            <td>
+                                @if ($hcuser->case_number)
+                                    {{ $hcuser->type_name }}/{{ $hcuser->case_number }}/{{ $hcuser->case_year }}
+                                @else
+                                   
+                                @endif
+                            </td>
+                            <td>
+                                @if ($hcuser->filing_number)
+                                    {{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
+                                @else
+                                    {{-- Show nothing --}}
+                                @endif
+                            </td>
                             <td>{{ Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td> <!-- Format the date -->
                             <td>
                                 @if ($hcuser->document_status == 1)

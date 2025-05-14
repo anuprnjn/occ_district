@@ -15,17 +15,16 @@ class HcWebApplicationController extends Controller
     // Fetch HC User List
     public function listHcWebApplication()
     {
+
         try {
             $hcuserdata = DB::table('hc_order_copy_applicant_registration as apr')
                 ->select(
                     'apr.*',
-                    DB::raw('COALESCE(ct1.type_name, ct2.type_name) AS type_name')
+                    'ct1.type_name'
                 )
                 ->leftJoin('high_court_case_master as ct1', 'ct1.case_type', '=', 'apr.case_type')
-                ->leftJoin('high_court_case_master as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
                 ->orderBy('apr.created_at', 'desc')
                 ->get();
-
             return view('admin.hc_web_copy.hc_web_application_list', compact('hcuserdata'));
         } catch (\Exception $e) {
             Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
@@ -40,11 +39,10 @@ class HcWebApplicationController extends Controller
             $appNumber = Crypt::decrypt($encryptedAppNumber);
 
             $hcuser = DB::table('hc_order_copy_applicant_registration as apr')
-                ->select('apr.*', DB::raw('COALESCE(ct1.type_name, ct2.type_name) AS type_name'))
-                ->leftJoin('high_court_case_master as ct1', 'ct1.case_type', '=', 'apr.case_type')
-                ->leftJoin('high_court_case_master as ct2', 'ct2.case_type', '=', 'apr.filingcase_type')
-                ->where('apr.application_number', $appNumber)
-                ->first();
+                        ->select('apr.*', 'ct1.type_name')
+                        ->leftJoin('high_court_case_master as ct1', 'ct1.case_type', '=', 'apr.case_type')
+                        ->where('apr.application_number', $appNumber)
+                        ->first();
 
             $transaction_details = DB::table('transaction_master_hc')
             ->where('application_number', $appNumber)
@@ -53,7 +51,7 @@ class HcWebApplicationController extends Controller
            
 
             if (!$hcuser) {
-                return redirect()->route('hc-web-application.list')->with('error', 'Application not found.');
+                return redirect()->route('hc_web_application_list')->with('error', 'Application not found.');
             }
 
             $ordersdata = DB::table('hc_order_details')
@@ -73,7 +71,7 @@ class HcWebApplicationController extends Controller
             return view('admin.hc_web_copy.hc_web_application_view', compact('hcuser', 'ordersdata','totaldiff','perpagefee','transaction_details'));
         } catch (\Exception $e) {
             Log::error('Error fetching HC User details', ['error' => $e->getMessage()]);
-            return redirect()->route('hc-web-application.list')->with('error', 'An error occurred.');
+            return redirect()->route('hc_web_application_list')->with('error', 'An error occurred.');
         }
     }
 
