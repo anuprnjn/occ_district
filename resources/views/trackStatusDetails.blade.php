@@ -43,13 +43,13 @@
         // Retrieve the application number from sessionStorage
         var application_number = sessionStorage.getItem('track_application_number') || url_application_number;
 
-        if(application_number.startsWith('HC')) {
-            sessionStorage.setItem('selectedCourt', 'HC');
-        }else{
-            sessionStorage.setItem('selectedCourt', 'DC');
-        }
         if (application_number) {
-
+            // continue with AJAX logic
+            if(application_number.startsWith('HC')) {
+                sessionStorage.setItem('selectedCourt', 'HC');
+            }else{
+                sessionStorage.setItem('selectedCourt', 'DC');
+            }
             // Make AJAX request to fetch the application details
             var selectedCourt = sessionStorage.getItem('selectedCourt');
             var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
@@ -66,6 +66,7 @@
                         var app_no = response.data[0].application_number;
                         const noteButton = document.querySelector('#note button');
                         noteButton.setAttribute('onclick', `detailsPayment('${app_no}')`);
+
                         displayApplicationDetails(response.data[0]);
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
@@ -76,59 +77,90 @@
                 }
             });
         } else {
-            window.location.href = '/trackStatus'; 
-                return;
+            window.location.href = '/trackStatus';
+            return;
         }
     });
 
     function displayApplicationDetails(data) {
         // Log the full data to inspect its structure
         // console.log('data',data);
-        // sessionStorage.removeItem('track_application_number');
-        // sessionStorage.removeItem('selectedCourt');
+        sessionStorage.removeItem('track_application_number');
+        sessionStorage.removeItem('selectedCourt');
             // Show a persistent warning message
-            function showWarningMessage() {
-            const warningMessage = document.createElement("div");
-            warningMessage.innerHTML = `
-                <div style="
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 300px;
-                background: #DAF7A6;
-                padding: 15px;
-                text-align: left;
-                z-index: 1000;
-                border-radius: 8px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-weight: bold;
-                border-left: 5px solid red;
-            ">
-                <span style="font-size: 24px; color: red;">⚠️</span>
-                <span style="flex: 1; color: #333;font-size:14px;">Warning: Refreshing this page will redirect you to the track status page.</span>
-                <button id="dismissWarning" style="
-                    background: red;
-                    color: white;
-                    border: none;
-                    padding: 5px 10px;
-                    cursor: pointer;
-                    border-radius: 3px;
-                    font-weight: bold;
-                    transition: background 0.3s ease;
-                ">X</button>
+function showWarningMessage() {
+    const toast = document.createElement("div");
+    toast.innerHTML = `
+        <div style="
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 12px 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            min-width: 320px;
+            max-width: 400px;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
+        ">
+            <span style="font-size: 20px;">⚠️</span>
+            <div style="flex: 1;">
+                Refreshing this page will redirect you to the track status page.
+                <div id="countdown" style="margin-top: 4px; font-size: 12px; color: #666;"></div>
             </div>
-            `;
-            document.body.appendChild(warningMessage);
+            <button id="dismissWarning" style="
+                background: transparent;
+                border: none;
+                font-size: 20px;
+                font-weight: bold;
+                color: #856404;
+                cursor: pointer;
+            " title="Close">&times;</button>
+        </div>
+    `;
+    document.body.appendChild(toast);
 
-            // Add event listener to dismiss button
-            document.getElementById("dismissWarning").addEventListener("click", function () {
-                warningMessage.remove();
-            });
+    const countdownSpan = toast.querySelector('#countdown');
+    let countdown = 10;
+    countdownSpan.textContent = `(Auto-hide in ${countdown}s)`;
+
+    const intervalId = setInterval(() => {
+        countdown--;
+        countdownSpan.textContent = `(Auto-hide in ${countdown}s)`;
+        if (countdown <= 0) {
+            clearInterval(intervalId);
+            toast.remove();
         }
-        // showWarningMessage();
+    }, 1000);
+
+    document.getElementById("dismissWarning").addEventListener("click", () => {
+        clearInterval(intervalId);
+        toast.remove();
+    });
+}
+
+// Add this to your CSS <style> or in <head> for animation:
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}`;
+document.head.appendChild(style);
+     showWarningMessage();
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
         print_btn_track.classList.remove('hidden');
@@ -167,9 +199,7 @@
         var applicationStatusRow = `
             <tr class="border">
                 <td class="px-6 py-2 font-semibold uppercase border">Application Status</td>
-                <td class="px-6 py-2 uppercase">
-                ${applicationStatus}
-                </td>
+                <td class="px-6 py-2 uppercase">${applicationStatus}</td>
             </tr>
         `;
 
@@ -177,22 +207,6 @@
             <tr class="border">
                 <td class="px-6 py-2 font-semibold uppercase border">Establishment Name</td>
                 <td class="px-6 py-2">${data.establishment_name}</td>
-            </tr>
-        ` : '';
-
-        var caseDetails = data.selected_method === 'F' ? `
-            <tr class="border">
-                <td class="px-6 py-2 font-semibold uppercase border">Filling Number</td>
-                <td class="px-6 py-2">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
-            </tr>
-            <tr class="border">
-                <td class="px-6 py-2 font-semibold uppercase border">Filling Year</td>
-                <td class="px-6 py-2">${data.case_filling_year}</td>
-            </tr>
-        ` : data.selected_method === 'C' ? `
-            <tr class="border">
-                <td class="px-6 py-2 font-semibold uppercase border">Case Number</td>
-                <td class="px-6 py-2">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
             </tr>
         ` : '';
 
@@ -210,6 +224,36 @@
             </tr>
         ` : '';
 
+        // ✅ Improved logic for handling both types of responses
+        var caseDetails = '';
+
+        if (data.selected_method === 'F') {
+            caseDetails = `
+                <tr class="border">
+                    <td class="px-6 py-2 font-semibold uppercase border">Filing Number</td>
+                    <td class="px-6 py-2">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
+                </tr>
+                <tr class="border">
+                    <td class="px-6 py-2 font-semibold uppercase border">Filing Year</td>
+                    <td class="px-6 py-2">${data.case_filling_year}</td>
+                </tr>
+            `;
+        } else if (data.selected_method === 'C') {
+            caseDetails = `
+                <tr class="border">
+                    <td class="px-6 py-2 font-semibold uppercase border">Case Number</td>
+                    <td class="px-6 py-2">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
+                </tr>
+            `;
+        } else if (data.case_number && data.case_year) {
+            caseDetails = `
+                <tr class="border">
+                    <td class="px-6 py-2 font-semibold uppercase border">Case Number</td>
+                    <td class="px-6 py-2">${data.case_type || ''}/${data.case_number}/${data.case_year}</td>
+                </tr>
+            `;
+        }
+
         detailsSection.html(`
             <table class="dark_form min-w-full overflow-hidden">
                 <thead>
@@ -219,7 +263,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    ${applicationStatusRow} 
+                    ${applicationStatusRow}
                     <tr class="border">
                         <td class="px-6 py-2 font-semibold uppercase border">Application Number</td>
                         <td class="px-6 py-2 text-teal-500 font-bold text-lg">${data.application_number}</td>
@@ -228,7 +272,7 @@
                         <td class="px-6 py-2 font-semibold uppercase border">Applicant Name</td>
                         <td class="px-6 py-2 capitalize">${data.applicant_name}</td>
                     </tr>
-                    ${districtNameRow} 
+                    ${districtNameRow}
                     ${establishmentRow}
                     <tr class="border">
                         <td class="px-6 py-2 font-semibold uppercase border">Mobile Number</td>

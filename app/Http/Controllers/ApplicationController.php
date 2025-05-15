@@ -11,19 +11,24 @@ class ApplicationController extends Controller
     {
         $applicationNumber = $request->input('application_number');
 
-        if (!$applicationNumber) {
-            return response()->json(['success' => false, 'message' => 'Application number is required.']);
+        if (empty($applicationNumber)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Application number is required.'
+            ]);
         }
 
-        $baseUrl = config('app.api.base_url'); 
+        $baseUrl = rtrim(config('app.api.base_url'), '/');
 
-        // Determine which endpoint to use based on 4th character
-        $endpoint = (strlen($applicationNumber) >= 4 && strtoupper($applicationNumber[3]) === 'W')
-            ? dd("hi") 
-            : '/track_district_court_application.php';
+        // Use specific endpoint based on the 4th character
+        if (strlen($applicationNumber) >= 4 && strtoupper($applicationNumber[3]) === 'W') {
+            $url = 'http://localhost/occ_api/district_court_order_copy/track_district_court_order_copy_application.php';
+        } else {
+            $url = $baseUrl . '/track_district_court_application.php';
+        }
 
         try {
-            $response = Http::post($baseUrl . $endpoint, [
+            $response = Http::post($url, [
                 'application_number' => $applicationNumber,
             ]);
 
@@ -31,9 +36,15 @@ class ApplicationController extends Controller
                 return response()->json($response->json());
             }
 
-            return response()->json(['success' => false, 'message' => 'Failed to fetch application details.']);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch application details or application number is incorrect.'
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'An error occurred.']);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage(),
+            ]);
         }
     }
 
