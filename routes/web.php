@@ -52,6 +52,7 @@ use App\Http\Controllers\DcOrderNapixController;
 use App\Http\Controllers\StoreHCCaseDataController;
 use App\Http\Controllers\DCOrderController;
 use App\Http\Controllers\HcOrderNapixController;
+use App\Http\Controllers\admin\DcWebApplicationController;
 
 
 Route::get('/', function () {
@@ -313,6 +314,17 @@ Route::post('/admin/digital_signature/pdf', [DigitalSignatureController::class, 
 Route::post('/send-certified-notification', [DcOtherCopyPaidController::class, 'sendCertifiedCopyNotification'])->name('send.certified.notification');
 
 Route::post('/send-hc-certified-notification', [HcOtherCopyPaidController::class, 'sendCertifiedCopyNotification'])->name('send.hc.certified.notification');
+
+Route::post('/admin/get-dc-pdf', [GetPdfController::class, 'fetchDcPdf']);
+Route::get('/admin/dc-web-application', [DcWebApplicationController::class, 'listDcWebApplication'])->name('dc_web_application_list');
+Route::get('/admin/dc-web-application/{encryptedAppNumber}', [DcWebApplicationController::class, 'viewDcWebApplication'])
+    ->name('dc-web-application.view');
+Route::post('/admin/upload-dc-order-copy', [DcWebApplicationController::class, 'uploadDcOrderCopy'])->name('admin.uploadDcOrderCopy');
+Route::get('/admin/download-dc-order-copy/{fileName}', [DcWebApplicationController::class, 'downloadDcOrderCopy'])->name('admin.downloadDcOrderCopy');
+Route::get('/delete-dc-order-copy/{application_number}/{order_number}', [DcWebApplicationController::class, 'deleteDcOrderCopy'])->name('admin.deleteDcOrderCopy');
+Route::post('/dc-web-application/send-dc-deficit-notification', [DcWebApplicationController::class, 'sendDcDeficitNotification'])
+->name('dc-web-application.send-dc-deficit-notification');
+Route::post('/dc-web-application/send-dc-ready-notification', [DcWebApplicationController::class, 'sendReadyDcNotification']) ->name('dc-web-application.send-dc-ready-notification'); 
 
 
 });
