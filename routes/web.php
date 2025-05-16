@@ -53,6 +53,7 @@ use App\Http\Controllers\StoreHCCaseDataController;
 use App\Http\Controllers\DCOrderController;
 use App\Http\Controllers\HcOrderNapixController;
 use App\Http\Controllers\admin\DcWebApplicationController;
+use App\Http\Controllers\admin\DashboardController;
 
 
 Route::get('/', function () {
@@ -325,6 +326,7 @@ Route::get('/delete-dc-order-copy/{application_number}/{order_number}', [DcWebAp
 Route::post('/dc-web-application/send-dc-deficit-notification', [DcWebApplicationController::class, 'sendDcDeficitNotification'])
 ->name('dc-web-application.send-dc-deficit-notification');
 Route::post('/dc-web-application/send-dc-ready-notification', [DcWebApplicationController::class, 'sendReadyDcNotification']) ->name('dc-web-application.send-dc-ready-notification'); 
-
+// Route::get('/admin/index', [DashboardController::class, 'index'])->name('admin.index');
+Route::get('/admin/index', [DashboardController::class, 'index'])->name('index');
 
 });

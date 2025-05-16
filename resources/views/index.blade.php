@@ -725,7 +725,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (!data.status) {
                     if (data.message === "Failed to fetch access token") {
-                        alert("Failed to search case. Please try again !");
+                        alert("Napix server not responding. Please try again !");
                     } else if (data.message === "Invalid response from NAPIX API") {
                         const orderDetailsDiv = document.getElementById("orderDetails");
                         orderDetailsDiv.classList.add('hidden');
@@ -1272,7 +1272,7 @@ function submitDCJudgementForm(e) {
         .then(data => {
             if (!data.status) {
                 if (data.message === "Failed to fetch access token") {
-                    alert("Failed to search. Please try again !");
+                    alert("Napix server not responding. Please try again !");
                 } else if (data.message === "Invalid response from NAPIX API") {
                     const orderDetailsDiv = document.getElementById("orderDetails");
                     orderDetailsDiv.classList.add('hidden');
