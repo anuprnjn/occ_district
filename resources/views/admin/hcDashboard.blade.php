@@ -24,17 +24,17 @@
             <div class="row mb-4">
                 <div class="col-12 d-flex justify-content-end align-items-center gap-2">
                     <form method="GET" action="{{ route('index') }}" id="dateFilterForm" class="d-flex align-items-center">
-                        <label for="date" class="me-2 mb-0">Select Date:</label>
+                       <label for="date" class="me-2 mb-0 w-100">Select Date:</label>
                         <input
                           type="date"
                           name="date"
                           id="date"
-                          class="form-control form-control-sm w-auto"
+                          class="form-control form-control-md w-100"
                           value="{{ $defaultDate }}"
                           max="{{ \Carbon\Carbon::today()->format('Y-m-d') }}"
                         >
                     </form>
-                    <a href="{{ route('index') }}" class="btn btn-secondary btn-sm">Show All</a>
+                    <a href="{{ route('index') }}" class="btn btn-secondary btn-md">Show All</a>
                 </div>
             </div>
           </div>
