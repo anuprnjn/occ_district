@@ -131,7 +131,7 @@
               <!--begin::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 1-->
-                 <a href="" class="link-light link-underline-opacity-0">
+                 <a href="dc-other-copy" class="link-light link-underline-opacity-0">
                    <div class="small-box bg-soft-applied text-white">
                   <div class="inner">
                     <h3>{{ $dcWebCopyCount }}</h3>
