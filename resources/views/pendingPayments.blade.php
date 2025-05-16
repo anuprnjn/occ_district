@@ -133,8 +133,9 @@ function pendingPayment(event) {
         success: function(response) {
         if (response.success) {
             var caseInfoDetails = response;
-            var show = caseInfoDetails.document_details[0].amount;
-            if(show === null){
+            if ('document_details' in caseInfoDetails) {
+                var show = caseInfoDetails.document_details[0]?.amount;
+                if(show === null){
                 const messageSpan = `
                     <div class="dark_form flex items-start gap-2 p-4 rounded-xl border border-red-300 bg-red-50 text-red-500 shadow-sm">
                         <span class="font-semibold">
@@ -146,7 +147,45 @@ function pendingPayment(event) {
                 document.getElementById('message').innerHTML = messageSpan;
                 return;
             }else{
-            $.ajax({
+                ajaxForPendingPayment(caseInfoDetails);
+           }
+
+            } else {
+                console.log("else");
+               if((response.case_info.payment_status === 0) || (response.case_info.deficit_status === 1 && response.case_info.deficit_payment_status ===0)) {
+                ajaxForPendingPayment(caseInfoDetails);
+               } else {
+                console.log("iff");
+                const messageSpan = `
+                    <div class="dark_form flex items-start gap-2 p-4 rounded-xl border border-red-300 bg-red-50 text-red-500 shadow-sm">
+                        <span class="font-semibold">
+                            Payment is already completed for the application number 
+                            <span class="text-teal-500 font-bold ml-1">${application_number}</span>
+                        </span>
+                    </div>
+                `;
+                document.getElementById('message').innerHTML = messageSpan;
+                return;
+               }
+            }
+     
+        } else {
+            errorSpan.innerText = response.message || 'Failed to fetch application details.';
+            var hide_message_span = document.getElementById("message");
+            hide_message_span.classList.add("hidden");
+        }
+    },
+        error: function() {
+            errorSpan.innerText = 'Application number not found.';
+            var hide_message_span = document.getElementById("message");
+            hide_message_span.classList.add("hidden");
+        }
+    });
+}
+</script>   
+<script>
+    function ajaxForPendingPayment(caseInfoDetails){
+        $.ajax({
                 url: '/set-caseInformation-PendingData-HC', 
                 method: 'POST',
                 data: {
@@ -172,7 +211,8 @@ function pendingPayment(event) {
                         const caseInfo = detailsResponse.session_data.PendingCaseInfoDetails.case_info;
                         const transactionInfo = detailsResponse.session_data.PendingCaseInfoDetails.transaction_details;    
                         const paymentStatus = caseInfo.payment_status;
-                        
+                        const application_number = caseInfo.application_number;
+                        const isDCOrderCopy = application_number.length >= 4 && application_number[3].toUpperCase() === 'W';
 
                         if (paymentStatus === "0") {
                             applicationInput.value = "";
@@ -180,10 +220,16 @@ function pendingPayment(event) {
                             // If payment is pending, redirect to the given location
                             window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
                         } else {
-                            if(caseInfo.application_number.startsWith("HCW") && paymentStatus === "1" && caseInfo.deficit_status === "1" && caseInfo.deficit_payment_status === "0"){
+                            if(caseInfo.application_number.startsWith("HCW") && paymentStatus === "1" && caseInfo.  deficit_status === "1" && caseInfo.deficit_payment_status === "0"){
                                 window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
                                 return;
+                            } else {
+                                if(isDCOrderCopy && paymentStatus === "1" && caseInfo.  deficit_status === "1" && caseInfo.deficit_payment_status === "0") {
+                                    window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
+                                return; 
+                                }
                             }
+                           
                             // Delay showing the success message and table by 1 second
                         setTimeout(() => {
                             // Hide loading animation
@@ -213,20 +259,7 @@ function pendingPayment(event) {
                     hide_message_span.classList.add("hidden");
                 }
             });
-        }
-        } else {
-            errorSpan.innerText = response.message || 'Failed to fetch application details.';
-            var hide_message_span = document.getElementById("message");
-            hide_message_span.classList.add("hidden");
-        }
-    },
-        error: function() {
-            errorSpan.innerText = 'Application number not found.';
-            var hide_message_span = document.getElementById("message");
-            hide_message_span.classList.add("hidden");
-        }
-    });
-}
-</script>   
+    }
+    </script>
 
 @endpush

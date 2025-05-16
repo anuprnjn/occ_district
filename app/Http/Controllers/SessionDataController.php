@@ -9,7 +9,9 @@ class SessionDataController extends Controller
 {   
     public function setPendingCaseInfoData(Request $request) { 
         $PendingCaseInfoDetails = $request->input('caseInfoDetailsPendingPayHC'); 
+        
         Session::put('PendingCaseInfoDetails', $PendingCaseInfoDetails);
+        Session::put('active_payment_source', 'PendingCaseInfoDetails');
         Session::save();  
         Session::reflash();
 

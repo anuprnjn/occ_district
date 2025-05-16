@@ -17,6 +17,8 @@ class DcWebApplicationController extends Controller
     {
 
         try {
+            $dist_code = session('user.dist_code');
+            $estd_code = session('user.estd_code');
             $dcuserdata = DB::table('district_court_order_copy_applicant_registration as dc')
             ->select(
                 'dc.*',
@@ -26,6 +28,8 @@ class DcWebApplicationController extends Controller
                 $join->on('dc.case_type', '=', 'hc.case_type')
                      ->whereColumn('dc.establishment_code', '=', 'hc.est_code');
             })
+            ->where('dc.district_code', $dist_code)
+            ->where('dc.establishment_code', $estd_code)
             ->orderBy('dc.created_at', 'desc')
             ->get();
         
