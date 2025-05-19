@@ -25,6 +25,73 @@
         document.getElementById('dateFilterForm').submit();
     });
   </script>
+<script src="{{ asset('passets/js/chart.js')}}"></script>
+<script>
+  const ctx = document.getElementById('applicationChart').getContext('2d');
+
+  const labels = @json($dates);
+
+  const datasets = [
+    @if(session('user.dist_code') && session('user.estd_code'))
+      {
+        label: 'District Court Orders and Judgement Copy',
+        data: @json($dcOrderCounts),
+        backgroundColor: 'rgba(188, 135, 52, 0.6)',
+        borderColor: '#BC8734',
+        borderWidth: 1
+      },
+      {
+        label: 'District Court Others Copy',
+        data: @json($dcOtherCounts),
+        backgroundColor: 'rgba(62, 49, 37, 0.6)',
+        borderColor: '#3E3125',
+        borderWidth: 1
+      }
+    @else
+      {
+        label: 'High Court Order and Judgement Copy',
+        data: @json($hcOrderCounts),
+        backgroundColor: 'rgba(188, 135, 52, 0.6)',
+        borderColor: '#BC8734',
+        borderWidth: 1
+      },
+      {
+        label: 'High Court Others Copy',
+        data: @json($hcOtherCounts),
+        backgroundColor: 'rgba(62, 49, 37, 0.6)',
+        borderColor: '#3E3125',
+        borderWidth: 1
+      }
+    @endif
+  ];
+
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
+        }
+      },
+      plugins: {
+        title: {
+          display: false
+        },
+        legend: {
+          position: 'top'
+        }
+      }
+    }
+  });
+</script>
 @endpush
 
 @push('styles')
