@@ -206,7 +206,7 @@
              <div class="card mt-4">
     <div class="card-body">
         <h5 class="card-title">Applications Submitted in Last 15 Days</h5>
-        <canvas id="applicationChart" height="120"></canvas>
+        <canvas id="applicationChart" height="80"></canvas>
     </div>
 </div>
           </div>
