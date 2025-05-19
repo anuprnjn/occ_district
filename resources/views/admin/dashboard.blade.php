@@ -43,7 +43,7 @@
 
   .small-box:hover {
     transform: translateY(-6px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
   }
 
   .small-box .inner h3 {
