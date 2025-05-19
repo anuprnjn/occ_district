@@ -76,6 +76,7 @@ class StoreHCCaseDataController extends Controller
          $caseInfoDetails['selectedOrders'] = $orders;
          $caseInfoDetails['urgent_fee'] = $urgentFee; 
         Session::put('caseInfoDetails', $caseInfoDetails);
+        Session::put('active_payment_source','hc_review_form_userDetails');
         Session::save();
         Session::reflash();
        
