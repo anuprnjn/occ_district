@@ -26,8 +26,15 @@ class PaymentController extends Controller
 
         $merchantDetails = $response->json();
         $userData = $request->input('userData');
-        $urgent_fee = Session::get('urgent_fee');
         $paybleAmount = $request->input('paybleAmount');
+        
+        if (!empty($paybleAmount)) {
+            $urgent_fee = Session::get('hc_final_amount_summary')['urgent_fee'] ?? "0";
+        } elseif (!empty($Dc_totalAmount)) {
+            $urgent_fee = Session::get('dc_final_amount_summary')['urgent_fee'] ?? "0";
+        } else {
+            $urgent_fee = "0";
+        }
         $applicationNumber = $request->input('applicationNumber');
         $transaction_no = $merchantDetails[0]['TransactionNumber'];
         $PAN = 'N/A';
@@ -69,7 +76,7 @@ class PaymentController extends Controller
             'depositerid'=> $depositerId ?? '',
             'amount' => $paybleAmount ?? $Dc_totalAmount ?? '',
             'panno' => $PAN ?? '',
-            'urgent_fee' => $urgent_fee ?? "5.00" ?? '',
+            'urgent_fee' => $urgent_fee ?? '',
             'addinfo1' => $ADDINFO1 ?? '',
             'addinfo2' => $ADDINFO2 ?? '',
             'addinfo3' => $ADDINFO3 ?? '',

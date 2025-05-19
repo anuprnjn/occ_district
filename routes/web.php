@@ -127,7 +127,7 @@ Route::post('/application-mobile-track-hc', [OtpController::class, 'getHCApplica
 Route::get('/get-login-captcha', [LoginController::class, 'getLoginCaptcha']);
 Route::post('/api/login', [LoginController::class, 'login']);
 Route::post('/register-application', [DCApplicationRegistrationController::class, 'registerApplication']);
-Route::post('/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
+Route::match(['get', 'post'], '/fetch-merchant-details', [PaymentController::class, 'fetchMerchantDetails']);
 Route::get('/refresh-captcha', [CaptchaController::class, 'refreshCaptcha']);
 Route::post('/validate-captcha', [CaptchaController::class, 'validateCaptcha']);
 Route::post('/fetch-application-details', [ApplicationController::class, 'fetchApplicationDetails'])->name('fetch_application_details');
