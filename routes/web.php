@@ -163,6 +163,7 @@ Route::post('/submit-dc-order-details', [App\Http\Controllers\DCOrderController:
 Route::post('/get-hc-order-pdf-napix', [HcOrderNapixController::class, 'getHcOrderPdf']);
 // Route::post('/store-hc-case-session', [StoreHCCaseDataController::class, 'store'])->name('hc.store.session');
 Route::post('/calculate-hc-final-amount', [StoreHCCaseDataController::class, 'calculateFinalPayableAmount'])->name('calculate-hc-final-amount');
+Route::post('/initiate-payment', [StoreHCCaseDataController::class, 'initiatePayment'])->name('initiate.hc.payment');
 
 //admin routes **************************************************************
 

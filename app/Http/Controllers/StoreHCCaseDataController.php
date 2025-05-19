@@ -111,6 +111,9 @@ class StoreHCCaseDataController extends Controller
             $finalAmount = $totalAmount;
             $urgentFee = 0; // no urgent fee in ordinary mode
         }
+
+        // dd($finalAmount);
+        // exit();
     
         // Step 4: Store total and fee in session
         session([
@@ -127,5 +130,24 @@ class StoreHCCaseDataController extends Controller
             'message' => 'Total amount is calculated successfully',
             'data' => session('hc_final_amount_summary')
         ]);
-    }    
+    }  
+    
+     // function to initialte the final amount with security 
+
+     public function initiatePayment()
+     {
+         $amount = session('hc_final_amount_summary.final_payable_amount');
+ 
+         if (!$amount) {
+             return response()->json([
+                 'status' => 'error',
+                 'message' => 'Payment amount not found in session.'
+             ], 422);
+         }
+ 
+         return response()->json([
+             'status' => 'ready',
+             'amount' => $amount
+         ]);
+     }
 }

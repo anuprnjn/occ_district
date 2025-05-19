@@ -224,6 +224,7 @@
             });
 
             const result = await response.json();
+            console.log("result", result);
 
             if (result.status === 'success') {
                 document.getElementById("totalAmount").textContent = `₹ ${result.data.final_payable_amount}`;
@@ -326,6 +327,21 @@
 
         try {
             const sessionData = @json(session()->all());
+            const initiateResponse = await fetch("{{ route('initiate.hc.payment') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                },
+                body: JSON.stringify({
+                    hc_application_number: applicationNumber
+                })
+            });
+            console.log("data",initiateResponse);
+            const hcFinalAmountData = await initiateResponse.json();
+            console.log("data",hcFinalAmountData);
+
+            const paybleAmount = hcFinalAmountData.amount;
             // console.log('all session data', sessionData);
 
             if (!sessionData) {
@@ -339,8 +355,6 @@
                 alert("Error: User data is missing. Please refresh and try again.");
                 return;
             }
-            
-            let paybleAmount = sessionData.hc_final_amount_summary?.final_payable_amount;
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
