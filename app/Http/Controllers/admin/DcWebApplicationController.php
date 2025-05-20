@@ -97,6 +97,7 @@ class DcWebApplicationController extends Controller
         ]);
 
         try {
+             $dist_name = $request->dist_name;
             // Fetch the per page cost from fee_master table
             $perPageFee = DB::table('fee_master')
                 ->where('fee_type', 'per_page_fee')
@@ -117,19 +118,20 @@ class DcWebApplicationController extends Controller
             }
             // Delete old file if exists
             if ($order->file_name) {
-                Storage::disk('public')->delete('dc_certified_order_copies/' . $order->file_name);
+                Storage::disk('public')->delete("dc_certified_order_copies/{$dist_name}/" . $order->file_name);
             }
 
             // Store PDF
             $fileName = $request->application_number . '_' . $request->order_number . '_' . time() . '.pdf';
-            $filePath = $request->file('pdf_file')->storeAs('dc_certified_order_copies', $fileName, 'public');
+           
+            $filePath = $request->file('pdf_file')->storeAs("dc_certified_order_copies/{$dist_name}/", $fileName, 'public');
 
             // Log file path
-            Log::info('File stored at:', ['path' => Storage::disk('public')->path('dc_certified_order_copies/' . $fileName)]);
+            Log::info('File stored at:', ['path' => Storage::disk('public')->path("dc_certified_order_copies/{$dist_name}/" . $fileName)]);
 
             // Count PDF pages
             $parser = new Parser();
-            $pdf = $parser->parseFile(Storage::disk('public')->path('dc_certified_order_copies/' . $fileName));
+            $pdf = $parser->parseFile(Storage::disk('public')->path("dc_certified_order_copies/{$dist_name}/" . $fileName));
             $pageCount = count($pdf->getPages());
 
             // Calculate the new page amount
@@ -171,7 +173,11 @@ class DcWebApplicationController extends Controller
     // Download Order PDF
     public function downloadDcOrderCopy($fileName)
     {
-        $filePath = Storage::disk('public')->path('dc_certified_order_copies/' . $fileName);
+        $dist_code = session('user.dist_code');
+        $dist_name = DB::table('district_master')
+                     ->where('dist_code', $dist_code)
+                     ->value('dist_name');
+        $filePath = Storage::disk('public')->path("dc_certified_order_copies/{$dist_name}/" . $fileName);
         
         if (file_exists($filePath)) {
             return response()->file($filePath);
@@ -181,7 +187,7 @@ class DcWebApplicationController extends Controller
     }
     // Delete Order PDF
     // Delete PDF
-    public function deleteDcOrderCopy($applicationNumber, $orderNumber)
+    public function deleteDcOrderCopy($applicationNumber, $orderNumber,$dist_name)
     {
         try {
             $order = DB::table('district_court_order_details')
@@ -194,7 +200,7 @@ class DcWebApplicationController extends Controller
             }
 
             // Delete File from Storage
-            Storage::disk('public')->delete('dc_certified_order_copies/' . $order->file_name);
+            Storage::disk('public')->delete("dc_certified_order_copies/{$dist_name}/" . $order->file_name);
 
             // Update Database
             DB::table('district_court_order_details')

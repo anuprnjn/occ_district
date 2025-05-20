@@ -323,7 +323,7 @@ Route::get('/admin/dc-web-application/{encryptedAppNumber}', [DcWebApplicationCo
     ->name('dc-web-application.view');
 Route::post('/admin/upload-dc-order-copy', [DcWebApplicationController::class, 'uploadDcOrderCopy'])->name('admin.uploadDcOrderCopy');
 Route::get('/admin/download-dc-order-copy/{fileName}', [DcWebApplicationController::class, 'downloadDcOrderCopy'])->name('admin.downloadDcOrderCopy');
-Route::get('/delete-dc-order-copy/{application_number}/{order_number}', [DcWebApplicationController::class, 'deleteDcOrderCopy'])->name('admin.deleteDcOrderCopy');
+Route::get('/delete-dc-order-copy/{application_number}/{order_number}/{dist_name}', [DcWebApplicationController::class, 'deleteDcOrderCopy'])->name('admin.deleteDcOrderCopy');
 Route::post('/dc-web-application/send-dc-deficit-notification', [DcWebApplicationController::class, 'sendDcDeficitNotification'])
 ->name('dc-web-application.send-dc-deficit-notification');
 Route::post('/dc-web-application/send-dc-ready-notification', [DcWebApplicationController::class, 'sendReadyDcNotification']) ->name('dc-web-application.send-dc-ready-notification'); 

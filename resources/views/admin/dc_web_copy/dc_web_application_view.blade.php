@@ -279,6 +279,8 @@
                                                         @csrf
                                                         <input type="hidden" name="application_number"
                                                             value="{{ $order->application_number }}">
+                                                        <input type="hidden" name="dist_name"
+                                                            value="{{ $dcuser->dist_name }}">
                                                         <input type="hidden" name="order_number"
                                                             value="{{ $order->order_number }}">
                                                         <input type="file" name="pdf_file" class="form-control mb-2"
@@ -307,7 +309,7 @@
                                                             onclick="viewPDF('{{ route('admin.downloadDcOrderCopy', $order->file_name) }}')">
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
-                                                        <a href="{{ route('admin.deleteDcOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number]) }}"
+                                                        <a href="{{ route('admin.deleteDcOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number, 'dist_name' => $dcuser->dist_name,]) }}"
                                                             class="w-100 btn btn-sm btn-danger @if ($dcuser->deficit_status == 1 or $dcuser->certified_copy_ready_status) disabled @endif"
                                                             onclick="return confirm('Are you sure want to delete ?')"
                                                             @if ($dcuser->deficit_status == 1 or $dcuser->certified_copy_ready_status) onclick="return false;" @endif>
