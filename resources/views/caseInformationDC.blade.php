@@ -205,6 +205,8 @@
             if (!responseDataDC) throw new Error('No case info available');
             const cino = responseDataDC.cino;
             const interimOrders = responseDataDC.interim || {};
+            const dist_name = responseDataDC.establishment_name;
+    
 
             // Step 2: Render Orders Table
             const ordersTable = document.getElementById("ordersTableDC")?.querySelector("tbody");
@@ -255,7 +257,8 @@
                     const payload = {
                         order_no: order.order_no,
                         order_date: order.order_date,
-                        cino: cino
+                        cino: cino,
+                        dist_name : dist_name
                     };
 
                     const currentRow = tableRows[index];
@@ -420,7 +423,7 @@
                 dist_name: dcCaseDetailsNapix.establishment_name,
                 establishment_code: dcCaseDetailsNapix.establishment_code,
                 establishment_name: dcCaseDetailsNapix.district_name,
-                cino: dcCaseDetailsNapix.cino
+                cino: dcCaseDetailsNapix.cino 
             }
         };
 

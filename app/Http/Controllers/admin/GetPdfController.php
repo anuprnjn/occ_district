@@ -40,9 +40,10 @@ public function fetchDcPdf(Request $request)
 {
     $cino = $request->input('cino');
     $order_no = $request->input('order_no');
+    $dist_name = $request->input('dist_name');
 
     // Define relative file path based on inputs
-    $filePath = "napix_pdf/district_court/{$cino}/{$cino}_{$order_no}_napix.pdf";
+    $filePath = "napix_pdf/district_court/{$dist_name}/{$cino}/{$cino}_{$order_no}_napix.pdf";
 
     // Check if file exists in 'public' disk (storage/app/public)
     if (Storage::disk('public')->exists($filePath)) {

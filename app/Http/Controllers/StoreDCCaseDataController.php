@@ -42,15 +42,16 @@ class StoreDCCaseDataController extends Controller
             empty($data['request_mode']) ||
             empty($data['selected_orders']) ||
             empty($data['case_details']) ||
+            empty($data['case_details']['dist_name']) ||
             empty($data['case_details']['cino'])
         ) {
             return response()->json(['error' => 'Required data is missing.'], 422);
         }
-    
+        $dist_name = $data['case_details']['dist_name'];
         // Check if per_page_fee is available in the database
         $feePerPage = DB::table('fee_master')->where('fee_type', 'per_page_fee')->value('amount'); // Default to 5 if not found
         $cino = $data['case_details']['cino'];
-        $pdfFolder = storage_path("app/public/napix_pdf/district_court/{$cino}");
+        $pdfFolder = storage_path("app/public/napix_pdf/district_court/{$dist_name}/{$cino}");
     
         $orders = [];
     

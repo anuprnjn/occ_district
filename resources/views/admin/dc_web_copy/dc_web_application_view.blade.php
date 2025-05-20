@@ -269,7 +269,7 @@
                                                 <button 
                                                     id="downloadBtn_{{ $order->order_number }}" 
                                                     class="mt-2 btn btn-outline-info btn-sm" 
-                                                    onclick="getPdf(this, '{{ $dcuser->cino }}', '{{ $order->order_number }}', '{{ $dcuser->application_number }}', '{{ $dcuser->created_at }}', '{{ $order->order_number }}', '{{ $transaction_details->transaction_no }}', '{{ $transaction_details->transaction_date }}')">
+                                                    onclick="getPdf(this, '{{ $dcuser->cino }}', '{{ $order->order_number }}', '{{ $dcuser->dist_name }}', '{{ $dcuser->application_number }}', '{{ $dcuser->created_at }}', '{{ $order->order_number }}', '{{ $transaction_details->transaction_no }}', '{{ $transaction_details->transaction_date }}')">
                                                     Download <i class="bi bi-download"></i>
                                                 </button>
                                                     </td>
@@ -463,7 +463,7 @@
     
     @push('scripts')
 <script>
-    function getPdf(buttonEl, cino, order_no, application_number, created_at, id, trn_no, trn_date) {
+    function getPdf(buttonEl, cino, order_no, dist_name, application_number, created_at, id, trn_no, trn_date) {
     const button = buttonEl;
     const originalHtml = button.innerHTML;
     button.disabled = true;
@@ -475,7 +475,7 @@
             "Content-Type": "application/json",
             "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').getAttribute("content")
         },
-        body: JSON.stringify({ cino, order_no })
+        body: JSON.stringify({ cino, order_no, dist_name })
     })
     .then(res => res.json())
     .then(data => {
