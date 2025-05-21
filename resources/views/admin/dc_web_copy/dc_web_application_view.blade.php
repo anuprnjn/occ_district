@@ -297,6 +297,7 @@
                                                     </form>
                                                 </td>
                                                 <td>
+                                                    <!-- checking git commit  -->
                                                     @if ($order->upload_status)
                                                         <span class="badge bg-success">Uploaded</span>
                                                     @else
