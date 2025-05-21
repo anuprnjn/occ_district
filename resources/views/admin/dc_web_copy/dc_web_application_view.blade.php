@@ -306,7 +306,7 @@
                                                 <td>
                                                     @if ($order->upload_status)
                                                         <a href="javascript:void(0);" class="w-100 mb-2 btn btn-sm btn-primary"
-                                                            onclick="viewPDF('{{ route('admin.downloadDcOrderCopy', $order->file_name) }}')">
+                                                            onclick="viewPDF(`{{ route('admin.downloadDcOrderCopy', $order->file_name) }}`)">
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteDcOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number, 'dist_name' => $dcuser->dist_name,]) }}"
