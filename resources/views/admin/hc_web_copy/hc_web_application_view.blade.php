@@ -94,7 +94,7 @@
                                         <div class="col-md-4">
                                             <p class="fw-bold text-success">Case Details</p>
                                             <table class="table table-bordered">
-                                               
+                                               @dd($hcuser);
                                                 <tr>
                                                 @if ($hcuser->case_number)
                                                 <th class="fw-bold">Case No</th>
@@ -102,8 +102,8 @@
                                                     </td>
                                                 @else
                                                     <th class="fw-bold">Filing No</th>
-                                                                        <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
-                                                                        </td>
+                                                    <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
+                                                    </td>
                                                 @endif
                                                    
                                                 </tr>
@@ -119,10 +119,19 @@
                                         <div class="col-md-4">
                                             <p class="fw-bold text-success">Payment Details</p>
                                             <table class="table table-bordered">
-                                                <tr>
-                                                    <th class="fw-bold">Payment Status</th>
-                                                    <td>{{ $hcuser->payment_status }}</td>
-                                                </tr>
+                                               <tr>
+                                                <th class="fw-bold">Payment Status</th>
+                                                <td>
+                                                    @if($hcuser->payment_status == 1)
+                                                        Success
+                                                    @elseif($hcuser->payment_status == 0)
+                                                        Fail
+                                                    @else
+                                                        Unknown
+                                                    @endif
+                                                </td>
+                                            </tr>
+
                                                 <tr>
                                                     <th class="fw-bold">Applied By</th>
                                                     <td>{{ $hcuser->applied_by }}</td>
@@ -304,7 +313,7 @@
                                                 <td>
                                                     @if ($order->upload_status)
                                                         <a href="javascript:void(0);" class="w-100 mb-2 btn btn-sm btn-primary"
-                                                            onclick="viewPDF('{{ route('admin.downloadOrderCopy', $order->file_name) }}')">
+                                                            onclick="viewPDF(`{{ route('admin.downloadOrderCopy', $order->file_name) }}`)">
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number]) }}"
