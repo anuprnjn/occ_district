@@ -513,8 +513,12 @@ function getPdf(buttonEl, cino, order_no, dist_name, application_number, created
             formData.append("trn_no", trn_no);
 
             const dateParts = trn_date.split("/");
-            const formattedDateTR = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
-            formData.append("trn_date", formattedDateTR);
+            if (dateParts.length === 3) {
+                const formattedDateTR = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                formData.append("trn_date", formattedDateTR);
+            } else {
+                formData.append("trn_date", trn_date); // fallback if format unexpected
+            }
 
             // console.log("FormData preview:");
             // for (let pair of formData.entries()) {

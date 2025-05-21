@@ -18,8 +18,23 @@ class HcPdfController extends Controller
         $application_number = $request->input('application_number');
         $doc_id = $request->input('doc_id');
         $trn_no = $request->input('transaction_no','TRNTEST12345');
-        $trn_date = $request->input('transaction_date','09-04-2025');
+        // $trn_date = $request->input('transaction_date','21-05-2025');
+        $trn_date = $request->input('transaction_date');
+        if (empty($trn_date)) {
+            $trn_date = 'N/A';
+        }
+
         $forceConvert = $request->input('force_convert', false);
+
+        // dd([
+        //     'pdf_path' => $request->input('pdf_path'),
+        //     'createdAt' => $request->input('createdAt'),
+        //     'application_number' => $request->input('application_number'),
+        //     'doc_id' => $request->input('doc_id'),
+        //     'transaction_no' => $request->input('transaction_no', 'TRNTEST12345'),
+        //     'transaction_date' => $request->input('transaction_date', '09-04-2025'),
+        // ]);
+
 
 
         $relativePath = str_replace(asset('/'), '', $relativeUrl);
