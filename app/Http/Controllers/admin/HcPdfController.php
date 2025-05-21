@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use setasign\Fpdi\Fpdi;
 use TCPDF;
+use Illuminate\Support\Facades\Log;
+
 
 class HcPdfController extends Controller
 {
@@ -19,9 +21,11 @@ class HcPdfController extends Controller
         $trn_date = $request->input('transaction_date','09-04-2025');
         $forceConvert = $request->input('force_convert', false);
 
+
         $relativePath = str_replace(asset('/'), '', $relativeUrl);
         $originalPdfPath = public_path($relativePath);
         $isTempFile = false;
+
 
         if (!file_exists($originalPdfPath)) {
             return response()->json(['error' => 'PDF file not found.'], 404);
@@ -121,6 +125,8 @@ class HcPdfController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="converted.pdf"');
     }
+
+
 
     public function checkPdfCompatibility(Request $request)
     {

@@ -465,7 +465,7 @@
     
     @push('scripts')
 <script>
-    function getPdf(buttonEl, cino, order_no, dist_name, application_number, created_at, id, trn_no, trn_date) {
+function getPdf(buttonEl, cino, order_no, dist_name, application_number, created_at, id, trn_no, trn_date) {
     const button = buttonEl;
     const originalHtml = button.innerHTML;
     button.disabled = true;
@@ -485,16 +485,21 @@
         if (data.message === 'success' && data.pdf_data) {
             
             const row = button.closest("tr");
+
             const x = row.querySelector(".bottom_stamp_x")?.value || 0;
+
             const y = row.querySelector(".bottom_stamp_y")?.value || 60;
+
             const auth_fee = row.querySelector(".auth_fee")?.value || 15;
 
             const base64Data = data.pdf_data;
+
             const blob = base64ToBlob(base64Data.split(',')[1], 'application/pdf');
             const file = new File([blob], `${application_number}_${order_no}.pdf`, { type: 'application/pdf' });
 
             const formData = new FormData();
             formData.append("pdf_file", file);
+  
             formData.append("application_number", application_number);
             formData.append("order_no", order_no);
 
@@ -511,6 +516,10 @@
             const formattedDateTR = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
             formData.append("trn_date", formattedDateTR);
 
+            // console.log("FormData preview:");
+            // for (let pair of formData.entries()) {
+            //     console.log(pair[0] + ':', pair[1]);
+            // }
             return fetch("/admin/save-raw-pdf", {
                 method: "POST",
                 headers: {
@@ -555,7 +564,7 @@
         modal.show();
     })
     .catch(err => {
-        console.error(err);
+        console.error('pdf error',err);
         alert("Something went wrong.");
     })
     .finally(() => {
