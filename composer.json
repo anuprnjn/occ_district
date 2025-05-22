@@ -12,6 +12,7 @@
         "phpseclib/phpseclib": "^3.0",
         "setasign/fpdf": "1.8",
         "setasign/fpdi": "2.6",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "smalot/pdfparser": "^2.12",
         "tecnickcom/tcpdf": "^6.9"
     },

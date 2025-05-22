@@ -121,7 +121,15 @@
                                             <table class="table table-bordered">
                                                 <tr>
                                                     <th class="fw-bold">Payment Status</th>
-                                                    <td>{{ $dcuser->payment_status }}</td>
+                                                    <td>
+                                                    @if($dcuser->payment_status == 1)
+                                                        Success
+                                                    @elseif($dcuser->payment_status == 0)
+                                                        Fail
+                                                    @else
+                                                        Unknown
+                                                    @endif
+                                                </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="fw-bold">Applied By</th>
@@ -274,27 +282,27 @@
                                                 </button>
                                                     </td>
                                                 <td>
-                                                    <form action="{{ route('admin.uploadDcOrderCopy') }}" method="POST"
-                                                        enctype="multipart/form-data">
-                                                        @csrf
-                                                        <input type="hidden" name="application_number"
-                                                            value="{{ $order->application_number }}">
-                                                        <input type="hidden" name="dist_name"
-                                                            value="{{ $dcuser->dist_name }}">
-                                                        <input type="hidden" name="order_number"
-                                                            value="{{ $order->order_number }}">
-                                                        <input type="file" name="pdf_file" class="form-control mb-2"
-                                                            required>
-                                                       
-                                                            @if ($errors->has('pdf_file') && old('order_number') == $order->order_number)
-                                                                <span
-                                                                    class="text-danger">{{ $errors->first('pdf_file') }}</span>
-                                                            @endif
-                                                        
-                                                        <button type="submit" class="btn btn-sm btn-success" @if ($dcuser->deficit_status == 1 or $dcuser->certified_copy_ready_status) disabled @endif>
-                                                            <i class="bi bi-upload"></i> Upload
-                                                        </button>
-                                                    </form>
+                                                <form action="{{ route('admin.uploadDcOrderCopy') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <input type="hidden" name="application_number" value="{{ $order->application_number }}">
+                                                    <input type="hidden" name="dist_name" value="{{ $dcuser->dist_name }}">
+                                                    <input type="hidden" name="order_number" value="{{ $order->order_number }}">
+
+                                                    <input type="file" name="pdf_file" class="form-control mb-2" required
+                                                        @if ($order->upload_status) disabled style="cursor: not-allowed;" @endif>
+
+                                                    @if ($errors->has('pdf_file') && old('order_number') == $order->order_number)
+                                                        <span class="text-danger">{{ $errors->first('pdf_file') }}</span>
+                                                    @endif
+
+                                                    <button type="submit" class="btn btn-sm btn-warning"
+                                                        @if ($order->upload_status || $dcuser->deficit_status == 1 || $dcuser->certified_copy_ready_status)
+                                                            disabled style="cursor: not-allowed;"
+                                                        @endif>
+                                                        <i class="bi bi-upload"></i> Upload
+                                                    </button>
+                                                </form>
+
                                                 </td>
                                                 <td>
                                                     @if ($order->upload_status)
