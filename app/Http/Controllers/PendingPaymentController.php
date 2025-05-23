@@ -27,7 +27,7 @@ class PendingPaymentController extends Controller
     
         $responseData = $response->json();
         // dd($responseData);
-        // exit();
+        // exit();  
     
         if ($responseData['success']) {
             $responsePayload = [

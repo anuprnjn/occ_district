@@ -21,7 +21,20 @@
             </div>
         <!-- <pre>{{ print_r(session('PendingCaseInfoDetails'))}}</pre> -->
         @if(session('PendingCaseInfoDetails.order_details'))
-        <table class="w-full border border-gray-300">
+            <table class="w-full border border-gray-300">
+            @php
+                $caseInfo = session('PendingCaseInfoDetails')['case_info'] ?? null;
+            @endphp
+
+            @if ($caseInfo && (!empty($caseInfo['district_name']) || !empty($caseInfo['establishment_name'])))
+                <tr>
+                    <td class="border p-2 font-bold">District Name</td>
+                    <td class="border p-2">{{ $caseInfo['district_name'] ?? 'N/A' }}</td>
+                    <td class="border p-2 font-bold">Establishment Name</td>
+                    <td class="border p-2">{{ $caseInfo['establishment_name'] ?? 'N/A' }}</td>
+                </tr>
+            @endif
+
             <tr>
                 <td class="border p-2 font-bold">Case Number</td>
                 <td class="border p-2">{{ session('PendingCaseInfoDetails.case_info.caseno') ?? 'N/A' }}</td>
@@ -37,14 +50,38 @@
         </table>
         @else
         <table class="w-full border border-gray-300">
-            <tr>
-                <td class="border p-2 font-bold">
-                    {{ session('PendingCaseInfoDetails.case_info.selected_method') == 'C' ? 'Case Number' : 'Filling Number' }}
-                </td>
-                <td class="border p-2">
-                    {{ session('PendingCaseInfoDetails.case_info.CASENO') ?? 'N/A' }}
-                </td>
-            </tr>
+
+        @php
+         $caseInfo = session('PendingCaseInfoDetails')['case_info'] ?? null;
+            @endphp
+
+            @if ($caseInfo)
+                @if (!empty($caseInfo['district_name']) || !empty($caseInfo['establishment_name']))
+                <tr>
+                    <td class="border p-2 font-bold">
+                        District Name 
+                    </td>
+                    <td class="border p-2">
+                        {{ $caseInfo['district_name'] ?? 'N/A' }}
+                    </td>
+                    <td class="border p-2 font-bold">
+                        Establishment Name 
+                    </td>
+                    <td class="border p-2">
+                        {{ $caseInfo['establishment_name'] ?? 'N/A' }}
+                    </td>
+                </tr>
+                @endif
+                   <tr>
+                    <td class="border p-2 font-bold">
+                        {{ $caseInfo['selected_method'] === 'C' ? 'Case Number' : 'Filling Number' }}
+                    </td>
+                    <td class="border p-2">
+                        {{ $caseInfo['CASENO'] ?? 'N/A' }}
+                    </td>
+                </tr>
+
+            @endif
         </table>
         @endif
     </div>
