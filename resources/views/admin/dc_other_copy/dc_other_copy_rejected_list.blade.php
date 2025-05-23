@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Crypt;
         <div class="row g-4">
           <div class="col-md-12">
             <div class="card card-danger card-outline mb-4">
-              <div class="card-header"><div class="card-title">Civilcourt Other Copy Rejected Application List</div></div>
+              <div class="card-header"><div class="card-title">Other Copy Rejected Application List</div></div>
               <div class="card-body">
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>

@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Crypt;
     <div class="app-content-header">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-6"><h3 class="mb-0">Civilcourt Other Copy Paid Application</h3></div>
+          <div class="col-sm-6"><h3 class="mb-0">Other Copy Paid Application</h3></div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-end">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Hc Other Copy</li>
+              <li class="breadcrumb-item active" aria-current="page">Other Copy</li>
             </ol>
           </div>
         </div>
@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Crypt;
         <div class="row g-4">
           <div class="col-md-12">
             <div class="card card-success card-outline mb-4">
-              <div class="card-header"><div class="card-title">Civilcourt Other Copy Paid Application List</div></div>
+              <div class="card-header"><div class="card-title">Other Copy Paid Application List</div></div>
               <div class="card-body">
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
@@ -77,7 +77,7 @@ use Illuminate\Support\Facades\Crypt;
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">No DC Users found</td>
+                            <td colspan="7" class="text-center">No Users found</td>
                         </tr>
                     @endforelse
                     </tbody>
