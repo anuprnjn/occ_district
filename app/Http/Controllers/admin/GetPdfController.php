@@ -38,6 +38,7 @@ class GetPdfController extends Controller
 
 public function fetchDcPdf(Request $request)
 {
+
     $cino = $request->input('cino');
     $order_no = $request->input('order_no');
     $dist_name = $request->input('dist_name');

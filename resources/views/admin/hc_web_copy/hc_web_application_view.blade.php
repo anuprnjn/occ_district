@@ -94,7 +94,6 @@
                                         <div class="col-md-4">
                                             <p class="fw-bold text-success">Case Details</p>
                                             <table class="table table-bordered">
-                                               
                                                 <tr>
                                                 @if ($hcuser->case_number)
                                                 <th class="fw-bold">Case No</th>
@@ -102,8 +101,8 @@
                                                     </td>
                                                 @else
                                                     <th class="fw-bold">Filing No</th>
-                                                                        <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
-                                                                        </td>
+                                                    <td>{{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
+                                                    </td>
                                                 @endif
                                                    
                                                 </tr>
@@ -119,10 +118,19 @@
                                         <div class="col-md-4">
                                             <p class="fw-bold text-success">Payment Details</p>
                                             <table class="table table-bordered">
-                                                <tr>
-                                                    <th class="fw-bold">Payment Status</th>
-                                                    <td>{{ $hcuser->payment_status }}</td>
-                                                </tr>
+                                               <tr>
+                                                <th class="fw-bold">Payment Status</th>
+                                                <td>
+                                                    @if($hcuser->payment_status == 1)
+                                                        Success
+                                                    @elseif($hcuser->payment_status == 0)
+                                                        Fail
+                                                    @else
+                                                        Unknown
+                                                    @endif
+                                                </td>
+                                            </tr>
+
                                                 <tr>
                                                     <th class="fw-bold">Applied By</th>
                                                     <td>{{ $hcuser->applied_by }}</td>
@@ -274,25 +282,25 @@
                                                 </button>
                                                     </td>
                                                 <td>
-                                                    <form action="{{ route('admin.uploadOrderCopy') }}" method="POST"
-                                                        enctype="multipart/form-data">
-                                                        @csrf
-                                                        <input type="hidden" name="application_number"
-                                                            value="{{ $order->application_number }}">
-                                                        <input type="hidden" name="order_number"
-                                                            value="{{ $order->order_number }}">
-                                                        <input type="file" name="pdf_file" class="form-control mb-2"
-                                                            required>
-                                                       
-                                                            @if ($errors->has('pdf_file') && old('order_number') == $order->order_number)
-                                                                <span
-                                                                    class="text-danger">{{ $errors->first('pdf_file') }}</span>
-                                                            @endif
-                                                        
-                                                        <button type="submit" class="btn btn-sm btn-success" @if ($hcuser->deficit_status == 1 or $hcuser->certified_copy_ready_status) disabled @endif>
-                                                            <i class="bi bi-upload"></i> Upload
-                                                        </button>
-                                                    </form>
+                                                <form action="{{ route('admin.uploadOrderCopy') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <input type="hidden" name="application_number" value="{{ $order->application_number }}">
+                                                    <input type="hidden" name="order_number" value="{{ $order->order_number }}">
+
+                                                    <input type="file" name="pdf_file" class="form-control mb-2" required
+                                                        @if ($order->upload_status) disabled style="cursor: not-allowed;" @endif>
+
+                                                    @if ($errors->has('pdf_file') && old('order_number') == $order->order_number)
+                                                        <span class="text-danger">{{ $errors->first('pdf_file') }}</span>
+                                                    @endif
+
+                                                    <button type="submit" class="btn btn-sm btn-warning"
+                                                        @if ($order->upload_status || $hcuser->deficit_status == 1 || $hcuser->certified_copy_ready_status)
+                                                            disabled style="cursor: not-allowed;"
+                                                        @endif>
+                                                        <i class="bi bi-upload"></i> Upload
+                                                    </button>
+                                                </form>
                                                 </td>
                                                 <td>
                                                     @if ($order->upload_status)
@@ -304,7 +312,7 @@
                                                 <td>
                                                     @if ($order->upload_status)
                                                         <a href="javascript:void(0);" class="w-100 mb-2 btn btn-sm btn-primary"
-                                                            onclick="viewPDF('{{ route('admin.downloadOrderCopy', $order->file_name) }}')">
+                                                            onclick="viewPDF(`{{ route('admin.downloadOrderCopy', $order->file_name) }}`)">
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number]) }}"
@@ -506,8 +514,18 @@
             formData.append("trn_no", trn_no);
 
             const dateParts = trn_date.split("/");
-            const formattedDateTR = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
-            formData.append("trn_date", formattedDateTR);
+            if (dateParts.length === 3) {
+                const formattedDateTR = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                formData.append("trn_date", formattedDateTR);
+            } else {
+                formData.append("trn_date", trn_date); // fallback if format unexpected
+            }
+
+
+            // console.log("FormData preview:");
+            // for (let pair of formData.entries()) {
+            //     console.log(pair[0] + ':', pair[1]);
+            // }
 
             return fetch("/admin/save-raw-pdf", {
                 method: "POST",

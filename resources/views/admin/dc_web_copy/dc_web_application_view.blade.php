@@ -121,7 +121,15 @@
                                             <table class="table table-bordered">
                                                 <tr>
                                                     <th class="fw-bold">Payment Status</th>
-                                                    <td>{{ $dcuser->payment_status }}</td>
+                                                    <td>
+                                                    @if($dcuser->payment_status == 1)
+                                                        Success
+                                                    @elseif($dcuser->payment_status == 0)
+                                                        Fail
+                                                    @else
+                                                        Unknown
+                                                    @endif
+                                                </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="fw-bold">Applied By</th>
@@ -274,27 +282,27 @@
                                                 </button>
                                                     </td>
                                                 <td>
-                                                    <form action="{{ route('admin.uploadDcOrderCopy') }}" method="POST"
-                                                        enctype="multipart/form-data">
-                                                        @csrf
-                                                        <input type="hidden" name="application_number"
-                                                            value="{{ $order->application_number }}">
-                                                        <input type="hidden" name="dist_name"
-                                                            value="{{ $dcuser->dist_name }}">
-                                                        <input type="hidden" name="order_number"
-                                                            value="{{ $order->order_number }}">
-                                                        <input type="file" name="pdf_file" class="form-control mb-2"
-                                                            required>
-                                                       
-                                                            @if ($errors->has('pdf_file') && old('order_number') == $order->order_number)
-                                                                <span
-                                                                    class="text-danger">{{ $errors->first('pdf_file') }}</span>
-                                                            @endif
-                                                        
-                                                        <button type="submit" class="btn btn-sm btn-success" @if ($dcuser->deficit_status == 1 or $dcuser->certified_copy_ready_status) disabled @endif>
-                                                            <i class="bi bi-upload"></i> Upload
-                                                        </button>
-                                                    </form>
+                                                <form action="{{ route('admin.uploadDcOrderCopy') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <input type="hidden" name="application_number" value="{{ $order->application_number }}">
+                                                    <input type="hidden" name="dist_name" value="{{ $dcuser->dist_name }}">
+                                                    <input type="hidden" name="order_number" value="{{ $order->order_number }}">
+
+                                                    <input type="file" name="pdf_file" class="form-control mb-2" required
+                                                        @if ($order->upload_status) disabled style="cursor: not-allowed;" @endif>
+
+                                                    @if ($errors->has('pdf_file') && old('order_number') == $order->order_number)
+                                                        <span class="text-danger">{{ $errors->first('pdf_file') }}</span>
+                                                    @endif
+
+                                                    <button type="submit" class="btn btn-sm btn-warning"
+                                                        @if ($order->upload_status || $dcuser->deficit_status == 1 || $dcuser->certified_copy_ready_status)
+                                                            disabled style="cursor: not-allowed;"
+                                                        @endif>
+                                                        <i class="bi bi-upload"></i> Upload
+                                                    </button>
+                                                </form>
+
                                                 </td>
                                                 <td>
                                                     @if ($order->upload_status)
@@ -306,7 +314,7 @@
                                                 <td>
                                                     @if ($order->upload_status)
                                                         <a href="javascript:void(0);" class="w-100 mb-2 btn btn-sm btn-primary"
-                                                            onclick="viewPDF('{{ route('admin.downloadDcOrderCopy', $order->file_name) }}')">
+                                                            onclick="viewPDF(`{{ route('admin.downloadDcOrderCopy', $order->file_name) }}`)">
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteDcOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number, 'dist_name' => $dcuser->dist_name,]) }}"
@@ -465,7 +473,7 @@
     
     @push('scripts')
 <script>
-    function getPdf(buttonEl, cino, order_no, dist_name, application_number, created_at, id, trn_no, trn_date) {
+function getPdf(buttonEl, cino, order_no, dist_name, application_number, created_at, id, trn_no, trn_date) {
     const button = buttonEl;
     const originalHtml = button.innerHTML;
     button.disabled = true;
@@ -485,16 +493,21 @@
         if (data.message === 'success' && data.pdf_data) {
             
             const row = button.closest("tr");
+
             const x = row.querySelector(".bottom_stamp_x")?.value || 0;
+
             const y = row.querySelector(".bottom_stamp_y")?.value || 60;
+
             const auth_fee = row.querySelector(".auth_fee")?.value || 15;
 
             const base64Data = data.pdf_data;
+
             const blob = base64ToBlob(base64Data.split(',')[1], 'application/pdf');
             const file = new File([blob], `${application_number}_${order_no}.pdf`, { type: 'application/pdf' });
 
             const formData = new FormData();
             formData.append("pdf_file", file);
+  
             formData.append("application_number", application_number);
             formData.append("order_no", order_no);
 
@@ -508,9 +521,17 @@
             formData.append("trn_no", trn_no);
 
             const dateParts = trn_date.split("/");
-            const formattedDateTR = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
-            formData.append("trn_date", formattedDateTR);
+            if (dateParts.length === 3) {
+                const formattedDateTR = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                formData.append("trn_date", formattedDateTR);
+            } else {
+                formData.append("trn_date", trn_date); // fallback if format unexpected
+            }
 
+            // console.log("FormData preview:");
+            // for (let pair of formData.entries()) {
+            //     console.log(pair[0] + ':', pair[1]);
+            // }
             return fetch("/admin/save-raw-pdf", {
                 method: "POST",
                 headers: {
@@ -555,7 +576,7 @@
         modal.show();
     })
     .catch(err => {
-        console.error(err);
+        console.error('pdf error',err);
         alert("Something went wrong.");
     })
     .finally(() => {

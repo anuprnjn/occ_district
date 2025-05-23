@@ -6,18 +6,33 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use setasign\Fpdi\Fpdi;
 use TCPDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\File;
 
 class HcPdfController extends Controller
 {
+
     public function attachStampAndHeader(Request $request)
     {
         $relativeUrl = $request->input('pdf_path');
         $requestDate = $request->input('createdAt');
         $application_number = $request->input('application_number');
         $doc_id = $request->input('doc_id');
-        $trn_no = $request->input('transaction_no','TRNTEST12345');
-        $trn_date = $request->input('transaction_date','09-04-2025');
+        $trn_no = $request->input('transaction_no', 'TRNTEST12345');
+        $trn_date = $request->input('transaction_date') ?: 'N/A';
         $forceConvert = $request->input('force_convert', false);
+        $bottomStampY = $request->input('y', 60);
+        $customX = $request->input('x');
+        $authFee = $request->input('auth_fee');
+
+            // dd([
+            //     'pdf_path' => $request->input('pdf_path'),
+            //     'createdAt' => $request->input('createdAt'),
+            //     'application_number' => $request->input('application_number'),
+            //     'doc_id' => $request->input('doc_id'),
+            //     'transaction_no' => $request->input('transaction_no', 'TRNTEST12345'),
+            //     'transaction_date' => $request->input('transaction_date', '09-04-2025'),
+            // ]);
 
         $relativePath = str_replace(asset('/'), '', $relativeUrl);
         $originalPdfPath = public_path($relativePath);
@@ -27,7 +42,6 @@ class HcPdfController extends Controller
             return response()->json(['error' => 'PDF file not found.'], 404);
         }
 
-        // Force conversion if requested
         if ($forceConvert) {
             $originalPdfPath = $this->convertPdfToCompatible($originalPdfPath, $doc_id, $application_number);
             $isTempFile = true;
@@ -45,9 +59,19 @@ class HcPdfController extends Controller
             $isTempFile = true;
         }
 
-        $bottomStampY = $request->input('y', 60);
-        $customX = $request->input('x');
-        $authFee = $request->input('auth_fee');
+        // Generate QR Code and Save to qr_code folder
+        $qrData = "Applied Date: $requestDate\nTransaction No: $trn_no\nTransaction Date: $trn_date\nAuth Fee: Rs $authFee";
+        $qrFolder = 'qr_code/';
+        $qrFilename = "{$application_number}_qr.png";
+        $qrPathRelative = $qrFolder . $qrFilename;
+        $qrFullPath = storage_path('app/public/' . $qrPathRelative);
+
+        if (!file_exists(dirname($qrFullPath))) {
+            mkdir(dirname($qrFullPath), 0775, true);
+        }
+
+        // Generate and write PNG QR
+        File::put($qrFullPath, QrCode::format('png')->size(250)->generate($qrData));
 
         for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
             $templateId = $pdf->importPage($pageNo);
@@ -56,10 +80,17 @@ class HcPdfController extends Controller
             $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
             $pdf->useTemplate($templateId);
 
-            // Header & Table
+            // Add Logo at top-left
             $logoWidth = $size['width'] * 0.1;
             $pdf->Image(public_path('passets/images/top.jpeg'), 2, 2, $logoWidth);
 
+            // Add QR Code just below the logo, slightly right
+            $qrWidth = 15;
+            $qrX = 5; // shift right from logo
+            $qrY = 4 + $logoWidth + 4; // below logo
+            $pdf->Image($qrFullPath, $qrX, $qrY, $qrWidth);
+
+            // Table Header
             $tableWidth = $size['width'] * 0.75;
             $xStart = ($size['width'] - $tableWidth) / 2;
             $cellWidths = [
@@ -78,22 +109,19 @@ class HcPdfController extends Controller
 
             $pdf->SetXY($xStart, 4);
             $pdf->Cell($cellWidths[0], $cellHeight, 'Applied Date', 1);
-            // $pdf->Cell($cellWidths[0], $cellHeight, 'Application Number', 1);
             $pdf->Cell($cellWidths[1], $cellHeight, 'Transaction No', 1);
             $pdf->Cell($cellWidths[2], $cellHeight, 'Transaction Date', 1);
             $pdf->Cell($cellWidths[3], $cellHeight, 'Authentication Fee Payable under court fee act Rs', 1);
 
             $pdf->Ln();
             $pdf->SetX($xStart);
-            $pdf->SetFont('Arial', 'B', $fontSize);
             $pdf->Cell($cellWidths[0], $cellHeight, $requestDate, 1);
-            // $pdf->Cell($cellWidths[0], $cellHeight, $application_number, 1);
             $pdf->Cell($cellWidths[1], $cellHeight, $trn_no, 1);
-            $pdf->Cell($cellWidths[2], $cellHeight, $trn_date, 1);  
+            $pdf->Cell($cellWidths[2], $cellHeight, $trn_date, 1);
             $pdf->Cell($cellWidths[3], $cellHeight, $authFee, 1);
             $pdf->SetTextColor(0, 0, 0);
 
-            // Bottom stamp only on last page
+            // Bottom Stamp on last page
             if ($pageNo === $pageCount) {
                 $stampPath = public_path('passets/images/bottom.jpeg');
                 $stampWidth = $size['width'] * 0.25;
@@ -110,9 +138,13 @@ class HcPdfController extends Controller
             }
         }
 
+        // Delete the QR code image after attaching it
+        if (file_exists($qrFullPath)) {
+            unlink($qrFullPath);
+        }
+
         $pdfContent = $pdf->Output('', 'S');
 
-        // Clean up converted PDF if it's temporary
         if ($isTempFile && file_exists($originalPdfPath)) {
             unlink($originalPdfPath);
         }
@@ -121,6 +153,7 @@ class HcPdfController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="converted.pdf"');
     }
+
 
     public function checkPdfCompatibility(Request $request)
     {
