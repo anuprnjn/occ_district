@@ -193,7 +193,7 @@
 
 <div class="orderJudgement" id="orderJudgementFormDC">
        
-    <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id="orderJudgementDC">
+    <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementDC">
        @csrf
            <h3 class="font-semibold sm:text-lg text-md mb-5">Apply for Orders And Judgement Copy (Civil Court) :</h3>
            <div class="form-group">

@@ -116,6 +116,10 @@ Route::get('/screenReader', function () {
 //     phpinfo();
 // });
 
+Route::get('/downloadCC', function () {
+    return view('downloadCC');
+})->name('downloadCC');
+
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 
 Route::get('/hcPage', [HCCaseTypeController::class, 'showCases']);
