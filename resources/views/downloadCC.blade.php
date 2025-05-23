@@ -32,6 +32,59 @@
 @endsection
 
 @push('scripts')
-   
+<script>
+    function trackApplication(event) {
+        event.preventDefault();
+        var applicationNumberInput = document.getElementById('application_number');
+        var application_number = applicationNumberInput.value.trim().toUpperCase();
+        var errorSpan = document.getElementById('error_span');
+        var selectedCourt = document.querySelector('input[name="search-type"]:checked').value;
+
+        // Clear previous error message
+        errorSpan.innerText = '';  
+
+        // Check if the application number is empty
+        if (application_number === '') {
+            errorSpan.innerText = 'Please enter the application number!';
+            return;
+        }
+
+        // Check if the selected court matches the application number prefix
+        if ((selectedCourt === 'HC' && !application_number.startsWith('HC')) || 
+            (selectedCourt === 'DC' && application_number.startsWith('HC'))) {
+            errorSpan.innerText = 'Selected court and application number do not match!';
+            trackApplicationForm.reset();
+            return;
+        }
+
+        // Store the application number and court in sessionStorage
+        sessionStorage.setItem('track_application_number', application_number);
+        sessionStorage.setItem('selectedCourt', selectedCourt);
+
+        // Make AJAX request based on selected court
+        var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                application_number: application_number,
+            },
+            success: function(response) {
+                if (response.success) {
+                    trackApplicationForm.reset();
+                    // Redirect to the details page
+                    // window.location.href = '/trackStatusDetails';
+                } else {
+                    errorSpan.innerText = response.message || 'Failed to fetch application details.';
+                }
+            },
+            error: function() {
+                errorSpan.innerText = 'An error occurred while fetching the application details.';
+            }
+        });
+    }
+</script>  
 
 @endpush

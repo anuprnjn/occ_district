@@ -3,7 +3,7 @@
 @section('content')
 
 <section class="content-section h-screen">
-    <h3 class="font-semibold text-xl -mt-8">Pending Payment</h3>
+    <h3 class="font-semibold text-xl -mt-8">Complete Pending Payment</h3>
 
     <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-6" id='pendingPaymentForm'>
         <div class="form-group">
