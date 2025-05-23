@@ -263,6 +263,7 @@
         const matchCaseYear = caseData?.reg_year || "";
         const matchFilingNo = caseData?.fil_no || "";
         const matchFilingYear = caseData?.fil_year || "";
+        const case_status = caseData?.case_status || "";
 
         const caseNumber = matchCaseNo ? matchCaseNo : "";
         const caseYear = matchCaseYear ? matchCaseYear: "";
@@ -280,6 +281,7 @@
             filing_number: filingNumber,
             case_year: caseYear,
             filing_year: filingYear,
+            case_status: case_status,
             request_mode: userData.caseInfoDetails.requestMode,
             applied_by: userData.caseInfoDetails.selectedValue,
             cino: caseData?.cino || "",

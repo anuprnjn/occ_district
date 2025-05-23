@@ -30,6 +30,7 @@ class OrderCopyController extends Controller
                 'case_year' => 'nullable|string',
                 'filing_number' => 'nullable|string',
                 'filing_year' => 'nullable|string',
+                'case_status' => 'nullable|string',
                 'request_mode' => 'required|string',
                 'applied_by' => 'required|string',
                 'cino' => 'required|string',
