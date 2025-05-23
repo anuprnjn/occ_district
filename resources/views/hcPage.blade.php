@@ -14,7 +14,7 @@
     <!-- Form for Apply for Orders and Judgement Copy -->
     <div class="orderJudgement" id="orderJudgementForm" style="display:block;">
        
-        <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id="orderJudgementHc">
+        <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementHc">
         @csrf
             <h3 class="font-semibold sm:text-lg text-md mb-5">Apply for Orders And Judgement Copy :</h3>
             <div class="form-group">

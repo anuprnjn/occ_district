@@ -9,7 +9,7 @@
     </a> Government of India.
 </span>
 
-    <img src="{{ asset('passets/images/niclogow.png') }}" alt="NIC Logo">
+    <img src="{{ asset('passets/images/niclogo.png') }}" alt="NIC Logo">
 </footer>
 </main>
 </body>
