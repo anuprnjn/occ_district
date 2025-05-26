@@ -5,86 +5,110 @@
 <section class="content-section h-[60vh]">
     <h3 class="font-semibold text-xl -mt-8">Download Certified Copy</h3>
 
-    <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id='trackApplicationForm'>
-        <div class="form-group">
+    <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-8" id='trackApplicationForm'>
+        <div class="form-group mb-4">
             <label>
                 <input type="radio" name="search-type" value="HC" checked>
                 High Court
             </label>
-            <label>
-                <input type="radio" name="search-type" value="DC">
+            <label class="ml-4">
+                <input type="radio" name="search-type" value="DC" class="-ml-4">
                 Civil Court
             </label>
         </div>
-        <div class="flex justify-center sm:flex-row flex-col items-center sm:gap-10">
-            <div class="form-field">
+
+        <div class="flex flex-col sm:flex-row sm:items-end items-stretch sm:gap-4 gap-4 w-full" id="input-wrapper">
+            <!-- Select City Dropdown -->
+            <div class="form-field hidden sm:w-[50%] w-full" id="district_city_field">
+                <label for="district_city">Select City: <span>*</span></label>
+                <select id="district_city" name="district_city" class="w-full p-[11px]">
+                    <option value="">-- Select District/City --</option>
+                </select>
+            </div>
+
+            <!-- Application Number Field -->
+            <div class="form-field sm:w-[50%] w-full" id="application_field">
                 <label for="application_number">Application Number: <span>*</span></label>
-                <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="sm:mb-5">
-            </div>    
-            <div class="form-field">
-                <button type="submit" class="sm:w-[50%] w-[100%] btn-submit order_btn mt-4" onClick="trackApplication(event)">Submit</button>
+                <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="w-full">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-field sm:w-[50%] w-full" id="button_field">
+                <button type="submit" id="submit_button" 
+                    class="w-full sm:w-[50%] btn-submit order_btn" 
+                    onClick="trackApplication(event)">
+                    Submit
+                </button>
             </div>
         </div>
-        <span id="error_span" class="text-red-500 font-bold text-sm ml-5 sm:ml-0"></span>
+
+        <span id="error_span" class="text-red-500 font-bold text-sm ml-5 sm:ml-0 mt-2 block"></span>
     </form>
 </section>
 
 @endsection
 
 @push('scripts')
+<!-- script to toggle fields of DC and HC and to get district from db -->
 <script>
-    function trackApplication(event) {
-        event.preventDefault();
-        var applicationNumberInput = document.getElementById('application_number');
-        var application_number = applicationNumberInput.value.trim().toUpperCase();
-        var errorSpan = document.getElementById('error_span');
-        var selectedCourt = document.querySelector('input[name="search-type"]:checked').value;
+document.addEventListener('DOMContentLoaded', function () {
+    const radioButtons = document.querySelectorAll('input[name="search-type"]');
+    const districtCityField = document.getElementById('district_city_field');
+    const submitButton = document.getElementById('submit_button');
+    const districtSelect = document.getElementById('district_city');
+    const applicationInput = document.getElementById('application_number');
 
-        // Clear previous error message
-        errorSpan.innerText = '';  
-
-        // Check if the application number is empty
-        if (application_number === '') {
-            errorSpan.innerText = 'Please enter the application number!';
-            return;
+    function setButtonWidth(type) {
+        if (type === 'DC') {
+            districtCityField.classList.remove('hidden');
+            // On larger screens, 70%
+            submitButton.classList.remove('sm:w-[50%]');
+            submitButton.classList.add('sm:w-[70%]');
+        } else {
+            districtCityField.classList.add('hidden');
+            // On larger screens, 50%
+            submitButton.classList.remove('sm:w-[70%]');
+            submitButton.classList.add('sm:w-[50%]');
         }
-
-        // Check if the selected court matches the application number prefix
-        if ((selectedCourt === 'HC' && !application_number.startsWith('HC')) || 
-            (selectedCourt === 'DC' && application_number.startsWith('HC'))) {
-            errorSpan.innerText = 'Selected court and application number do not match!';
-            trackApplicationForm.reset();
-            return;
-        }
-
-        // Store the application number and court in sessionStorage
-        sessionStorage.setItem('track_application_number', application_number);
-        sessionStorage.setItem('selectedCourt', selectedCourt);
-
-        // Make AJAX request based on selected court
-        var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                application_number: application_number,
-            },
-            success: function(response) {
-                if (response.success) {
-                    trackApplicationForm.reset();
-                    // Redirect to the details page
-                    // window.location.href = '/trackStatusDetails';
-                } else {
-                    errorSpan.innerText = response.message || 'Failed to fetch application details.';
-                }
-            },
-            error: function() {
-                errorSpan.innerText = 'An error occurred while fetching the application details.';
-            }
-        });
     }
-</script>  
 
+    function clearFields() {
+        // Reset district dropdown to default option
+        districtSelect.selectedIndex = 0;
+        // Clear application number input
+        applicationInput.value = '';
+    }
+
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function () {
+            setButtonWidth(this.value);
+            clearFields();
+        });
+    });
+
+    // Initial setup based on checked radio button
+    setButtonWidth(document.querySelector('input[name="search-type"]:checked').value);
+
+    // Load districts dynamically from backend (only needed once)
+    function loadDistricts() {
+        fetch('/get-districts')
+            .then(response => response.json())
+            .then(data => {
+                // Clear previous options except placeholder
+                districtSelect.innerHTML = '<option value="">-- Select District/City --</option>';
+                data.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.dist_name;
+                    option.textContent = district.dist_name;
+                    districtSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching districts:', error);
+            });
+    }
+
+    loadDistricts();
+});
+</script>
 @endpush

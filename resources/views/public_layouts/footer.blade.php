@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/caseInformationDc": "home",
         "/occ/cd_pay": "home", // Default behavior for /occ/cd_pay
         "/api/occ/gras_resp_cc": "home",
+        "/downloadCC":"download_certified_copy"
     };
 
     // Special condition for /occ/cd_pay

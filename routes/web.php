@@ -54,6 +54,7 @@ use App\Http\Controllers\DCOrderController;
 use App\Http\Controllers\HcOrderNapixController;
 use App\Http\Controllers\admin\DcWebApplicationController;
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\DownloadCertifiedCopyController;
 
 
 Route::get('/', function () {
@@ -208,6 +209,8 @@ Route::post('/get-hc-order-pdf-napix', [HcOrderNapixController::class, 'getHcOrd
 Route::post('/calculate-hc-final-amount', [StoreHCCaseDataController::class, 'calculateFinalPayableAmount'])->name('calculate-hc-final-amount');
 
 Route::post('/initiate-payment', [StoreHCCaseDataController::class, 'initiatePayment'])->name('initiate.hc.payment');
+
+Route::get('/get-districts', [DownloadCertifiedCopyController::class, 'getDistricts']);
 
 //admin routes **************************************************************
 
