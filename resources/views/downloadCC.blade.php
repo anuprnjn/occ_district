@@ -25,7 +25,6 @@
                     <option value="">-- Please Select District --</option>
                 </select>
             </div>
-
             <!-- Application Number Field -->
             <div class="form-field sm:w-[50%] w-full" id="application_field">
                 <label for="application_number">Application Number: <span>*</span></label>

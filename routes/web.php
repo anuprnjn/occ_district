@@ -218,6 +218,8 @@ Route::post('/certified-copy/high-court', [DownloadCertifiedCopyController::clas
 
 Route::post('/certified-copy/civil-court', [DownloadCertifiedCopyController::class, 'civilCourt']);
 
+Route::get('/download-file/{filename}', [DownloadCertifiedCopyController::class, 'downloadFile']);
+
 //admin routes **************************************************************
 
 Route::middleware([AuthenticateUser::class])->group(function () {
