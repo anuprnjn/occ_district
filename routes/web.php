@@ -203,14 +203,20 @@ Route::post('/dc/store-case-session', [StoreDCCaseDataController::class, 'store'
 Route::post('/calculate-dc-final-amount', [StoreDCCaseDataController::class, 'calculateFinalAmount'])->name('calculate-dc-final-amount');
 
 Route::post('/dc/initiate-payment', [StoreDCCaseDataController::class, 'initiatePayment'])->name('initiate.dc.payment');
+
 Route::post('/submit-dc-order-details', [DCOrderController::class, 'submit'])->name('dc-order.submit');
+
 Route::post('/get-hc-order-pdf-napix', [HcOrderNapixController::class, 'getHcOrderPdf']);
-// Route::post('/store-hc-case-session', [StoreHCCaseDataController::class, 'store'])->name('hc.store.session');
+
 Route::post('/calculate-hc-final-amount', [StoreHCCaseDataController::class, 'calculateFinalPayableAmount'])->name('calculate-hc-final-amount');
 
 Route::post('/initiate-payment', [StoreHCCaseDataController::class, 'initiatePayment'])->name('initiate.hc.payment');
 
 Route::get('/get-districts', [DownloadCertifiedCopyController::class, 'getDistricts']);
+
+Route::post('/certified-copy/high-court', [DownloadCertifiedCopyController::class, 'highCourt']);
+
+Route::post('/certified-copy/civil-court', [DownloadCertifiedCopyController::class, 'civilCourt']);
 
 //admin routes **************************************************************
 
@@ -293,13 +299,14 @@ Route::get('/admin/payment-parameter-list-dc', [DCPaymentParameterController::cl
 Route::post('/admin/payment-parameter-dc/update', [DCPaymentParameterController::class, 'update'])->name('payment_parameter_update_dc');
 
 Route::get('/delete-order-copy/{application_number}/{order_number}', [HcWebApplicationController::class, 'deleteOrderCopy'])->name('admin.deleteOrderCopy');
+
 Route::post('/hc-web-application/send-deficit-notification', [HcWebApplicationController::class, 'sendDeficitNotification'])
     ->name('hc-web-application.send-deficit-notification');
 
-    Route::post('/hc-web-application/send-ready-notification', [HcWebApplicationController::class, 'sendReadyNotification'])
-    ->name('hc-web-application.send-ready-notification'); 
-    
-    Route::get('/admin/hc-other-copy-view/{encryptedAppNumber}', [HcOtherCopyController::class, 'ViewHcOtherCopy'])->name('hc_other_copy_view');    
+Route::post('/hc-web-application/send-ready-notification', [HcWebApplicationController::class, 'sendReadyNotification'])
+->name('hc-web-application.send-ready-notification'); 
+
+Route::get('/admin/hc-other-copy-view/{encryptedAppNumber}', [HcOtherCopyController::class, 'ViewHcOtherCopy'])->name('hc_other_copy_view');    
 
  Route::post('/admin/hc-other-copy/upload', [HcOtherCopyController::class, 'uploadDocument'])->name('upload.document');
 
