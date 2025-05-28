@@ -252,6 +252,7 @@
         const est_code = @json(session('dc_review_form_userDetails.case_details.establishment_code'));
         const pet_name = @json(session('dc_review_form_userDetails.case_details.pet_name'));
         const res_name = @json(session('dc_review_form_userDetails.case_details.res_name'));
+        const case_status = @json(session('DcCaseDetailsNapix.case_status'));
 
         const orderDetails = @json(session('dc_review_form_userDetails.orders'));
         const urgent_fee = @json(session('dc_review_form_userDetails.urgent_fee'));
@@ -276,6 +277,7 @@
             case_year: case_year,
             filing_number: fil_no,
             filing_year: fil_year,
+            case_status: case_status,
             request_mode: request_mode,
             district_code: dist_code,
             establishment_code: est_code,
