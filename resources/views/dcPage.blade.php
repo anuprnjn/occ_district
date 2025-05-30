@@ -58,7 +58,7 @@
             <div class="flex items-start justify-start gap-2">
                 <label for="mobile" id="mobileLabel">Mobile No: <span>*</span></label>
             <span
-            id="otpTimer"
+            id="otpTimerTrack"
             class="text-md text-rose-600 "
             ></span>
             </div>

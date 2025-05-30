@@ -55,6 +55,7 @@ use App\Http\Controllers\HcOrderNapixController;
 use App\Http\Controllers\admin\DcWebApplicationController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\DownloadCertifiedCopyController;
+use App\Http\Controllers\mobileNumberTrackController;
 
 
 Route::get('/', function () {
@@ -120,6 +121,15 @@ Route::get('/screenReader', function () {
 Route::get('/downloadCC', function () {
     return view('downloadCC');
 })->name('downloadCC');
+
+Route::get('/trackStatusMobileHC', function () {
+    return view('trackStatusMobileHC');
+})->name('trackStatusMobileHC');
+
+Route::get('/trackStatusMobileDC', function () {
+    return view('trackStatusMobileDC');
+})->name('trackStatusMobileDC');
+
 
 Route::get('/dcPage', [DistrictController::class, 'showDistricts']);
 
@@ -219,6 +229,16 @@ Route::post('/certified-copy/high-court', [DownloadCertifiedCopyController::clas
 Route::post('/certified-copy/civil-court', [DownloadCertifiedCopyController::class, 'civilCourt']);
 
 Route::get('/download-file/{filename}', [DownloadCertifiedCopyController::class, 'downloadFile']);
+
+Route::post('/check-mobile-number-hc', [mobileNumberTrackController::class, 'trackMobileNumberHC']);
+
+Route::post('/check-mobile-number-dc', [mobileNumberTrackController::class, 'trackMobileNumberDC']);
+
+Route::post('/set-track-response-hc', [mobileNumberTrackController::class, 'setTrackDetailsHC']);
+
+Route::post('/set-track-response-dc', [mobileNumberTrackController::class, 'setTrackDetailsDC']);
+
+
 
 //admin routes **************************************************************
 

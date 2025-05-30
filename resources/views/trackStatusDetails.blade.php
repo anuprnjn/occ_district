@@ -34,9 +34,23 @@
 
 <script>
     $(document).ready(function() {
+        // function getQueryParam(param) {
+        //     let urlParams = new URLSearchParams(window.location.search);
+        //     return urlParams.get(param);
+        // }
         function getQueryParam(param) {
-            let urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+            const urlParams = new URLSearchParams(window.location.search);
+            const encoded = urlParams.get(param);
+            if (encoded) {
+                try {
+                    const decoded = atob(encoded); // Base64 decode
+                    return decoded;
+                } catch (e) {
+                    console.error('Failed to decode:', e);
+                    return null;
+                }
+            }
+            return null;
         }
         var url_application_number = getQueryParam('application_number');
         console.log(application_number);
