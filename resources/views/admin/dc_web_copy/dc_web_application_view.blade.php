@@ -107,6 +107,18 @@
                                                 @endif
                                                    
                                                 </tr>
+                                                 <tr>
+                                                @if ($dcuser->case_status)
+                                                <th class="fw-bold">Case Status</th>
+                                                <td>
+                                                    @if ($dcuser->case_status == 'D' || $dcuser->case_status == 'd')
+                                                        <span style="text-transform:uppercase;color:red;font-weight:bold;">Disposed</span>
+                                                    @else
+                                                       <span style="text-transform:uppercase;color:green;font-weight:bold;">Pending</span>
+                                                    @endif
+                                                </td>
+                                                @endif
+                                                </tr>
                                                 <tr>
                                                     <th class="fw-bold">Request Mode</th>
                                                     <td>{{ $dcuser->request_mode }}</td>
