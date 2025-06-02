@@ -764,13 +764,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 interimOrderGlobal = responsedata.data?.interimorder ?? [];
                 const caseStatus =  responsedata.data.pend_disp;
 
+                const responseDataOfCnr = responsedata.data;
 
             setTimeout(() => window.scrollBy(0, 350), 200);
                 
             btnText.textContent = "Search";
             btnSpinner.classList.add("hidden");
             const orderDetailsCount = Object.keys(interimOrderGlobal).length;
-            populateTableHCOrderCopy(originalData,interimOrderGlobal,caseStatus);
+            populateTableHCOrderCopy(originalData,interimOrderGlobal,caseStatus,responseDataOfCnr);
             })
 
             })
@@ -825,12 +826,16 @@ document.addEventListener("DOMContentLoaded", function () {
             searchBtn.disabled = false;
         }
 
-        function populateTableHCOrderCopy(responseData, interimOrderGlobal,caseStatus) {
+        function populateTableHCOrderCopy(responseData, interimOrderGlobal,caseStatus,responseDataOfCnr) {
             const orderDetailsCount = Object.keys(interimOrderGlobal).length;
 
             console.log("count2", orderDetailsCount);
             const case_type = responseData.case_type;
             const search_type = responseData.search_type;
+            const case_number = responseDataOfCnr?.reg_no ?? 'N/A';
+            const case_year = responseDataOfCnr?.reg_year ?? 'N/A';
+            const filling_number = responseDataOfCnr?.fil_no ?? 'N/A';
+            const filling_year = responseDataOfCnr?.fil_year ?? 'N/A';
             const orderDetailsDiv = document.getElementById("orderDetails");
             const tableBody = document.getElementById("orderTableBody");
             const caseErrElement = document.getElementById('case_err');
@@ -863,7 +868,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             data-case='${caseDataStr}' 
                             data-type='${caseTypeStr}' 
                             data-interim='${interimOrderStr}' 
-                            data-status='${caseStatus}' 
+                            data-status='${caseStatus}'
+                            data-caseno='${case_number}' 
+                            data-caseyear='${case_year}' 
+                            data-filno='${filling_number}' 
+                            data-filyear='${filling_year}'  
                             class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">
                             ${applyText}
                         </button>`;
@@ -919,11 +928,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const caseStatus = JSON.parse(button.dataset.type);
             const interimOrder = JSON.parse(button.dataset.interim);
             const status = button.getAttribute('data-status');
+            const reg_no = button.getAttribute('data-caseno');
+            const reg_year = button.getAttribute('data-caseyear');
+            const fil_no = button.getAttribute('data-filno');
+            const fil_year = button.getAttribute('data-filyear');
 
             // Add to caseDetails object if needed
             caseData.case_type = caseType;
             caseData.interim = interimOrder;
             caseData.case_status = status;
+            caseData.case_number = reg_no;
+            caseData.case_year = reg_year;
+            caseData.filling_number = fil_no;
+            caseData.filling_year = fil_year;
 
             setHccaseDetailsToPhpSession(caseData);
         } catch (error) {
@@ -1114,6 +1131,10 @@ function handleSetPhpSession(button) {
         const establishmentName = button.getAttribute('data-est');
         const establishmentCode = button.getAttribute('data-est-code');
         const distCode = button.getAttribute('data-dist-code');
+        const reg_no = button.getAttribute('data-dist-caseno');
+        const reg_year = button.getAttribute('data-dist-caseyear');
+        const fil_no = button.getAttribute('data-dist-filno');
+        const fil_year = button.getAttribute('data-dist-filyear');
         
         caseData.case_type = caseType;
         caseData.interim = interimOrder;
@@ -1122,6 +1143,10 @@ function handleSetPhpSession(button) {
         caseData.establishment_name = establishmentName;
         caseData.establishment_code = establishmentCode;
         caseData.dist_code = distCode;
+        caseData.case_number = reg_no;
+        caseData.case_year = reg_year;
+        caseData.filling_number = fil_no;
+        caseData.filling_year = fil_year;
 
         setcaseDetailsToPhpSession(caseData);
     } catch (error) {
@@ -1317,13 +1342,15 @@ function submitDCJudgementForm(e) {
             const dist_name_napix = responsedata.data?.dist_name;
             const dist_code = responsedata.data?.district_code;
             const est_code = responsedata.data?.est_code;
+            const responseDataOfCnr = responsedata.data;
+            console.log("DATA------",responseDataOfCnr);
             
 
           setTimeout(() => window.scrollBy(0, 350), 200);
            btnText.textContent = "Search";
            btnSpinner.classList.add("hidden");
            const orderDetailsCount = Object.keys(interimOrderGlobal).length;
-           populateTableDCOrderCopy(originalData,interimOrderGlobal,case_status,est_name_napix,dist_name_napix,dist_code,est_code);
+           populateTableDCOrderCopy(originalData,interimOrderGlobal,case_status,est_name_napix,dist_name_napix,dist_code,est_code,responseDataOfCnr);
         })
 
         })
@@ -1378,12 +1405,16 @@ function submitDCJudgementForm(e) {
         searchBtn.disabled = false;
     }
 
-    function populateTableDCOrderCopy(responseData, interimOrderGlobal,case_status,dist_name_napix,est_name_napix,dist_code,est_code) {
+    function populateTableDCOrderCopy(responseData, interimOrderGlobal,case_status,dist_name_napix,est_name_napix,dist_code,est_code,responseDataOfCnr) {
         const orderDetailsCount = Object.keys(interimOrderGlobal).length;
 
         // console.log("count2", orderDetailsCount);
         const case_type = responseData.case_type;
         const search_type = responseData.search_type;
+        const case_number = responseDataOfCnr?.reg_no ?? 'N/A';
+        const case_year = responseDataOfCnr?.reg_year ?? 'N/A';
+        const filling_number = responseDataOfCnr?.fil_no ?? 'N/A';
+        const filling_year = responseDataOfCnr?.fil_year ?? 'N/A';
         const orderDetailsDiv = document.getElementById("orderDetails");
         const tableBody = document.getElementById("orderTableBody");
         const caseErrElement = document.getElementById('case_err');
@@ -1421,6 +1452,10 @@ function submitDCJudgementForm(e) {
                         data-est='${est_name_napix ?? ''}'
                         data-est-code='${est_code ?? ''}'
                         data-dist-code='${dist_code ?? ''}'
+                        data-dist-caseno='${case_number}' 
+                        data-dist-caseyear='${case_year}' 
+                        data-dist-filno='${filling_number}' 
+                        data-dist-filyear='${filling_year}'  
                         class="p-[10px] bg-teal-600 sm:w-[250px] hover:bg-teal-700 text-white rounded-md uppercase -ml-2">
                         ${applyText}
                     </button>`;

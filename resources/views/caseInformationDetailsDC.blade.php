@@ -238,21 +238,25 @@
         const name = @json(session('dc_review_form_userDetails.user_info.name'));
         const email = @json(session('dc_review_form_userDetails.user_info.email'));
         const mobile = @json(session('dc_review_form_userDetails.user_info.mobile'));
-        const adv_reg_no = @json(session('dc_review_form_userDetails.user_info.adv_reg_no'));
+        const adv_reg_no = @json(session('dc_review_form_userDetails.user_info.adv_reg_no'));\\\\
         const applied_by = @json(session('dc_review_form_userDetails.user_info.applied_by'));
         const request_mode = @json(session('dc_review_form_userDetails.user_info.request_mode'));
 
         const case_type = @json(session('dc_review_form_userDetails.case_details.case_type'));
-        const case_no = @json(session('dc_review_form_userDetails.case_details.case_no')) || "";
-        const case_year = @json(session('dc_review_form_userDetails.case_details.case_year')) || "";
-        const fil_no = @json(session('dc_review_form_userDetails.case_details.fil_no')) || "";
-        const fil_year = @json(session('dc_review_form_userDetails.case_details.fil_year')) || "";
+        // const case_no = @json(session('dc_review_form_userDetails.case_details.case_no')) || "";
+        // const case_year = @json(session('dc_review_form_userDetails.case_details.case_year')) || "";
+        // const fil_no = @json(session('dc_review_form_userDetails.case_details.fil_no')) || "";
+        // const fil_year = @json(session('dc_review_form_userDetails.case_details.fil_year')) || "";
         const cino = @json(session('dc_review_form_userDetails.case_details.cino'));
         const dist_code = @json(session('dc_review_form_userDetails.case_details.dist_code'));
         const est_code = @json(session('dc_review_form_userDetails.case_details.establishment_code'));
         const pet_name = @json(session('dc_review_form_userDetails.case_details.pet_name'));
         const res_name = @json(session('dc_review_form_userDetails.case_details.res_name'));
         const case_status = @json(session('DcCaseDetailsNapix.case_status'));
+        const case_no = @json(session('DcCaseDetailsNapix.case_number'));
+        const case_year = @json(session('DcCaseDetailsNapix.case_year'));
+        const fil_no = @json(session('DcCaseDetailsNapix.filling_number'));
+        const fil_year = @json(session('DcCaseDetailsNapix.filling_year'));
 
         const orderDetails = @json(session('dc_review_form_userDetails.orders'));
         const urgent_fee = @json(session('dc_review_form_userDetails.urgent_fee'));

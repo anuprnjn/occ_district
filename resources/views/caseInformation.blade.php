@@ -146,9 +146,24 @@
                                     </div>
                                     <div>
                                         <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
-                                        <h6 class="font-semibold">${caseInfo.type_name || 'N/A'}/${caseInfo.reg_no || 'N/A'}/${caseInfo.reg_year || 'N/A'}</h6>
+                                        <h6 class="font-semibold">${caseInfo.type_name || 'N/A'}/${caseInfo.case_number || 'N/A'}/${caseInfo.case_year || 'N/A'}</h6>
                                     </div>
-                                                               <div>
+                                    <div>
+                                        <h6 class="text-sm text-gray-500 mb-1">Filling Number</h6>
+                                        <h6 class="font-semibold">${caseInfo.type_name || 'N/A'}/${caseInfo.filling_number || 'N/A'}/${caseInfo.filling_year || 'N/A'}</h6>
+                                    </div>
+                                    
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <h6 class="text-sm text-gray-500 mb-1">Petitioner</h6>
+                                        <h6 class="font-semibold">${caseInfo.pet_name || 'N/A'}</h6>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-sm text-gray-500 mb-1">Respondent</h6>
+                                        <h6 class="font-semibold">${caseInfo.res_name || 'N/A'}</h6>
+                                    </div>
+                                    <div>
                                     <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
                                     <span class="-ml-1 inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold tracking-wide ${
                                         caseInfo.case_status?.toUpperCase() === 'P' 
@@ -166,16 +181,6 @@
                                         }
                                     </span>
                                 </div>
-                                </div>
-                                <div class="space-y-4">
-                                    <div>
-                                        <h6 class="text-sm text-gray-500 mb-1">Petitioner</h6>
-                                        <h6 class="font-semibold">${caseInfo.pet_name || 'N/A'}</h6>
-                                    </div>
-                                    <div>
-                                        <h6 class="text-sm text-gray-500 mb-1">Respondent</h6>
-                                        <h6 class="font-semibold">${caseInfo.res_name || 'N/A'}</h6>
-                                    </div>
                                 </div>
                             </div>
                         </div>

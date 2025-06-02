@@ -259,10 +259,10 @@
         const caseData = sessionData.HcCaseDetailsNapix; 
         //console.log("CASEDATA", caseData);
 
-        const matchCaseNo = caseData?.reg_no || "";
-        const matchCaseYear = caseData?.reg_year || "";
-        const matchFilingNo = caseData?.fil_no || "";
-        const matchFilingYear = caseData?.fil_year || "";
+        const matchCaseNo = caseData?.case_number || "";
+        const matchCaseYear = caseData?.case_year || "";
+        const matchFilingNo = caseData?.filling_number || "";
+        const matchFilingYear = caseData?.filling_year || "";
         const case_status = caseData?.case_status || "";
 
         const caseNumber = matchCaseNo ? matchCaseNo : "";
