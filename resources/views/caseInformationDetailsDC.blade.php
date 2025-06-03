@@ -238,7 +238,7 @@
         const name = @json(session('dc_review_form_userDetails.user_info.name'));
         const email = @json(session('dc_review_form_userDetails.user_info.email'));
         const mobile = @json(session('dc_review_form_userDetails.user_info.mobile'));
-        const adv_reg_no = @json(session('dc_review_form_userDetails.user_info.adv_reg_no'));\\\\
+        const adv_reg_no = @json(session('dc_review_form_userDetails.user_info.adv_reg_no'));
         const applied_by = @json(session('dc_review_form_userDetails.user_info.applied_by'));
         const request_mode = @json(session('dc_review_form_userDetails.user_info.request_mode'));
 
