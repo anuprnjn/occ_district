@@ -141,25 +141,11 @@
                                 </div>
                                 <div>
                                     <h6 class="text-sm text-gray-500 mb-1">Case Number</h6>
-                                    <h6 class="font-semibold">${responseDataDC.type_name || 'N/A'}/${responseDataDC.reg_no || 'N/A'}/${responseDataDC.reg_year || 'N/A'}</h6>
+                                    <h6 class="font-semibold">${responseDataDC.type_name || 'N/A'}/${responseDataDC.case_number || 'N/A'}/${responseDataDC.case_year || 'N/A'}</h6>
                                 </div>
-                            <div>
-                                    <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
-                                    <span class="-ml-1 inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold tracking-wide ${
-                                        responseDataDC.case_status?.toUpperCase() === 'P' 
-                                            ? 'bg-blue-100 text-blue-800' 
-                                            : responseDataDC.case_status?.toUpperCase() === 'D'
-                                                ? 'bg-red-100 text-red-800' 
-                                                : 'bg-gray-100 text-gray-800'
-                                    }">
-                                        ${
-                                            responseDataDC.case_status?.toUpperCase() === 'P'
-                                                ? 'PENDING'
-                                                : responseDataDC.case_status?.toUpperCase() === 'D'
-                                                    ? 'DISPOSED'
-                                                    : responseDataDC.case_status || 'N/A'
-                                        }
-                                    </span>
+                                 <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Filling Number</h6>
+                                    <h6 class="font-semibold">${responseDataDC.type_name || 'N/A'}/${responseDataDC.filling_number || 'N/A'}/${responseDataDC.filling_year || 'N/A'}</h6>
                                 </div>
                             
                             
@@ -177,6 +163,25 @@
                                     <h6 class="text-sm text-gray-500 mb-1">Respondent Name</h6>
                                     <h6 class="font-semibold">${responseDataDC.res_name || 'N/A'}</h6>
                                 </div>
+                                <div>
+                                    <h6 class="text-sm text-gray-500 mb-1">Case Status</h6>
+                                    <span class="-ml-1 inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold tracking-wide ${
+                                        responseDataDC.case_status?.toUpperCase() === 'P' 
+                                            ? 'bg-blue-100 text-blue-800' 
+                                            : responseDataDC.case_status?.toUpperCase() === 'D'
+                                                ? 'bg-red-100 text-red-800' 
+                                                : 'bg-gray-100 text-gray-800'
+                                    }">
+                                        ${
+                                            responseDataDC.case_status?.toUpperCase() === 'P'
+                                                ? 'PENDING'
+                                                : responseDataDC.case_status?.toUpperCase() === 'D'
+                                                    ? 'DISPOSED'
+                                                    : responseDataDC.case_status || 'N/A'
+                                        }
+                                    </span>
+                                </div>
+
                                 
                             </div>
                         </div>
