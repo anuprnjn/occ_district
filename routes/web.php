@@ -315,7 +315,7 @@ Route::post('/update-session-estd-code', [SessionEstdController::class, 'updateE
 
 Route::post('/admin/upload-order-copy', [HcWebApplicationController::class, 'uploadOrderCopy'])->name('admin.uploadOrderCopy');
 
-Route::get('/admin/download-order-copy/{fileName}', [HcWebApplicationController::class, 'downloadOrderCopy'])->name('admin.downloadOrderCopy');
+Route::get('/admin/download-order-copy/{fileName}/{date}', [HcWebApplicationController::class, 'downloadOrderCopy'])->name('admin.downloadOrderCopy');
 
 Route::get('/admin/delete-order-copy/{orderNumber}', [HcWebApplicationController::class, 'deleteOrderCopy'])->name('admin.deleteOrderCopy');
 
@@ -402,7 +402,7 @@ Route::get('/admin/dc-web-application/{encryptedAppNumber}', [DcWebApplicationCo
 
 Route::post('/admin/upload-dc-order-copy', [DcWebApplicationController::class, 'uploadDcOrderCopy'])->name('admin.uploadDcOrderCopy');
 
-Route::get('/admin/download-dc-order-copy/{fileName}', [DcWebApplicationController::class, 'downloadDcOrderCopy'])->name('admin.downloadDcOrderCopy');
+Route::get('/admin/download-dc-order-copy/{fileName}/{$date}', [DcWebApplicationController::class, 'downloadDcOrderCopy'])->name('admin.downloadDcOrderCopy');
 
 Route::get('/delete-dc-order-copy/{application_number}/{order_number}/{dist_name}', [DcWebApplicationController::class, 'deleteDcOrderCopy'])->name('admin.deleteDcOrderCopy');
 

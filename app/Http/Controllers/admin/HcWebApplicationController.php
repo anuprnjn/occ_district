@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser;
+use Carbon\Carbon;
 
 class HcWebApplicationController extends Controller
 {
@@ -104,20 +105,21 @@ class HcWebApplicationController extends Controller
             return back()->with('error', 'Order details not found.');
         }
         // Delete old file if exists
+        $monthName = strtolower(now()->format('Fy'));
         if ($order->file_name) {
-            Storage::disk('public')->delete('hc_certified_order_copies/' . $order->file_name);
+            Storage::disk('public')->delete("hc_certified_order_copies/{$monthName}/" . $order->file_name);
         }
 
         // Store PDF
         $fileName = $request->application_number . '_' . $request->order_number . '_' . time() . '.pdf';
-        $filePath = $request->file('pdf_file')->storeAs('hc_certified_order_copies', $fileName, 'public');
+        $filePath = $request->file('pdf_file')->storeAs("hc_certified_order_copies/{$monthName}", $fileName, 'public');
 
         // Log file path
         Log::info('File stored at:', ['path' => Storage::disk('public')->path('hc_certified_order_copies/' . $fileName)]);
 
         // Count PDF pages
         $parser = new Parser();
-        $pdf = $parser->parseFile(Storage::disk('public')->path('hc_certified_order_copies/' . $fileName));
+        $pdf = $parser->parseFile(Storage::disk('public')->path("hc_certified_order_copies/{$monthName}/" . $fileName));
         $pageCount = count($pdf->getPages());
 
         // Calculate the new page amount
@@ -131,6 +133,7 @@ class HcWebApplicationController extends Controller
                 'file_name' => $fileName,
                 'upload_status' => true,
                 'new_page_no' => $pageCount,
+                'certified_copy_uploaded_date'=>now(),
                 'new_page_amount' => $newPageAmount, // Update with calculated amount
             ]);
 
@@ -157,9 +160,10 @@ class HcWebApplicationController extends Controller
 
 
     // Download Order PDF
-    public function downloadOrderCopy($fileName)
+    public function downloadOrderCopy($fileName,$date)
 {
-    $filePath = Storage::disk('public')->path('hc_certified_order_copies/' . $fileName);
+    $monthName = strtolower(Carbon::parse($date)->format('Fy'));
+    $filePath = Storage::disk('public')->path("hc_certified_order_copies/{$monthName}/" . $fileName);
     
     if (file_exists($filePath)) {
         return response()->file($filePath);
@@ -175,14 +179,17 @@ class HcWebApplicationController extends Controller
         $order = DB::table('hc_order_details')
             ->where('application_number', $applicationNumber)
             ->where('order_number', $orderNumber)
-            ->first();
+            ->first(); 
 
         if (!$order || !$order->file_name) {
             return back()->with('error', 'File not found.');
         }
 
+        $date=$order->certified_copy_uploaded_date;
+        $monthName = strtolower(Carbon::parse($date)->format('Fy'));
+
         // Delete File from Storage
-        Storage::disk('public')->delete('hc_certified_order_copies/' . $order->file_name);
+        Storage::disk('public')->delete("hc_certified_order_copies/{$monthName }/" . $order->file_name);
 
         // Update Database
         DB::table('hc_order_details')
@@ -193,6 +200,7 @@ class HcWebApplicationController extends Controller
                 'upload_status' => false,
                 'new_page_no' => null,
                 'new_page_amount' => null,
+                'certified_copy_uploaded_date' => null,
             ]);
 
         // Check if at least one order has been deleted (upload_status = false exists)
