@@ -22,7 +22,7 @@
                 <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="sm:mb-5">
             </div>    
             <div class="form-field">
-                <button type="submit" class="sm:w-[50%] w-[100%] hover:shadow-md btn-submit order_btn mt-4" onClick="pendingPayment(event)">Submit</button>
+                <button type="submit" class="sm:w-[50%] w-[100%] hover:shadow-md btn-submit order_btn mt-4 tracking-wide" onClick="pendingPayment(event)">Click to proceed</button>
             </div>
         </div>
         <span id="error_span" class="text-red-500 font-bold text-sm ml-5 sm:ml-0"></span>
@@ -70,26 +70,43 @@ document.addEventListener('DOMContentLoaded', function () {
     const applicationNumber = params.get('application_number');
 
     if (applicationNumber) {
-        const input = document.getElementById('application_number');
-        if (input) {
-            input.value = applicationNumber;
-        }
+        try {
+            const decodedAppNo = atob(applicationNumber); // Decode base64
+            const input = document.getElementById('application_number');
+            if (input) {
+                input.value = decodedAppNo;
+                input.disabled = true;
+                input.style.cursor = 'not-allowed';
+                input.style.opacity = '0.5';
+            }
 
-        // Check if it starts with HC or HCW
-        const isHighCourt = applicationNumber.startsWith('HC') || applicationNumber.startsWith('HCW');
+            // Determine if it's High Court (starts with HC or HCW)
+            const isHighCourt = decodedAppNo.startsWith('HC') || decodedAppNo.startsWith('HCW');
 
-        // Set the correct radio button
-        const highCourtRadio = document.querySelector('input[name="search-type"][value="HC"]');
-        const civilCourtRadio = document.querySelector('input[name="search-type"][value="DC"]');
+            // Select the correct radio button
+            const highCourtRadio = document.querySelector('input[name="search-type"][value="HC"]');
+            const civilCourtRadio = document.querySelector('input[name="search-type"][value="DC"]');
 
-        if (!isHighCourt && civilCourtRadio) {
-            civilCourtRadio.checked = true;
-        } else if (isHighCourt && highCourtRadio) {
-            highCourtRadio.checked = true;
+            if (isHighCourt && highCourtRadio) {
+                highCourtRadio.checked = true;
+            } else if (civilCourtRadio) {
+                civilCourtRadio.checked = true;
+            }
+
+            // ✅ Trigger submit button click automatically
+            // const submitBtn = document.querySelector('button.btn-submit');
+            // if (submitBtn) {
+            //     submitBtn.click();
+            // }
+
+        } catch (error) {
+            console.error("Invalid base64 string in URL:", error);
         }
     }
 });
 </script>
+
+
 
 <script>
 function pendingPayment(event) {
@@ -112,7 +129,7 @@ function pendingPayment(event) {
     if ((selectedCourt === 'HC' && !application_number.startsWith('HC')) || 
         (selectedCourt === 'DC' && application_number.startsWith('HC'))) {
         errorSpan.innerText = 'Selected court and application number do not match!';
-        pendingPaymentForm.reset();
+        // pendingPaymentForm.reset();
         return;
     }
 
@@ -215,7 +232,7 @@ function pendingPayment(event) {
                         const isDCOrderCopy = application_number.length >= 4 && application_number[3].toUpperCase() === 'W';
 
                         if (paymentStatus === "0") {
-                            applicationInput.value = "";
+                            // applicationInput.value = "";
                             loading.classList.add("hidden");
                             // If payment is pending, redirect to the given location
                             window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;

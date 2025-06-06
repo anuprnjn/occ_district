@@ -248,7 +248,6 @@ function verifyOtp() {
     const verificationMessage = document.getElementById("verificationMessage");
     const otpTimer = document.getElementById("otpTimer");
     const submitButton = document.querySelector(".order_btn");
-
     const TrackMobileNumber = sessionStorage.getItem('mobile_number_dc');
    
     if (!mobileInput.value) {

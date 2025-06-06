@@ -238,6 +238,9 @@ Route::post('/set-track-response-hc', [mobileNumberTrackController::class, 'setT
 
 Route::post('/set-track-response-dc', [mobileNumberTrackController::class, 'setTrackDetailsDC']);
 
+Route::post('/certified-copy/download-zip', [DownloadCertifiedCopyController::class, 'downloadZip']);
+
+Route::get('/download-district-file/{filename}', [DownloadCertifiedCopyController::class, 'downloadDistrictCourtFile']);
 
 
 //admin routes **************************************************************

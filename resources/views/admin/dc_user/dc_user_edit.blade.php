@@ -53,9 +53,11 @@
                                             <select class="form-select" id="dist_code" name="dist_code" required>
                                                 <option value="">-- Select District --</option>
                                                 @foreach($districtdata as $district)
+                                                 @if (session('user.role_id') == 1 || session('user.dist_code') == $district['dist_code'])
                                                     <option value="{{ $district['dist_code'] }}" {{ $dcUser['dist_code'] == $district['dist_code'] ? 'selected' : '' }}>
                                                         {{ $district['dist_name'] }}
                                                     </option>
+                                                  @endif  
                                                 @endforeach
                                             </select>
                                         </div>

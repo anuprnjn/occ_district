@@ -3,7 +3,7 @@
 @section('content')
 
 <section class="content-section h-[65vh]">
-    <h3 class="font-semibold text-xl -mt-8">User Sign In</h3>
+    <h3 class="font-semibold text-xl -mt-8">Online Certified Copy Portal - Sign In</h3>
     
     <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id='trackApplicationForm'>
         <div class="form-group -ml-1">
@@ -39,8 +39,26 @@
 @endsection
 
 @push('scripts')
+
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
 
+<!-- script to add js controls to the input box  -->
+<!-- <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const otpInput = document.getElementById('otp');
+
+    if (otpInput) {
+        otpInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        });
+        ['paste', 'copy', 'cut'].forEach(evt =>
+            otpInput.addEventListener(evt, e => e.preventDefault())
+        );
+        otpInput.addEventListener('contextmenu', e => e.preventDefault());
+    }
+});
+</script> -->
+<!-- script to check the mobile number or application number  -->
 <script>
     function trackApplication(input) {
 
@@ -89,8 +107,8 @@
                     const fetched_mobile = response.data[0].mobile_number;
                     const masked_mobile = fetched_mobile.slice(0, 2) + 'xxxx' + fetched_mobile.slice(-4);
                     document.getElementById('error_span').innerHTML = `
-                        <span class="text-green-600">OTP has been sent to mobile number - </span>
-                        <span class="text-blue-600">${masked_mobile}</span>
+                        <span class="text-green-600">OTP has been sent to registered mobile number - </span>
+                        <span class="text-red-600">${masked_mobile}</span>
                     `;
                     sendOtpTrackAPP(selectedCourt, fetched_mobile);
                 } else {
@@ -162,7 +180,7 @@
                                 const maskedMobile = input.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
                                 otp_input.classList.remove('hidden');
                                 errorSpan.style.color = 'green';
-                                errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: blue;">${maskedMobile}</span>.`;
+                                errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: red;">${maskedMobile}</span>.`;
 
                             } else {
                                 errorSpan.textContent="Mobile number not found !";
@@ -207,7 +225,7 @@
                                 const maskedMobile = input.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
                                 otp_input.classList.remove('hidden');
                                 errorSpan.style.color = 'green';
-                                errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: blue;">${maskedMobile}</span>.`;
+                                errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: red;">${maskedMobile}</span>.`;
 
                             } else {
                                 errorSpan.textContent="Mobile number not registered !";

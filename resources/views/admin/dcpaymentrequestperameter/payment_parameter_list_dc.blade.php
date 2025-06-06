@@ -56,6 +56,8 @@ use Illuminate\Support\Facades\Crypt;
                                 </thead>
                                 <tbody>
                                     @forelse ($payparameterdata as $index => $payparameter)
+
+                                    @if (session('user.role_id') == 1 || session('user.dist_code') == $payparameter['dist_code'])
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $payparameter['deptid'] }}</td>
@@ -71,6 +73,7 @@ use Illuminate\Support\Facades\Crypt;
                                                 </button>
                                             </td>
                                         </tr>
+                                       @endif 
                                     @empty
                                         <tr>
                                             <td colspan="7" class="text-center">No Records Found</td>

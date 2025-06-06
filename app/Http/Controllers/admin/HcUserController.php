@@ -74,20 +74,22 @@ class   HcUserController extends Controller
         ], [
             'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
         ]);
-  
 
         try {
-            $response = Http::post(config('app.api.admin_url') . '/add_hc_user.php', [
+            
+              $response = Http::post(config('app.api.admin_url') . '/add_hc_user.php', [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'mobile_no' => $validated['mobile_no'],
                 'role_id' => $validated['role_id'],
                 'username' => $validated['username'],
                 'password' => $validated['password'],
-            ]);
+            ]); 
 
+           // dd($response);
+            
             if ($response->status() == 409) {
-                return redirect()->route('hc_user_list')->with('error', 'User already exists!');
+                return redirect()->route('hc_user_list')->with('error', 'User already exists using This mobile or email or username!');
             }
 
             if ($response->successful()) {
@@ -99,7 +101,7 @@ class   HcUserController extends Controller
             Log::error('Error adding user', ['error' => $e->getMessage()]);
             return redirect()->route('hc_user_list')->with('error', 'Error while connecting to API.');
         }
-    }
+    }   
 
     // Show Edit User Form
     public function editHcUser($user_id)
@@ -156,6 +158,10 @@ class   HcUserController extends Controller
                 'role_id' => $validated['role_id'],
                 'username' => $validated['username'], 
             ]);
+
+            if ($response->status() == 409) {
+            return redirect()->route('hc_user_list')->with('error', 'User already exists using This mobile or email or username !');
+           }
     
             if ($response->successful()) {
                 return redirect()->route('hc_user_list')->with('success', 'User updated successfully!');

@@ -3,9 +3,7 @@
 @section('title', 'High Court of Jharkhand || Edit Highcourt User')
 
 @section('content')
-<!--begin::App Main-->
 <main class="app-main">
-    <!--begin::App Content Header-->
     <div class="app-content-header">
         <div class="container-fluid">
             <div class="row">
@@ -22,9 +20,7 @@
             </div>
         </div>
     </div>
-    <!--end::App Content Header-->
 
-    <!--begin::App Content-->
     <div class="app-content">
         <div class="container-fluid">
             <div class="row g-4">
@@ -42,41 +38,68 @@
                                 <div class="alert alert-danger">{{ session('error') }}</div>
                             @endif
 
-                            <!-- Edit User Form -->
                             <form action="{{ route('hc_user_update', $hcUser['id']) }}" method="POST">
                                 @csrf
-                                @method('POST') <!-- Using POST since the API only supports it -->
+                                @method('POST')
 
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ $hcUser['name'] }}" required>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                           id="name" name="name"
+                                           value="{{ old('name', $hcUser['name']) }}" required>
+                                    @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{ $hcUser['email'] }}" required>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                           id="email" name="email"
+                                           value="{{ old('email', $hcUser['email']) }}" required>
+                                    @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="mobile_no" class="form-label">Mobile No</label>
-                                    <input type="text" class="form-control" id="mobile_no" name="mobile_no" value="{{ $hcUser['mobile_no'] }}" required>
+                                    <input type="text" class="form-control @error('mobile_no') is-invalid @enderror"
+                                           id="mobile_no" name="mobile_no"
+                                           value="{{ old('mobile_no', $hcUser['mobile_no']) }}" required>
+                                    @error('mobile_no')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="role_id" class="form-label">Select Role</label>
-                                    <select class="form-select" id="role_id" name="role_id" required>
+                                    <select class="form-select @error('role_id') is-invalid @enderror"
+                                            id="role_id" name="role_id" required>
                                         <option value="">-- Select Role --</option>
                                         @foreach($roledata as $role)
-                                            <option value="{{ $role['role_id'] }}" {{ $hcUser['role_id'] == $role['role_id'] ? 'selected' : '' }}>
+                                        @if (session('user.role_id') != 1 && $role['role_id'] == 1)
+                                                @continue
+                                            @endif
+                                            <option value="{{ $role['role_id'] }}"
+                                                {{ old('role_id', $hcUser['role_id']) == $role['role_id'] ? 'selected' : '' }}>
                                                 {{ $role['role_name'] }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('role_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="username" name="username" value="{{ $hcUser['username'] }}" required>
+                                    <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                           id="username" name="username"
+                                           value="{{ old('username', $hcUser['username']) }}" required>
+                                    @error('username')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
 
                                 <button type="submit" class="btn btn-primary mt-3">Update User</button>
@@ -87,6 +110,6 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div>
 </main>
 @endsection

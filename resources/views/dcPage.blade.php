@@ -58,7 +58,7 @@
             <div class="flex items-start justify-start gap-2">
                 <label for="mobile" id="mobileLabel">Mobile No: <span>*</span></label>
             <span
-            id="otpTimerTrack"
+            id="otpTimer"
             class="text-md text-rose-600 "
             ></span>
             </div>
@@ -183,7 +183,7 @@
             </div>
         </div>
         <div class="form-field">
-            <button type="submit" id="submitBtn" class="btn-submit hidden sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmit(event)">Submit</button>
+            <button type="submit" id="submitBtn" class="hidden btn-submit sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmit(event)">Submit</button>
         </div>
     </div>
 </form>
@@ -334,7 +334,7 @@
     <span id="case_err" class="hidden w-full block text-base sm:text-lg text-center bg-rose-100 text-rose-700 p-4 rounded-md font-semibold">
 </span>
 
-     <!-- response data of order and judgement copy div end  -->
+<!-- response data of order and judgement copy div end  -->
 
 </div>
 

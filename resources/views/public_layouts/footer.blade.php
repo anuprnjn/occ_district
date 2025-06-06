@@ -43,13 +43,13 @@ document.addEventListener("DOMContentLoaded", function () {
         "/": "home",
         "/hc-application-details": "home",
         "/trackStatus": "track_app",
-        "/pendingPayments": "pending_payments",
+        "/pendingPayments": "track_app",
         "/application-details": "home",
         "/trackStatusDetails": "track_app",
         "/caseInformation": "home",
         "/caseInformationDc": "home",
-        "/occ/cd_pay": "home", // Default behavior for /occ/cd_pay
-        "/api/occ/gras_resp_cc": "home",
+        "/occ/cd_pay": "track_app", // Default behavior for /occ/cd_pay
+        "/api/occ/gras_resp_cc": "track_app",
         "/trackStatusMobileHC" : "track_app",
         "/trackStatusMobileDC" : "track_app",
     };

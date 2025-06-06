@@ -119,7 +119,7 @@ class  DcUserController extends Controller
         ]);
 
         if ($response->status() == 409) {
-            return redirect()->route('dc_user_list')->with('error', 'User already exists!');
+            return redirect()->route('dc_user_list')->with('error', 'User already exists using This mobile or email or username !');
         }
 
         if ($response->successful()) {
@@ -218,6 +218,10 @@ class  DcUserController extends Controller
                 'username' => $validated['username'], 
                 'est_code' => $validated['est_code'] ?? [], // Fix: Ensure correct field name
             ]);
+
+            if ($response->status() == 409) {
+            return redirect()->route('dc_user_list')->with('error', 'User already exists using This mobile or email or username !');
+        }
     
             if ($response->successful()) {
                 return redirect()->route('dc_user_list')->with('success', 'User updated successfully!');
