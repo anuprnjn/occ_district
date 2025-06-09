@@ -76,9 +76,7 @@ use Illuminate\Support\Facades\Crypt;
                           </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="text-center">No HC Users found</td>
-                        </tr>
+                      
                     @endforelse
                     </tbody>
                 </table>

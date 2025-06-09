@@ -70,9 +70,7 @@ use Illuminate\Support\Facades\Crypt;
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="7" class="text-center">No Records Found</td>
-                                        </tr>
+                                        
                                     @endforelse
                                 </tbody>
                             </table>

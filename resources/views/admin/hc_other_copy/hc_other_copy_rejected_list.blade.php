@@ -85,9 +85,7 @@ use Illuminate\Support\Facades\Crypt;
                             </td>
                         </tr>
                         @empty
-                        <tr>
-                            <td colspan="8" class="text-center">No Rejected Applications Found</td>
-                        </tr>
+                     
                         @endforelse
                     </tbody>
                 </table>

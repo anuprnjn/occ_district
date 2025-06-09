@@ -72,9 +72,7 @@
                                                     </tr>
                                                 @endif
                                             @empty
-                                                <tr>
-                                                    <td colspan="7" class="text-center">No District Users found</td>
-                                                </tr>
+                                              
                                             @endforelse
                                         </tbody>
                                     </table>

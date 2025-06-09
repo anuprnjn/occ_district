@@ -83,9 +83,7 @@ use Illuminate\Support\Facades\Crypt;
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="5" class="text-center">No Roles found</td>
-                                        </tr>
+                                  
                                     @endforelse
                                 </tbody>
                             </table>

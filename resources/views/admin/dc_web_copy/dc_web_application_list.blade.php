@@ -82,9 +82,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="9" class="text-center">No Order Copy found</td>
-                        </tr>
+                       
                     @endforelse
                     </tbody>
                 </table>

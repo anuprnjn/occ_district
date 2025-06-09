@@ -77,9 +77,7 @@ use Illuminate\Support\Facades\Crypt;
                           </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="text-center">No DC Users found</td>
-                        </tr>
+                        
                     @endforelse
                     </tbody>
                 </table>
