@@ -100,16 +100,16 @@ use Illuminate\Support\Facades\Crypt;
             <div class="modal-body">
                 <form id="editForm" action="{{ route('payment_parameter_update_dc') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="id" id="edit_id">
+                    <input type="hidden" name="dist_code" id="edit_dist_code">
 
                     <div class="mb-3">
                         <label class="form-label">Dept ID</label>
-                        <input type="text" class="form-control" name="deptid" id="edit_deptid" disabled>
+                        <input type="text" class="form-control" name="deptid" id="edit_deptid" readonly>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Reciept Head Code</label>
-                        <input type="text" class="form-control" name="recieptheadcode" id="edit_recieptheadcode" disabled>
+                        <input type="text" class="form-control" name="recieptheadcode" id="edit_recieptheadcode" readonly>
                     </div>
 
                     <div class="mb-3">
@@ -124,7 +124,7 @@ use Illuminate\Support\Facades\Crypt;
 
                     <div class="mb-3">
                         <label class="form-label">Security Code</label>
-                        <input type="text" class="form-control" name="securitycode" id="edit_securitycode" disabled>
+                        <input type="text" class="form-control" name="securitycode" id="edit_securitycode" readonly>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Update</button>
@@ -136,7 +136,8 @@ use Illuminate\Support\Facades\Crypt;
 
 <script>
     function openEditModal(payparameter) {
-        document.getElementById('edit_id').value = payparameter.id;
+    console.log("DC",payparameter);
+        document.getElementById('edit_dist_code').value = payparameter.dist_code;
         document.getElementById('edit_deptid').value = payparameter.deptid;
         document.getElementById('edit_recieptheadcode').value = payparameter.recieptheadcode;
         document.getElementById('edit_treascode').value = payparameter.treascode;

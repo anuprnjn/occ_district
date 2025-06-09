@@ -27,7 +27,7 @@ class DCPaymentParameterController extends Controller
     public function update(Request $request)
 {
     $validated = $request->validate([
-        'id' => 'required',
+        'dist_code' => 'required',
         'deptid' => 'required|string',
         'recieptheadcode' => 'required|string',
         'treascode' => 'required|string',
@@ -40,7 +40,7 @@ class DCPaymentParameterController extends Controller
 
     // Send PUT or POST request to the API
     $response = Http::post($apiUrl, [
-        'id' => $validated['id'],
+        'dist_code' => $validated['dist_code'],
         'deptid' => $validated['deptid'],
         'recieptheadcode' => $validated['recieptheadcode'],
         'treascode' => $validated['treascode'],
