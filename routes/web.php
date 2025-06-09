@@ -402,7 +402,7 @@ Route::get('/admin/dc-web-application/{encryptedAppNumber}', [DcWebApplicationCo
 
 Route::post('/admin/upload-dc-order-copy', [DcWebApplicationController::class, 'uploadDcOrderCopy'])->name('admin.uploadDcOrderCopy');
 
-Route::get('/admin/download-dc-order-copy/{fileName}/{$date}', [DcWebApplicationController::class, 'downloadDcOrderCopy'])->name('admin.downloadDcOrderCopy');
+Route::get('/admin/download-dc-order-copy/{fileName}/{date}', [DcWebApplicationController::class, 'downloadDcOrderCopy'])->name('admin.downloadDcOrderCopy');
 
 Route::get('/delete-dc-order-copy/{application_number}/{order_number}/{dist_name}', [DcWebApplicationController::class, 'deleteDcOrderCopy'])->name('admin.deleteDcOrderCopy');
 
