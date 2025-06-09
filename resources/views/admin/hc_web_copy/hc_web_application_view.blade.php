@@ -324,7 +324,7 @@
                                                 <td>
                                                     @if ($order->upload_status)
                                                         <a href="javascript:void(0);" class="w-100 mb-2 btn btn-sm btn-primary"
-                                                            onclick="viewPDF(`{{ route('admin.downloadOrderCopy', $order->file_name) }}`)">
+                                                            onclick="viewPDF(`{{ route('admin.downloadOrderCopy', ['fileName' => $order->file_name, 'date' => $order->certified_copy_uploaded_date]) }}`)">
                                                             <i class="bi bi-eye"></i> View
                                                         </a>
                                                         <a href="{{ route('admin.deleteOrderCopy', ['application_number' => $order->application_number, 'order_number' => $order->order_number]) }}"
