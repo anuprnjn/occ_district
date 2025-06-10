@@ -45,7 +45,7 @@ class GrasResponseController extends Controller
     //     Log::info('Final Decoded Response:', $decodedResponse);
 
     //     // **Send API Request**
-    //     $apiUrl = 'http://localhost/occ_api/transaction/jegras_payment_response_hc.php';
+    //     $apiUrl = config('app.api.transaction_url') . '/jegras_payment_response_hc.php';
 
     //     $apiResponse = Http::post($apiUrl, $decodedResponse);
 
@@ -106,7 +106,7 @@ class GrasResponseController extends Controller
     Log::info('Final Decoded Response:', $decodedResponse);
 
     // **Send API Request**
-    $apiUrl = 'http://localhost/occ_api/transaction/jegras_payment_response_hc.php';
+    $apiUrl = config('app.api.transaction_url') . '/jegras_payment_response_hc.php';
     $apiResponse = Http::post($apiUrl, $decodedResponse);
 
     // **Handle API Response**

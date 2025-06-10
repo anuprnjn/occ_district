@@ -14,8 +14,9 @@ class mobileNumberTrackController extends Controller
             'mobile_number' => 'required|digits:10',
         ]);
 
+        $baseUrl = config('app.api.hc_base_url');
         // Prepare the API endpoint and data
-        $apiUrl = 'http://localhost/occ_api/high_court/get_all_application_applied_user_from_mobile_hc.php';
+        $apiUrl = $baseUrl . '/get_all_application_applied_user_from_mobile_hc.php';
         $mobileNumber = $request->input('mobile_number');
 
         try {
@@ -48,7 +49,7 @@ class mobileNumberTrackController extends Controller
         ]);
 
         // Prepare the API endpoint and data
-        $apiUrl = 'http://localhost/occ_api/district_court/get_all_application_applied_user_from_mobile_dc.php';
+        $apiUrl = config('app.api.base_url') . '/get_all_application_applied_user_from_mobile_dc.php';
         $mobileNumber = $request->input('mobile_number');
 
         try {

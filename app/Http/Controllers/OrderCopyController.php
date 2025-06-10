@@ -48,7 +48,7 @@ class OrderCopyController extends Controller
 
 
             // Make external API call
-            $apiResponse = Http::post('http://localhost/occ_api/high_court_order_copy/hc_order_copy_applicant_registration.php', $validatedData);
+            $apiResponse = Http::post(config('app.api.hc_order_copy_base_url') . '/hc_order_copy_applicant_registration.php', $validatedData);
 
             Log::info('API Response:', ['status' => $apiResponse->status(), 'body' => $apiResponse->body()]);
 
