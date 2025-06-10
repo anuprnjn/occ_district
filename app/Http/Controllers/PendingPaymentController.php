@@ -12,12 +12,12 @@ class PendingPaymentController extends Controller
     public function fetchPendingPaymentsHC(Request $request)
     {
         $application_number = $request->input('application_number');
-       
-        if (str_starts_with($application_number, 'HCW')) {
-            $apiUrl = 'http://localhost/occ_api/transaction/pending_payment_hc_order_copy.php';
+        $baseUrl = config('app.api.transaction_url');
+        if (str_starts_with($application_number, 'HCW')) { 
+            $apiUrl =  $baseUrl .'/pending_payment_hc_order_copy.php';
             $isOrderApi = true;
         } else {
-            $apiUrl = 'http://localhost/occ_api/transaction/pending_payment_hc_other_copy.php';
+            $apiUrl = $baseUrl .'/pending_payment_hc_other_copy.php';
             $isOrderApi = false;
         }
         // Send a POST request to the selected API
@@ -57,12 +57,12 @@ class PendingPaymentController extends Controller
     public function fetchPendingPaymentsDC(Request $request)
     {
         $application_number = $request->input('application_number');
-       
+        $baseUrl = config('app.api.transaction_url');
         if (strlen($application_number) >= 4 && strtoupper($application_number[3]) === 'W') {
-            $apiUrl = 'http://localhost/occ_api/transaction/pending_payment_dc_order_copy.php';
+            $apiUrl = $baseUrl .'/pending_payment_dc_order_copy.php';
             $isOrderApi = true;
         } else {
-            $apiUrl = 'http://localhost/occ_api/transaction/pending_payment_dc_other_copy.php';
+            $apiUrl = $baseUrl .'/pending_payment_dc_other_copy.php';
             $isOrderApi = false;
         }
         // Send a POST request to the selected API

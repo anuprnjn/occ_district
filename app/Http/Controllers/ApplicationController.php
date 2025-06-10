@@ -22,7 +22,7 @@ class ApplicationController extends Controller
 
         // Use specific endpoint based on the 4th character
         if (strlen($applicationNumber) >= 4 && strtoupper($applicationNumber[3]) === 'W') {
-            $url = 'http://localhost/occ_api/district_court_order_copy/track_district_court_order_copy_application.php';
+            $url = config('app.api.dc_order_copy_base_url') . '/track_district_court_order_copy_application.php';
         } else {
             $url = $baseUrl . '/track_district_court_application.php';
         }
