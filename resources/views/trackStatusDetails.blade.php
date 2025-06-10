@@ -277,6 +277,7 @@
             var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
             
             $.ajax({
+
                 url: url,
                 method: 'POST',
                 data: {
@@ -288,8 +289,9 @@
                         var app_no = response.data[0].application_number;
                         const noteButton = document.querySelector('#note button');
                         // noteButton.setAttribute('onclick', `detailsPayment('${app_no}')`);
+                        const orderDetails = response?.order_details || [];
 
-                        displayApplicationDetails(response.data[0]);
+                        displayApplicationDetails(response.data[0],orderDetails);
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
                     }
@@ -304,7 +306,7 @@
         }
     });
 
-    function displayApplicationDetails(data) {
+    function displayApplicationDetails(data,orderDetails) {
         // Log the full data to inspect its structure
         // console.log('data',data);
         sessionStorage.removeItem('track_application_number');
@@ -494,6 +496,20 @@
             `;
         }
 
+
+
+        const orderDetailsList = orderDetails || []; // fallback to empty array
+
+        const orderDetailsRows = orderDetailsList.map((item, index) => `
+            <tr class="border">
+                <td class="px-4 py-2 border">${item.order_number || 'N/A'}</td>
+                <td class="px-4 py-2 border">${item.order_date || 'N/A'}</td>
+                <td class="px-4 py-2 border">${item.number_of_page || 'N/A'}</td>
+                <td class="px-4 py-2 border">${item.amount || 'N/A'}</td>
+            </tr>
+        `).join('');
+
+
         detailsSection.html(`
         <div class="overflow-x-auto">
             <table class="dark_form min-w-full border border-gray-300 text-md text-left">
@@ -545,6 +561,26 @@
                     </tr>
                 </tbody>
             </table>
+            
+
+             ${orderDetailsList.length > 0 ? `
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-2">Order Details</h3>
+                <table class="min-w-full border border-gray-300 text-sm">
+                    <thead>
+                        <tr class="bg-[#4B3D2F] text-white text-left text-md">
+                            <th class="px-4 py-2 border">Order Number</th>
+                            <th class="px-4 py-2 border">Order Date</th>
+                            <th class="px-4 py-2 border">No of Page</th>
+                            <th class="px-4 py-2 border">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orderDetailsRows}
+                    </tbody>
+                </table>
+                </div>
+                ` : ''}
         </div>
         `);
    
