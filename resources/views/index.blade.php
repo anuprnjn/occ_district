@@ -615,7 +615,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const caseNoInput = document.getElementById("case-no");
+        const filingNoInput = document.getElementById("filling-no");
 
+        function allowOnlyDigits(e) {
+            const allowedKeys = [
+                'Backspace', 'ArrowLeft', 'ArrowRight', 'Delete', 'Tab'
+            ];
+            if (
+                !/^\d$/.test(e.key) && // Not a digit (0–9)
+                !allowedKeys.includes(e.key)
+            ) {
+                e.preventDefault(); // Block the character from being typed
+            }
+        }
+
+        caseNoInput.addEventListener("keydown", allowOnlyDigits);
+        filingNoInput.addEventListener("keydown", allowOnlyDigits);
+    });
+</script>
 <!--Script for Search High court order copy From Napix-->
 <script>
 

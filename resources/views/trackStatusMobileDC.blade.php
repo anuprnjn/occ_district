@@ -8,8 +8,6 @@
             Application Details - High Court
         </h3>
 
-
-
         @if(session()->has('trackDetailsMobileDC'))
             @php
                 $hcData = session('trackDetailsMobileDC')['data'];
@@ -20,14 +18,15 @@
                     ->sortByDesc('created_at')
                     ->values();
 
-                // Group by created_at date
-                $groupedByDate = $allCopies->groupBy(function($item) {
-                    return \Carbon\Carbon::parse($item['created_at'])->format('Y-m-d');
-                });
+                // Group all applications that are NOT ready to download
+                $latestDateApplications = $allCopies->filter(function($item) {
+                    return $item['application_status'] !== 'Certified copy is ready to be download';
+                })->values();
 
-                $latestDate = $groupedByDate->keys()->first();
-                $latestDateApplications = $groupedByDate[$latestDate] ?? collect();
-                $previousApplications = $groupedByDate->except($latestDate)->flatten(1);
+                // Applications that ARE ready to download
+                $previousApplications = $allCopies->filter(function($item) {
+                    return $item['application_status'] === 'Certified copy is ready to be download';
+                })->values();
 
                 $hasApplications = $allCopies->isNotEmpty();
             @endphp
@@ -117,7 +116,6 @@
                         @endforeach
                     </tbody>
                 </table>
-               
             </div>
         @else
             <div class="mt-6 flex items-center gap-3 text-rose-600 bg-rose-50 border border-rose-200 px-4 py-3 rounded-lg shadow-sm">
@@ -128,7 +126,6 @@
             </div>
         @endif
     </div>
-            
 
     @else
         <div class="mt-6 flex items-center gap-3 text-rose-600 bg-rose-50 border border-rose-200 px-4 py-3 rounded-lg shadow-sm">

@@ -68,8 +68,18 @@
                
         <div class="form-field case-field space-y-[14px]">
             <label for="case-no">Case Number: <span>*</span></label>
-            <input type="text" id="case-no" name="case-no" placeholder="Enter Case Number" data-value="C" required>
-            </div>
+            <!-- <input type="text" id="case-no" name="case-no" placeholder="Enter Case Number" data-value="C" required > -->
+             <input type="text" 
+                id="case-no" 
+                name="case-no" 
+                placeholder="Enter Case Number" 
+                data-value="C" 
+                required 
+                inputmode="numeric" 
+                pattern="\d*" 
+                oninput="this.value = this.value.replace(/\D/g, '')"
+            />
+        </div>
         <div class="form-field case-field space-y-[14px]">
             <label for="case-year">Case Year: <span>*</span></label>
             <input 
@@ -87,7 +97,17 @@
         </div>
         <div class="form-field filling-field space-y-[14px]">
             <label for="filling-no">Filing Number: <span>*</span></label>
-            <input type="text" id="filling-no" name="filling-no" placeholder="Enter Filing Number" data-value="F" required>
+            <!-- <input type="text" id="filling-no" name="filling-no" placeholder="Enter Filing Number" data-value="F" required> -->
+             <input type="text" 
+            id="filling-no" 
+            name="filling-no" 
+            placeholder="Enter Filing Number" 
+            data-value="F" 
+            required 
+            inputmode="numeric" 
+            pattern="\d*" 
+            oninput="this.value = this.value.replace(/\D/g, '')" />
+
         </div>
         <div class="form-field filling-field space-y-[14px]">
             <label for="filling-year">Filing Year: <span>*</span></label>
@@ -262,11 +282,12 @@
     <div class="form-row">
         <div class="form-field">
             <label for="case-no-hc" id="field1-label">Case No: <span class="red">*</span></label>
-            <input type="text" id="case-no-hc" name="case_no" placeholder="Enter Case No" required>
+            <input type="text" id="case-no-hc" name="case_no" placeholder="Enter Case No" required inputmode="numeric" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')">
+
         </div>
         <div class="form-field">
             <label for="case-year-hc" id="field2-label">Case Year: <span class="red">*</span></label>
-            <input type="text" id="case-year-hc" name="case_year" placeholder="Enter Case Year" required>
+            <input type="text" id="case-year-hc" name="case_year" placeholder="Enter Case Year" required inputmode="numeric" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')">
         </div>
     </div>
     <div class="form-row">

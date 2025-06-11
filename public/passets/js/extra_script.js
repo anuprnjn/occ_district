@@ -200,6 +200,7 @@ function sendOtp(courtType) {
     sessionStorage.setItem("mobile_number_dc",mobileInput.value);
     const otpButton = document.getElementById("otpButton");
     const mobileLabel = document.getElementById("mobileLabel");
+    const mobile_indicator = document.getElementById("mobile_indicator");
 
     if (!mobileInput.value || mobileInput.value.length !== 10) {
         alert("Please enter a valid 10-digit mobile number.");

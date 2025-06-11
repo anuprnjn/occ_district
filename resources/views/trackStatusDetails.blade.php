@@ -29,7 +29,7 @@
         </button>
 
     </div>
-    <div id="cc-download-result" class="mt-2 w-full mb-5">
+    <div id="cc-download-result" class="mt-2 w-full mb-16 sm:mb-5">
     <!-- Table will be injected here -->
     </div>
         <span id="note_span" class="hidden">
@@ -73,170 +73,174 @@
         }
     }
 
-    // function downloadAsZip(applicationNo) {
-    //     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    //     fetch('/certified-copy/download-zip', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'X-CSRF-TOKEN': csrfToken
-    //         },
-    //         body: JSON.stringify({ application_number: applicationNo })
-    //     })
-    //     .then(response => response.blob())
-    //     .then(blob => {
-    //         const url = window.URL.createObjectURL(blob);
-    //         const a = document.createElement('a');
-    //         a.href = url;
-    //         a.download = `${applicationNo}.zip`;
-    //         document.body.appendChild(a);
-    //         a.click();
-    //         document.body.removeChild(a);
-    //         window.URL.revokeObjectURL(url);
-    //     })
-    //     .catch(error => {
-    //         console.error("ZIP Download error:", error);
-    //         alert("Failed to download ZIP file.");
-    //     });
-    // }
+    function downloadAsZip(applicationNo) {
+        alert(applicationNo);
+        return;
+        // const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        // fetch('/certified-copy/download-zip', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'X-CSRF-TOKEN': csrfToken
+        //     },
+        //     body: JSON.stringify({ application_number: applicationNo })
+        // })
+        // .then(response => response.blob())
+        // .then(blob => {
+        //     const url = window.URL.createObjectURL(blob);
+        //     const a = document.createElement('a');
+        //     a.href = url;
+        //     a.download = `${applicationNo}.zip`;
+        //     document.body.appendChild(a);
+        //     a.click();
+        //     document.body.removeChild(a);
+        //     window.URL.revokeObjectURL(url);
+        // })
+        // .catch(error => {
+        //     console.error("ZIP Download error:", error);
+        //     alert("Failed to download ZIP file.");
+        // });
+    }
     
-    function downloadCC(applicationNo) {
-        const button = document.getElementById("download-cc");
-        const isHighCourt = applicationNo.startsWith("HC") || applicationNo.startsWith("HCW");
-        const route = isHighCourt 
-            ? '/certified-copy/high-court' 
-            : '/certified-copy/civil-court';
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+function downloadCC(applicationNo) {
+    const button = document.getElementById("download-cc");
+    const isHighCourt = applicationNo.startsWith("HC") || applicationNo.startsWith("HCW");
+    const route = isHighCourt 
+        ? '/certified-copy/high-court' 
+        : '/certified-copy/civil-court';
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-        button.innerHTML = `<span class="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Loading...`;
-        button.disabled = true;
-        button.style.cursor = "not-allowed";
-        button.classList.add("opacity-60");
+    button.innerHTML = `<span class="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Loading...`;
+    button.disabled = true;
+    button.style.cursor = "not-allowed";
+    button.classList.add("opacity-60");
 
+    fetch(route, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({ application_number: applicationNo })
+    })
+    .then(res => res.json())
+    .then(data => {
+        button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
+        button.disabled = false;
 
-        fetch(route, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({ application_number: applicationNo })
-        })
-        .then(res => res.json())
-        .then(data => {
-            button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
-            button.disabled = false;
+        const resultContainer = document.getElementById("cc-download-result");
+        resultContainer.innerHTML = "";
 
-            const resultContainer = document.getElementById("cc-download-result");
-            resultContainer.innerHTML = "";
+        if (data.status === "success") {
+            const docs = data.data.document_details || [];
 
-            if (data.status === "success") {
-                const docs = data.data.document_details || [];
+            if (docs.length === 0) {
+                resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">No documents found.</p>`;
+                return;
+            }
 
-                if (docs.length === 0) {
-                    resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">No documents found.</p>`;
-                    return;
-                }
+            const isOrderCopy = applicationNo.startsWith("HCW") || /^[A-Z]{3}W/.test(applicationNo);
+            const isOrderCopyCivil = !applicationNo.startsWith("H");
 
-                const isOrderCopy = applicationNo.startsWith("HCW");
-
-                // Optional buttons (only for multiple documents)
-                let extraButtons = '';
-                if (docs.length > 1) {
-                    const encodedDocs = encodeURIComponent(JSON.stringify(docs));
-                    extraButtons = `
+            let extraButtons = '';
+            if (docs.length > 1) {
+                const encodedDocs = encodeURIComponent(JSON.stringify(docs));
+                extraButtons = `
                     <div class="mb-4 w-full flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end items-stretch sm:items-center sm:-mt-16 mt-0">
-                            <button onclick="downloadAllDocuments('${encodedDocs}')" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
-                                <img src="/passets/images/icons/download.svg" alt="Download All" class="w-5 h-5">
-                                Download All Files
-                            </button>
-                            <button onclick="" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
-                                <img src="/passets/images/icons/zip.svg" alt="Download ZIP" class="w-5 h-5">
-                                Download as ZIP
-                            </button>
-                        </div>
-                    `;
-                }
+                        <button onclick="downloadAllDocuments('${encodedDocs}')" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
+                            <img src="/passets/images/icons/download.svg" alt="Download All" class="w-5 h-5">
+                            Download All Files
+                        </button>
+                        <button onclick="downloadAsZip('${applicationNo}')" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
+                            <img src="/passets/images/icons/zip.svg" alt="Download ZIP" class="w-5 h-5">
+                            Download as ZIP
+                        </button>
+                    </div>
+                `;
+            }
 
-                let tableHTML = `
-                    ${extraButtons}
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full border border-gray-300 text-sm text-left">
-                            <thead class="bg-[#D09A3F] text-md uppercase text-white">
-                                <tr>
-                                    <th class="px-2 py-2 border-b font-semibold text-md">S.No.</th>
+            let tableHTML = `
+                ${extraButtons}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border border-gray-300 text-sm text-left">
+                        <thead class="bg-[#D09A3F] text-md uppercase text-white">
+                            <tr>
+                                <th class="px-2 py-2 border-b font-semibold text-md">S.No.</th>
+            `;
+
+            if (isOrderCopy) {
+                // Same structure for HCW and Civil Court "Order Copy"
+                tableHTML += `
+                    <th class="px-2 py-1 border-b font-semibold text-md">Order No</th>
+                    <th class="px-2 py-1 border-b font-semibold text-md">Order Date</th>
+                    <th class="px-2 py-1 border-b font-semibold text-md">No. of Pages</th>
+                `;
+            } else {
+                // Other documents
+                tableHTML += `
+                    <th class="px-2 py-1 border-b font-semibold text-md">Required Document</th>
+                    <th class="px-2 py-1 border-b font-semibold text-md">No. of Pages</th>
+                `;
+            }
+
+            tableHTML += `
+                <th class="px-2 py-1 border-b font-semibold text-md">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            docs.forEach((doc, index) => {
+                const downloadLink = doc.certified_copy_links?.[0] || "#";
+
+                tableHTML += `
+                    <tr>
+                        <td class="px-2 py-1 border-b text-md">${index + 1}</td>
                 `;
 
                 if (isOrderCopy) {
                     tableHTML += `
-                        <th class="px-2 py-1 border-b font-semibold text-md">Order No</th>
-                        <th class="px-2 py-1 border-b font-semibold text-md">Order Date</th>
-                        <th class="px-2 py-1 border-b font-semibold text-md">No of Pages</th>
+                        <td class="px-2 py-1 border-b text-md border">${doc.order_number || '-'}</td>
+                        <td class="px-2 py-1 border-b text-md border">${doc.order_date || '-'}</td>
+                        <td class="px-2 py-1 border-b text-md border">${doc.new_page_no || doc.number_of_page || '-'}</td>
                     `;
                 } else {
                     tableHTML += `
-                        <th class="px-2 py-1 border-b font-semibold text-md">Required Document</th>
-                        <th class="px-2 py-1 border-b font-semibold text-md">No. of Pages</th>
+                        <td class="px-2 py-1 border-b text-md border">${doc.document_type || '-'}</td>
+                        <td class="px-2 py-1 border-b text-md border">${doc.number_of_page || '-'}</td>
                     `;
                 }
 
                 tableHTML += `
-                    <th class="px-2 py-1 border-b font-semibold text-md">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <td class="px-2 py-1 border-b text-md">
+                            <a href="${downloadLink}" download class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs">
+                                <img src="/passets/images/icons/download.svg" alt="Download" class="w-4 h-4">
+                            </a>
+                        </td>
+                    </tr>
                 `;
+            });
 
-                docs.forEach((doc, index) => {
-                    const downloadLink = doc.certified_copy_links?.[0] || "#";
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
 
-                    tableHTML += `
-                        <tr>
-                            <td class="px-2 py-1 border-b text-md">${index + 1}</td>
-                    `;
+            resultContainer.innerHTML = tableHTML;
 
-                    if (isOrderCopy) {
-                        tableHTML += `
-                            <td class="px-2 py-1 border-b text-md border">${doc.order_number}</td>
-                            <td class="px-2 py-1 border-b text-md border">${doc.order_date}</td>
-                            <td class="px-2 py-1 border-b text-md border">${doc.new_page_no}</td>
-                        `;
-                    } else {
-                        tableHTML += `
-                            <td class="px-2 py-1 border-b text-md border">${doc.document_type}</td>
-                            <td class="px-2 py-1 border-b text-md border">${doc.number_of_page}</td>
-                        `;
-                    }
+        } else {
+            resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">Error: ${data.message}</p>`;
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
+        button.disabled = false;
+        document.getElementById("cc-download-result").innerHTML = `<p class="text-sm text-red-600 mt-2">An error occurred. Please try again.</p>`;
+    });
+}
 
-                    tableHTML += `
-                            <td class="px-2 py-1 border-b text-md">
-                                <a href="${downloadLink}" download class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs">
-                                    <img src="/passets/images/icons/download.svg" alt="Download" class="w-4 h-4">
-                                </a>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tableHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-
-                resultContainer.innerHTML = tableHTML;
-
-            } else {
-                resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">Error: ${data.message}</p>`;
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
-            button.disabled = false;
-            document.getElementById("cc-download-result").innerHTML = `<p class="text-sm text-red-600 mt-2">An error occurred. Please try again.</p>`;
-        });
-    }
 
 </script> 
 
@@ -309,8 +313,8 @@
     function displayApplicationDetails(data,orderDetails) {
         // Log the full data to inspect its structure
         // console.log('data',data);
-        sessionStorage.removeItem('track_application_number');
-        sessionStorage.removeItem('selectedCourt');
+        // sessionStorage.removeItem('track_application_number');
+        // sessionStorage.removeItem('selectedCourt');
             // Show a persistent warning message
     function showWarningMessage() {
         const toast = document.createElement("div");
