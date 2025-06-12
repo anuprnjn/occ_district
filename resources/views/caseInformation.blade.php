@@ -43,10 +43,10 @@
             </div>
 
             <div class="form-field">
-            <label for="mobile" id="mobileLabel">Mobile No: <span>*</span>
-            <span class="text-sm font-medium text-green-500" id="mobile_indicator"></span>
+            <label for="mobile" class="font-medium" id="mobileLabel">Mobile No: <span>*</span>
             </label>
-            <span id="otpTimer"class="text-md text-rose-600 " ></span>
+            <span class="text-sm font-medium text-green-500 hidden" id="mobile_indicator">test</span>
+            <span id="otpTimer"class="text-sm text-rose-600 " ></span>
                 <div class="flex items-center gap-2">
                     <input type="text" id="mobileInput" name="mobile" placeholder="Enter Your Mobile No"
                         class="flex-1 p-2 border rounded-md" required  maxlength="10" onkeydown="return isNumber(event)">

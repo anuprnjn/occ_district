@@ -226,6 +226,9 @@ function sendOtp(courtType) {
 
                 // Update UI for OTP input
                 mobileLabel.textContent = "Enter OTP:";
+                mobile_indicator.classList.remove("hidden");
+                const maskedMobile = mobileNumber.slice(0, 2) + 'xxxx' + mobileNumber.slice(-4);
+                mobile_indicator.textContent = `OTP has been sent to ${maskedMobile}`;
                 mobileInput.value = "";
                 mobileInput.placeholder = "Enter OTP";
                 otpButton.textContent = "Verify OTP";
@@ -295,8 +298,10 @@ function view_recent_app(){
 function resendOtp() {
     const otpButton = document.getElementById("otpButton");
     const mobileInput = document.getElementById("mobileInput");
+    const mobile_indicator = document.getElementById("mobile_indicator");
     mobileInput.disabled = false;
 
+    const mobileNumber = sessionStorage.getItem('mobile_number_dc');
     // Make a POST request to the resendOtp endpoint
     fetch('/resend-otp', {
         method: 'POST',
@@ -309,6 +314,9 @@ function resendOtp() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                mobile_indicator.classList.remove('hidden');
+                const maskedMobile = mobileNumber.slice(0, 2) + 'xxxx' + mobileNumber.slice(-4);
+                mobile_indicator.textContent = `OTP has been sent to ${maskedMobile}`;
                 alert(`OTP resent successfully. Your OTP is: ${data.otp}`); // Show OTP for now
                 otpButton.textContent = "Verify OTP";
                 otpButton.setAttribute("onclick", "verifyOtp()"); // Ensure verifyOtp is set
@@ -325,6 +333,7 @@ function startOtpTimer() {
     const otpButton = document.getElementById("otpButton");
     const otpTimer = document.getElementById("otpTimer");
     const mobileInput = document.getElementById("mobileInput");
+    const mobile_indicator = document.getElementById("mobile_indicator");
     let timeLeft = 60;
 
     otpTimer.textContent = "Resend OTP in (01:00)";
@@ -339,6 +348,7 @@ function startOtpTimer() {
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             otpTimer.classList.add("hidden");
+            mobile_indicator.classList.add("hidden");
             otpButton.textContent = "Resend OTP";
             mobileInput.disabled = true;
             otpButton.disabled = false;

@@ -32,6 +32,42 @@ class HcWebApplicationController extends Controller
             return back()->with('error', 'An error occurred while fetching data.');
         }
     }
+    public function listHcWebApplicationDelivered()
+    {
+
+        try {
+            $hcuserdata = DB::table('hc_order_copy_applicant_registration as apr')
+                ->select(
+                    'apr.*',
+                    'ct1.type_name'
+                )
+                ->leftJoin('high_court_case_master as ct1', 'ct1.case_type', '=', 'apr.case_type')
+                ->orderBy('apr.created_at', 'desc')
+                ->get();
+            return view('admin.hc_web_copy.hc_web_application_delivered', compact('hcuserdata'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
+            return back()->with('error', 'An error occurred while fetching data.');
+        }
+    }
+   public function listHcWebApplicationPending()
+    {
+
+        try {
+            $hcuserdata = DB::table('hc_order_copy_applicant_registration as apr')
+                ->select(
+                    'apr.*',
+                    'ct1.type_name'
+                )
+                ->leftJoin('high_court_case_master as ct1', 'ct1.case_type', '=', 'apr.case_type')
+                ->orderBy('apr.created_at', 'desc')
+                ->get();
+            return view('admin.hc_web_copy.hc_web_application_pending', compact('hcuserdata'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
+            return back()->with('error', 'An error occurred while fetching data.');
+        }
+    }
 
     // View Application Details with Order Data
     public function viewHcWebApplication($encryptedAppNumber)

@@ -72,7 +72,7 @@
               <!--end::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 2-->
-                <a href="" class="link-light link-underline-opacity-0">
+                <a href="hc-web-delivered-application" class="link-light link-underline-opacity-0">
                   <div class="small-box bg-soft-delivered text-white">
                   <div class="inner">
                     <h3>{{ $hcOrderDelivered }}</h3>
@@ -100,7 +100,7 @@
               <!--end::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 2-->
-                <a href="" class="link-light link-underline-opacity-0">
+                <a href="hc-web-pending-application" class="link-light link-underline-opacity-0">
                   <div class="small-box bg-soft-pending text-white">
                   <div class="inner">
                     <h3>{{ $hcOrderPending }}</h3>
@@ -129,7 +129,7 @@
               <!--begin::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 1-->
-                <a href="" class="link-light link-underline-opacity-0">
+                <a href="hc-other-copy" class="link-light link-underline-opacity-0">
                   <div class="small-box bg-soft-applied text-white">
                   <div class="inner">
                     <h3>{{ $hcWebCopyCount }}</h3>
@@ -151,7 +151,7 @@
               <!--end::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 2-->
-                <a href="" class="link-light link-underline-opacity-0">
+                <a href="hc-other-delivered-copy" class="link-light link-underline-opacity-0">
                   <div class="small-box bg-soft-delivered text-white">
                   <div class="inner">
                     <h3>{{ $hcWebDelivered }}</h3>
@@ -179,7 +179,7 @@
               <!--end::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 2-->
-                <a href="" class="link-light link-underline-opacity-0">
+                <a href="hc-other-pending-copy" class="link-light link-underline-opacity-0">
                   <div class="small-box bg-soft-pending text-white">
                   <div class="inner">
                     <h3>{{ $hcWebPending }}</h3>

@@ -31,6 +31,41 @@ class HcOtherCopyController extends Controller
                 ->with('error', 'An error occurred while fetching data.');
         }
     }
+    public function listHcOtherCopyPending()
+    {
+        try {
+            $hcuserdata = DB::table('high_court_applicant_registration as hc')
+                ->select('hc.*', 'ct.type_name as case_type_name')
+                ->leftJoin('high_court_case_master as ct', 'hc.case_type', '=', 'ct.case_type')
+                ->where('rejection_status',0)
+                ->orderBy('hc.created_at', 'desc')
+                ->get();
+
+            return view('admin.hc_other_copy.hc_other_copy_application_pending', compact('hcuserdata'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC Other Copy data', ['error' => $e->getMessage()]);
+            return view('admin.hc_other_copy.hc_other_copy_application_pending', ['hcuserdata' => []])
+                ->with('error', 'An error occurred while fetching data.');
+        }
+    }
+
+    public function listHcOtherCopyDelivered()
+    {
+        try {
+            $hcuserdata = DB::table('high_court_applicant_registration as hc')
+                ->select('hc.*', 'ct.type_name as case_type_name')
+                ->leftJoin('high_court_case_master as ct', 'hc.case_type', '=', 'ct.case_type')
+                ->where('rejection_status',0)
+                ->orderBy('hc.created_at', 'desc')
+                ->get();
+
+            return view('admin.hc_other_copy.hc_other_copy_application_delivered', compact('hcuserdata'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC Other Copy data', ['error' => $e->getMessage()]);
+            return view('admin.hc_other_copy.hc_other_copy_application_delivered', ['hcuserdata' => []])
+                ->with('error', 'An error occurred while fetching data.');
+        }
+    }
 
     // View HC Other Copy Details
     public function ViewHcOtherCopy($encryptedAppNumber)

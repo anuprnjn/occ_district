@@ -18,14 +18,13 @@ use Carbon\Carbon; // Import Carbon for date formatting
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-end">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Hc Web Copy</li>
+              <li class="breadcrumb-item active" aria-current="page">Hc All Web Copy</li>
             </ol>
           </div>
         </div>
       </div>
     </div>
     <!--end::App Content Header-->
-
     <!--begin::App Content-->
     <div class="app-content">
       <div class="container-fluid">
@@ -45,6 +44,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <th>Filing No</th>
                             <th>Date</th>
                             <th>Document Status</th> <!-- New Column for Document Status -->
+                            <th>Certified Copy Status</th> 
                             <th>View</th>  
                         </tr>
                     </thead>
@@ -70,9 +70,16 @@ use Carbon\Carbon; // Import Carbon for date formatting
                                 @endif
                             </td>
                             <td>{{ Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td> <!-- Format the date -->
-                            <td>
+                             <td>
                                 @if ($hcuser->document_status == 1)
                                     <span class="badge bg-success">Uploaded</span>
+                                @else
+                                    <span class="badge bg-warning">Pending</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($hcuser->certified_copy_ready_status == 1)
+                                    <span class="badge bg-success">Delivered</span>
                                 @else
                                     <span class="badge bg-warning">Pending</span>
                                 @endif
@@ -100,11 +107,13 @@ use Carbon\Carbon; // Import Carbon for date formatting
 
 @push('scripts')
 
-    <script>
-        $(document).ready(function () {
-            $('#myTable').DataTable(); // Initialize DataTables
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            pageLength: 100 // Show 100 entries by default
         });
-    </script>
+    });
+</script>
     
 @endpush
 

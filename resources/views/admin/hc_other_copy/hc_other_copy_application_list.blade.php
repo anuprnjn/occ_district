@@ -50,6 +50,8 @@ use Illuminate\Support\Facades\Crypt;
                             <th>Mobile No</th>
                             <th>Case No/Filing No</th>
                             <th>Date</th>
+                            <th>Document status</th>
+                            <th>Certified copy status</th>
                             <th>View</th>
                         </tr>
                     </thead>
@@ -72,6 +74,20 @@ use Illuminate\Support\Facades\Crypt;
                             </td>
                             <td>{{ \Carbon\Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td>
                             <td>
+                                @if ($hcuser->document_status == 1)
+                                    <span class="badge bg-success">Uploaded</span>
+                                @else
+                                    <span class="badge bg-warning">Pending</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($hcuser->certified_copy_ready_status == 1)
+                                    <span class="badge bg-success">Delivered</span>
+                                @else
+                                    <span class="badge bg-warning">Pending</span>
+                                @endif
+                            </td>
+                            <td>
                               <a href="{{ route('hc_other_copy_view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i>View</a>
                           </td>
                         </tr>
@@ -92,11 +108,13 @@ use Illuminate\Support\Facades\Crypt;
 @endpush
 
 @push('scripts')
-    <script>
-        $(document).ready(function () {
-            $('#myTable').DataTable(); // Initialize DataTables
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            pageLength: 100 // Show 100 entries by default
         });
-    </script>
+    });
+</script>
     
 @endpush
 

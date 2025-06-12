@@ -79,7 +79,7 @@
                                             <td>{{ $menu['menu_name'] }}</td>
                                             <td>{{ $menu['menu_icon'] }}</td>
                                             <td>
-                                                <button class="btn btn-warning btn-sm" onclick="editMenu({{ $menu['menu_id'] }}, '{{ $menu['menu_name'] }}')">Edit</button>
+                                                <button class="btn btn-warning btn-sm" onclick="editMenu({{ $menu['menu_id'] }}, '{{ $menu['menu_name'] }}','{{ $menu['menu_icon'] }}')">Edit</button>
                                             </td>
                                         </tr>
                                     @empty

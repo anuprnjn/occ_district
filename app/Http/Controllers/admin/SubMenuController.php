@@ -6,28 +6,29 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class SubMenuController extends Controller
 {
     public function SubMenuList()
-    {
-        // Fetch submenu list
-        $submenuResponse = Http::get(config('app.api.admin_url') . '/fetch_submenu.php');
-        $menuResponse = Http::get(config('app.api.admin_url') . '/fetch_menu.php'); // Fetch menu list
+{
+    // Fetch submenu data with associated menu name
+    $submenudata = DB::table('submenu_master')
+        ->select('submenu_master.*', 'menu_master.menu_name')
+        ->join('menu_master', 'submenu_master.menu_id', '=', 'menu_master.menu_id')
+        ->orderBy('submenu_master.menu_id', 'asc')
+        ->orderBy('submenu_master.submenu_id', 'asc')
+        ->get();
 
-        $submenudata = $submenuResponse->successful() ? $submenuResponse->json() : [];
-        $menudata = $menuResponse->successful() ? $menuResponse->json() : [];
+    // Fetch all menu data
+    $menudata = DB::table('menu_master')
+        ->orderBy('menu_name', 'asc')
+        ->get();
 
-        if ($submenuResponse->failed()) {
-            Log::error('Failed to fetch SubMenu Data', ['response' => $submenuResponse->body()]);
-        }
+        //dd($menudata);
 
-        if ($menuResponse->failed()) {
-            Log::error('Failed to fetch Menu Data', ['response' => $menuResponse->body()]);
-        }
-
-        return view('admin.submenu.sub_menu_list', compact('submenudata', 'menudata'));
-    }
+    return view('admin.submenu.sub_menu_list', compact('submenudata', 'menudata'));
+}
 
     public function addSubMenu(Request $request)
     {

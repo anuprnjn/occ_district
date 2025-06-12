@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Crypt;
                 @endif
 
                 <table id="myTable" class="table table-bordered">
-                    <thead class="table-success">
+                    <thead class="table-warning">
                         <tr>
                             <th>#</th>
                             <th>Application No</th>
@@ -92,11 +92,13 @@ use Illuminate\Support\Facades\Crypt;
 @endpush
 
 @push('scripts')
-    <script>
-        $(document).ready(function () {
-            $('#myTable').DataTable(); // Initialize DataTables
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            pageLength: 100 // Show 100 entries by default
         });
-    </script>
+    });
+</script>
     
 @endpush
 
