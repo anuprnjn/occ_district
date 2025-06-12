@@ -44,12 +44,17 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <th>Case No</th>
                             <th>Filing No</th>
                             <th>Date</th>
-                            <th>Document Status</th> <!-- New Column for Document Status -->
+                            <th>Document Status</th> 
+                            <th>Certified Copy Status</th> <!-- New Column for Document Status -->
                             <th>View</th>  
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($dcuserdata as $index => $dcuser)
+                        @php
+                            $typeName = $dcuser->type_name ?? ''; // Adjust key as needed
+                            $caseType = explode(':', $typeName)[0];
+                        @endphp
                         <tr> 
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $dcuser->application_number }}</td>
@@ -57,14 +62,14 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <td>{{ $dcuser->mobile_number }}</td>
                             <td>
                                 @if ($dcuser->case_number)
-                                    {{ $dcuser->type_name }}/{{ $dcuser->case_number }}/{{ $dcuser->case_year }}
+                                    {{ $caseType }}/{{ $dcuser->case_number }}/{{ $dcuser->case_year }}
                                 @else
                                    
                                 @endif
                             </td>
                             <td>
                                 @if ($dcuser->filing_number)
-                                    {{ $dcuser->type_name }}/{{ $dcuser->filing_number }}/{{ $dcuser->filing_year }}
+                                    {{ $caseType }}/{{ $dcuser->filing_number }}/{{ $dcuser->filing_year }}
                                 @else
                                     {{-- Show nothing --}}
                                 @endif
@@ -73,6 +78,13 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <td>
                                 @if ($dcuser->document_status == 1)
                                     <span class="badge bg-success">Uploaded</span>
+                                @else
+                                    <span class="badge bg-warning">Pending</span>
+                                @endif
+                            </td>
+                             <td>
+                                @if ($dcuser->certified_copy_ready_status == 1)
+                                    <span class="badge bg-success">Delivered</span>
                                 @else
                                     <span class="badge bg-warning">Pending</span>
                                 @endif

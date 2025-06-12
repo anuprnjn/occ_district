@@ -13,7 +13,7 @@ use Carbon\Carbon;
 
 class DcWebApplicationController extends Controller
 {
-    // Fetch HC User List
+    // Fetch DC User List
     public function listDcWebApplication()
     {
 
@@ -35,6 +35,62 @@ class DcWebApplicationController extends Controller
             ->get();
         
         return view('admin.dc_web_copy.dc_web_application_list', compact('dcuserdata'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
+            return back()->with('error', 'An error occurred while fetching data.');
+        }
+    }
+
+    public function listOfPendingDcWebApplication()
+    {
+
+        try {
+            $dist_code = session('user.dist_code');
+            $estd_code = session('user.estd_code');
+            $dcuserdata = DB::table('district_court_order_copy_applicant_registration as dc')
+            ->select(
+                'dc.*',
+                'hc.type_name'
+            )
+            ->leftJoin('district_court_case_master as hc', function($join) {
+                $join->on('dc.case_type', '=', 'hc.case_type')
+                     ->whereColumn('dc.establishment_code', '=', 'hc.est_code');
+            })
+            ->where('dc.district_code', $dist_code)
+            ->where('dc.establishment_code', $estd_code)
+            ->where('dc.certified_copy_ready_status', 0)
+            ->orderBy('dc.created_at', 'desc')
+            ->get();
+        
+        return view('admin.dc_web_copy.dc_web_application_pending_list', compact('dcuserdata'));
+        } catch (\Exception $e) {
+            Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
+            return back()->with('error', 'An error occurred while fetching data.');
+        }
+    }
+
+    public function listOfDeliveredDcWebApplication()
+    {
+
+        try {
+            $dist_code = session('user.dist_code');
+            $estd_code = session('user.estd_code');
+            $dcuserdata = DB::table('district_court_order_copy_applicant_registration as dc')
+            ->select(
+                'dc.*',
+                'hc.type_name'
+            )
+            ->leftJoin('district_court_case_master as hc', function($join) {
+                $join->on('dc.case_type', '=', 'hc.case_type')
+                     ->whereColumn('dc.establishment_code', '=', 'hc.est_code');
+            })
+            ->where('dc.district_code', $dist_code)
+            ->where('dc.establishment_code', $estd_code)
+            ->where('dc.certified_copy_ready_status', 1)
+            ->orderBy('dc.created_at', 'desc')
+            ->get();
+        
+        return view('admin.dc_web_copy.dc_web_application_deliver_list', compact('dcuserdata'));
         } catch (\Exception $e) {
             Log::error('Error fetching HC User data', ['error' => $e->getMessage()]);
             return back()->with('error', 'An error occurred while fetching data.');
