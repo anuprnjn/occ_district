@@ -434,4 +434,12 @@ Route::post('/dc-web-application/send-dc-ready-notification', [DcWebApplicationC
 // Route::get('/admin/index', [DashboardController::class, 'index'])->name('admin.index');
 Route::get('/admin/index', [DashboardController::class, 'index'])->name('index');
 
+Route::get('/admin/hc-web-delivered-application', [HcWebApplicationController::class, 'listHcWebApplicationDelivered'])->name('hc_web_application_delivered');
+
+Route::get('/admin/hc-web-pending-application', [HcWebApplicationController::class, 'listHcWebApplicationPending'])->name('hc_web_application_pending');
+
+Route::get('/admin/hc-other-pending-copy', [HcOtherCopyController::class, 'listHcOtherCopyPending'])->name('hc_other_copy');
+
+Route::get('/admin/hc-other-delivered-copy', [HcOtherCopyController::class, 'listHcOtherCopyDelivered'])->name('hc_other_copy');
+
 });
