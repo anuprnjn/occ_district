@@ -413,6 +413,10 @@ Route::post('/admin/get-dc-pdf', [GetPdfController::class, 'fetchDcPdf']);
 
 Route::get('/admin/dc-web-application', [DcWebApplicationController::class, 'listDcWebApplication'])->name('dc_web_application_list');
 
+Route::get('/admin/dc-web-pending-application', [DcWebApplicationController::class, 'listOfPendingDcWebApplication'])->name('dc_web_application_pending_list');
+
+Route::get('/admin/dc-web-deliver-application', [DcWebApplicationController::class, 'listOfDeliveredDcWebApplication'])->name('dc_web_application_deliver_list');
+
 Route::get('/admin/dc-web-application/{encryptedAppNumber}', [DcWebApplicationController::class, 'viewDcWebApplication'])
     ->name('dc-web-application.view');
 

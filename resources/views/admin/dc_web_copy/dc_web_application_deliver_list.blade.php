@@ -44,8 +44,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <th>Case No</th>
                             <th>Filing No</th>
                             <th>Date</th>
-                            <th>Document Status</th> 
-                            <th>Certified Copy Status</th> <!-- New Column for Document Status -->
+                            <th>Certified Copy</th> <!-- New Column for Document Status -->
                             <th>View</th>  
                         </tr>
                     </thead>
@@ -72,18 +71,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             </td>
                             <td>{{ Carbon::parse($dcuser->created_at)->format('d-m-Y') }}</td> <!-- Format the date -->
                             <td>
-                                @if ($dcuser->document_status == 1)
-                                    <span class="badge bg-success">Uploaded</span>
-                                @else
-                                    <span class="badge bg-warning">Pending</span>
-                                @endif
-                            </td>
-                             <td>
-                                @if ($dcuser->certified_copy_ready_status == 1)
-                                    <span class="badge bg-success">Delivered</span>
-                                @else
-                                    <span class="badge bg-warning">Pending</span>
-                                @endif
+                              <span class="badge bg-success">Delivered</span>
                             </td>
                             <td>
                                 <a href="{{ route('dc-web-application.view', Crypt::encrypt($dcuser->application_number)) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i>View</a>

@@ -44,8 +44,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <th>Case No</th>
                             <th>Filing No</th>
                             <th>Date</th>
-                            <th>Document Status</th> 
-                            <th>Certified Copy Status</th> <!-- New Column for Document Status -->
+                            <th>Document Status</th> <!-- New Column for Document Status -->
                             <th>View</th>  
                         </tr>
                     </thead>
@@ -74,13 +73,6 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <td>
                                 @if ($dcuser->document_status == 1)
                                     <span class="badge bg-success">Uploaded</span>
-                                @else
-                                    <span class="badge bg-warning">Pending</span>
-                                @endif
-                            </td>
-                             <td>
-                                @if ($dcuser->certified_copy_ready_status == 1)
-                                    <span class="badge bg-success">Delivered</span>
                                 @else
                                     <span class="badge bg-warning">Pending</span>
                                 @endif
