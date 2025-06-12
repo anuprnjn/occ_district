@@ -56,13 +56,18 @@ use Illuminate\Support\Facades\Crypt;
                     </thead>
                     <tbody>
                         @forelse ($dcuserdata as $index => $dcuser)
+                         @php
+                            $typeName = $dcuser->case_type_name ?? ''; // Adjust key as needed
+                            $caseType = explode(':', $typeName)[0];
+                         @endphp
+
                         <tr>
                             <td>{{ $index + 1 }}{{ session('user.estd_code') }}</td>
                             <td>{{ $dcuser->application_number }}</td>
                             <td>{{ $dcuser->applicant_name }}</td>
                             <td>{{ $dcuser->mobile_number }}</td>
                             <td>
-                                {{ $dcuser->case_type_name . '/' . $dcuser->case_filling_number . '/' . $dcuser->case_filling_year }}
+                                {{ $caseType . '/' . $dcuser->case_filling_number . '/' . $dcuser->case_filling_year }}
                                 @if ($dcuser->selected_method == 'F') 
                                     (Filing No) 
                                 @elseif ($dcuser->selected_method == 'C')
