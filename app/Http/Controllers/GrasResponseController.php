@@ -69,6 +69,7 @@ class GrasResponseController extends Controller
     $encryptionHelper = new clsEncrypt();
     $secretKey = 'Ky@5432#';
     $encTest = 'kdUDf+/ZxxRnRGDotlk6x/2CsbIONnFDTwNIPjhSjjteczI4hC/C52WkSbgvDSss1Evdyh0GidObr2c1WTdWTts7UZv1Fs/uqFfbbgqa6X2ijLynIYilBTqx0u0zazotp67Chxhv7u9nXKhT7YQcNA7G3RJN49Ss151+bBe/pR7P3+zqwQpOBmruVLJqnxeFdWtZGgAuDox6RqbpbYrDhjpGFECiq+DtBUYZO21oknnZIDjbOBSs6DzE1l2VDB5uqJOgi1nZF1r0pC+V0xuzqvkjzcl0xzsJNTQ3J1aV/U4=';
+    
     $nullEnc = null;
 
     // Check if encrypted text is provided

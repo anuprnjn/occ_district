@@ -193,6 +193,14 @@ function isNumber(event) {
     return false;
 }
 
+function view_recent_app(){
+    const application_modal = document.getElementById("application_n_details");
+    application_modal.classList.remove("hidden");
+}
+
+
+//************************************************** OTP logic OTHERS COPY *****************************************************
+
 // Function to send OTP
 function sendOtp(courtType) {
     sessionStorage.setItem("court_type_for_verify_otp",courtType);
@@ -225,7 +233,7 @@ function sendOtp(courtType) {
                 otpButton.disabled = true;
 
                 // Update UI for OTP input
-                mobileLabel.textContent = "Enter OTP:";
+                mobileLabel.innerHTML = 'Enter OTP : <span style="color:red;">*</span>';
                 mobile_indicator.classList.remove("hidden");
                 const maskedMobile = mobileNumber.slice(0, 2) + 'xxxx' + mobileNumber.slice(-4);
                 mobile_indicator.textContent = `OTP has been sent to ${maskedMobile}`;
@@ -253,6 +261,7 @@ function verifyOtp() {
     const otpTimer = document.getElementById("otpTimer");
     const submitButton = document.querySelector(".order_btn");
     const TrackMobileNumber = sessionStorage.getItem('mobile_number_dc');
+    const mobile_indicator = document.getElementById("mobile_indicator");
    
     if (!mobileInput.value) {
         alert("Please enter the OTP.");
@@ -274,6 +283,7 @@ function verifyOtp() {
         .then(data => {
             if (data.success) {
                 clearInterval(timerInterval);
+                mobile_indicator.classList.add("hidden");
                 mobileLabel.textContent = "Mobile Number Verified:";
                 mobileLabel.classList.add("text-green-500");
                 mobileLabel.classList.add("font-normal");
@@ -290,16 +300,12 @@ function verifyOtp() {
         .catch(error => console.error('Error verifying OTP:', error));
 }
 
-function view_recent_app(){
-    const application_modal = document.getElementById("application_n_details");
-    application_modal.classList.remove("hidden");
-}
-
 // Function to resend OTP
 function resendOtp() {
     const otpButton = document.getElementById("otpButton");
     const mobileInput = document.getElementById("mobileInput");
     const mobile_indicator = document.getElementById("mobile_indicator");
+    const mobileLabel = document.getElementById("mobileLabel");
     mobileInput.disabled = false;
 
     const mobileNumber = sessionStorage.getItem('mobile_number_dc');
@@ -315,6 +321,9 @@ function resendOtp() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+               mobileLabel.innerHTML = `Enter OTP : <span style="color:red;">*</span>`;
+                mobileInput.classList.remove("cursor-not-allowed", "opacity-50");
+                mobileInput.value='';
                 mobile_indicator.classList.remove('hidden');
                 const maskedMobile = mobileNumber.slice(0, 2) + 'xxxx' + mobileNumber.slice(-4);
                 mobile_indicator.textContent = `OTP has been sent to ${maskedMobile}`;
@@ -335,8 +344,10 @@ function startOtpTimer() {
     const otpTimer = document.getElementById("otpTimer");
     const mobileInput = document.getElementById("mobileInput");
     const mobile_indicator = document.getElementById("mobile_indicator");
+    const mobileLabel = document.getElementById("mobileLabel");
     let timeLeft = 60;
 
+    const mobile_number_dc = sessionStorage.getItem("mobile_number_dc");
     otpTimer.textContent = "Resend OTP in (01:00)";
     otpTimer.classList.remove("hidden");
 
@@ -348,10 +359,13 @@ function startOtpTimer() {
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
+            mobileLabel.innerHTML = 'Resend OTP : <span style="color:red;">*</span>';
             otpTimer.classList.add("hidden");
             mobile_indicator.classList.add("hidden");
             otpButton.textContent = "Resend OTP";
             mobileInput.disabled = true;
+            mobileInput.value = mobile_number_dc;
+            mobileInput.classList.add("cursor-not-allowed", "opacity-50");
             otpButton.disabled = false;
             otpButton.setAttribute("onclick", "resendOtp()"); // Ensure resendOtp is set
         }
