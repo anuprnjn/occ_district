@@ -442,4 +442,8 @@ Route::get('/admin/hc-other-pending-copy', [HcOtherCopyController::class, 'listH
 
 Route::get('/admin/hc-other-delivered-copy', [HcOtherCopyController::class, 'listHcOtherCopyDelivered'])->name('hc_other_copy');
 
+Route::get('/admin/dc-other-pending-copy', [DcOtherCopyController::class, 'listDcOtherCopyPending'])->name('dc_other_pending_copy');
+
+Route::get('/admin/dc-other-delivered-copy', [DcOtherCopyController::class, 'listDcOtherCopyDelivered'])->name('dc_other_delivered_copy');
+
 });

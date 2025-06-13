@@ -44,6 +44,75 @@ class DcOtherCopyController extends Controller
         }
     }
 
+      public function listDcOtherCopyPending()
+    {
+        try { 
+            $dist_code = session('user.dist_code');
+            $estd_code = session('user.estd_code');
+
+            // Retrieve data using Laravel Query Builder
+            $dcuserdata = DB::table('district_court_applicant_registration as dc')
+                    ->select('dc.*', 'ct.type_name as case_type_name')
+                    ->leftJoin('district_court_case_master as ct', function($join) {
+                        $join->on('dc.case_type', '=', 'ct.case_type')
+                            ->whereColumn('dc.establishment_code', '=', 'ct.est_code');
+                    })
+                    ->where('dc.district_code', $dist_code)
+                    ->where('dc.establishment_code', $estd_code)
+                    ->where('rejection_status',0)
+                    ->where('certified_copy_ready_status',0)
+                    ->orderBy('dc.created_at', 'desc')
+                    ->get();
+
+                //Log::info('DC User Data:', $dcuserdata->toArray());
+
+            // Return view with data using compact
+            return view('admin.dc_other_copy.dc_other_copy_pending_application_list', compact('dcuserdata'));
+
+        } catch (\Exception $e) {
+            Log::error('Error fetching DC Other Copy data', ['error' => $e->getMessage()]);
+
+            return view('admin.dc_other_copy.dc_other_copy_pending_application_list', ['dcuserdata' => []])
+                ->with('error', 'An error occurred while fetching data.');
+        }
+    }
+
+
+      public function listDcOtherCopyDelivered()
+    {
+        try { 
+            $dist_code = session('user.dist_code');
+            $estd_code = session('user.estd_code');
+
+            // Retrieve data using Laravel Query Builder
+            $dcuserdata = DB::table('district_court_applicant_registration as dc')
+                    ->select('dc.*', 'ct.type_name as case_type_name')
+                    ->leftJoin('district_court_case_master as ct', function($join) {
+                        $join->on('dc.case_type', '=', 'ct.case_type')
+                            ->whereColumn('dc.establishment_code', '=', 'ct.est_code');
+                    })
+                    ->where('dc.district_code', $dist_code)
+                    ->where('dc.establishment_code', $estd_code)
+                    ->where('rejection_status',0)
+                    ->where('certified_copy_ready_status',1)
+                    ->orderBy('dc.created_at', 'desc')
+                    ->get();
+
+                //Log::info('DC User Data:', $dcuserdata->toArray());
+
+            // Return view with data using compact
+            return view('admin.dc_other_copy.dc_other_copy_delivered_application_list', compact('dcuserdata'));
+
+        } catch (\Exception $e) {
+            Log::error('Error fetching DC Other Copy data', ['error' => $e->getMessage()]);
+
+            return view('admin.dc_other_copy.dc_other_copy_delivered_application_list', ['dcuserdata' => []])
+                ->with('error', 'An error occurred while fetching data.');
+        }
+    }
+
+    
+
      // View DC Other Copy Details
      public function ViewDcOtherCopy($encryptedAppNumber)
      {

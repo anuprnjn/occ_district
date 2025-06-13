@@ -38,6 +38,7 @@ class HcOtherCopyController extends Controller
                 ->select('hc.*', 'ct.type_name as case_type_name')
                 ->leftJoin('high_court_case_master as ct', 'hc.case_type', '=', 'ct.case_type')
                 ->where('rejection_status',0)
+                ->where('certified_copy_ready_status',0)
                 ->orderBy('hc.created_at', 'desc')
                 ->get();
 
@@ -56,6 +57,7 @@ class HcOtherCopyController extends Controller
                 ->select('hc.*', 'ct.type_name as case_type_name')
                 ->leftJoin('high_court_case_master as ct', 'hc.case_type', '=', 'ct.case_type')
                 ->where('rejection_status',0)
+                ->where('certified_copy_ready_status',1)
                 ->orderBy('hc.created_at', 'desc')
                 ->get();
 

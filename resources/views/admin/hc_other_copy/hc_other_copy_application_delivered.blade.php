@@ -59,11 +59,9 @@ use Illuminate\Support\Facades\Crypt;
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $serial = 1; @endphp
-                                    @forelse ($hcuserdata as $hcuser)
-                                        @if ($hcuser->certified_copy_ready_status == 1)
-                                            <tr>
-                                                <td>{{ $serial++ }}</td>
+                                 @forelse ($hcuserdata as $index => $hcuser)
+                                    <tr>
+                                                <td>{{ $index++ }}</td>
                                                 <td>{{ $hcuser->application_number }}</td>
                                                 <td>{{ $hcuser->applicant_name }}</td>
                                                 <td>{{ $hcuser->mobile_number }}</td>
@@ -84,13 +82,10 @@ use Illuminate\Support\Facades\Crypt;
                                                         <i class="bi bi-eye"></i> View
                                                     </a>
                                                 </td>
-                                            </tr>
-                                        @endif
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="text-center">No Delivered Applications Found</td>
-                                        </tr>
-                                    @endforelse
+                                    </tr>
+                                  @empty
+
+                                 @endforelse
                                 </tbody>
                             </table>
                         </div>

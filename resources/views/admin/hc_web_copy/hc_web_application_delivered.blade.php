@@ -31,7 +31,7 @@ use Carbon\Carbon;
         <div class="container-fluid">
             <div class="row g-4">
                 <div class="col-md-12">
-                    <div class="card card-primary card-outline mb-4">
+                    <div class="card card-info card-outline mb-4">
                         <div class="card-header"><div class="card-title text-success">Highcourt Web Copy Delivered List</div></div>
                         <div class="card-body">
                             <table id="myTable" class="table table-bordered">
