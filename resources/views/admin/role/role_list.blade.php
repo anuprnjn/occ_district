@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Crypt;
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h5 class="card-title fw-semibold">Role List</h5>
-                                <a href="{{ route('role_add') }}" class="btn btn-primary">Add Role</a>
+                                <a href="{{ route('role_add') }}" class="btn btn-primary"><i class="bi bi-plus"></i>Add Role</a>
                             </div>
                         </div>
                         <div class="card-body">
@@ -79,7 +79,7 @@ use Illuminate\Support\Facades\Crypt;
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('role_edit', ['role_id' => $role['role_id']]) }}" class="btn btn-warning btn-sm">Edit</a>
+                                                <a href="{{ route('role_edit', ['role_id' => $role['role_id']]) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i>Edit</a>
                                             </td>
                                         </tr>
                                     @empty

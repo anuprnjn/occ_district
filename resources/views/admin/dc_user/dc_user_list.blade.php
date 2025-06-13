@@ -30,7 +30,7 @@
 
                             <div class="card-header">
                                 <div class="card-title">District User List</div>
-                                <a href="{{ route('dc_user_add') }}" class="btn btn-primary float-end">Add User</a>
+                                <a href="{{ route('dc_user_add') }}" class="btn btn-primary float-end"><i class="bi bi-plus"></i>Add User</a>
                             </div>
 
                             <div class="card-body">
@@ -67,7 +67,7 @@
                                                         <td>{{ $dcuser['username'] }}</td>
                                                         <td>
                                                             <a href="{{ route('dc_user_edit', $dcuser['id']) }}"
-                                                                class="btn btn-warning btn-sm">Edit</a>
+                                                                class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i>Edit</a>
                                                         </td>
                                                     </tr>
                                                 @endif

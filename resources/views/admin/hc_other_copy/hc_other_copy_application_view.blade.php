@@ -42,9 +42,25 @@
                                             <i class="bi bi-x-circle"></i> Reject Application
                                         </button>
                                     </div>
-                                    <a href="{{ route('hc_other_copy') }}" class="btn btn-info">
+                                    <!-- <a href="{{ route('hc_other_copy') }}" class="btn btn-info">
                                         <i class="bi bi-arrow-left"></i> Back
-                                    </a>
+                                    </a> -->
+                                    @php
+                                        $previousUrl = session()->get('_previous.url');
+                                        if ($previousUrl && Str::contains($previousUrl, '/admin/hc_other_copy')) {
+                                            $previousUrl = url('/admin/hc_other_copy');
+                                        }
+                                    @endphp
+
+                                    @if($previousUrl)
+                                        <a href="{{ $previousUrl }}" class="btn btn-primary">
+                                            ← Back
+                                        </a>
+                                    @else
+                                        <a href="{{ route('admin.hc_other_copy') }}" class="btn btn-primary">
+                                            ← Back
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
 

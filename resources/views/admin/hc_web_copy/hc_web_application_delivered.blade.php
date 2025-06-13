@@ -52,7 +52,7 @@ use Carbon\Carbon;
                                     @php $count = 1; @endphp
                                     @forelse ($hcuserdata as $hcuser)
                                         @if ($hcuser->certified_copy_ready_status == 1)
-                                            <tr> 
+                                            <tr>
                                                 <td>{{ $count++ }}</td>
                                                 <td>{{ $hcuser->application_number }}</td>
                                                 <td>{{ $hcuser->applicant_name }}</td>

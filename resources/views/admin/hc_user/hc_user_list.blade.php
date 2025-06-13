@@ -31,7 +31,7 @@
                         <div class="card card-primary card-outline mb-4">
                             <div class="card-header">
                                 <div class="card-title">Highcourt User List</div>
-                                <a href="{{ route('hc_user_add') }}" class="btn btn-primary float-end">Add User</a>
+                                <a href="{{ route('hc_user_add') }}" class="btn btn-primary float-end"><i class="bi bi-plus"></i>Add User</a>
                             </div>
                             <div class="card-body">
                                 @if (session('success'))
@@ -69,7 +69,7 @@
                                                 <td>{{ $hcuser['username'] }}</td>
                                                 <td>
                                                     <a href="{{ route('hc_user_edit', $hcuser['id']) }}"
-                                                        class="btn btn-warning btn-sm">Edit</a>
+                                                        class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i>Edit</a>
                                                 </td>
                                             </tr>
                                         @empty

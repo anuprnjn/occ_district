@@ -65,7 +65,7 @@ use Illuminate\Support\Facades\Crypt;
                                             <td>
                                                 <button class="btn btn-warning btn-sm" 
                                                         onclick="openEditModal({{ json_encode($payparameter) }})">
-                                                    Edit
+                                                   <i class="bi bi-pencil"></i> Edit
                                                 </button>
                                             </td>
                                         </tr>

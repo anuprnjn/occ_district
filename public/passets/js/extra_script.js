@@ -289,6 +289,7 @@ function verifyOtp() {
         })
         .catch(error => console.error('Error verifying OTP:', error));
 }
+
 function view_recent_app(){
     const application_modal = document.getElementById("application_n_details");
     application_modal.classList.remove("hidden");
@@ -360,6 +361,8 @@ function startOtpTimer() {
 //**************************************************track status OTP logic *****************************************************
 
 function sendOtpTrack(selectedCourt,validatedMobile){
+    
+    sessionStorage.setItem('otp_mobile', validatedMobile);
     // console.log('new function',selectedCourt, validatedMobile);
     const otpButton = document.getElementById("otpButtonTrack");
     const otp_label = document.getElementById("otp_label");
@@ -426,10 +429,17 @@ function verifyOtpTrack(selectedCourt,validatedMobile) {
                 otpTimertrack.classList.add("hidden");
                 otpButtonTrack.disabled = true;
                 otpButtonTrack.classList.add("cursor-not-allowed", "opacity-50");
-                if(selectedCourt === 'HC'){
+                sessionStorage.removeItem("otp_mobile");
+                console.log(selectedCourt);
+                if (selectedCourt === 'HC') {
+                    console.log('HC');
                     window.location.href='/trackStatusMobileHC';
-                }else{
+                } else if (selectedCourt === 'DC') {
+                    console.log('DC');
                     window.location.href='/trackStatusMobileDC';
+                } else {
+                    console.log('APP');
+                    window.location.href='/trackStatusDetails';
                 }
             } else {
                 alert("Invalid OTP. Try again.");
@@ -443,8 +453,9 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
     const otpButton = document.getElementById("otpButtonTrack");
     const otpTimer = document.getElementById("otpTimertrack");
     const mobileInput = document.getElementById("otp");
-    let timeLeft = 60;
-
+    const err_span = document.getElementById('error_span');
+    let timeLeft = 10;
+    const mobile_number = sessionStorage.getItem("otp_mobile");
     otpTimer.textContent = "Resend OTP in (01:00)";
     otpTimer.classList.remove("hidden");
 
@@ -456,20 +467,23 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
+            err_span.classList.add('hidden');
             otpTimer.classList.add("hidden");
             otpButton.textContent = "Resend OTP";
             mobileInput.disabled = true;
+            mobileInput.classList.add('cursor-not-allowed');
             otpButton.disabled = false;
-            otpButton.setAttribute("onclick", `resendOtpTrack('${selectedCourt}', '${validatedMobile}')`); // Ensure resendOtp is set
+            otpButton.setAttribute("onclick", `resendOtpTrack('${selectedCourt}', '${mobile_number}')`); // Ensure resendOtp is set
         }
     }, 1000);
 }
 
 // Function to resend OTP
 function resendOtpTrack(selectedCourt,validatedMobile) {
-    
     const otpButton = document.getElementById("otpButtonTrack");
     const mobileInput = document.getElementById("otp");
+    const err_span = document.getElementById('error_span');
+
     mobileInput.disabled = false;
 
     // Make a POST request to the resendOtp endpoint
@@ -485,143 +499,18 @@ function resendOtpTrack(selectedCourt,validatedMobile) {
     .then(data => {
         if (data.success) {
             alert(`OTP resent successfully. Your OTP is: ${data.otp}`); // Show OTP for now
+            err_span.classList.remove('hidden');
+            const maskedMobile = validatedMobile.slice(0, 2) + 'xxxx' + validatedMobile.slice(-4);
+           if(selectedCourt === 'HC'){
+               err_span.innerHTML = `OTP has been sent to mobile number - <span style="color:red;">${maskedMobile}</span>.`;
+           } else if (selectedCourt === 'DC') {
+                err_span.innerHTML = `OTP has been sent to mobile number - <span style="color:red;">${maskedMobile}</span>.`;
+            } else {
+                err_span.innerHTML = `<span style="color: green;">OTP has been sent to registered mobile number - </span><span style="color:red;">${maskedMobile}</span>.`;
+            }
             otpButton.textContent = "Verify OTP";
             otpButton.setAttribute("onclick", `verifyOtpTrack('${selectedCourt}', '${validatedMobile}')`); // Ensure verifyOtp is set
-            startOtpTimerTrack(validatedMobile);
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(error => console.error('Error resending OTP:', error));
-}
-
-// ******************************************************otp redirect for application number *************************************
-
-function sendOtpTrackAPP(selectedCourt,validatedMobile){
-    // console.log('new function',selectedCourt, validatedMobile);
-    const otpButton = document.getElementById("otpButtonTrack");
-    const otp_label = document.getElementById("otp_label");
-    otpButton.textContent = "Verify OTP";
-    otpButton.setAttribute("onclick", `verifyOtpTrackAPP('${selectedCourt}', '${validatedMobile}')`)
-
-     fetch('/send-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        },
-        body: JSON.stringify({ mobile: validatedMobile }),
-    }).then(response => response.json())
-    .then(data => {
-        if(data.success){
-            alert(`Your OTP is: ${data.otp}`);
             startOtpTimerTrack(selectedCourt,validatedMobile);
-        }else{
-            alert(data.message);
-        }
-    })
-    
-}
-// Function to verify OTP
-function verifyOtpTrackAPP(selectedCourt,validatedMobile) {
-    
-    const mobileInput = document.getElementById("otp");
-    const otp_label = document.getElementById("otp_label");
-    const otpTimertrack = document.getElementById("otpTimertrack");
-    const app_mobile = document.getElementById("application_number");
-    const otpButtonTrack = document.getElementById("otpButtonTrack");
-
-    if (!mobileInput.value) {
-        alert("Please enter the OTP.");
-        return;
-    }
-
-    const otp = mobileInput.value;
-    console.log('otp',otp);
-
-    // Make a POST request to the verifyOtp endpoint
-    fetch('/verify-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        },
-        body: JSON.stringify({ mobile: validatedMobile, otp: otp }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                clearInterval(timerInterval);
-                otp_label.textContent = "Mobile Number Verified:";
-                otp_label.classList.add("text-green-500");
-                otp_label.classList.add("font-normal");
-                mobileInput.type = "password";
-                mobileInput.value = validatedMobile;
-                mobileInput.disabled = true;
-                app_mobile.disabled = true;
-                mobileInput.style.cursor = "not-allowed";
-                app_mobile.style.cursor = "not-allowed";
-                otpTimertrack.classList.add("hidden");
-                otpButtonTrack.disabled = true;
-                otpButtonTrack.classList.add("cursor-not-allowed", "opacity-50");
-                window.location.href='/trackStatusDetails';
-            } else {
-                alert("Invalid OTP. Try again.");
-            }
-        })
-        .catch(error => console.error('Error verifying OTP:', error));
-}
-
-function startOtpTimerTrackAPP(selectedCourt,validatedMobile) {
-    
-    const otpButton = document.getElementById("otpButtonTrack");
-    const otpTimer = document.getElementById("otpTimertrack");
-    const mobileInput = document.getElementById("otp");
-    let timeLeft = 60;
-
-    otpTimer.textContent = "Resend OTP in (01:00)";
-    otpTimer.classList.remove("hidden");
-
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
-        const seconds = String(timeLeft % 60).padStart(2, "0");
-        otpTimer.textContent = `Resend OTP in (${minutes}:${seconds})`;
-
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            otpTimer.classList.add("hidden");
-            otpButton.textContent = "Resend OTP";
-            mobileInput.disabled = true;
-            otpButton.disabled = false;
-            otpButton.setAttribute("onclick", `resendOtpTrackAPP('${selectedCourt}', '${validatedMobile}')`); // Ensure resendOtp is set
-        }
-    }, 1000);
-}
-
-// Function to resend OTP
-function resendOtpTrackAPP(selectedCourt,validatedMobile) {
-    
-    const otpButton = document.getElementById("otpButtonTrack");
-    const mobileInput = document.getElementById("otp");
-    mobileInput.disabled = false;
-
-    // Make a POST request to the resendOtp endpoint
-    fetch('/resend-otp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        },
-        body: JSON.stringify({ mobile: validatedMobile }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(`OTP resent successfully. Your OTP is: ${data.otp}`); // Show OTP for now
-            otpButton.textContent = "Verify OTP";
-            otpButton.setAttribute("onclick", `verifyOtpTrackAPP('${selectedCourt}', '${validatedMobile}')`); // Ensure verifyOtp is set
-            startOtpTimerTrack(validatedMobile);
         } else {
             alert(data.message);
         }

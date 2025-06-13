@@ -111,12 +111,12 @@
                                                 <td>
                                                     <button class="btn btn-warning btn-sm"
                                                         onclick="editSubMenu({{ $submenu->submenu_id }}, '{{ $submenu->menu_id }}', '{{ $submenu->submenu_name }}', '{{ $submenu->url }}')">
-                                                        Edit
+                                                        <i class="bi bi-pencil"></i>Edit
                                                     </button>
 
                                                     <button class="btn btn-danger btn-sm"
                                                         onclick="confirmDelete({{ $submenu->submenu_id }})">
-                                                        Delete
+                                                       <i class="bi bi-trash"></i> Delete
                                                     </button>
                                                 </td>
                                             </tr>

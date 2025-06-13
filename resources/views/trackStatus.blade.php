@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <span class="text-green-600">OTP has been sent to registered mobile number - </span>
                         <span class="text-red-600">${masked_mobile}</span>
                     `;
-                    sendOtpTrackAPP(selectedCourt, fetched_mobile);
+                    sendOtpTrack('application', fetched_mobile);
                 } else {
                     errorSpan.innerText = response.message || 'Failed to fetch application details.';
                 }
@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isValidMobile) {
             // get the valid mobile number 
             const validatedMobile = input;
+           
             var selectedCourt = document.querySelector('input[name="search-type"]:checked').value;
             if(selectedCourt === 'HC'){
                 fetch('/check-mobile-number-hc', {

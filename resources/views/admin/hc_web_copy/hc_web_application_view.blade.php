@@ -41,8 +41,22 @@
                                             <i class="bi bi-printer"></i> Print
                                         </button>
                                     </div>
-                                    <a href="{{ route('hc_web_application_list') }}" class="btn btn-primary"><i
-                                            class="bi bi-arrow-left"></i>Back</a>
+                                    @php
+                                        $previousUrl = session()->get('_previous.url');
+                                        if ($previousUrl && Str::contains($previousUrl, '/admin/hc-web-application')) {
+                                            $previousUrl = url('/admin/hc-web-application');
+                                        }
+                                    @endphp
+
+                                    @if($previousUrl)
+                                        <a href="{{ $previousUrl }}" class="btn btn-primary">
+                                            ← Back
+                                        </a>
+                                    @else
+                                        <a href="{{ route('admin.hc-web-application') }}" class="btn btn-primary">
+                                            ← Back
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-body">
