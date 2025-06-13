@@ -454,7 +454,7 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
     const otpTimer = document.getElementById("otpTimertrack");
     const mobileInput = document.getElementById("otp");
     const err_span = document.getElementById('error_span');
-    let timeLeft = 10;
+    let timeLeft = 60;
     const mobile_number = sessionStorage.getItem("otp_mobile");
     otpTimer.textContent = "Resend OTP in (01:00)";
     otpTimer.classList.remove("hidden");
@@ -471,7 +471,7 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
             otpTimer.classList.add("hidden");
             otpButton.textContent = "Resend OTP";
             mobileInput.disabled = true;
-            mobileInput.classList.add('cursor-not-allowed');
+            // mobileInput.classList.add('cursor-not-allowed');
             otpButton.disabled = false;
             otpButton.setAttribute("onclick", `resendOtpTrack('${selectedCourt}', '${mobile_number}')`); // Ensure resendOtp is set
         }

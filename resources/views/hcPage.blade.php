@@ -6,8 +6,8 @@
     <div id="highCourtDropdown" class="dropdown w-[100%] sm:w-[50%] p-[10px] sm:-ml-2">
         <label for="highCourtSelect" class="mb-4">Select an option:</label>
         <select id="highCourtSelect" class="p-[10px]" onchange="myfun()">
-            <option value="applyJudgement" selected>Apply for Orders and Judgement Copy</option>
-            <option value="applyOrders">Apply for Others Copy</option>
+            <option value="applyJudgement" selected>Apply for Orders and Judgement Copy (High Court)</option>
+            <option value="applyOrders">Apply for Others Copy (High Court)</option>
         </select>
     </div>
 
@@ -190,12 +190,13 @@
                     <input type="text" id="name" name="name" placeholder="Enter your name" required>
                 </div>
         <div class="form-field">
-            <div class="flex items-start justify-start gap-2">
+            <div class="flex items-center justify-start gap-2">
                 <label for="mobile" id="mobileLabel">Mobile No: <span>*</span></label>
             <span
             id="otpTimer"
-            class="text-md text-rose-600 "
+            class="text-md text-rose-600 -mt-1"
             ></span>
+            <span class="text-sm font-medium text-green-500 -mt-1" id="mobile_indicator"></span>
             </div>
             <div class="flex items-center justify-center gap-2">
             <input

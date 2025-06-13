@@ -55,12 +55,14 @@
             <input type="text" id="name" name="name" placeholder="Enter your name" required>
         </div>
         <div class="form-field">
-            <div class="flex items-start justify-start gap-2">
+            <div class="flex items-center justify-start gap-2">
                 <label for="mobile" id="mobileLabel">Mobile No: <span>*</span></label>
-            <span
-            id="otpTimer"
-            class="text-md text-rose-600 "
-            ></span>
+                
+                <span
+                id="otpTimer"
+                class="text-md text-rose-600 -mt-1"
+                ></span>
+                <span class="text-sm font-medium text-green-500 -mt-1" id="mobile_indicator"></span>
             </div>
             <div class="flex items-center justify-center gap-2">
             <input
