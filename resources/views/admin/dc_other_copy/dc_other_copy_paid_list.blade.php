@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Crypt;
                 @endif
 
                 <table id="myTable" class="table table-bordered">
-                    <thead class="table-success">
+                    <thead class="table-warning">
                         <tr>
                             <th>#</th>
                             <th>Application No</th>
@@ -66,7 +66,7 @@ use Illuminate\Support\Facades\Crypt;
                             <td>{{ $dcuser->applicant_name }}</td>
                             <td>{{ $dcuser->mobile_number }}</td>
                             <td>
-                                {{ $dcuser->caseType . '/' . $dcuser->case_filling_number . '/' . $dcuser->case_filling_year }}
+                                {{ $caseType . '/' . $dcuser->case_filling_number . '/' . $dcuser->case_filling_year }}
                                 @if ($dcuser->selected_method == 'F') 
                                     (Filing No) 
                                 @elseif ($dcuser->selected_method == 'C')

@@ -60,44 +60,41 @@ use Illuminate\Support\Facades\Crypt;
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $serial = 1; @endphp
-                                    @forelse ($hcuserdata as $hcuser)
-                                        @if ($hcuser->certified_copy_ready_status == 0)
-                                            <tr>
-                                                <td>{{ $serial++ }}</td>
-                                                <td>{{ $hcuser->application_number }}</td>
-                                                <td>{{ $hcuser->applicant_name }}</td>
-                                                <td>{{ $hcuser->mobile_number }}</td>
-                                                <td>
-                                                    {{ $hcuser->case_type_name . '/' . $hcuser->case_filling_number . '/' . $hcuser->case_filling_year }}
-                                                    @if ($hcuser->selected_method == 'F') 
-                                                        (Filing No) 
-                                                    @elseif ($hcuser->selected_method == 'C')
-                                                        (Case No)
-                                                    @else
-                                                        {{ $hcuser->selected_method }} {{-- Default fallback --}}
-                                                    @endif
-                                                </td>
-                                                <td>{{ \Carbon\Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td>
-                                                <td>
-                                                   @if($hcuser->document_status == 0 )
-                                                        <span class="badge bg-warning">Pending</span>
-                                                    @else
-                                                        <span class="badge bg-success">Uploaded</span>
-                                                    @endif
-                                                </td>
-                                                <td><span class="badge bg-warning">Pending</span></td>
-                                                <td>
-                                                    <a href="{{ route('hc_other_copy_view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm">
-                                                        <i class="bi bi-eye"></i> View
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endif
+                                  @forelse ($hcuserdata as $index => $hcuser)
+                                    <tr>
+                                        <td>{{ $index++ }}</td>
+                                        <td>{{ $hcuser->application_number }}</td>
+                                        <td>{{ $hcuser->applicant_name }}</td>
+                                        <td>{{ $hcuser->mobile_number }}</td>
+                                        <td>
+                                          {{ $hcuser->case_type_name . '/' . $hcuser->case_filling_number . '/' . $hcuser->case_filling_year }}
+                                          @if ($hcuser->selected_method == 'F') 
+                                                (Filing No) 
+                                          @elseif ($hcuser->selected_method == 'C')
+                                             (Case No)
+                                          @else
+                                             {{ $hcuser->selected_method }} {{-- Default fallback --}}
+                                          @endif
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($hcuser->created_at) ->format('d-m-Y') }}
+                                        </td>
+                                        <td>
+                                          @if($hcuser->document_status == 0 )
+                                             <span class="badge bg-warning">Pending</span>
+                                            @else
+                                             <span class="badge bg-success">Uploaded</span>
+                                            @endif
+                                        </td>
+                                        <td><span class="badge bg-warning">Pending</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('hc_other_copy_view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="8" class="text-center">No Pending Applications Found</td>
-                                        </tr>
+                                    
                                     @endforelse
                                 </tbody>
                             </table>

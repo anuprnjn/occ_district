@@ -14,7 +14,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
     <div class="app-content-header">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-6"><h3 class="mb-0">Web Copy Pending Request List</h3></div>
+          <div class="col-sm-6"><h3 class="mb-0 text-danger">Web Copy Pending Request List</h3></div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-end">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -31,11 +31,11 @@ use Carbon\Carbon; // Import Carbon for date formatting
       <div class="container-fluid">
         <div class="row g-4">
           <div class="col-md-12">
-            <div class="card card-primary card-outline mb-4">
-              <div class="card-header"><div class="card-title">Web Copy Request List</div></div>
+            <div class="card card-danger card-outline mb-4">
+              <div class="card-header"><div class="card-title text-danger">Web Copy Request List</div></div>
               <div class="card-body">
                 <table id="myTable" class="table table-bordered">
-                    <thead class="table-primary">
+                    <thead class="table-danger">
                         <tr>
                             <th>#</th>
                             <th>Application No</th>
