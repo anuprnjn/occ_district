@@ -151,7 +151,7 @@
               <!--end::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 2-->
-                <a href="" class="link-light link-underline-opacity-0">
+                <a href="dc-other-delivered-copy" class="link-light link-underline-opacity-0">
                   <div class="small-box bg-soft-delivered text-white">
                   <div class="inner">
                     <h3>{{ $dcWebDelivered }}</h3>
@@ -179,7 +179,7 @@
               <!--end::Col-->
               <div class="col-lg-4 col-6">
                 <!--begin::Small Box Widget 2-->
-                <a href="" class="link-light link-underline-opacity-0">
+                <a href="dc-other-pending-copy" class="link-light link-underline-opacity-0">
                   <div class="small-box bg-soft-pending text-white">
                   <div class="inner">
                     <h3>{{ $dcWebPending }}</h3>
