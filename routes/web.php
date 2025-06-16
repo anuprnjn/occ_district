@@ -56,6 +56,7 @@ use App\Http\Controllers\admin\DcWebApplicationController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\DownloadCertifiedCopyController;
 use App\Http\Controllers\mobileNumberTrackController;
+use App\Http\Controllers\admin\ReportController;
 
 
 Route::get('/', function () {
@@ -445,5 +446,18 @@ Route::get('/admin/hc-other-delivered-copy', [HcOtherCopyController::class, 'lis
 Route::get('/admin/dc-other-pending-copy', [DcOtherCopyController::class, 'listDcOtherCopyPending'])->name('dc_other_pending_copy');
 
 Route::get('/admin/dc-other-delivered-copy', [DcOtherCopyController::class, 'listDcOtherCopyDelivered'])->name('dc_other_delivered_copy');
+
+Route::get('/admin/payment-report', [ReportController::class, 'paymentReport'])->name('payment_report');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/delivered-report', [ReportController::class, 'deliveredReport'])->name('delivered.report');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/pending-report', [ReportController::class, 'pendingReport'])->name('pending.report');
+});
+
+Route::get('/admin/activity-log-report', [ReportController::class, 'logsReport'])->name('activity_log_report');
+
 
 });
