@@ -6,25 +6,6 @@
     <h3 class="font-semibold text-xl -mt-8">Complete Pending Payment</h3>
 
     <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-6" id='pendingPaymentForm'>
-        <div class="form-group">
-            <label>
-                <input type="radio" name="search-type" value="HC" checked>
-                High Court
-            </label>
-            <label>
-                <input type="radio" name="search-type" value="DC">
-                Civil Court
-            </label>
-        </div>
-        <div class="flex justify-center sm:flex-row flex-col items-center sm:gap-10">
-            <div class="form-field">
-                <label for="application_number">Application Number: <span>*</span></label>
-                <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="sm:mb-5">
-            </div>    
-            <div class="form-field">
-                <button type="submit" class="sm:w-[50%] w-[100%] hover:shadow-md btn-submit order_btn mt-4 tracking-wide" onClick="pendingPayment(event)">Click to proceed</button>
-            </div>
-        </div>
         <span id="error_span" class="text-red-500 font-bold text-sm ml-5 sm:ml-0"></span>
     </form>
     <div class="hidden loading">
@@ -70,34 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const applicationNumber = params.get('application_number');
 
     if (applicationNumber) {
+       
         try {
             const decodedAppNo = atob(applicationNumber); // Decode base64
-            const input = document.getElementById('application_number');
-            if (input) {
-                input.value = decodedAppNo;
-                input.disabled = true;
-                input.style.cursor = 'not-allowed';
-                input.style.opacity = '0.5';
-            }
+            pendingPayment(decodedAppNo)
 
-            // Determine if it's High Court (starts with HC or HCW)
-            const isHighCourt = decodedAppNo.startsWith('HC') || decodedAppNo.startsWith('HCW');
-
-            // Select the correct radio button
-            const highCourtRadio = document.querySelector('input[name="search-type"][value="HC"]');
-            const civilCourtRadio = document.querySelector('input[name="search-type"][value="DC"]');
-
-            if (isHighCourt && highCourtRadio) {
-                highCourtRadio.checked = true;
-            } else if (civilCourtRadio) {
-                civilCourtRadio.checked = true;
-            }
-
-            // ✅ Trigger submit button click automatically
-            // const submitBtn = document.querySelector('button.btn-submit');
-            // if (submitBtn) {
-            //     submitBtn.click();
-            // }
 
         } catch (error) {
             console.error("Invalid base64 string in URL:", error);
@@ -109,13 +67,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 <script>
-function pendingPayment(event) {
-    event.preventDefault();
-    var applicationNumberInput = document.getElementById('application_number');
-    var application_number = applicationNumberInput.value.trim().toUpperCase();
+function pendingPayment(decodedAppNo) {
+    
+    var application_number = decodedAppNo.toUpperCase();
     var errorSpan = document.getElementById('error_span');
-    var selectedCourt = document.querySelector('input[name="search-type"]:checked').value;
-
     // Clear previous error message
     errorSpan.innerText = '';  
 
@@ -125,20 +80,13 @@ function pendingPayment(event) {
         return;
     }
 
-    // Check if the selected court matches the application number prefix
-    if ((selectedCourt === 'HC' && !application_number.startsWith('HC')) || 
-        (selectedCourt === 'DC' && application_number.startsWith('HC'))) {
-        errorSpan.innerText = 'Selected court and application number do not match!';
-        // pendingPaymentForm.reset();
-        return;
-    }
-
-    // Store the application number and court in sessionStorage
-    // sessionStorage.setItem('pending_payment_application_number', application_number);
-    sessionStorage.setItem('selectedCourt', selectedCourt);
+    var loading = document.querySelector('.loading');
+    loading.classList.remove('hidden');
+    loading.classList.add('flex');
+    
 
     // Make AJAX request based on selected court
-    var url = selectedCourt === 'HC' ? '/fetch-pending-payments-hc' : '/fetch-pending-payments-dc';
+    var url = application_number.startsWith('HC')  ? '/fetch-pending-payments-hc' : '/fetch-pending-payments-dc';
 
     $.ajax({
         url: url,
@@ -216,7 +164,7 @@ function pendingPayment(event) {
                         const successTable = document.querySelector(".success_payment_table");
                         const titlePaymentSuccess = document.querySelector(".title_payment_success");
                         const loading = document.querySelector(".loading");
-                        const applicationInput = document.querySelector("#application_number");
+                    
                         // Show loading initially
                         loading.classList.remove("hidden");
                         loading.classList.add("flex");
