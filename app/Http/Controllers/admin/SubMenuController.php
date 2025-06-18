@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use App\Helpers\ActivityLogger;
 
 class SubMenuController extends Controller
 {
@@ -77,6 +79,7 @@ class SubMenuController extends Controller
             $response = Http::post(config('app.api.admin_url') . '/update_submenu.php', $data);
 
             if ($response->successful()) {
+                ActivityLogger::log_hc('Submenu Name Changed', 'update', session('user.id'), session('user.name'));
                 return redirect()->route('submenu_list')->with('success', 'Sub Menu updated successfully!');
             } else {
                 return redirect()->route('submenu_list')->with('error', 'Failed to update Sub Menu. ' . $response->body());

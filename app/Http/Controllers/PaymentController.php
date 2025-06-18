@@ -13,7 +13,7 @@ class PaymentController extends Controller
     public function fetchMerchantDetails(Request $request)
     {
         // $depositerId = 'DRID' . str_pad(rand(1, 999), 3, '0', STR_PAD_LEFT);
-        $depositerId = "DRID001";
+        $depositerId = env('DEPOSITERID');;
         $response = Http::get(config('app.api.admin_url') . '/fetch_jegras_merchent_details.php');
 
         if (!$response->successful()) {
@@ -43,8 +43,8 @@ class PaymentController extends Controller
             ? ($userData["payment_status"] == "1" ? "deficit" : "normal") 
             : "normal";
         $ADDINFO3 = 'N/A';
-        $responseURL = 'http://10.134.9.45/api/occ/gras_resp_cc';
-        $key = 'Ky@5432#';
+        $responseURL = env('PAY_RESPONSE_URL');
+        $key = env('VERIFICATION_KEY');
 
         // Constructing `Requestparameter` string
         $Requestparameter = implode('|', [
@@ -113,5 +113,76 @@ class PaymentController extends Controller
             'application_number' => $applicationNumber
         ]);
     }
+
+
+    public function doubleVerification(Request $request)
+    {
+        $depid        = $request->input('depid');          
+        $depttranid   = $request->input('depttranid');     
+        $securitycode = $request->input('securitycode');   
+        $grn          = $request->input('grn', '');        
+
+        $secretKey = env('DOUBLE_VERIFICATION_SECRET'); 
+
+        // Ensure key and IV are exactly 16 bytes
+        $key = str_pad(substr($secretKey, 0, 16), 16, "\0");
+        $iv  = str_pad(substr($secretKey, 0, 16), 16, "\0");
+
+        // Step 1: Build plain string
+        $plain = implode('|', [$grn, $depid, $depttranid, $securitycode]);
+
+        // Step 2: Encrypt using AES-128-CBC
+        $cipher = 'AES-128-CBC';
+        $encrypted = openssl_encrypt($plain, $cipher, $key, 0, $iv);
+
+        // Step 3: Build request data
+        $requestData = [
+            'EncryptTxt' => $encrypted,
+            'REQDEPTID'  => $depid,
+        ];
+
+        // Step 4: Send JSON POST request
+        $url = env('DOUBLE_VERIFICATION_URL');
+        $options = [
+            'http' => [
+                'method'  => 'POST',
+                'header'  => "Content-Type: application/json\r\n" .
+                            "Accept: application/json\r\n",
+                'content' => json_encode($requestData),
+            ],
+            'ssl' => [
+                'verify_peer'      => false,
+                'verify_peer_name' => false,
+            ],
+        ];
+        $context = stream_context_create($options);
+        $resultJson = file_get_contents($url, false, $context);
+
+        // Step 5: Decode and decrypt response
+        $resultArray = json_decode($resultJson, true);
+        $encryptedResponse = $resultArray['SBIePayDoubleVerificationResult'] ?? null;
+
+        $decryptedOutput = null;
+        $parsedFields = [];
+
+        if ($encryptedResponse) {
+            // Some APIs return base64 encoded ciphertext
+            $decryptedOutput = openssl_decrypt(base64_decode($encryptedResponse), $cipher, $key, OPENSSL_RAW_DATA, $iv);
+
+            if ($decryptedOutput !== false) {
+                $parsedFields = explode('|', $decryptedOutput);
+            }
+        }
+
+        // Final output
+        return response()->json([
+            'success'          => $decryptedOutput !== false,
+            'decrypted_data'    => $parsedFields,
+        ]);
+    }
+
+
+
+
     
 }

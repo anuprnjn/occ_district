@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function pendingPayment(decodedAppNo) {
     
     var application_number = decodedAppNo.toUpperCase();
+    
     var errorSpan = document.getElementById('error_span');
     // Clear previous error message
     errorSpan.innerText = '';  
@@ -120,7 +121,6 @@ function pendingPayment(decodedAppNo) {
                if((response.case_info.payment_status === 0) || (response.case_info.deficit_status === 1 && response.case_info.deficit_payment_status ===0)) {
                 ajaxForPendingPayment(caseInfoDetails);
                } else {
-                console.log("iff");
                 const messageSpan = `
                     <div class="dark_form flex items-start gap-2 p-4 rounded-xl border border-red-300 bg-red-50 text-red-500 shadow-sm">
                         <span class="font-semibold">

@@ -62,9 +62,19 @@
                         <td class="px-6 py-2 font-bold">REFERENCE NUMBER</td>
                         <td class="px-6 py-2">{{ $responseData['ref_no'] ?? 'N/A' }}</td>
                     </tr>
-                    <tr>
+                   <tr>
                         <td class="px-6 py-2 font-bold">MODE OF PAYMENT</td>
-                        <td class="px-6 py-2">{{ $responseData['pmode'] ?? 'N/A' }}</td>
+                        <td class="px-6 py-2">
+                            @php
+                                $paymentModes = [
+                                    'P' => 'PAYMENT GATEWAY',
+                                    'M' => 'MANUAL',
+                                    'G' => 'GBSS',
+                                ];
+                                $pmode = $responseData['pmode'] ?? null;
+                            @endphp
+                            {{ $paymentModes[$pmode] ?? 'N/A' }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="px-6 py-2 font-bold">TXN DATE</td>

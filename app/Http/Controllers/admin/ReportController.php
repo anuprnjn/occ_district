@@ -102,7 +102,24 @@ public function pendingReport(Request $request)
 
 public function logsReport(Request $request)
 {
-    return view('admin.occ_report.activity_log_report');
+    $logs = collect(); // Empty collection by default
+
+    // Only run the query if from_date or to_date is provided
+    if ($request->from_date || $request->to_date) {
+        $query = DB::table('log_activity_hc');
+
+        if ($request->from_date) {
+            $query->whereDate('log_date', '>=', Carbon::parse($request->from_date));
+        }
+
+        if ($request->to_date) {
+            $query->whereDate('log_date', '<=', Carbon::parse($request->to_date));
+        }
+
+        $logs = $query->orderBy('log_date', 'desc')->get();
+    }
+
+    return view('admin.occ_report.activity_log_report', compact('logs'));
 }
 
  

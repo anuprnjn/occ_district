@@ -87,10 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Store the application number and court in sessionStorage
-        sessionStorage.setItem('track_application_number', application_number);
-        sessionStorage.setItem('selectedCourt', selectedCourt);
-
 
         // Make AJAX request based on selected court
         var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
@@ -110,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <span class="text-green-600">OTP has been sent to registered mobile number - </span>
                         <span class="text-red-600">${masked_mobile}</span>
                     `;
-                    sendOtpTrack('application', fetched_mobile);
+                    sendOtpTrack('application', fetched_mobile, application_number);
                 } else {
                     errorSpan.innerText = response.message || 'Failed to fetch application details.';
                 }

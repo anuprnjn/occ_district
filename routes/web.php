@@ -243,24 +243,9 @@ Route::post('/certified-copy/download-zip', [DownloadCertifiedCopyController::cl
 
 Route::get('/download-district-file/{filename}', [DownloadCertifiedCopyController::class, 'downloadDistrictCourtFile']);
 
+Route::post('/double-verification', [PaymentController::class, 'doubleVerification']);
 
-Route::get('/test-download', function () {
-    $fileName = 'HC05723052500_1748341123.pdf';
-    $folder = 'highcourt_certified_other_copies/may25'; // ✅ correct folder
-    $filePath = storage_path("app/public/{$folder}/{$fileName}");
-
-    if (!file_exists($filePath)) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'File not found',
-            'path_checked' => $filePath
-        ], 404);
-    }
-
-    return response()->download($filePath);
-});
-
-//admin routes **************************************************************
+//**********************************************************admin routes **************************************************************
 
 Route::middleware([AuthenticateUser::class])->group(function () {
     Route::get('/admin/index', function () {
@@ -458,6 +443,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 Route::get('/admin/activity-log-report', [ReportController::class, 'logsReport'])->name('activity_log_report');
+Route::get('/admin/logs-report', [ReportController::class, 'logsReport'])->name('admin.logs.report');
 
 
 });

@@ -374,14 +374,14 @@ function startOtpTimer() {
 
 //**************************************************track status OTP logic *****************************************************
 
-function sendOtpTrack(selectedCourt,validatedMobile){
+function sendOtpTrack(selectedCourt,validatedMobile, application_number){
     
     sessionStorage.setItem('otp_mobile', validatedMobile);
     // console.log('new function',selectedCourt, validatedMobile);
     const otpButton = document.getElementById("otpButtonTrack");
     const otp_label = document.getElementById("otp_label");
     otpButton.textContent = "Verify OTP";
-    otpButton.setAttribute("onclick", `verifyOtpTrack('${selectedCourt}', '${validatedMobile}')`)
+    otpButton.setAttribute("onclick", `verifyOtpTrack('${selectedCourt}', '${validatedMobile}', '${application_number}')`)
 
      fetch('/send-otp', {
         method: 'POST',
@@ -402,7 +402,7 @@ function sendOtpTrack(selectedCourt,validatedMobile){
     
 }
 // Function to verify OTP
-function verifyOtpTrack(selectedCourt,validatedMobile) {
+function verifyOtpTrack(selectedCourt,validatedMobile, application_number) {
     
     const mobileInput = document.getElementById("otp");
     const otp_label = document.getElementById("otp_label");
@@ -446,14 +446,13 @@ function verifyOtpTrack(selectedCourt,validatedMobile) {
                 sessionStorage.removeItem("otp_mobile");
                 console.log(selectedCourt);
                 if (selectedCourt === 'HC') {
-                    console.log('HC');
                     window.location.href='/trackStatusMobileHC';
                 } else if (selectedCourt === 'DC') {
-                    console.log('DC');
                     window.location.href='/trackStatusMobileDC';
                 } else {
-                    console.log('APP');
-                    window.location.href='/trackStatusDetails';
+                    const applicationNumber = application_number;
+                    const encodedAppNumber = btoa(applicationNumber); // Base64 encode
+                    window.location.href = `/trackStatusDetails?application_number=${encodeURIComponent(encodedAppNumber)}`;
                 }
             } else {
                 alert("Invalid OTP. Try again.");
@@ -468,7 +467,7 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
     const otpTimer = document.getElementById("otpTimertrack");
     const mobileInput = document.getElementById("otp");
     const err_span = document.getElementById('error_span');
-    let timeLeft = 60;
+    let timeLeft = 10;
     const mobile_number = sessionStorage.getItem("otp_mobile");
     otpTimer.textContent = "Resend OTP in (01:00)";
     otpTimer.classList.remove("hidden");
@@ -619,7 +618,7 @@ function getApplicationDetailByMobile(mobileNumber) {
             {
             view_recent_applications.classList.remove('hidden');
             
-            let maskedNumber = `XXXXX XXX${mobileNumber.slice(-2)}`;
+            let maskedNumber = `xxxxx xxx${mobileNumber.slice(-2)}`;
             document.getElementById("modalText").innerHTML = 
             `Details of recently applied applications with mobile no <span class="text-green-500">${maskedNumber}</span>`;
 
@@ -643,7 +642,7 @@ function getApplicationDetailByMobile(mobileNumber) {
             trackedDataHTML += `
                 <tr class="text-center">
                     <td class="border border-gray-300 px-4 py-2 text-[#D09A3F]">
-                        <a href="trackStatusDetails?application_number=${app.application_number}" 
+                        <a href="trackStatusDetails?application_number=${btoa(app.application_number)}" 
                         class="underline hover:text-[#B07D2E]">
                             ${app.application_number}
                         </a>

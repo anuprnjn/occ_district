@@ -78,7 +78,7 @@
                             {{ session('user.estd_code') == $establishment['est_code'] ? 'selected' : '' }}>
                             {{ $establishment['estname'] }}
                         </option>
-                    @endforeach
+                    @endforeach 
                 </select>
             </form>
         @endif

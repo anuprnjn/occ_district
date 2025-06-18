@@ -102,144 +102,144 @@
         // });
     }
     
-function downloadCC(applicationNo) {
-    const button = document.getElementById("download-cc");
-    const isHighCourt = applicationNo.startsWith("HC") || applicationNo.startsWith("HCW");
-    const route = isHighCourt 
-        ? '/certified-copy/high-court' 
-        : '/certified-copy/civil-court';
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    function downloadCC(applicationNo) {
+        const button = document.getElementById("download-cc");
+        const isHighCourt = applicationNo.startsWith("HC") || applicationNo.startsWith("HCW");
+        const route = isHighCourt 
+            ? '/certified-copy/high-court' 
+            : '/certified-copy/civil-court';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    button.innerHTML = `<span class="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Loading...`;
-    button.disabled = true;
-    button.style.cursor = "not-allowed";
-    button.classList.add("opacity-60");
+        button.innerHTML = `<span class="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Loading...`;
+        button.disabled = true;
+        button.style.cursor = "not-allowed";
+        button.classList.add("opacity-60");
 
-    fetch(route, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
-        },
-        body: JSON.stringify({ application_number: applicationNo })
-    })
-    .then(res => res.json())
-    .then(data => {
-        button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
-        button.disabled = false;
+        fetch(route, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ application_number: applicationNo })
+        })
+        .then(res => res.json())
+        .then(data => {
+            button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
+            button.disabled = false;
 
-        const resultContainer = document.getElementById("cc-download-result");
-        resultContainer.innerHTML = "";
+            const resultContainer = document.getElementById("cc-download-result");
+            resultContainer.innerHTML = "";
 
-        if (data.status === "success") {
-            const docs = data.data.document_details || [];
+            if (data.status === "success") {
+                const docs = data.data.document_details || [];
 
-            if (docs.length === 0) {
-                resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">No documents found.</p>`;
-                return;
-            }
+                if (docs.length === 0) {
+                    resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">No documents found.</p>`;
+                    return;
+                }
 
-            const isOrderCopy = applicationNo.startsWith("HCW") || /^[A-Z]{3}W/.test(applicationNo);
-            const isOrderCopyCivil = !applicationNo.startsWith("H");
+                const isOrderCopy = applicationNo.startsWith("HCW") || /^[A-Z]{3}W/.test(applicationNo);
+                const isOrderCopyCivil = !applicationNo.startsWith("H");
 
-            let extraButtons = '';
-            if (docs.length > 1) {
-                const encodedDocs = encodeURIComponent(JSON.stringify(docs));
-                extraButtons = `
-                    <div class="mb-4 w-full flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end items-stretch sm:items-center sm:-mt-16 mt-0">
-                        <button onclick="downloadAllDocuments('${encodedDocs}')" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
-                            <img src="/passets/images/icons/download.svg" alt="Download All" class="w-5 h-5">
-                            Download All Files
-                        </button>
-                        <button onclick="downloadAsZip('${applicationNo}')" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
-                            <img src="/passets/images/icons/zip.svg" alt="Download ZIP" class="w-5 h-5">
-                            Download as ZIP
-                        </button>
-                    </div>
-                `;
-            }
+                let extraButtons = '';
+                if (docs.length > 1) {
+                    const encodedDocs = encodeURIComponent(JSON.stringify(docs));
+                    extraButtons = `
+                        <div class="mb-4 w-full flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end items-stretch sm:items-center sm:-mt-16 mt-0">
+                            <button onclick="downloadAllDocuments('${encodedDocs}')" class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
+                                <img src="/passets/images/icons/download.svg" alt="Download All" class="w-5 h-5">
+                                Download All Files
+                            </button>
+                            <button onclick="downloadAsZip('${applicationNo}')" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
+                                <img src="/passets/images/icons/zip.svg" alt="Download ZIP" class="w-5 h-5">
+                                Download as ZIP
+                            </button>
+                        </div>
+                    `;
+                }
 
-            let tableHTML = `
-                ${extraButtons}
-                <div class="overflow-x-auto">
-                    <table class="min-w-full border border-gray-300 text-sm text-left">
-                        <thead class="bg-[#D09A3F] text-md uppercase text-white">
-                            <tr>
-                                <th class="px-2 py-2 border-b font-semibold text-md">S.No.</th>
-            `;
-
-            if (isOrderCopy) {
-                // Same structure for HCW and Civil Court "Order Copy"
-                tableHTML += `
-                    <th class="px-2 py-1 border-b font-semibold text-md">Order No</th>
-                    <th class="px-2 py-1 border-b font-semibold text-md">Order Date</th>
-                    <th class="px-2 py-1 border-b font-semibold text-md">No. of Pages</th>
-                `;
-            } else {
-                // Other documents
-                tableHTML += `
-                    <th class="px-2 py-1 border-b font-semibold text-md">Required Document</th>
-                    <th class="px-2 py-1 border-b font-semibold text-md">No. of Pages</th>
-                `;
-            }
-
-            tableHTML += `
-                <th class="px-2 py-1 border-b font-semibold text-md">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            docs.forEach((doc, index) => {
-                const downloadLink = doc.certified_copy_links?.[0] || "#";
-
-                tableHTML += `
-                    <tr>
-                        <td class="px-2 py-1 border-b text-md">${index + 1}</td>
+                let tableHTML = `
+                    ${extraButtons}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border border-gray-300 text-sm text-left">
+                            <thead class="bg-[#D09A3F] text-md uppercase text-white">
+                                <tr>
+                                    <th class="px-2 py-2 border-b font-semibold text-md">S.No.</th>
                 `;
 
                 if (isOrderCopy) {
+                    // Same structure for HCW and Civil Court "Order Copy"
                     tableHTML += `
-                        <td class="px-2 py-1 border-b text-md border">${doc.order_number || '-'}</td>
-                        <td class="px-2 py-1 border-b text-md border">${doc.order_date || '-'}</td>
-                        <td class="px-2 py-1 border-b text-md border">${doc.new_page_no || doc.number_of_page || '-'}</td>
+                        <th class="px-2 py-1 border-b font-semibold text-md">Order No</th>
+                        <th class="px-2 py-1 border-b font-semibold text-md">Order Date</th>
+                        <th class="px-2 py-1 border-b font-semibold text-md">No. of Pages</th>
                     `;
                 } else {
+                    // Other documents
                     tableHTML += `
-                        <td class="px-2 py-1 border-b text-md border">${doc.document_type || '-'}</td>
-                        <td class="px-2 py-1 border-b text-md border">${doc.number_of_page || '-'}</td>
+                        <th class="px-2 py-1 border-b font-semibold text-md">Required Document</th>
+                        <th class="px-2 py-1 border-b font-semibold text-md">No. of Pages</th>
                     `;
                 }
 
                 tableHTML += `
-                        <td class="px-2 py-1 border-b text-md">
-                            <a href="${downloadLink}" download class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs">
-                                <img src="/passets/images/icons/download.svg" alt="Download" class="w-4 h-4">
-                            </a>
-                        </td>
-                    </tr>
+                    <th class="px-2 py-1 border-b font-semibold text-md">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                 `;
-            });
 
-            tableHTML += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
+                docs.forEach((doc, index) => {
+                    const downloadLink = doc.certified_copy_links?.[0] || "#";
 
-            resultContainer.innerHTML = tableHTML;
+                    tableHTML += `
+                        <tr>
+                            <td class="px-2 py-1 border-b text-md">${index + 1}</td>
+                    `;
 
-        } else {
-            resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">Error: ${data.message}</p>`;
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
-        button.disabled = false;
-        document.getElementById("cc-download-result").innerHTML = `<p class="text-sm text-red-600 mt-2">An error occurred. Please try again.</p>`;
-    });
-}
+                    if (isOrderCopy) {
+                        tableHTML += `
+                            <td class="px-2 py-1 border-b text-md border">${doc.order_number || '-'}</td>
+                            <td class="px-2 py-1 border-b text-md border">${doc.order_date || '-'}</td>
+                            <td class="px-2 py-1 border-b text-md border">${doc.new_page_no || doc.number_of_page || '-'}</td>
+                        `;
+                    } else {
+                        tableHTML += `
+                            <td class="px-2 py-1 border-b text-md border">${doc.document_type || '-'}</td>
+                            <td class="px-2 py-1 border-b text-md border">${doc.number_of_page || '-'}</td>
+                        `;
+                    }
+
+                    tableHTML += `
+                            <td class="px-2 py-1 border-b text-md">
+                                <a href="${downloadLink}" download class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-xs">
+                                    <img src="/passets/images/icons/download.svg" alt="Download" class="w-4 h-4">
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                resultContainer.innerHTML = tableHTML;
+
+            } else {
+                resultContainer.innerHTML = `<p class="text-sm text-red-600 mt-2">Error: ${data.message}</p>`;
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            button.innerHTML = `<img src="/passets/images/icons/download.svg" alt="">Download Certified Copy`;
+            button.disabled = false;
+            document.getElementById("cc-download-result").innerHTML = `<p class="text-sm text-red-600 mt-2">An error occurred. Please try again.</p>`;
+        });
+    }
 
 
 </script> 
@@ -265,13 +265,14 @@ function downloadCC(applicationNo) {
             return null;
         }
         var url_application_number = getQueryParam('application_number');
-        console.log(application_number);
+        // console.log(url_application_number);
+        // return;
         // Retrieve the application number from sessionStorage
-        var application_number = sessionStorage.getItem('track_application_number') || url_application_number;
-
-        if (application_number) {
+        // var application_number = url_application_number || sessionStorage.getItem('track_application_number') ;
+       
+        if (url_application_number) {
             // continue with AJAX logic
-            if(application_number.startsWith('HC')) {
+            if(url_application_number.startsWith('HC')) {
                 sessionStorage.setItem('selectedCourt', 'HC');
             }else{
                 sessionStorage.setItem('selectedCourt', 'DC');
@@ -286,7 +287,7 @@ function downloadCC(applicationNo) {
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    application_number: application_number,
+                    application_number: url_application_number,
                 },
                 success: function(response) {
                     if (response.success) {
@@ -294,8 +295,9 @@ function downloadCC(applicationNo) {
                         const noteButton = document.querySelector('#note button');
                         // noteButton.setAttribute('onclick', `detailsPayment('${app_no}')`);
                         const orderDetails = response?.order_details || [];
-
-                        displayApplicationDetails(response.data[0],orderDetails);
+                        const merchantDetails = response?.merchantdetails;
+                       
+                        displayApplicationDetails(response.data[0],orderDetails,merchantDetails);
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
                     }
@@ -310,112 +312,14 @@ function downloadCC(applicationNo) {
         }
     });
 
-    function displayApplicationDetails(data,orderDetails) {
-        // Log the full data to inspect its structure
-        // console.log('data',data);
-        // sessionStorage.removeItem('track_application_number');
-        // sessionStorage.removeItem('selectedCourt');
-            // Show a persistent warning message
-    function showWarningMessage() {
-        const toast = document.createElement("div");
-        toast.innerHTML = `
-            <div style="
-                position: fixed;
-                bottom: 30px;
-                right: 30px;
-                background-color: #fff3cd;
-                color: #856404;
-                padding: 12px 14px;
-                border-radius: 10px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-family: 'Segoe UI', sans-serif;
-                font-size: 14px;
-                min-width: 320px;
-                max-width: 400px;
-                animation: slideIn 0.5s ease-out;
-                z-index: 1000;
-            ">
-                <span style="font-size: 20px;">⚠️</span>
-                <div style="flex: 1;">
-                Refreshing this page might redirect you to the Sign-In page.
-                    <div id="countdown" style="margin-top: 4px; font-size: 12px; color: #666;"></div>
-                </div>
-                <button id="dismissWarning" style="
-                    background: transparent;
-                    border: none;
-                    font-size: 20px;
-                    font-weight: bold;
-                    color: #856404;
-                    cursor: pointer;
-                " title="Close">&times;</button>
-            </div>
-        `;
-        document.body.appendChild(toast);
-
-        const countdownSpan = toast.querySelector('#countdown');
-        let countdown = 10;
-        countdownSpan.textContent = `(Auto-hide in ${countdown}s)`;
-
-        const intervalId = setInterval(() => {
-            countdown--;
-            countdownSpan.textContent = `(Auto-hide in ${countdown}s)`;
-            if (countdown <= 0) {
-                clearInterval(intervalId);
-                toast.remove();
-            }
-        }, 1000);
-
-        document.getElementById("dismissWarning").addEventListener("click", () => {
-            clearInterval(intervalId);
-            toast.remove();
-        });
-    }
-
-    // Add this to your CSS <style> or in <head> for animation:
-    const style = document.createElement('style');
-    style.innerHTML = `
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }`;
-    document.head.appendChild(style);
-     showWarningMessage();
+    function displayApplicationDetails(data,orderDetails,merchantDetails) {
+   
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
         print_btn_track.classList.remove('hidden');
         // Display the application status
         var applicationStatus = data.application_status ? `Application Status - ( ${data.application_status} )` : '';
-        var statusElement = $('#application-status');
-
-        // Define status colors
-        var statusColors = {
-            "Rejected": "text-red-500",
-            "Certified copy is ready to be download": "text-teal-500",
-            "Payment Success": "text-lime-500",
-            "Document Uploaded": "text-yellow-500",
-            "In Progress": "text-green-500"
-        };
-
-        // Remove any previous color classes
-        statusElement.removeClass("text-red-500 text-teal-500 text-lime-500 text-yellow-500 text-green-500");
-
-        // Set text and color
-        if (data.application_status) {
-            statusElement.text(applicationStatus);
-            var statusColor = statusColors[data.application_status] || "text-gray-500"; // Default color if status not matched
-            statusElement.addClass(statusColor);
-        } else {
-            statusElement.text('');
-        }
+       
         var detailsSection = $('#application-details');
 
         // Format the created_at time as dd-mm-yyyy hh:mm AM/PM
@@ -425,10 +329,9 @@ function downloadCC(applicationNo) {
         var applicationStatus = data.application_status ? data.application_status.trim() : 'N/A';
        
         var application_no = data.application_number || 'N/A';
+       
 
-        const status = applicationStatus.toLowerCase();
-
-        if (status === "payment pending" || status === "deficit payment pending") {
+        if (data.payment_status === 0 || (data.deficit_status === 1 && data.deficit_payment_status === 0) ) {
             const payBtn = document.getElementById("pay-now-button");
             const note_span = document.getElementById("note_span");
             note_span.classList.remove("hidden");
@@ -436,12 +339,72 @@ function downloadCC(applicationNo) {
             payBtn.setAttribute("onclick", `paymentPending('${application_no}')`);
         }
 
-        if (status === "certified copy is ready to be download") {
+        if (data.certified_copy_ready_status === 1) {
             const downloadBtn = document.getElementById("download-cc");
             downloadBtn.classList.remove("hidden");
             downloadBtn.setAttribute("onclick", `downloadCC('${application_no}')`);
         }
-        // condition ends here 
+        if(merchantDetails != null && merchantDetails.transaction_number != null){
+            doubleVerification();
+        }
+       
+       function doubleVerification() {
+            const DEPID = merchantDetails.deptid;
+            const DEPTTRANID = 'TR176261120073123';
+            // const DEPTTRANID = merchantDetails.transaction_number;
+            const SECURITYCODE = merchantDetails.securitycode;
+
+            fetch('/double-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    depid: DEPID,
+                    depttranid: DEPTTRANID,
+                    securitycode: SECURITYCODE
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+               if (data.success && Array.isArray(data.decrypted_data)) {
+                const decPayload = {
+                    DEPTID: data.decrypted_data[0],
+                    RECIEPTHEADCODE: data.decrypted_data[1],
+                    DEPOSITERNAME: data.decrypted_data[2],
+                    DEPTTRANID: data.decrypted_data[3],
+                    AMOUNT: data.decrypted_data[4],
+                    DEPOSITERID: data.decrypted_data[5],
+                    PANNO: data.decrypted_data[6],
+                    ADDINFO1: data.decrypted_data[7],
+                    ADDINFO2: data.decrypted_data[8],
+                    ADDINFO3: data.decrypted_data[9],
+                    TREASCODE: data.decrypted_data[10],
+                    IFMSOFFICECODE: data.decrypted_data[11],
+                    STATUS: data.decrypted_data[12],
+                    PAYMENTSTATUSMESSAGE: data.decrypted_data[13],
+                    GRN: data.decrypted_data[14],
+                    CIN: data.decrypted_data[15],
+                    REF_NO: data.decrypted_data[16],
+                    TXN_DATE: data.decrypted_data[17],
+                    TXN_AMOUNT: data.decrypted_data[18],
+                    CHALLAN_URL: data.decrypted_data[19],
+                    PMODE: data.decrypted_data[20],
+                    ADDINFO5: data.decrypted_data[21],
+                    ADDINFO6: data.decrypted_data[22],
+                };
+
+                console.log("Payload to send: ", decPayload);
+                } else {
+                    console.log("Double Verification failed.");
+                }
+            })
+            .catch(error => {
+                console.error('Error during verification:', error);
+                console.log("Error during verification.");
+            });
+        }
 
         var applicationStatusRow = `
             <tr class="border">
@@ -491,15 +454,24 @@ function downloadCC(applicationNo) {
                     <td class="px-6 py-2">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                 </tr>
             `;
-        } else if (data.case_number && data.case_year) {
+        } else if ((data.case_number && data.case_year) || (data.filing_number && data.filing_year) ) {
+            if(data.case_number && data.case_year){
             caseDetails = `
                 <tr class="border">
                     <td class="px-6 py-2 font-semibold uppercase border">Case Number</td>
                     <td class="px-6 py-2">${data.case_type || ''}/${data.case_number}/${data.case_year}</td>
                 </tr>
             `;
+            }if(data.filing_number && data.filing_year)
+            {
+                 caseDetails = `
+                <tr class="border">
+                    <td class="px-6 py-2 font-semibold uppercase border">Filling Number</td>
+                    <td class="px-6 py-2">${data.case_type || ''}/${data.filing_number}/${data.filing_year}</td>
+                </tr>
+            `;
+            }
         }
-
 
 
         const orderDetailsList = orderDetails || []; // fallback to empty array

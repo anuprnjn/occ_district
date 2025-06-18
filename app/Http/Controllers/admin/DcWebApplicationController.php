@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
+use App\Helpers\ActivityLogger;
 
 class DcWebApplicationController extends Controller
 {
@@ -150,7 +152,7 @@ class DcWebApplicationController extends Controller
         $request->validate([
             'application_number' => 'required',
             'order_number' => 'required',
-            'pdf_file' => 'required|mimes:pdf|max:2048'
+            'pdf_file' => 'required|mimes:pdf|max:20480'
         ]);
 
         try {
@@ -219,7 +221,7 @@ class DcWebApplicationController extends Controller
                     ->where('application_number', $request->application_number)
                     ->update(['document_status' => 1]);
             }
-
+           ActivityLogger::log_dc('Document uploaded for application no: ' . $request->application_number, 'update', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
             return back()->with('success', 'PDF uploaded successfully with ' . $pageCount . ' pages. Total amount: ' . number_format($newPageAmount, 2));
         } catch (\Exception $e) {
             Log::error('Error uploading PDF', ['error' => $e->getMessage()]);

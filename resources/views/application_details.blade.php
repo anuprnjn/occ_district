@@ -21,19 +21,11 @@
         </div>
     </button>
     <br>
-    <div class="sm:mt-4 hidden -mt-10 mb-20 sm:mb-0" id="note">
-    <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <button onclick="detailsPayment()" class="text-blue-500 border-b border-blue-500 ml-1">Pending Payments</button>.</span>
-    </div>
-    
 </section>
 @endsection
 
 @push('scripts')  
 <script>
-
-    function detailsPayment(application_number) {
-        window.location.href = "{{ route('pendingPayments') }}?application_number=" + encodeURIComponent(application_number);
-    }
         
     const formatDateTime = (dateString) => {
         const date = new Date(dateString);
@@ -85,9 +77,6 @@
                     const data = result.data[0]; 
                     console.log('applied data',data);
                     const container = document.getElementById('application-details-container');
-
-                    const noteButton = document.querySelector('#note button');
-                    noteButton.setAttribute('onclick', `detailsPayment('${data.application_number}')`);
 
                     // Set the dynamic title
                     const title = ` ${data.district_name || districtName} - ${data.establishment_name || establishmentName}`;
@@ -185,7 +174,6 @@
 
                     // Show print button after data loads
                     document.getElementById('print-button').style.display = 'inline-block';
-                    document.getElementById('note').style.display = 'inline-block';
                     
                 } else {
                     document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">Failed to fetch application details.</p>';
@@ -195,51 +183,80 @@
                 // sessionStorage.removeItem('application_number');
 
                 // Show a persistent warning message
-                function showWarningMessage() {
-                const warningMessage = document.createElement("div");
-                warningMessage.innerHTML = `
+            function showWarningMessage() {
+                const toast = document.createElement("div");
+                toast.innerHTML = `
                     <div style="
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    width: 300px;
-                    background: #DAF7A6;
-                    padding: 15px;
-                    text-align: left;
-                    z-index: 1000;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    font-family: Arial, sans-serif;
-                    font-weight: bold;
-                    border-left: 5px solid red;
-                ">
-                    <span style="font-size: 24px; color: red;">⚠️</span>
-                    <span style="flex: 1; color: #333;font-size:14px;">Warning: Refreshing this page will redirect you to the website home page.</span>
-                    <button id="dismissWarning" style="
-                        background: red;
-                        color: white;
-                        border: none;
-                        padding: 5px 10px;
-                        cursor: pointer;
-                        border-radius: 3px;
-                        font-weight: bold;
-                        transition: background 0.3s ease;
-                    ">X</button>
-                </div>
+                        position: fixed;
+                        bottom: 30px;
+                        right: 30px;
+                        background-color: #fff3cd;
+                        color: #856404;
+                        padding: 12px 14px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        font-family: 'Segoe UI', sans-serif;
+                        font-size: 14px;
+                        min-width: 320px;
+                        max-width: 400px;
+                        animation: slideIn 0.5s ease-out;
+                        z-index: 1000;
+                    ">
+                        <span style="font-size: 20px;">⚠️</span>
+                        <div style="flex: 1;">
+                        Refreshing this page redirect you to the Home Page.
+                            <div id="countdown" style="margin-top: 4px; font-size: 12px; color: #666;"></div>
+                        </div>
+                        <button id="dismissWarning" style="
+                            background: transparent;
+                            border: none;
+                            font-size: 20px;
+                            font-weight: bold;
+                            color: #856404;
+                            cursor: pointer;
+                        " title="Close">&times;</button>
+                    </div>
                 `;
-                document.body.appendChild(warningMessage);
+                document.body.appendChild(toast);
 
-                // Add event listener to dismiss button
-                document.getElementById("dismissWarning").addEventListener("click", function () {
-                    warningMessage.remove();
+                const countdownSpan = toast.querySelector('#countdown');
+                let countdown = 10;
+                countdownSpan.textContent = `(Auto-hide in ${countdown}s)`;
+
+                const intervalId = setInterval(() => {
+                    countdown--;
+                    countdownSpan.textContent = `(Auto-hide in ${countdown}s)`;
+                    if (countdown <= 0) {
+                        clearInterval(intervalId);
+                        toast.remove();
+                    }
+                }, 1000);
+
+                document.getElementById("dismissWarning").addEventListener("click", () => {
+                    clearInterval(intervalId);
+                    toast.remove();
                 });
             }
+              // Add this to your CSS <style> or in <head> for animation:
+            const style = document.createElement('style');
+            style.innerHTML = `
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }`;
+            document.head.appendChild(style);
 
             // Call this function when the application details page loads
-            // showWarningMessage();
+            showWarningMessage();
             } catch (error) {
                 console.error('Error fetching application details:', error);
                 document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">An error occurred while fetching application details.</p>';
@@ -345,6 +362,5 @@
     printWindow.print();
 }
 </script>
-<!-- <span><strong >Note : </strong>Actual delivery of certified copy after making payment on intimation made by copying section ! <br>Payment can be done through <a href="#" class="text-blue-500">Pending Payments</a>.</span> -->
   
 @endpush

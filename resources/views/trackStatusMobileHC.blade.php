@@ -11,30 +11,28 @@
         @if(session()->has('trackDetailsMobileHC'))
             @php
                 $hcData = session('trackDetailsMobileHC')['data'];
-
-                // Merge all copies
                 $allCopies = collect($hcData['order_copy'] ?? [])
                     ->merge($hcData['other_copy'] ?? [])
                     ->sortByDesc('created_at')
                     ->values();
 
-                // Group all applications that are NOT ready to download
-                $latestDateApplications = $allCopies->filter(function($item) {
-                    return $item['application_status'] !== 'Certified copy is ready to be download';
-                })->values();
+                $latestDateApplications = $allCopies->filter(fn($item) =>
+                    $item['application_status'] !== 'Certified copy is ready to be download'
+                )->values();
 
-                // Applications that ARE ready to download
-                $previousApplications = $allCopies->filter(function($item) {
-                    return $item['application_status'] === 'Certified copy is ready to be download';
-                })->values();
+                $previousApplications = $allCopies->filter(fn($item) =>
+                    $item['application_status'] === 'Certified copy is ready to be download'
+                )->values();
 
                 $hasApplications = $allCopies->isNotEmpty();
             @endphp
 
             @if($hasApplications && $previousApplications->isNotEmpty())
                 <div class="w-full sm:w-auto text-center sm:text-right mb-6 sm:mb-4">
-                    <button id="toggleButton" onclick="toggleAllRows(this)" class="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-base shadow">
-                        <img src="{{ asset('passets/images/icons/history.svg')}}" alt="" class="w-5 h-5"> Show Previous Applications
+                    <button id="toggleButton" onclick="toggleAllRows(this)"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-base shadow">
+                        <img src="{{ asset('passets/images/icons/history.svg')}}" alt="" class="w-5 h-5">
+                        Show Previous Applications
                     </button>
                 </div>
             @endif
@@ -52,10 +50,10 @@
 
     <div class="mt-4 mb-16">
         @if($hasApplications)
-        <!-- Instruction Message -->
-           <div class="w-full text-yellow-600 rounded mb-4 text-xs sm:text-sm">
+            <div class="w-full text-yellow-600 rounded mb-4 text-xs sm:text-sm">
                 <strong>Note:</strong> Click on the <span class="font-semibold text-yellow-700">Application Number</span> to view full application details.
             </div>
+
             <div class="overflow-x-auto rounded-lg">
                 <table class="min-w-full table-auto text-base">
                     <thead class="bg-[#4B3E2F] text-white text-base">
@@ -64,19 +62,20 @@
                             <th class="px-3 py-2 border text-left font-medium whitespace-nowrap">Application Number</th>
                             <th class="px-3 py-2 border text-left font-medium whitespace-nowrap">Name</th>
                             <th class="px-3 py-2 border text-left font-medium whitespace-nowrap">Status of the Application</th>
-                            <th class="px-3 py-2 border text-left font-medium whitespace-nowrap">Case Type</th>
+                            <th class="px-3 py-2 border text-left font-medium whitespace-nowrap">Filling Number</th>
+                            <th class="px-3 py-2 border text-left font-medium whitespace-nowrap">Case Number</th>
                             <th class="px-3 py-2 border text-left font-medium whitespace-nowrap">Applied Date</th>
                         </tr>
                     </thead>
                     <tbody id="application-table">
-                        @foreach($latestDateApplications as $index => $copy)
+                        @foreach($latestDateApplications as $copy)
                             <tr class="text-base">
                                 <td class="px-3 py-2 border">{{ $loop->iteration }}</td>
                                 <td class="px-3 py-2 border break-words">
                                     @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
-                                    <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}" 
+                                    <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
                                        class="text-md text-emerald-600 font-semibold border-b border-emerald-500 hover:text-emerald-700">
-                                       {{ $copy['application_number'] }}
+                                        {{ $copy['application_number'] }}
                                     </a>
                                 </td>
                                 <td class="px-3 py-2 border break-words">
@@ -86,20 +85,31 @@
                                     {{ is_array($copy['application_status']) ? implode(', ', $copy['application_status']) : $copy['application_status'] }}
                                 </td>
                                 <td class="px-3 py-2 border break-words">
-                                    {{ is_array($copy['case_type']) ? implode(', ', $copy['case_type']) : $copy['case_type'] }}
+                                    @php
+                                        $fillingType = !empty($copy['filling_type']) ? (is_array($copy['filling_type']) ? implode(', ', $copy['filling_type']) : $copy['filling_type']) : 'N/A';
+                                        if ($fillingType !== 'N/A' && preg_match('/^([A-Z\.]+)\s*:\s*.*?\/(\d+\/\d+)/', $fillingType, $matches)) {
+                                            $fillingType = $matches[1] . '/' . $matches[2];
+                                        }
+                                    @endphp
+                                    {{ $fillingType }}
                                 </td>
-                                <td class="px-3 py-2 border break-words">{{ \Carbon\Carbon::parse($copy['created_at'])->format('d M Y') }}</td>
+                                <td class="px-3 py-2 border break-words">
+                                    {{ !empty($copy['case_type']) ? (is_array($copy['case_type']) ? implode(', ', $copy['case_type']) : $copy['case_type']) : 'N/A' }}
+                                </td>
+                                <td class="px-3 py-2 border break-words">
+                                    {{ \Carbon\Carbon::parse($copy['created_at'])->format('d M Y') }}
+                                </td>
                             </tr>
                         @endforeach
 
-                        @foreach($previousApplications as $index => $copy)
+                        @foreach($previousApplications as $copy)
                             <tr class="text-base previous-row hidden">
                                 <td class="px-3 py-2 border">{{ $loop->iteration + $latestDateApplications->count() }}</td>
                                 <td class="px-3 py-2 border break-words">
                                     @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
-                                    <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}" 
+                                    <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
                                        class="text-md text-emerald-600 font-semibold border-b border-emerald-500 hover:text-emerald-700">
-                                       {{ $copy['application_number'] }}
+                                        {{ $copy['application_number'] }}
                                     </a>
                                 </td>
                                 <td class="px-3 py-2 border break-words">
@@ -109,9 +119,14 @@
                                     {{ is_array($copy['application_status']) ? implode(', ', $copy['application_status']) : $copy['application_status'] }}
                                 </td>
                                 <td class="px-3 py-2 border break-words">
-                                    {{ is_array($copy['case_type']) ? implode(', ', $copy['case_type']) : $copy['case_type'] }}
+                                    {{ !empty($copy['filling_type']) ? (is_array($copy['filling_type']) ? implode(', ', $copy['filling_type']) : $copy['filling_type']) : 'N/A' }}
                                 </td>
-                                <td class="px-3 py-2 border break-words">{{ \Carbon\Carbon::parse($copy['created_at'])->format('d M Y') }}</td>
+                                <td class="px-3 py-2 border break-words">
+                                    {{ !empty($copy['case_type']) ? (is_array($copy['case_type']) ? implode(', ', $copy['case_type']) : $copy['case_type']) : 'N/A' }}
+                                </td>
+                                <td class="px-3 py-2 border break-words">
+                                    {{ \Carbon\Carbon::parse($copy['created_at'])->format('d M Y') }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -127,14 +142,14 @@
         @endif
     </div>
 
-    @else
-        <div class="mt-6 flex items-center gap-3 text-rose-600 bg-rose-50 border border-rose-200 px-4 py-3 rounded-lg shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M18 10c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-8-4a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 0010 6zm0 7a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-lg font-semibold">404 No details found.</span>
-        </div>
-    @endif
+@else
+    <div class="mt-6 flex items-center gap-3 text-rose-600 bg-rose-50 border border-rose-200 px-4 py-3 rounded-lg shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-8-4a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 0010 6zm0 7a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+        </svg>
+        <span class="text-lg font-semibold">404 No details found.</span>
+    </div>
+@endif
 </section>
 
 @endsection
