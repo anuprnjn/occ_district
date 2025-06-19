@@ -76,6 +76,7 @@ class mobileNumberTrackController extends Controller
     }
     public function setTrackDetailsHC(Request $request)
     {
+        session()->forget('trackDetailsMobileDC');
         $trackData = $request->input('data');
 
         // Save in Laravel session
@@ -88,6 +89,8 @@ class mobileNumberTrackController extends Controller
     }
     public function setTrackDetailsDC(Request $request)
     {
+        
+        session()->forget('trackDetailsMobileHC');
         $trackData = $request->input('data');
 
         // Save in Laravel session
