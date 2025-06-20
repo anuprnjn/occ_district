@@ -363,7 +363,7 @@
         event.preventDefault(); 
 
         // Get form input values
-        const name = document.getElementById("name").value.trim();
+        const name = document.getElementById("name").value.trim().toUpperCase();
         const mobile = document.getElementById("mobileInput").value.trim();
         const email = document.getElementById("email").value.trim();
         const cnfEmail = document.getElementById("confirm-email").value.trim();

@@ -18,7 +18,7 @@
         </div>
         <div class="flex justify-center sm:flex-row flex-col items-center sm:gap-10">
             <div class="form-field">
-                <label for="application_number">Application Number / Mobile Number :  <span>*</span></label>
+                <label for="application_number">Mobile Number / Application Number  <span>*</span></label>
                 <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="sm:mb-5">
             </div>  
             <div class="form-field hidden" id="mobile_otp">
@@ -43,7 +43,7 @@
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
 
 <!-- script to add js controls to the input box  -->
-<!-- <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
     const otpInput = document.getElementById('otp');
 
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         otpInput.addEventListener('contextmenu', e => e.preventDefault());
     }
 });
-</script> -->
+</script>
 <!-- script to check the mobile number or application number  -->
 <script>
     function trackApplication(input) {

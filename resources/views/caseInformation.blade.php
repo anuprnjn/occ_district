@@ -379,7 +379,7 @@
         const btnSpinner = document.getElementById("btnSpinner");
 
         // Get form field values
-        const name = document.getElementById("name").value.trim();
+        const name = document.getElementById("name").value.trim().toUpperCase();
         const mobile = document.getElementById("mobileInput").value.trim();
         const email = document.getElementById("email").value.trim();
         const cnfemail = document.getElementById("confirm-email").value.trim();
