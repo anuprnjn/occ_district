@@ -239,7 +239,7 @@ async function refreshCaptcha() {
     // Collect form data
     var district_code = sessionStorage.getItem('selectedDistCode');
     var establishment_code = sessionStorage.getItem('selectedEstCodeDC');
-    var applicant_name = document.getElementById('name').value;
+    var applicant_name = document.getElementById('name').value.toUpperCase();
     var mobile_number = document.getElementById('mobileInput').value;
     var email = document.getElementById('email').value;
     const cnfemail = document.getElementById('confirm-email').value.trim();
@@ -429,7 +429,7 @@ function submitFormData() {
     event.preventDefault();
 
     // Collect form data
-    var applicant_name = document.getElementById('name').value;
+    var applicant_name = document.getElementById('name').value.toUpperCase();
     var mobile_number = document.getElementById('mobileInput').value;
     var email = document.getElementById('email').value;
     const cnfemail = document.getElementById('confirm-email').value.trim();

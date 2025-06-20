@@ -384,13 +384,13 @@
 
                             if (status === "SUCCESS") {
                                 responseData.paymentStatus = 1;
-                                responseData.application_status = 'PAYMENT SUCCESSFULL <span style="color: green;font-weight:700">(Certified Copy will uploaded soon)</span>';
+                                responseData.application_status = 'PAYMENT SUCCESSFULL';
                             } else if (status === "FAIL") {
                                 responseData.payment_status = 0;
                                 responseData.application_status = "PAYMENT PENDING";
                             } else if (status === "BOOKED") {
                                 responseData.payment_status = 2;
-                                responseData.application_status = '<span style="color: red;font-weight:700">PAYMENT IS IN PROCESS</span>';
+                                responseData.application_status = 'PAYMENT IS IN PROCESS';
                             }
 
                             displayApplicationDetails(responseData, orderDetails,merchantDetails.transaction_number);
@@ -451,7 +451,6 @@
             downloadBtn.classList.remove("hidden");
             downloadBtn.setAttribute("onclick", `downloadCC('${application_no}')`);
         }
-
 
         var applicationStatusRow = `
             <tr class="border">

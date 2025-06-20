@@ -239,6 +239,12 @@ function sendOtp(courtType) {
                 mobile_indicator.textContent = `OTP has been sent to ${maskedMobile}`;
                 mobileInput.value = "";
                 mobileInput.placeholder = "Enter OTP";
+                mobileInput.maxLength = 6;
+                mobileInput.inputMode = "numeric";
+                mobileInput.pattern = "\\d{6}";
+                mobileInput.oninput = function () {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 6);
+                };
                 otpButton.textContent = "Verify OTP";
                 otpButton.disabled = false;
                 otpButton.setAttribute("onclick", "verifyOtp()"); // Ensure verifyOtp is set
@@ -321,7 +327,7 @@ function resendOtp() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-               mobileLabel.innerHTML = `Enter OTP : <span style="color:red;">*</span>`;
+                mobileLabel.innerHTML = `Enter OTP : <span style="color:red;">*</span>`;
                 mobileInput.classList.remove("cursor-not-allowed", "opacity-50");
                 mobileInput.value='';
                 mobile_indicator.classList.remove('hidden');
@@ -380,6 +386,9 @@ function sendOtpTrack(selectedCourt,validatedMobile, application_number){
     // console.log('new function',selectedCourt, validatedMobile);
     const otpButton = document.getElementById("otpButtonTrack");
     const otp_label = document.getElementById("otp_label");
+    const mobileInput = document.getElementById("otp");
+
+    mobileInput.classList.remove("cursor-not-allowed", "opacity-50");
     otpButton.textContent = "Verify OTP";
     otpButton.setAttribute("onclick", `verifyOtpTrack('${selectedCourt}', '${validatedMobile}', '${application_number}')`)
 
@@ -467,7 +476,8 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
     const otpTimer = document.getElementById("otpTimertrack");
     const mobileInput = document.getElementById("otp");
     const err_span = document.getElementById('error_span');
-    let timeLeft = 10;
+    const otp_label = document.getElementById("otp_label");
+    let timeLeft = 60;
     const mobile_number = sessionStorage.getItem("otp_mobile");
     otpTimer.textContent = "Resend OTP in (01:00)";
     otpTimer.classList.remove("hidden");
@@ -482,8 +492,12 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
             clearInterval(timerInterval);
             err_span.classList.add('hidden');
             otpTimer.classList.add("hidden");
+            otp_label.innerHTML = 'Click on Resend OTP <span style="color:red">*</span>';
             otpButton.textContent = "Resend OTP";
             mobileInput.disabled = true;
+            mobileInput.placeholder = "Click on resend OTP"
+            mobileInput.value = '';
+            mobileInput.classList.add("cursor-not-allowed","opacity-50");
             // mobileInput.classList.add('cursor-not-allowed');
             otpButton.disabled = false;
             otpButton.setAttribute("onclick", `resendOtpTrack('${selectedCourt}', '${mobile_number}')`); // Ensure resendOtp is set
@@ -492,12 +506,11 @@ function startOtpTimerTrack(selectedCourt,validatedMobile) {
 }
 
 // Function to resend OTP
-function resendOtpTrack(selectedCourt,validatedMobile) {
+function resendOtpTrack(selectedCourt, validatedMobile) {
     const otpButton = document.getElementById("otpButtonTrack");
     const mobileInput = document.getElementById("otp");
     const err_span = document.getElementById('error_span');
-
-    mobileInput.disabled = false;
+    const otp_label = document.getElementById("otp_label");
 
     // Make a POST request to the resendOtp endpoint
     fetch('/resend-otp', {
@@ -512,24 +525,35 @@ function resendOtpTrack(selectedCourt,validatedMobile) {
     .then(data => {
         if (data.success) {
             alert(`OTP resent successfully. Your OTP is: ${data.otp}`); // Show OTP for now
+            mobileInput.disabled = false;
+            mobileInput.classList.remove("cursor-not-allowed", "opacity-50");
+            mobileInput.placeholder = "Enter OTP";
+            mobileInput.type = "text";
+            mobileInput.value = '';
+            otp_label.innerHTML = 'Enter OTP : <span style="color:red">*</span>';
+
+            // Show mobile message
             err_span.classList.remove('hidden');
             const maskedMobile = validatedMobile.slice(0, 2) + 'xxxx' + validatedMobile.slice(-4);
-           if(selectedCourt === 'HC'){
-               err_span.innerHTML = `OTP has been sent to mobile number - <span style="color:red;">${maskedMobile}</span>.`;
-           } else if (selectedCourt === 'DC') {
+            if (selectedCourt === 'HC' || selectedCourt === 'DC') {
                 err_span.innerHTML = `OTP has been sent to mobile number - <span style="color:red;">${maskedMobile}</span>.`;
             } else {
                 err_span.innerHTML = `<span style="color: green;">OTP has been sent to registered mobile number - </span><span style="color:red;">${maskedMobile}</span>.`;
             }
+
+            // Update button to verify
             otpButton.textContent = "Verify OTP";
-            otpButton.setAttribute("onclick", `verifyOtpTrack('${selectedCourt}', '${validatedMobile}')`); // Ensure verifyOtp is set
-            startOtpTimerTrack(selectedCourt,validatedMobile);
+            otpButton.setAttribute("onclick", `verifyOtpTrack('${selectedCourt}', '${validatedMobile}')`);
+
+            // Start timer
+            startOtpTimerTrack(selectedCourt, validatedMobile);
         } else {
             alert(data.message);
         }
     })
     .catch(error => console.error('Error resending OTP:', error));
 }
+
 
 
 //**************************************************track status OTP logic end *****************************************************

@@ -288,7 +288,16 @@
         </div>
         <div class="form-field">
             <label for="case-year-hc" id="field2-label">Case Year: <span class="red">*</span></label>
-            <input type="text" id="case-year-hc" name="case_year" placeholder="Enter Case Year" required inputmode="numeric" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')">
+            <input 
+                type="text" 
+                id="case-year-hc" 
+                name="case_year" 
+                placeholder="Enter Case Year" 
+                required 
+                inputmode="numeric" 
+                pattern="\d{4}" 
+                maxlength="4"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)">
         </div>
     </div>
     <div class="form-row">
