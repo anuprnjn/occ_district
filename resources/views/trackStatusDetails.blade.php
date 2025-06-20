@@ -297,10 +297,11 @@
                         const orderDetails = response?.order_details || [];
                         const merchantDetails = response?.merchantdetails;
                         const responseData = response.data[0];
-                       if(merchantDetails != null && merchantDetails.transaction_number != null){
+                        const transaction_number = merchantDetails.transaction_number
+                       if(merchantDetails != null && transaction_number != null){
                             doubleVerification(merchantDetails,app_no,responseData,orderDetails);
                         }else{
-                            displayApplicationDetails(responseData,orderDetails);
+                            displayApplicationDetails(responseData,orderDetails,transaction_number);
                         }
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
@@ -392,7 +393,7 @@
                                 responseData.application_status = '<span style="color: red;font-weight:700">PAYMENT IS IN PROCESS</span>';
                             }
 
-                            displayApplicationDetails(responseData, orderDetails);
+                            displayApplicationDetails(responseData, orderDetails,merchantDetails.transaction_number);
                         } else {
                             console.log("Double Verification API failed.");
                         }
@@ -410,7 +411,7 @@
             });
     }
 
-    function displayApplicationDetails(data,orderDetails) {
+    function displayApplicationDetails(data,orderDetails,transaction_number) {
    
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
@@ -428,13 +429,21 @@
        
         var application_no = data.application_number || 'N/A';
        
-
+        
         if (data.payment_status === 0 || (data.deficit_status === 1 && data.deficit_payment_status === 0) ) {
             const payBtn = document.getElementById("pay-now-button");
             const note_span = document.getElementById("note_span");
             note_span.classList.remove("hidden");
             payBtn.classList.remove("hidden");
             payBtn.setAttribute("onclick", `paymentPending('${application_no}')`);
+        } else {
+            if(transaction_number == null && data.payment_status=== 3 && data.document_status ===1){
+                const payBtn = document.getElementById("pay-now-button");
+                const note_span = document.getElementById("note_span");
+                note_span.classList.remove("hidden");
+                payBtn.classList.remove("hidden");
+                payBtn.setAttribute("onclick", `paymentPending('${application_no}')`);
+            }
         }
 
         if (data.certified_copy_ready_status === 1) {
