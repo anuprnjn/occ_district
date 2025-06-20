@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Helpers\clsEncrypt; 
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 
 class PaymentController extends Controller
@@ -182,7 +183,58 @@ class PaymentController extends Controller
     }
 
 
+public function verifyJegrasPayment(Request $request)
+{
+    $payload = $request->all();
 
+    // Log incoming request payload
+    Log::info('Incoming Jegras DV Payload:', $payload);
+
+    $applicationNumber = $payload['APPLICATION_NUMBER'] ?? '';
+
+    // Determine the correct API URL
+    $apiUrl = str_starts_with($applicationNumber, 'HC')
+        ? 'http://localhost/occ_api/transaction/jegras_dv_payment_response_hc.php'
+        : 'http://localhost/occ_api/transaction/jegras_dv_payment_response_dc.php';
+
+    Log::info('Selected API URL: ' . $apiUrl);
+
+    try {
+    Log::info('Original Payload:', $payload);
+
+    $normalizedPayload = array_change_key_case($payload, CASE_LOWER);
+    Log::info('Normalized Payload:', $normalizedPayload);
+
+    $response = Http::post($apiUrl, $normalizedPayload);
+
+    Log::info('DV API Response Status: ' . $response->status());
+    Log::info('DV API Response Body: ' . $response->body());
+
+    if ($response->successful()) {
+        return response()->json([
+            'success' => true,
+            'data' => $payload,
+        ]);
+    }
+
+    Log::error('Jegras DV API call failed. Status: ' . $response->status());
+
+    return response()->json([
+        'success' => false,
+        'message' => 'API call failed',
+        'status' => $response->status(),
+        'response_body' => $response->body()
+    ], 500);
+
+} catch (\Exception $e) {
+    Log::error('Exception during Jegras DV API call: ' . $e->getMessage());
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Exception: ' . $e->getMessage(),
+    ], 500);
+}
+}
 
     
 }

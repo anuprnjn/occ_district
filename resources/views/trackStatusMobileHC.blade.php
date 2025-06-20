@@ -81,7 +81,7 @@
                                 <td class="px-3 py-2 border break-words">
                                     {{ is_array($copy['applicant_name']) ? implode(', ', $copy['applicant_name']) : $copy['applicant_name'] }}
                                 </td>
-                                <td class="px-3 py-2 border break-words">
+                                <td class="px-3 py-2 border break-words uppercase">
                                     {{ is_array($copy['application_status']) ? implode(', ', $copy['application_status']) : $copy['application_status'] }}
                                 </td>
                                 <td class="px-3 py-2 border break-words">

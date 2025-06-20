@@ -296,8 +296,12 @@
                         // noteButton.setAttribute('onclick', `detailsPayment('${app_no}')`);
                         const orderDetails = response?.order_details || [];
                         const merchantDetails = response?.merchantdetails;
-                       
-                        displayApplicationDetails(response.data[0],orderDetails,merchantDetails);
+                        const responseData = response.data[0];
+                       if(merchantDetails != null && merchantDetails.transaction_number != null){
+                            doubleVerification(merchantDetails,app_no,responseData,orderDetails);
+                        }else{
+                            displayApplicationDetails(responseData,orderDetails);
+                        }
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
                     }
@@ -312,7 +316,101 @@
         }
     });
 
-    function displayApplicationDetails(data,orderDetails,merchantDetails) {
+    function doubleVerification(merchantDetails,app_no,responseData,orderDetails) {
+        const DEPID = merchantDetails.deptid;
+        const DEPTTRANID = 'TR176261120073123';
+        // const DEPTTRANID = merchantDetails.transaction_number;
+        const SECURITYCODE = merchantDetails.securitycode;
+
+        fetch('/double-verification', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                depid: DEPID,
+                depttranid: DEPTTRANID,
+                securitycode: SECURITYCODE
+            })
+        })
+        .then(response => response.json())
+            .then(data => {
+                if (data.success && Array.isArray(data.decrypted_data)) {
+                    const decrypted_jegras_resp_dv_payload = {
+                        APPLICATION_NUMBER: app_no,
+                        DEPTID: data.decrypted_data[0],
+                        RECIEPTHEADCODE: data.decrypted_data[1],
+                        DEPOSITERNAME: data.decrypted_data[2],
+                        DEPTTRANID: data.decrypted_data[3],
+                        AMOUNT: data.decrypted_data[4],
+                        DEPOSITERID: data.decrypted_data[5],
+                        PANNO: data.decrypted_data[6],
+                        ADDINFO1: data.decrypted_data[7],
+                        ADDINFO2: data.decrypted_data[8],
+                        ADDINFO3: data.decrypted_data[9],
+                        TREASCODE: data.decrypted_data[10],
+                        IFMSOFFICECODE: data.decrypted_data[11],
+                        STATUS: data.decrypted_data[12],
+                        PAYMENTSTATUSMESSAGE: data.decrypted_data[13],
+                        GRN: data.decrypted_data[14],
+                        CIN: data.decrypted_data[15],
+                        REF_NO: data.decrypted_data[16],
+                        TXN_DATE: data.decrypted_data[17],
+                        TXN_AMOUNT: data.decrypted_data[18],
+                        CHALLAN_URL: data.decrypted_data[19],
+                        PMODE: data.decrypted_data[20],
+                        ADDINFO5: data.decrypted_data[21],
+                        ADDINFO6: data.decrypted_data[22],
+                    };
+
+                    console.log("Payload to send: ", decrypted_jegras_resp_dv_payload);
+                    
+                    // Hit Laravel backend to forward to HC/DC API
+                    fetch('/verify-jegras-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(decrypted_jegras_resp_dv_payload)
+                    })
+                    .then(res => res.json())
+                    .then(apiResponse => {
+                        if (apiResponse.success) {
+                            // Proceed with status check
+                            const status = apiResponse.STATUS;
+
+                            if (status === "SUCCESS") {
+                                responseData.paymentStatus = 1;
+                                responseData.application_status = 'PAYMENT SUCCESSFULL <span style="color: green;font-weight:700">(Certified Copy will uploaded soon)</span>';
+                            } else if (status === "FAIL") {
+                                responseData.payment_status = 0;
+                                responseData.application_status = "PAYMENT PENDING";
+                            } else if (status === "BOOKED") {
+                                responseData.payment_status = 2;
+                                responseData.application_status = '<span style="color: red;font-weight:700">PAYMENT IS IN PROCESS</span>';
+                            }
+
+                            displayApplicationDetails(responseData, orderDetails);
+                        } else {
+                            console.log("Double Verification API failed.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during Laravel DV API:', error);
+                    });
+
+                } else {
+                    console.log("Double Verification failed.");
+                }
+            })
+            .catch(error => {
+                console.error('Error during verification:', error);
+            });
+    }
+
+    function displayApplicationDetails(data,orderDetails) {
    
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
@@ -344,72 +442,12 @@
             downloadBtn.classList.remove("hidden");
             downloadBtn.setAttribute("onclick", `downloadCC('${application_no}')`);
         }
-        if(merchantDetails != null && merchantDetails.transaction_number != null){
-            doubleVerification();
-        }
-       
-       function doubleVerification() {
-            const DEPID = merchantDetails.deptid;
-            const DEPTTRANID = 'TR176261120073123';
-            // const DEPTTRANID = merchantDetails.transaction_number;
-            const SECURITYCODE = merchantDetails.securitycode;
 
-            fetch('/double-verification', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    depid: DEPID,
-                    depttranid: DEPTTRANID,
-                    securitycode: SECURITYCODE
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-               if (data.success && Array.isArray(data.decrypted_data)) {
-                const decPayload = {
-                    DEPTID: data.decrypted_data[0],
-                    RECIEPTHEADCODE: data.decrypted_data[1],
-                    DEPOSITERNAME: data.decrypted_data[2],
-                    DEPTTRANID: data.decrypted_data[3],
-                    AMOUNT: data.decrypted_data[4],
-                    DEPOSITERID: data.decrypted_data[5],
-                    PANNO: data.decrypted_data[6],
-                    ADDINFO1: data.decrypted_data[7],
-                    ADDINFO2: data.decrypted_data[8],
-                    ADDINFO3: data.decrypted_data[9],
-                    TREASCODE: data.decrypted_data[10],
-                    IFMSOFFICECODE: data.decrypted_data[11],
-                    STATUS: data.decrypted_data[12],
-                    PAYMENTSTATUSMESSAGE: data.decrypted_data[13],
-                    GRN: data.decrypted_data[14],
-                    CIN: data.decrypted_data[15],
-                    REF_NO: data.decrypted_data[16],
-                    TXN_DATE: data.decrypted_data[17],
-                    TXN_AMOUNT: data.decrypted_data[18],
-                    CHALLAN_URL: data.decrypted_data[19],
-                    PMODE: data.decrypted_data[20],
-                    ADDINFO5: data.decrypted_data[21],
-                    ADDINFO6: data.decrypted_data[22],
-                };
-
-                console.log("Payload to send: ", decPayload);
-                } else {
-                    console.log("Double Verification failed.");
-                }
-            })
-            .catch(error => {
-                console.error('Error during verification:', error);
-                console.log("Error during verification.");
-            });
-        }
 
         var applicationStatusRow = `
             <tr class="border">
                 <td class="px-6 py-2 font-semibold uppercase border tracking-wide">Application Status</td>
-                <td class="px-6 py-2 uppercase tracking-wide">${applicationStatus}</td>
+                <td class="px-6 py-2 uppercase tracking-wide font-semibold">${applicationStatus}</td>
             </tr>
         `;
 
@@ -561,7 +599,6 @@
         `);
    
     }
-
     function formatDateTime(date) {
         var day = ("0" + date.getDate()).slice(-2);
         var month = ("0" + (date.getMonth() + 1)).slice(-2);

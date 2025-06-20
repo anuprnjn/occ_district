@@ -246,6 +246,8 @@ Route::get('/download-district-file/{filename}', [DownloadCertifiedCopyControlle
 
 Route::post('/double-verification', [PaymentController::class, 'doubleVerification']);
 
+Route::post('/verify-jegras-payment', [PaymentController::class, 'verifyJegrasPayment']);
+
 //**********************************************************admin routes **************************************************************
 
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
