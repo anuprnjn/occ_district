@@ -15,7 +15,8 @@ class DcOtherCopyController extends Controller
     // Fetch DC Other Copy List from database
     public function listDcOtherCopy()
     {
-        try { 
+        try {  
+            // Access control check
             $dist_code = session('user.dist_code');
             $estd_code = session('user.estd_code');
 

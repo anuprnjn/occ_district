@@ -50,6 +50,7 @@ class SubMenuController extends Controller
             $response = Http::post(config('app.api.admin_url') . '/add_submenu.php', $data);
 
             if ($response->successful()) {
+                 ActivityLogger::log_hc('Submenu Name inserted', 'insert', session('user.id'), session('user.name'));
                 return redirect()->route('submenu_list')->with('success', 'Sub Menu added successfully!');
             } else {
                 return redirect()->route('submenu_list')->with('error', 'Failed to add Sub Menu. ' . $response->body());

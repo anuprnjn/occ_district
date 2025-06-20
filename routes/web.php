@@ -57,6 +57,7 @@ use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\DownloadCertifiedCopyController;
 use App\Http\Controllers\mobileNumberTrackController;
 use App\Http\Controllers\admin\ReportController;
+use App\Http\Middleware\RolePermissionMiddleware;
 
 
 Route::get('/', function () {
@@ -247,12 +248,15 @@ Route::post('/double-verification', [PaymentController::class, 'doubleVerificati
 
 //**********************************************************admin routes **************************************************************
 
-Route::middleware([AuthenticateUser::class])->group(function () {
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/logout', function () {
+    abort(405, 'Logout must be a POST request');
+});
+
+Route::middleware([AuthenticateUser::class,'role.permission'])->group(function () {
     Route::get('/admin/index', function () {
         return view('admin.dashboard');
     })->name('index');
-
-Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 Route::get('/admin/menu-list', [MenuController::class, 'MenuList'])->name('menu_list');
 
