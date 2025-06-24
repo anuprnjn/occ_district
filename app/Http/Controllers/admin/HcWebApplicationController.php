@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser;
 use Carbon\Carbon;
+use App\Helpers\ActivityLogger;
 
 class HcWebApplicationController extends Controller
 {

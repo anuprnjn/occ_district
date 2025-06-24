@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser; // Library for extracting PDF page count
 use Carbon\Carbon;
+use App\Helpers\ActivityLogger;
 
 class DcOtherCopyPaidController extends Controller
 {

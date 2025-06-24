@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser; // Library for extracting PDF page count
 use Carbon\Carbon;
+use App\Helpers\ActivityLogger;
 
-class   HcOtherCopyPaidController extends Controller
+
+class HcOtherCopyPaidController extends Controller
 {
     // Fetch HC Other Copy List
     public function paidHcOtherCopyList()
