@@ -179,7 +179,7 @@ function pendingPayment(decodedAppNo) {
                         const application_number = caseInfo.application_number;
                         const isDCOrderCopy = application_number.length >= 4 && application_number[3].toUpperCase() === 'W';
 
-                        if (paymentStatus === "0") {
+                        if (paymentStatus === "0" || paymentStatus === "3") {
                             // applicationInput.value = "";
                             loading.classList.add("hidden");
                             // If payment is pending, redirect to the given location

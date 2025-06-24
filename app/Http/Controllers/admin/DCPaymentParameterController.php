@@ -50,6 +50,7 @@ class DCPaymentParameterController extends Controller
 
     // Handle API response
     if ($response->successful()) {
+        ActivityLogger::log_dc('Update Payment Parameter', 'Update', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name'));
         return redirect()->route('payment_parameter_list_dc')->with('success', 'Payment Parameter updated successfully.');
     } else {
         return redirect()->route('payment_parameter_list_dc')->with('error', 'Failed to update Payment Parameter.')->withInput();

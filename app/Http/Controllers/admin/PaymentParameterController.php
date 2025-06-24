@@ -50,6 +50,7 @@ class PaymentParameterController extends Controller
 
     // Handle API response
     if ($response->successful()) {
+         ActivityLogger::log_hc('Update Payment Parameter', 'Update', session('user.id'), session('user.name'));
         return redirect()->route('payment_parameter_list')->with('success', 'Payment Parameter updated successfully.');
     } else {
         return redirect()->route('payment_parameter_list')->with('error', 'Failed to update Payment Parameter.')->withInput();

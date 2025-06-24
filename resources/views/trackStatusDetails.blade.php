@@ -298,11 +298,19 @@
                         const orderDetails = response?.order_details || [];
                         const merchantDetails = response?.merchantdetails;
                         const responseData = response.data[0];
+<<<<<<< HEAD
                         const transaction_number = merchantDetails?.transaction_number
                        if(merchantDetails != null && transaction_number != null){
                             doubleVerification(merchantDetails,app_no,responseData,orderDetails,color_key);
                         }else{
                             displayApplicationDetails(responseData,orderDetails,transaction_number,color_key);
+=======
+                        const transaction_no = merchantDetails?.transaction_number || null;
+                       if(merchantDetails != null && transaction_no != null){
+                            doubleVerification(merchantDetails,app_no,responseData,orderDetails);
+                        }else{
+                            displayApplicationDetails(responseData,orderDetails,transaction_no);
+>>>>>>> ca5cb0714deec6b925c6b5a783c1f706a39e5662
                         }
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');

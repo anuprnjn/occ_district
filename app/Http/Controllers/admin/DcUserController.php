@@ -123,6 +123,8 @@ class  DcUserController extends Controller
         }
 
         if ($response->successful()) {
+          ActivityLogger::log_dc('User Added ', 'User Added', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name'));
+
             return redirect()->route('dc_user_list')->with('success', 'User added successfully!');
         } else {
             return redirect()->route('dc_user_list')->with('error', 'Failed to add user. ' . $response->body());

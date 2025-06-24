@@ -189,7 +189,7 @@ class DcOtherCopyController extends Controller
                     'created_at' => now(),
                 ]);
             }
-    
+             ActivityLogger::log_dc('Upload Document For Application no: ' . $request->application_number, 'Upload Document', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
             return response()->json(['success' => 'Documents uploaded successfully.']);
     
         } catch (\Exception $e) {
@@ -248,7 +248,7 @@ class DcOtherCopyController extends Controller
             // or
             // Notification::send($user, new DocumentStatusNotification());
         }
-
+         ActivityLogger::log_dc('Pyment Notification Send For Application no: ' . $applicationNumber, 'Send Notification', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
         return redirect()->back()->with('success', 'Notification sent successfully and document status updated.');
     } catch (\Exception $e) {
         Log::error('Error sending notification', ['error' => $e->getMessage()]);
@@ -282,6 +282,7 @@ public function rejectApplication(Request $request)
             // Mail::to($user->email)->send(new ApplicationRejectedMail($user));
             // Notification::send($user, new ApplicationRejectedNotification());
         }
+         ActivityLogger::log_dc('Reject Application no: ' . $applicationNumber, 'Reject', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name'));  
 
         // Redirect to the desired route
         return redirect()->route('dc_other_copy_rejected_application')->with('success', 'Application rejected successfully.');
