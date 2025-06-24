@@ -185,7 +185,7 @@ class HcWebApplicationController extends Controller
                 ->where('application_number', $request->application_number)
                 ->update(['document_status' => 1]);
         }
-
+        ActivityLogger::log_hc('Document uploaded for application no: ' . $request->application_number, 'Upload Certified Copy', session('user.id'), session('user.name')); 
         return back()->with('success', 'PDF uploaded successfully with ' . $pageCount . ' pages. Total amount: ' . number_format($newPageAmount, 2));
     } catch (\Exception $e) {
         Log::error('Error uploading PDF', ['error' => $e->getMessage()]);
@@ -271,7 +271,7 @@ public function sendDeficitNotification(Request $request)
                 'deficit_status' => 1,
                 'deficit_amount' => $totalDeficitAmount
             ]);
-
+        ActivityLogger::log_hc('Deficit notification send for application no: ' . $appNumber, 'notification send', session('user.id'), session('user.name')); 
         return back()->with('success', 'Deficit notification sent successfully.');
     } catch (\Exception $e) {
         Log::error('Error sending deficit notification', ['error' => $e->getMessage()]);
@@ -292,7 +292,7 @@ public function sendReadyNotification(Request $request)
                 'user_id' => session('user.id')
                
             ]);
-
+        ActivityLogger::log_hc('Cerified Copy ready notification send for application no: ' . $appNumber, 'notification send for certified copy', session('user.id'), session('user.name'));
         return back()->with('success', 'Download notification sent successfully to Applicant.');
     } catch (\Exception $e) {
         Log::error('Error sending Download notification', ['error' => $e->getMessage()]);

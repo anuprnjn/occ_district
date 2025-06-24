@@ -114,7 +114,7 @@ class   HcOtherCopyPaidController extends Controller
                 } else {
                 Log::warning('No rows updated. Check if ID exists.', ['id' => $request->id]);
             }
-    
+            ActivityLogger::log_hc('Upload Certified Copy For Application no: ' . $request->application_number, 'Upload Certified Copy', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
             return response()->json(['success' => 'Certified copy uploaded successfully!']);
         } catch (\Exception $e) {
             Log::error('Error in uploading certified copy:', ['error' => $e->getMessage()]);
@@ -192,7 +192,7 @@ class   HcOtherCopyPaidController extends Controller
                 // or
                 // Notification::send($user, new DocumentStatusNotification());
             }
-
+            ActivityLogger::log_hc('Certified copy Notification Send For Application no: ' . $applicationNumber, 'Cerified Copy Notification', session('user.id'), session('user.name')); 
             return redirect()->back()->with('success', 'Notification sent successfully and document status updated.');
         } catch (\Exception $e) {
             Log::error('Error sending notification', ['error' => $e->getMessage()]);

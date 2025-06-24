@@ -221,7 +221,7 @@ class DcWebApplicationController extends Controller
                     ->where('application_number', $request->application_number)
                     ->update(['document_status' => 1]);
             }
-           ActivityLogger::log_dc('Document uploaded for application no: ' . $request->application_number, 'update', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
+           ActivityLogger::log_dc('Document uploaded for application no: ' . $request->application_number, 'Upload Certified Copy', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
             return back()->with('success', 'PDF uploaded successfully with ' . $pageCount . ' pages. Total amount: ' . number_format($newPageAmount, 2));
         } catch (\Exception $e) {
             Log::error('Error uploading PDF', ['error' => $e->getMessage()]);
@@ -310,7 +310,7 @@ class DcWebApplicationController extends Controller
                     'deficit_status' => 1,
                     'deficit_amount' => $totalDeficitAmount
                     ]);
-
+            ActivityLogger::log_dc('Deficit notification send for application no: ' . $appNumber, 'notification send', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
                 return back()->with('success', 'Deficit notification sent successfully.');
             } catch (\Exception $e) {
                 Log::error('Error sending deficit notification', ['error' => $e->getMessage()]);
@@ -331,7 +331,7 @@ class DcWebApplicationController extends Controller
                     'user_id' => session('user.id')
                 
                 ]);
-
+             ActivityLogger::log_dc('Cerified Copy ready notification send for application no: ' . $appNumber, 'notification send', session('user.id'), session('user.dist_code'), session('user.estd_code'), session('user.name')); 
             return back()->with('success', 'Download notification sent successfully to Applicant.');
         } catch (\Exception $e) {
             Log::error('Error sending Download notification', ['error' => $e->getMessage()]);
