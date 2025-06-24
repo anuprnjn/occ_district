@@ -300,9 +300,9 @@
                         const responseData = response.data[0];
                         const transaction_no = merchantDetails?.transaction_number || null;
                        if(merchantDetails != null && transaction_no != null){
-                            doubleVerification(merchantDetails,app_no,responseData,orderDetails);
+                            doubleVerification(merchantDetails,app_no,responseData,orderDetails,color_key);
                         }else{
-                            displayApplicationDetails(responseData,orderDetails,transaction_no);
+                            displayApplicationDetails(responseData,orderDetails,transaction_no,color_key);
                         }
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
@@ -431,8 +431,8 @@
         var applicationStatus = data.application_status ? data.application_status.trim() : 'N/A';
        
         var application_no = data.application_number || 'N/A';
-       
-        
+        var rejection_remarks = data.rejection_remarks || 'REJECTED BY COPYING SECTION';
+      
         if (data.payment_status === 0 || (data.deficit_status === 1 && data.deficit_payment_status === 0) ) {
             const payBtn = document.getElementById("pay-now-button");
             const note_span = document.getElementById("note_span");
@@ -484,6 +484,13 @@
         ` : '';
        
         var caseDetails = '';
+
+        var rejection_remarks = data.rejection_remarks ? `
+            <tr class="border">
+                <td class="px-6 py-2 font-semibold uppercase border">Rejection Remarks</td>
+                <td class="px-6 py-2 uppercase text-red-500 font-bold">${data.rejection_remarks}</td>
+            </tr>
+        ` : '';
 
         if (data.selected_method === 'F') {
             caseDetails = `
@@ -584,6 +591,7 @@
                         <td class="px-6 py-2 font-semibold uppercase border">Applied Date</td>
                         <td class="px-6 py-2">${formattedCreatedAt}</td>
                     </tr>
+                    ${rejection_remarks}
                 </tbody>
             </table>
             
