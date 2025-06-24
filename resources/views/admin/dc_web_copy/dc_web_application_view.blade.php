@@ -171,7 +171,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Order Details -->
+                                    <!-- Transaction Details -->
                                     <div class="row">
                                         <div class="col-md-12">
                                             <p class="fw-bold text-success">Transaction Details</p>
@@ -185,21 +185,28 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @if ($transaction_details)
+                                                @if ($transaction_det)
+                                                    @forelse($transaction_det as $key => $transaction_details)
                                                         <tr>
-                                                            <td>{{ $transaction_details->transaction_no ?? 'N/A' }}</td>
-                                                            <td>{{ $transaction_details->transaction_date ?? 'N/A' }}</td>
-                                                            <td>₹{{ $transaction_details->amount ?? 'N/A' }}</td>
-                                                            <td class="fw-bold {{ $transaction_details && $transaction_details->transaction_status == 'SUCCESS' ? 'text-success' : 'text-danger' }}">
-                                                                {{ $transaction_details->transaction_status ?? 'N/A' }}
-                                                            </td>
-                                                        </tr>
-                                                    @else
+                                                        <td>
+                                                        {{ $transaction_details->transaction_no ?? 'N/A' }}
+                                                        @if($transaction_details->deficit_payment == 1)
+                                                            <span style="color: green;">(DEFICIT)</span>
+                                                        @endif
+                                                    </td>
+                                                        <td>{{ $transaction_details->transaction_date ?? 'N/A' }}</td>
+                                                        <td>₹{{ $transaction_details->amount ?? 'N/A' }}</td>
+                                                        <td class="fw-bold {{ $transaction_details && $transaction_details->transaction_status == 'SUCCESS' ? 'text-success' : 'text-danger' }}">
+                                                            {{ $transaction_details->transaction_status ?? 'N/A' }}
+                                                        </td>
+                                                    </tr>
+                                                    @empty
                                                         <tr>
                                                             <td colspan="4" class="text-center">No transaction details found for this application.</td>
                                                         </tr>
-                                                    @endif
-                                                </tbody>
+                                                    @endforelse
+                                                @endif
+                                            </tbody>
                                             </table>
                                         </div>
                                     </div>

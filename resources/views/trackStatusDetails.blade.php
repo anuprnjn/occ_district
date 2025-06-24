@@ -291,17 +291,18 @@
                 },
                 success: function(response) {
                     if (response.success) {
+                        var color_key = response.data[0].color_key;
                         var app_no = response.data[0].application_number;
                         const noteButton = document.querySelector('#note button');
                         // noteButton.setAttribute('onclick', `detailsPayment('${app_no}')`);
                         const orderDetails = response?.order_details || [];
                         const merchantDetails = response?.merchantdetails;
                         const responseData = response.data[0];
-                        const transaction_number = merchantDetails.transaction_number
+                        const transaction_number = merchantDetails?.transaction_number
                        if(merchantDetails != null && transaction_number != null){
-                            doubleVerification(merchantDetails,app_no,responseData,orderDetails);
+                            doubleVerification(merchantDetails,app_no,responseData,orderDetails,color_key);
                         }else{
-                            displayApplicationDetails(responseData,orderDetails,transaction_number);
+                            displayApplicationDetails(responseData,orderDetails,transaction_number,color_key);
                         }
                     } else {
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
@@ -317,7 +318,7 @@
         }
     });
 
-    function doubleVerification(merchantDetails,app_no,responseData,orderDetails) {
+    function doubleVerification(merchantDetails,app_no,responseData,orderDetails,color_key) {
         const DEPID = merchantDetails.deptid;
         const DEPTTRANID = 'TR176261120073123';
         // const DEPTTRANID = merchantDetails.transaction_number;
@@ -380,20 +381,22 @@
                     .then(apiResponse => {
                         if (apiResponse.success) {
                             // Proceed with status check
-                            const status = apiResponse.STATUS;
-
+                            const status = apiResponse.data.STATUS;
+                            console.log('status',status);
                             if (status === "SUCCESS") {
+                                console.log('SU');
                                 responseData.paymentStatus = 1;
-                                responseData.application_status = 'PAYMENT SUCCESSFULL';
+                                responseData.application_status = 'Certified Copy is Not Ready Yet';
+                                console.log(responseData);
                             } else if (status === "FAIL") {
                                 responseData.payment_status = 0;
-                                responseData.application_status = "PAYMENT PENDING";
+                                responseData.application_status = "Payment Pending";
                             } else if (status === "BOOKED") {
                                 responseData.payment_status = 2;
-                                responseData.application_status = 'PAYMENT IS IN PROCESS';
+                                responseData.application_status = 'Payment is in Process';
                             }
 
-                            displayApplicationDetails(responseData, orderDetails,merchantDetails.transaction_number);
+                            displayApplicationDetails(responseData, orderDetails,merchantDetails.transaction_number,color_key);
                         } else {
                             console.log("Double Verification API failed.");
                         }
@@ -411,7 +414,7 @@
             });
     }
 
-    function displayApplicationDetails(data,orderDetails,transaction_number) {
+    function displayApplicationDetails(data,orderDetails,transaction_number,color_key) {
    
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
@@ -453,12 +456,12 @@
         }
 
         var applicationStatusRow = `
-            <tr class="border">
-                <td class="px-6 py-2 font-semibold uppercase border tracking-wide">Application Status</td>
-                <td class="px-6 py-2 uppercase tracking-wide font-semibold">${applicationStatus}</td>
-            </tr>
+            <div class="w-full mb-4">
+                <div class="w-full text-start pl-4 text-white text-sm sm:text-base font-semibold tracking-wide uppercase py-3 rounded-md bg-gradient-to-r ${color_key || 'from-gray-500 to-gray-600'}">
+                   Application Status : ${applicationStatus}
+                </div>
+            </div>
         `;
-
         var establishmentRow = data.establishment_name ? `
             <tr class="border">
                 <td class="px-6 py-2 font-semibold uppercase border">Establishment Name</td>
@@ -533,6 +536,7 @@
 
 
         detailsSection.html(`
+        ${applicationStatusRow}
         <div class="overflow-x-auto">
             <table class="dark_form min-w-full border border-gray-300 text-md text-left">
                 <thead>
@@ -542,7 +546,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    ${applicationStatusRow}
                     <tr class="border">
                         <td class="px-6 py-2 font-semibold uppercase border">Application Number</td>
                         <td class="px-6 py-2 text-teal-500 font-bold text-lg">${data.application_number}</td>

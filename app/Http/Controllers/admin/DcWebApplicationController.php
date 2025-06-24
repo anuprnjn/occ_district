@@ -115,10 +115,10 @@ class DcWebApplicationController extends Controller
                         ->where('dc.application_number', $appNumber)
                         ->first();
 
-            $transaction_details = DB::table('transaction_master_dc')
+            $transaction_det = DB::table('transaction_master_dc')
             ->where('application_number', $appNumber)
             ->where('payment_status', '1')
-            ->first();     
+            ->get();     
            
 
             if (!$dcuser) {
@@ -139,7 +139,7 @@ class DcWebApplicationController extends Controller
             ->where('fee_type', 'per_page_fee')
             ->value('amount');
 
-            return view('admin.dc_web_copy.dc_web_application_view', compact('dcuser', 'ordersdata','totaldiff','perpagefee','transaction_details'));
+            return view('admin.dc_web_copy.dc_web_application_view', compact('dcuser', 'ordersdata','totaldiff','perpagefee','transaction_det'));
         } catch (\Exception $e) {
             Log::error('Error fetching DC User details', ['error' => $e->getMessage()]);
             return redirect()->route('dc_web_application_list')->with('error', 'An error occurred.');

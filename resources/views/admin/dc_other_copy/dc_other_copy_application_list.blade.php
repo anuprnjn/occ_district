@@ -62,7 +62,7 @@ use Illuminate\Support\Facades\Crypt;
                          @endphp
 
                         <tr>
-                            <td>{{ $index + 1 }}{{ session('user.estd_code') }}</td>
+                            <td>{{ $index + 1 }}</td>
                             <td>{{ $dcuser->application_number }}</td>
                             <td>{{ $dcuser->applicant_name }}</td>
                             <td>{{ $dcuser->mobile_number }}</td>

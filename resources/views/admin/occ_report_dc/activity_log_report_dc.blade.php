@@ -51,6 +51,7 @@ use Carbon\Carbon;
                                 </div>
                             </form>
                             <!-- End Filter -->
+
                             @if(request('from_date') || request('to_date'))
                                 @if($logs->count())
                                     <div class="table-responsive">

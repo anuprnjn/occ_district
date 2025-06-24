@@ -23,6 +23,8 @@ class PaymentController extends Controller
 
         $Dc_userName = $request->input('Dc_userName');
         $Dc_application_number = $request->input('Dc_application_number');
+        $district_code = $request->input('district_code', null);
+        $establishment_code = $request->input('establishment_code', null);
         $Dc_totalAmount = $request->input('Dc_totalAmount');
 
         $merchantDetails = $response->json();
@@ -84,7 +86,9 @@ class PaymentController extends Controller
             'treascode' => $merchantDetails[0]['treascode'] ?? '',
             'ifmsofficecode' => $merchantDetails[0]['ifmsofficecode'] ?? '',
             'securitycode' => $merchantDetails[0]['securitycode'] ?? '',
-            'response_url' => $responseURL ?? ''
+            'response_url' => $responseURL ?? '',
+            'district_code' => $district_code ?? '',
+            'establishment_code' => $establishment_code ?? ''
         ];
        
         // Send data to entryPayDetails API
@@ -107,11 +111,15 @@ class PaymentController extends Controller
         }
 
         $applicationNumber = $entryResponseData['application_number'];
+        $district_code = $entryResponseData['district_code'] ?? '';
+        $establishment_code = $entryResponseData['establishment_code'] ?? '';
 
         // Return JSON response to frontend
         return response()->json([
             'enc_val' => $enc_val,
-            'application_number' => $applicationNumber
+            'application_number' => $applicationNumber,
+            'district_code' => $district_code,
+            'establishment_code' => $establishment_code,
         ]);
     }
 
@@ -183,58 +191,58 @@ class PaymentController extends Controller
     }
 
 
-public function verifyJegrasPayment(Request $request)
-{
-    $payload = $request->all();
+    public function verifyJegrasPayment(Request $request)
+    {
+        $payload = $request->all();
 
-    // Log incoming request payload
-    Log::info('Incoming Jegras DV Payload:', $payload);
+        // Log incoming request payload
+        Log::info('Incoming Jegras DV Payload:', $payload);
 
-    $applicationNumber = $payload['APPLICATION_NUMBER'] ?? '';
+        $applicationNumber = $payload['APPLICATION_NUMBER'] ?? '';
 
-    // Determine the correct API URL
-    $apiUrl = str_starts_with($applicationNumber, 'HC')
-        ? 'http://localhost/occ_api/transaction/jegras_dv_payment_response_hc.php'
-        : 'http://localhost/occ_api/transaction/jegras_dv_payment_response_dc.php';
+        // Determine the correct API URL
+        $apiUrl = str_starts_with($applicationNumber, 'HC')
+            ? 'http://localhost/occ_api/transaction/jegras_dv_payment_response_hc.php'
+            : 'http://localhost/occ_api/transaction/jegras_dv_payment_response_dc.php';
 
-    Log::info('Selected API URL: ' . $apiUrl);
+        Log::info('Selected API URL: ' . $apiUrl);
 
-    try {
-    Log::info('Original Payload:', $payload);
+        try {
+        Log::info('Original Payload:', $payload);
 
-    $normalizedPayload = array_change_key_case($payload, CASE_LOWER);
-    Log::info('Normalized Payload:', $normalizedPayload);
+        $normalizedPayload = array_change_key_case($payload, CASE_LOWER);
+        Log::info('Normalized Payload:', $normalizedPayload);
 
-    $response = Http::post($apiUrl, $normalizedPayload);
+        $response = Http::post($apiUrl, $normalizedPayload);
 
-    Log::info('DV API Response Status: ' . $response->status());
-    Log::info('DV API Response Body: ' . $response->body());
+        Log::info('DV API Response Status: ' . $response->status());
+        Log::info('DV API Response Body: ' . $response->body());
 
-    if ($response->successful()) {
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'data' => $payload,
+            ]);
+        }
+
+        Log::error('Jegras DV API call failed. Status: ' . $response->status());
+
         return response()->json([
-            'success' => true,
-            'data' => $payload,
-        ]);
+            'success' => false,
+            'message' => 'API call failed',
+            'status' => $response->status(),
+            'response_body' => $response->body()
+        ], 500);
+
+    } catch (\Exception $e) {
+        Log::error('Exception during Jegras DV API call: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Exception: ' . $e->getMessage(),
+        ], 500);
     }
-
-    Log::error('Jegras DV API call failed. Status: ' . $response->status());
-
-    return response()->json([
-        'success' => false,
-        'message' => 'API call failed',
-        'status' => $response->status(),
-        'response_body' => $response->body()
-    ], 500);
-
-} catch (\Exception $e) {
-    Log::error('Exception during Jegras DV API call: ' . $e->getMessage());
-
-    return response()->json([
-        'success' => false,
-        'message' => 'Exception: ' . $e->getMessage(),
-    ], 500);
-}
-}
+    }
 
     
 }

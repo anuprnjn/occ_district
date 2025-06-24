@@ -29,6 +29,7 @@ class DcOtherCopyController extends Controller
                     })
                     ->where('dc.district_code', $dist_code)
                     ->where('dc.establishment_code', $estd_code)
+                    ->where('rejection_status',0)
                     ->orderBy('dc.created_at', 'desc')
                     ->get();
 

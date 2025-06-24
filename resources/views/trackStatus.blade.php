@@ -21,7 +21,7 @@
                 <label for="application_number">Mobile Number / Application Number  <span>*</span></label>
                 <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="sm:mb-5">
             </div>  
-            <div class="form-field hidden" id="mobile_otp">
+            <div class="hidden form-field mt-4 sm:mt-0 w-[90%] sm-w-[100%]" id="mobile_otp">
                 <div class="flex items-center justify-start gap-3">
                     <label for="otp" id="otp_label">Enter OTP :  <span>*</span></label>
                     <span id="otpTimertrack" class="text-md text-rose-600 -mt-1"></span>
@@ -32,7 +32,7 @@
                 <button id="otpButtonTrack" type="button" class="sm:w-[50%] w-[100%] btn-submit order_btn mt-4" onClick="checkInputType(event)">GO</button>
             </div>
         </div>
-        <span id="error_span" class="text-red-500 font-normal text-sm ml-5 sm:ml-0"></span>
+        <span id="error_span" class="text-red-500 font-normal text-sm ml-5 sm:ml-0 sm:text-left text-center mt-2 sm:mt-0 block"></span>
     </form>
 </section>
 
@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
                if (response.success) {
                     const fetched_mobile = response.data[0].mobile_number;
                     const masked_mobile = fetched_mobile.slice(0, 2) + 'xxxx' + fetched_mobile.slice(-4);
+                    otp_input.classList.remove('hidden');
                     document.getElementById('error_span').innerHTML = `
                         <span class="text-green-600">OTP has been sent to registered mobile number - </span>
                         <span class="text-red-600">${masked_mobile}</span>
@@ -109,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sendOtpTrack('application', fetched_mobile, application_number);
                 } else {
                     errorSpan.innerText = response.message || 'Failed to fetch application details.';
+                    otp_input.classList.add('hidden');
                 }
             },
             error: function() {
@@ -235,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
         } else {
-            otp_input.classList.remove('hidden');
+            // otp_input.classList.remove('hidden');
             errorSpan.innerText = '';
             trackApplication(input);
         }

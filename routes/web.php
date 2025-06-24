@@ -100,7 +100,6 @@ Route::get('/caseInformationDc', function () {
     return view('caseInformationDC');
 })->name('caseInformationDC');
 
-
 // Route::middleware([CheckSession::class])->group(function () {
     Route::get('/caseInformation', function () {
         return view('caseInformation');
@@ -438,6 +437,7 @@ Route::get('/admin/dc-other-pending-copy', [DcOtherCopyController::class, 'listD
 
 Route::get('/admin/dc-other-delivered-copy', [DcOtherCopyController::class, 'listDcOtherCopyDelivered'])->name('dc_other_delivered_copy');
 
+// Report section admin pannel 
 Route::get('/admin/payment-report', [ReportController::class, 'paymentReport'])->name('payment_report');
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -448,8 +448,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/pending-report', [ReportController::class, 'pendingReport'])->name('pending.report');
 });
 
-Route::get('/admin/activity-log-report', [ReportController::class, 'logsReport'])->name('activity_log_report');
-Route::get('/admin/logs-report', [ReportController::class, 'logsReport'])->name('admin.logs.report');
+Route::get('/admin/activity-log-report', [ReportController::class, 'logsReport'])->name('admin.logs.report');
 
+// dc report section 
+
+Route::get('/admin/payment-report-dc', [ReportController::class, 'paymentReportDC'])->name('payment_report_dc');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/delivered-report-dc', [ReportController::class, 'deliveredReportDC'])->name('delivered.report_dc');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/pending-report-dc', [ReportController::class, 'pendingReportDC'])->name('pending.report_dc');
+});
+
+Route::get('/admin/activity-log-report-dc', [ReportController::class, 'logsReportDC'])->name('admin.logs.report_dc');
 
 });

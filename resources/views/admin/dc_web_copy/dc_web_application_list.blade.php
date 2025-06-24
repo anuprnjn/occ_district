@@ -46,6 +46,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <th>Date</th>
                             <th>Document Status</th> 
                             <th>Certified Copy Status</th> <!-- New Column for Document Status -->
+                            <th>Payment Status</th>
                             <th>View</th>  
                         </tr>
                     </thead>
@@ -89,9 +90,22 @@ use Carbon\Carbon; // Import Carbon for date formatting
                                     <span class="badge bg-warning">Pending</span>
                                 @endif
                             </td>
+                             <td>
+                              @if($dcuser->payment_status == 1)
+                                <span class="badge bg-success">Cleared</span>
+                              @else
+                                <span class="badge bg-danger">Pending</span>
+                              @endif    
+                            </td>  
+                            @if($dcuser->payment_status === 1)
                             <td>
                                 <a href="{{ route('dc-web-application.view', Crypt::encrypt($dcuser->application_number)) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i>View</a>
                             </td>
+                             @else
+                            <td>
+                              <a href="{{ route('dc-web-application.view', Crypt::encrypt($dcuser->application_number)) }}" class="btn btn-primary btn-sm disabled"><i class="bi bi-eye"></i>View</a>
+                            </td>  
+                            @endif
                         </tr>
                     @empty
                        

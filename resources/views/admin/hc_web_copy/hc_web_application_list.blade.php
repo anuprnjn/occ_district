@@ -45,6 +45,7 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <th>Date</th>
                             <th>Document Status</th> <!-- New Column for Document Status -->
                             <th>Certified Copy Status</th> 
+                            <th>Payment Status</th>
                             <th>View</th>  
                         </tr>
                     </thead>
@@ -55,21 +56,22 @@ use Carbon\Carbon; // Import Carbon for date formatting
                             <td>{{ $hcuser->application_number }}</td>
                             <td>{{ $hcuser->applicant_name }}</td>
                             <td>{{ $hcuser->mobile_number }}</td>
+                            @php
+                                $shortType = explode(':', $hcuser->type_name)[0];
+                            @endphp
+
                             <td>
                                 @if ($hcuser->case_number)
-                                    {{ $hcuser->type_name }}/{{ $hcuser->case_number }}/{{ $hcuser->case_year }}
-                                @else
-                                   
+                                    {{ trim($shortType) }} :/{{ implode('/', [$hcuser->case_number, $hcuser->case_year]) }}
                                 @endif
                             </td>
+
                             <td>
                                 @if ($hcuser->filing_number)
-                                    {{ $hcuser->type_name }}/{{ $hcuser->filing_number }}/{{ $hcuser->filing_year }}
-                                @else
-                                    {{-- Show nothing --}}
+                                    {{ trim($shortType) }} :/{{ implode('/', [$hcuser->filing_number, $hcuser->filing_year]) }}
                                 @endif
                             </td>
-                            <td>{{ Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td> <!-- Format the date -->
+                            <td>{{ Carbon::parse($hcuser->created_at)->format('d-m-Y') }}</td>
                              <td>
                                 @if ($hcuser->document_status == 1)
                                     <span class="badge bg-success">Uploaded</span>
@@ -85,8 +87,21 @@ use Carbon\Carbon; // Import Carbon for date formatting
                                 @endif
                             </td>
                             <td>
+                              @if($hcuser->payment_status == 1)
+                                <span class="badge bg-success">Cleared</span>
+                              @else
+                                <span class="badge bg-danger">Pending</span>
+                              @endif    
+                            </td>  
+                            @if($hcuser->payment_status === 1)
+                            <td>
                                 <a href="{{ route('hc-web-application.view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i>View</a>
                             </td>
+                            @else
+                            <td>
+                              <a href="{{ route('hc-web-application.view', Crypt::encrypt($hcuser->application_number)) }}" class="btn btn-primary btn-sm disabled"><i class="bi bi-eye"></i>View</a>
+                            </td>  
+                            @endif
                         </tr>
                     @empty
                     

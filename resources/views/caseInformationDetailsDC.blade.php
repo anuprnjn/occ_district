@@ -178,7 +178,7 @@
 
     <!-- Pay Now Button -->
     <div class="flex justify-end items-center mt-4">
-        <button class="order_btn bg-teal-500 w-[200px] text-white p-3 rounded-md hover:bg-teal-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="saveDCOrderDetailsPay(event)">
+        <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="saveDCOrderDetailsPay(event)">
             Pay Now
         </button>
     </div>
@@ -307,8 +307,9 @@
         .then(res => {
             // console.log('API Response:', res);
             if (res.success) {
-                // alert(`Success! Application No: ${res.application_number}`);
-                paymentToMerchant(event, res.application_number);
+                alert(`Success! Application No: ${res.application_number}`);
+                // return;
+                paymentToMerchant(event, res.application_number,res.district_code,res.establishment_code);
             } else {
                 alert(`Failed: ${res.message || 'Unexpected error'}`);
             }
@@ -323,7 +324,7 @@
 <!-- funtion to secure the total amount before sending into the jegras payment merchant  -->
 
 <script>
-    async function paymentToMerchant(event, dc_application_number_oc) {
+    async function paymentToMerchant(event, dc_application_number_oc,district_code, establishment_code) {
         event.preventDefault();
 
         try {
@@ -334,7 +335,7 @@
                     "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
                 },
                 body: JSON.stringify({
-                    dc_application_number: dc_application_number_oc
+                    dc_application_number: dc_application_number_oc,
                 })
             });
 
@@ -349,8 +350,10 @@
                 Dc_totalAmount,
                 Dc_application_number,
                 paybleAmount: Dc_totalAmount,
-                applicationNumber: Dc_application_number
-                // optionally add userData if available
+                applicationNumber: Dc_application_number,
+                district_code: district_code,
+                establishment_code: establishment_code
+                // sending dist_code and est_code 
             };
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -365,7 +368,6 @@
             });
 
             const merchantData = await merchantResponse.json();
-            console.log("Merchant Response:", merchantData);
 
             if (merchantData.enc_val && merchantData.application_number) {
                 const form = document.querySelector('form[name="eGrassClient"]');
@@ -373,7 +375,7 @@
                     form.querySelector('input[name="requestparam"]').value = merchantData.enc_val;
                     alert('Entered to transaction details');
                     // form.submit();
-                    // window.location.href='/api/occ/gras_resp_cc';
+                    window.location.href='/api/occ/gras_resp_cc';
                 } else {
                     console.error("Form 'eGrassClient' not found!");
                     alert("Payment form not found. Please try again.");
