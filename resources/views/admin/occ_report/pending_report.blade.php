@@ -40,9 +40,13 @@
                                     <label for="to_date">To Date</label>
                                     <input type="date" name="to_date" class="form-control" value="{{ $to }}">
                                 </div>
-                                <div class="col-md-3 d-flex align-items-end">
-                                    <button class="btn btn-primary">Filter</button>
-                                    <a href="{{ route('admin.pending.report') }}" class="btn btn-secondary ms-2">Reset</a>
+                               <div class="col-md-3 d-flex align-items-end">
+                                    <button class="btn btn-danger">
+                                        <i class="bi bi-search me-1"></i> Search
+                                    </button>
+                                    <a href="{{ route('admin.pending.report') }}" class="btn btn-dark ms-2">
+                                        <i class="bi bi-arrow-clockwise me-1"></i> Reset
+                                    </a>
                                 </div>
                             </form>
 

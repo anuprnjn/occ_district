@@ -4,7 +4,7 @@
 
 <section class="content-section min-h-[65vh] px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col sm:flex-row justify-between items-center sm:-mb-4">
-        <h3 class="font-semibold text-xl mb-6 -mt-6 sm:-mt-10 text-center sm:text-left w-full sm:w-auto">
+        <h3 class="font-semibold text-xl -mt-6 sm:-mt-10 text-center sm:text-left w-full sm:w-auto">
             Application Details - Civil Court
         </h3>
 
@@ -27,16 +27,20 @@
                 $hasApplications = $allCopies->isNotEmpty();
             @endphp
 
-            @if($hasApplications && $previousApplications->isNotEmpty())
-                <div class="w-full sm:w-auto text-center sm:text-right mb-6 sm:mb-4">
+           <div class="flex items-center justify-center sm:gap-4 gap-2 sm:mb-4">
+                <a href="{{ route('refresh.track.status.dc') }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-base shadow">
+                    <img src="{{ asset('passets/images/icons/history.svg')}}" alt="" class="w-5 h-5">Click to refresh Application Status
+                </a> 
+                    @if($hasApplications && $previousApplications->isNotEmpty())
                     <button id="toggleButton" onclick="toggleAllRows(this)"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-base shadow">
                         <img src="{{ asset('passets/images/icons/history.svg')}}" alt="" class="w-5 h-5">
                         Show Previous & Delivered Applications
                     </button>
+                    @endif 
                 </div>
-            @endif
-    </div>
+             </div>
 
     <!-- Loader -->
     <div id="common-loader" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -46,6 +50,7 @@
             </div>
             <span class="text-base text-gray-800">Loading previous & delivered applications...</span>
         </div>
+          
     </div>
 
     <div class="mt-4 mb-16">
@@ -55,6 +60,7 @@
             </div>
 
             <div class="overflow-x-auto">
+       
             <table class="min-w-full border table-auto text-base">
                 <thead class="bg-[#4B3E2F] text-white text-base">
                     <tr>
@@ -142,8 +148,9 @@
                         </tr>
                     @endforeach
                 </tbody>
+                
             </table>
-            </div>
+           
         @else
             <div class="mt-6 flex items-center gap-3 text-rose-600 bg-rose-50 border border-rose-200 px-4 py-3 rounded-lg shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
@@ -189,4 +196,5 @@
         }, 1000);
     }
 </script>
+
 @endpush

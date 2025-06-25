@@ -247,6 +247,11 @@ Route::post('/double-verification', [PaymentController::class, 'doubleVerificati
 
 Route::post('/verify-jegras-payment', [PaymentController::class, 'verifyJegrasPayment']);
 
+Route::get('/refresh-track-status-hc', [mobileNumberTrackController::class, 'refreshTrackDetailsHCFromSession'])->name('refresh.track.status.hc');
+
+Route::get('/refresh-track-status-dc', [mobileNumberTrackController::class, 'refreshTrackDetailsDCFromSession'])->name('refresh.track.status.dc');
+
+
 //**********************************************************admin routes **************************************************************
 
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');

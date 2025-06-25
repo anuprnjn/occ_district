@@ -3,8 +3,17 @@
 @section('content')
 
 <section class="content-section ">
-   
-    <div class="-mt-10 -mb-12 sm:-mt-20 flex sm:justify-end justify-center items-center sm:mb-4">
+    <div class="-mt-10 -mb-12 sm:-mt-20 flex sm:justify-end justify-center items-center sm:mb-4 gap-4">
+    @php
+        $hasHC = session()->has('trackDetailsMobileHC');
+        $hasDC = session()->has('trackDetailsMobileDC');
+    @endphp
+    <button
+        onclick="window.location.href='{{ $hasHC ? '/trackStatusMobileHC' : '/trackStatusMobileDC' }}'"
+        class="flex gap-2 p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">
+        <img src="{{ asset('passets/images/icons/back.svg') }}" alt="">
+        Back
+    </button>
         <button id="print-application-btn" class="flex gap-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5"><img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Application</button>
     </div>
 

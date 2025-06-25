@@ -46,8 +46,12 @@ use Carbon\Carbon;
                                     <input type="date" name="to_date" class="form-control" value="{{ $to }}">
                                 </div>
                                 <div class="col-md-3 d-flex align-items-end">
-                                    <button class="btn btn-primary">Filter</button>
-                                    <a href="{{ route('payment_report') }}" class="btn btn-secondary ms-2">Reset</a>
+                                    <button class="btn btn-info text-white">
+                                        <i class="bi bi-search me-1"></i> Search
+                                    </button>
+                                     <a href="{{ route('payment_report') }}" class="btn btn-dark ms-2">
+                                        <i class="bi bi-arrow-clockwise me-1"></i> Reset
+                                    </a>
                                 </div>
                             </form>
                             <!-- End Filter -->

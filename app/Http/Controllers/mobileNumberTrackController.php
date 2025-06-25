@@ -41,6 +41,7 @@ class mobileNumberTrackController extends Controller
             ], 500);
         }
     }
+
     public function trackMobileNumberDC(Request $request)
     {
         // Validate the request
@@ -74,6 +75,7 @@ class mobileNumberTrackController extends Controller
             ], 500);
         }
     }
+
     public function setTrackDetailsHC(Request $request)
     {
         session()->forget('trackDetailsMobileDC');
@@ -87,6 +89,7 @@ class mobileNumberTrackController extends Controller
             'message' => 'Track details of HC saved in session.'
         ]);
     }
+
     public function setTrackDetailsDC(Request $request)
     {
         
@@ -100,5 +103,89 @@ class mobileNumberTrackController extends Controller
             'success' => true,
             'message' => 'Track details of DC saved in session.'
         ]);
+    }
+
+    public function refreshTrackDetailsHCFromSession()
+    {
+        // Step 1: Check if HC session exists
+        if (session()->has('trackDetailsMobileHC')) {
+            $sessionData = session('trackDetailsMobileHC');
+            $mobile = null;
+
+            // Step 2: Extract mobile number from either order_copy or other_copy
+            if (!empty($sessionData['data']['order_copy'])) {
+                $mobile = $sessionData['data']['order_copy'][0]['mobile_number'] ?? null;
+            } elseif (!empty($sessionData['data']['other_copy'])) {
+                $mobile = $sessionData['data']['other_copy'][0]['mobile_number'] ?? null;
+            }
+
+            // Step 3: If mobile number found, fetch updated data from external API
+            if ($mobile) {
+                $apiUrl = config('app.api.hc_base_url') . '/get_all_application_applied_user_from_mobile_hc.php';
+
+                try {
+                    $response = Http::post($apiUrl, [
+                        'mobile_number' => $mobile
+                    ]);
+
+                    $data = $response->json();
+
+                    // Step 4: Update session
+                    session()->put('trackDetailsMobileHC', [
+                        'success' => true,
+                        'data' => $data,
+                    ]);
+
+                    return redirect()->back(); // or redirect to specific route if needed
+
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Could not refresh data.');
+                }
+            }
+        }
+
+        return redirect()->back()->with('error', 'Session data not available.');
+    }
+
+    public function refreshTrackDetailsDCFromSession()
+    {
+        // Step 1: Check if HC session exists
+        if (session()->has('trackDetailsMobileDC')) {
+            $sessionData = session('trackDetailsMobileDC');
+            $mobile = null;
+
+            // Step 2: Extract mobile number from either order_copy or other_copy
+            if (!empty($sessionData['data']['order_copy'])) {
+                $mobile = $sessionData['data']['order_copy'][0]['mobile_number'] ?? null;
+            } elseif (!empty($sessionData['data']['other_copy'])) {
+                $mobile = $sessionData['data']['other_copy'][0]['mobile_number'] ?? null;
+            }
+
+            // Step 3: If mobile number found, fetch updated data from external API
+            if ($mobile) {
+                 $apiUrl = config('app.api.base_url') . '/get_all_application_applied_user_from_mobile_dc.php';
+
+                try {
+                    $response = Http::post($apiUrl, [
+                        'mobile_number' => $mobile
+                    ]);
+
+                    $data = $response->json();
+
+                    // Step 4: Update session
+                    session()->put('trackDetailsMobileDC', [
+                        'success' => true,
+                        'data' => $data,
+                    ]);
+
+                    return redirect()->back(); // or redirect to specific route if needed
+
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Could not refresh data.');
+                }
+            }
+        }
+
+        return redirect()->back()->with('error', 'Session data not available.');
     }
 }
