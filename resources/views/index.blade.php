@@ -221,12 +221,10 @@ async function refreshCaptcha() {
 </script>
 <!-- {{-- function to get the case type  --}} -->
 <script>
-    function getCaseType(element){
-        var caseType = element.getAttribute('data-value');
-        if(caseType !== ''){
-            sessionStorage.setItem('selectedCaseType', caseType); 
-        }else{
-            sessionStorage.removeItem('selectedCaseType');
+    function getCaseType(elem) {
+        const selectedValue = elem.getAttribute('data-value');
+        if (selectedValue && !isNaN(selectedValue)) {
+            sessionStorage.setItem('selectedCaseType', selectedValue);
         }
     }
 </script> 
@@ -353,7 +351,7 @@ function submitFormData() {
     if (!confirmation) {
         refreshCaptcha();
         document.getElementById('captcha').value = '';
-        return;  // Exit the function if the user cancels
+        return;  
     }
 
     var formData = {
@@ -425,69 +423,141 @@ function submitFormData() {
 
 <!-- {{-- function for submit application for High Court Other Copy --}} -->
 <script>
-    function handleFormSubmitForHighCourt(event) {
+function handleFormSubmitForHighCourt(event) {
     event.preventDefault();
 
-    // Collect form data
-    var applicant_name = document.getElementById('name').value.toUpperCase();
-    var mobile_number = document.getElementById('mobileInput').value;
-    var email = document.getElementById('email').value;
-    const cnfemail = document.getElementById('confirm-email').value.trim();
-    var case_type = sessionStorage.getItem('selectedCaseType');
-    var case_filling_number = document.getElementById('case-no-hc').value;
-    var case_filling_year = document.getElementById('case-year-hc').value;
-    var request_mode = document.querySelector('input[name="request_mode"]:checked')?.value;
-    var required_document = document.getElementById('required-document').value;
-    var applied_by = document.getElementById('apply-by').value;
-    var advocate_registration = document.getElementById('adv_res').value;
-    const selected_method = document.querySelector('input[name="select_mode"]:checked')?.value;
-    const captcha = document.getElementById('captcha-hc').value.trim();
+    // Clear all previous errors
+    document.querySelectorAll('.error-message').forEach(e => e.remove());
+    document.querySelectorAll('.border-red-500').forEach(e => e.classList.remove('border-red-500'));
 
-    if (!case_type || !applicant_name || !mobile_number || !email || !case_filling_number || !case_filling_year || !request_mode || !required_document || !applied_by) {
-        console.error('Missing required form data.');
-        alert('Please fill out all required fields.');
+    const showError = (el, message) => {
+        const container = el.classList.contains('form-field') ? el : el.closest('.form-field') || el;
+
+        // Avoid duplicates
+        if (!container.querySelector('.error-message')) {
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'error-message text-red-500 text-sm mt-1';
+            errorMsg.innerText = message;
+            container.appendChild(errorMsg);
+        }
+
+        container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    const applicantName = document.getElementById('name');
+    if (!applicantName.value.trim()) {
+        showError(applicantName, 'Please enter your name.');
         return;
     }
 
-    if (email !== cnfemail) {
-        alert('Email and Confirm Email do not match.');
+    const mobileInput = document.getElementById('mobileInput');
+    if (!mobileInput.value.trim()) {
+        showError(mobileInput, 'Please enter mobile number.');
         return;
     }
 
+    const email = document.getElementById('email');
+    const confirmEmail = document.getElementById('confirm-email');
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
+    if (!email.value.trim() || !emailRegex.test(email.value)) {
+        showError(email, 'Enter a valid email.');
         return;
     }
-    if (!captcha) {
-        alert('Please evaluate the CAPTCHA.');
-        return;  // Stop the process if CAPTCHA is not filled
+    if (email.value.trim() !== confirmEmail.value.trim()) {
+        showError(confirmEmail, 'Emails do not match.');
+        return;
     }
+
+    const selectedMethod = document.querySelector('input[name="select_mode"]:checked');
+    if (!selectedMethod) {
+        const methodGroup = document.querySelector('input[name="select_mode"]').closest('.radio-group');
+        showError(methodGroup, 'Please select a method.');
+        return;
+    }
+
+    const caseType = document.getElementById('case_type');
+    if (!caseType.value) {
+        showError(caseType, 'Please select a case type.');
+        return;
+    }
+
+    const caseNo = document.getElementById('case-no-hc');
+    if (!caseNo.value.trim()) {
+        showError(caseNo, 'Please enter case number or filling number.');
+        return;
+    }
+
+    const caseYear = document.getElementById('case-year-hc');
+    if (!caseYear.value.trim()) {
+        showError(caseYear, 'Please enter case year or filling year.');
+        return;
+    }
+
+    const selectedRequestMode = document.querySelector('input[name="request_mode"]:checked');
+    if (!selectedRequestMode) {
+        const requestGroup = document.getElementById('request-mode-group');
+        showError(requestGroup, 'Please select request mode.');
+        return;
+    }
+
+    const requiredDoc = document.getElementById('required-document');
+    if (!requiredDoc.value.trim()) {
+        showError(requiredDoc, 'Please enter document details.');
+        return;
+    }
+
+    const appliedBy = document.getElementById('apply-by');
+    if (!appliedBy.value) {
+        showError(appliedBy, 'Please select applied by.');
+        return;
+    }
+
+    const advocateField = document.getElementById('adv_res');
+    if (appliedBy.value === 'advocate' && !advocateField.value.trim()) {
+        showError(advocateField, 'Enter Advocate Registration No.');
+        return;
+    }
+
+    const captcha = document.getElementById('captcha-hc');
+    if (!captcha.value.trim()) {
+        showError(captcha, 'Please solve the captcha.');
+        return;
+    }
+
+    // CAPTCHA API Check
     fetch('/validate-captcha', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',  // Ensure the response is expected in JSON format
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({
-            captcha: captcha,
-        }),
+        body: JSON.stringify({ captcha: captcha.value.trim() })
     })
-    .then(response => response.json()) // Ensure you're parsing the JSON response
+    .then(res => res.json())
     .then(data => {
         if (!data.success) {
-            alert('CAPTCHA validation failed. Please try again.');
-            document.getElementById('captcha-hc').value = '';  // Clear captcha input field
-            refreshCaptcha(); // Optional: refresh captcha image
-            return;  // Stop further validation if CAPTCHA fails
+            showError(captcha, 'CAPTCHA validation failed.');
+            captcha.value = '';
+            refreshCaptcha();
+        } else {
+            submitHcFormData(); // Proceed
         }
-        submitHcFormData();
     })
     .catch(error => {
         console.error('CAPTCHA validation error:', error);
-        alert('An error occurred while validating the CAPTCHA.');
+        alert('An error occurred while validating CAPTCHA.');
     });
+}
+// Helper to show field-specific errors
+function markFieldError(input, message) {
+    input.classList.add('border-red-500');
+    const parent = input.closest('.form-field');
+    if (!parent.querySelector('.error-message')) {
+        const error = document.createElement('span');
+        error.classList.add('text-red-500', 'text-sm', 'error-message');
+        error.innerText = message;
+        parent.appendChild(error);
+    }
 }
 
 // Function to submit the form data to the backend
@@ -497,14 +567,20 @@ function submitHcFormData() {
     if (!confirmation) {
         refreshCaptcha();
         document.getElementById('captcha').value = '';
-        return;  // Exit the function if the user cancels
+        return;  
     }
+    // Clear previous errors
+    document.querySelectorAll('.form-field input, .form-field select, .form-field textarea').forEach(field => {
+        field.classList.remove('border-red-500');
+        let errorSpan = field.parentElement.querySelector('.error-message');
+        if (errorSpan) errorSpan.remove();
+    });
 
-    var formData = {
+    const formData = {
         applicant_name: document.getElementById('name').value,
         mobile_number: document.getElementById('mobileInput').value,
         email: document.getElementById('email').value,
-        case_type: sessionStorage.getItem('selectedCaseType'),
+        case_type: document.getElementById('case_type').value,
         case_filling_number: document.getElementById('case-no-hc').value,
         case_filling_year: document.getElementById('case-year-hc').value,
         request_mode: document.querySelector('input[name="request_mode"]:checked')?.value,
@@ -514,7 +590,6 @@ function submitHcFormData() {
         selected_method: document.querySelector('input[name="select_mode"]:checked')?.value,
     };
 
-    // Send the form data to the server
     fetch('/hc-register-application', {
         method: 'POST',
         headers: {
@@ -524,27 +599,53 @@ function submitHcFormData() {
         },
         body: JSON.stringify(formData),
     })
-    .then(response => response.json()) // Ensure the response is in JSON format
+    .then(response => {
+        if (response.status === 422) {
+            return response.json().then(data => {
+                const errors = data.errors;
+                for (const field in errors) {
+                    let fieldId = mapFieldNameToId(field);
+                    let inputField = document.getElementById(fieldId);
+                    if (inputField) {
+                        inputField.classList.add('border-red-500');
+                        const errorMsg = document.createElement('span');
+                        errorMsg.classList.add('text-red-500', 'text-sm', 'error-message');
+                        errorMsg.innerText = errors[field][0];
+                        inputField.parentElement.appendChild(errorMsg);
+                    }
+                }
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
-            sessionStorage.setItem('application_number', data.application_number);
             document.getElementById('applyOrdersFormHC').reset();
-            const mobileLabel = document.getElementById("mobileLabel");
-            mobileLabel.innerHTML = 'Mobile Number : <span class="text-red-500">*</span>';
-            mobileLabel.classList.remove("text-green-500");
-            mobileInput.placeholder = "Enter mobile number";
+            sessionStorage.removeItem('application_number');
+            sessionStorage.setItem('application_number', data.application_number);
             window.location.href = '/hc-application-details';
-           
-
-        } else {
-            alert('Failed to register application. Please try again.');
-            console.error('Error:', data.message);
         }
     })
     .catch(error => {
-        console.error('Error:', error.message);
-        alert(`Error: ${error.message}`);
+        console.error('Submission error:', error.message);
     });
+}
+
+function mapFieldNameToId(fieldName) {
+    const map = {
+        applicant_name: 'name',
+        mobile_number: 'mobileInput',
+        email: 'email',
+        case_type: 'case_type',
+        case_filling_number: 'case-no-hc',
+        case_filling_year: 'case-year-hc',
+        request_mode: 'urgent', // fallback radio
+        required_document: 'required-document',
+        applied_by: 'apply-by',
+        advocate_registration_number: 'adv_res',
+        selected_method: 'case_no' // fallback radio
+    };
+    return map[fieldName] || fieldName;
 }
 </script>
 <script>

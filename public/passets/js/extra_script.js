@@ -145,26 +145,19 @@
     function selectCaseTypeOption(element) {
         const caseTypeToggle = document.getElementById('caseTypeToggle');
         const caseTypeMenu = document.getElementById('caseTypeMenu');
+        const selectedValue = element.dataset.value;
+        const selectedText = element.innerText;
 
-        // Set selected value
-        caseTypeToggle.innerText = element.innerText;
-        caseTypeToggle.dataset.value = element.dataset.value;
+        // Set display and data attribute
+        caseTypeToggle.innerText = selectedText;
+        caseTypeToggle.dataset.value = selectedValue;
 
         // Close dropdown
         caseTypeMenu.classList.add('hidden');
 
-        // Set the hidden input value (if needed for form submission)
-        const caseTypeInput = document.createElement('input');
-        caseTypeInput.type = 'hidden';
-        caseTypeInput.name = 'case_type';
-        caseTypeInput.value = element.dataset.value;
-        caseTypeInput.id = 'hiddenCaseTypeInput';
-
-        const existingInput = document.getElementById('hiddenCaseTypeInput');
-        if (existingInput) {
-            existingInput.remove();
-        }
-        document.querySelector('#caseTypeDropdown').appendChild(caseTypeInput);
+        // Set hidden input value
+        const caseTypeInput = document.getElementById('case_type_hidden');
+        caseTypeInput.value = selectedValue;
     }
 
     // Close dropdown when clicking outside

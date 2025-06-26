@@ -200,14 +200,14 @@
             </div>
             <div class="flex items-center justify-center gap-2">
             <input
-                type="text"
-                id="mobileInput"
-                name="mobile"
-                placeholder="Enter Your Mobile No"
-                class="p-[10px] border border-gray-300 rounded"
-                required
-                maxlength="10"
-                onkeydown="return isNumber(event)"
+            type="text"
+            id="mobileInput"
+            name="mobile"
+            placeholder="Enter Your Mobile No"
+            class="p-[10px] border border-gray-300 rounded"
+            required
+            maxlength="10"
+            onkeydown="return isNumber(event)"
             >
             <button
             type="button"
@@ -243,40 +243,21 @@
         <div class="form-row">
         <div class="form-field">
             <label for="request-mode">Select the method: <span>*</span></label>
-            <div class="mt-2">
+            <div class="mt-2 radio-group">
                 <input type="radio" id="case_no" name="select_mode" value="C" required checked onchange="updateFields()">
                 <label for="case_no">Case No</label>
                 <input type="radio" id="filling_no" name="select_mode" value="F" required onchange="updateFields()" class="ml-4">
                 <label for="filling_no">Filling No</label>
             </div>
         </div>
-        <div class="form-field">
-            <label for="case-type">Case Type: <span>*</span></label>
-            <div class="relative w-full dark_select">
-                <!-- Custom Dropdown -->
-                <div id="caseTypeDropdown" class="w-full p-[10px] border rounded ">
-                    <div id="caseTypeToggle" class="cursor-pointer" onclick="toggleCaseTypeDropdown()">Please Select Case Type</div>
-                    <div id="caseTypeMenu" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
-                        <!-- Search Box -->
-                        <div class="p-2">
-                            <input type="text" id="caseTypeSearchInput" class="w-full p-[10px] border border-gray-300 rounded" placeholder="Search Case Type..." onkeyup="filterCaseTypeOptions()">
-                        </div>
-                        <!-- Options -->
-                        <ul id="caseTypeOptions" class="list-none p-0 m-0">
-                            <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">Please Select Case Type</li>
-                            @if (!empty($caseTypes) && is_array($caseTypes))
-                                @foreach ($caseTypes as $caseType)
-                                    <li data-value="{{ $caseType['case_type'] }}" class="p-2 hover:bg-gray-100 cursor-pointer" onclick="selectCaseTypeOption(this); getCaseType(this)">
-                                        {{ $caseType['type_name'] }}
-                                    </li>
-                                @endforeach
-                            @else
-                                <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-            </div>
+             <div class="form-field">
+            <label for="case_type">Case Type: <span>*</span></label>
+            <select id="case_type" name="case_type" required class="p-[10px] border rounded w-full">
+                <option value="">Please Select Case Type</option>
+                @foreach ($caseTypes as $caseType)
+                    <option value="{{ $caseType['case_type'] }}">{{ $caseType['type_name'] }}</option>
+                @endforeach
+            </select>
         </div>
         </div>
 
@@ -301,12 +282,12 @@
         </div>
     </div>
     <div class="form-row">
-        <div class="form-field">
+        <div class="form-field" id="request-mode-group">
             <label for="request-mode">Request Mode: <span>*</span></label>
             <div class="mt-2">
                 <input type="radio" id="urgent" name="request_mode" value="urgent" required>
                 <label for="urgent">Urgent</label>
-                <input type="radio" id="ordinary" name="request_mode" value="ordinary" required class="ml-6">
+                <input type="radio" id="ordinary" name="request_mode" value="ordinary" class="ml-6">
                 <label for="ordinary">Ordinary</label>
             </div>
         </div>

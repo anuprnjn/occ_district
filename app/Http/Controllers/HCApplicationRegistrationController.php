@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Gregwar\Captcha\CaptchaBuilder;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class HCApplicationRegistrationController extends Controller
 {
@@ -29,19 +30,27 @@ class HCApplicationRegistrationController extends Controller
     public function hcRegisterApplication(Request $request)
     {
         // Validate the incoming request data
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'applicant_name' => 'required|string',
-            'mobile_number' => 'required|numeric',
+            'mobile_number' => 'required|digits:10',
             'email' => 'required|email',
             'case_type' => 'required|integer',
             'case_filling_number' => 'required|string',
-            'case_filling_year' => 'required|integer',
-            'request_mode' => 'required|string',
+            'case_filling_year' => 'required|digits:4|integer',
+            'request_mode' => 'required|in:urgent,ordinary',
             'required_document' => 'required|string',
-            'applied_by' => 'required|string',
+            'applied_by' => 'required|string|in:petitioner,respondent,advocate,others',
             'advocate_registration_number' => 'nullable|string',
-            'selected_method' => 'required|string',
+            'selected_method' => 'required|in:C,F',
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $validated = $validator->validated();
 
         // Prepare the data for the external API
         $data = [
