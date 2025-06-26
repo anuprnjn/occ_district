@@ -53,9 +53,74 @@
 @push('scripts')
 
 <script>
-    function paymentPending(applicationNo) {
-        const encodedAppNo = btoa(applicationNo); 
-        window.location.href = "{{ route('pendingPayments') }}?application_number=" + encodeURIComponent(encodedAppNo);
+    
+function paymentPending(application_number) {
+    var url = application_number.startsWith('HC')  ? '/fetch-pending-payments-hc' : '/fetch-pending-payments-dc';
+    $.ajax({
+        url: url,
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            application_number: application_number,
+        },
+        success: function(response) {
+        if (response.success) {
+            var caseInfoDetails = response;
+            ajaxForPendingPayment(caseInfoDetails);
+        } else {
+            alert(response.error || 'Failed to fetch application details !');
+        }
+        },
+        error: function() {
+            alert('Application Number not found');
+            return;
+        }
+    });
+    }
+    function ajaxForPendingPayment(caseInfoDetails){
+        console.log('Test case info details',caseInfoDetails);
+        // return;
+        $.ajax({
+                url: '/set-caseInformation-PendingData-HC', 
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    caseInfoDetailsPendingPayHC: caseInfoDetails 
+                },
+                success: function(detailsResponse) {
+                   if (detailsResponse) {
+
+                        console.log('this is detailed response',detailsResponse)
+                        
+                        const caseInfo = detailsResponse.session_data.PendingCaseInfoDetails.case_info;
+                        const transactionInfo = detailsResponse.session_data.PendingCaseInfoDetails.transaction_details;    
+                        const paymentStatus = caseInfo.payment_status;
+                        const application_number = caseInfo.application_number;
+                        const isDCOrderCopy = application_number.length >= 4 && application_number[3].toUpperCase() === 'W';
+
+                        if (paymentStatus === "0" || paymentStatus === "3") {
+                            window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
+                        } else {
+                            if(caseInfo.application_number.startsWith("HCW") && paymentStatus === "1" && caseInfo.  deficit_status === "1" && caseInfo.deficit_payment_status === "0"){
+                                window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
+                                return;
+                            } else {
+                                if(isDCOrderCopy && paymentStatus === "1" && caseInfo.  deficit_status === "1" && caseInfo.deficit_payment_status === "0") {
+                                    window.location.href = detailsResponse.session_data.PendingCaseInfoDetails.location;
+                                return; 
+                                }
+                            }
+                        }
+                    } else {
+                        alert(detailsResponse.message || "Error showing pending payment details HC");
+                        return;
+                    }
+                },
+                error: function() {
+                    alert("An error occurred while setting pending Payment details.");
+                    return;
+                }
+            });
     }
     
     function downloadAllDocuments(encodedDocs) {

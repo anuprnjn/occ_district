@@ -4,7 +4,6 @@
 <section class="content-section">
     <!-- Case Information Section -->
     <div class="w-full rounded-md -mt-8">
-        
         <span class="mb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 py-2 px-3 rounded-xl border uppercase border-red-300 bg-red-50 text-red-600 shadow-sm text-sm sm:text-base leading-snug">
         Payment is pending for the application number
         <span class="text-teal-500 font-semibold">
