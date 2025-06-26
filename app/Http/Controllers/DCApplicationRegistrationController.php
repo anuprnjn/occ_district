@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Gregwar\Captcha\CaptchaBuilder;
 use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\Facades\Validator;
 
 class DCApplicationRegistrationController extends Controller
 {
@@ -30,21 +30,30 @@ class DCApplicationRegistrationController extends Controller
     public function registerApplication(Request $request)
     {
         // Validate the incoming request data
-        $validated = $request->validate([
-            'district_code' => 'required|integer',
-            'establishment_code' => 'required|string',
-            'applicant_name' => 'required|string',
-            'mobile_number' => 'required|numeric',
-            'email' => 'required|email',
-            'case_type' => 'required|integer',
-            'case_filling_number' => 'required|string',
-            'case_filling_year' => 'required|integer',
-            'request_mode' => 'required|string',
-            'required_document' => 'required|string',
-            'applied_by' => 'required|string',
-            'advocate_registration_number' => 'nullable|string',
-            'selected_method' => 'required|string',
-        ]);
+        $validator = Validator::make($request->all(), [
+                'district_code' => 'required|integer',
+                'establishment_code' => 'required|string',
+                'applicant_name' => 'required|string',
+                'mobile_number' => 'required|numeric',
+                'email' => 'required|email',
+                'case_type' => 'required|integer',
+                'case_filling_number' => 'required|string',
+                'case_filling_year' => 'required|integer',
+                'request_mode' => 'required|string',
+                'required_document' => 'required|string',
+                'applied_by' => 'required|string',
+                'advocate_registration_number' => 'nullable|string',
+                'selected_method' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                ], 422); // Unprocessable Entity
+            }
+
+            // Proceed if validation passes
+            $validated = $validator->validated();
 
         // Prepare the data for the external API
         $data = [

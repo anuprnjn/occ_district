@@ -231,119 +231,166 @@ async function refreshCaptcha() {
 
 <!-- {{-- function for submit application for Civil Court Other Copy --}} -->
 <script>
-    function handleFormSubmit(event) {
+function handleFormSubmit(event) {
     event.preventDefault();
 
-    // Collect form data
-    var district_code = sessionStorage.getItem('selectedDistCode');
-    var establishment_code = sessionStorage.getItem('selectedEstCodeDC');
-    var applicant_name = document.getElementById('name').value.toUpperCase();
-    var mobile_number = document.getElementById('mobileInput').value;
-    var email = document.getElementById('email').value;
-    const cnfemail = document.getElementById('confirm-email').value.trim();
-    var case_type = sessionStorage.getItem('selectedCaseTypeDCNapix');
-    var case_filling_number = document.getElementById('case-no').value;
-    var case_filling_year = document.getElementById('case-year').value;
-    var request_mode = document.querySelector('input[name="request_mode"]:checked')?.value;
-    var required_document = document.getElementById('required-document').value;
-    var applied_by = document.getElementById('apply-by').value;
-    var advocate_registration = document.getElementById('adv_res').value;
-    const selected_method = document.querySelector('input[name="select_mode"]:checked')?.value;
-    const captcha = document.getElementById('captcha').value.trim();
+    // Clear all previous error messages
+    document.querySelectorAll('.error-message').forEach(e => e.remove());
 
-    // Validate required fields
+    const showError = (el, message) => {
+        const error = document.createElement('div');
+        error.className = 'error-message text-red-500 text-sm mt-1';
+        error.innerText = message;
+        el.parentElement.appendChild(error);
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    // 1. District
+    const district_code = sessionStorage.getItem('selectedDistCode');
     if (!district_code) {
-    alert('Please select a district.');
-    return;
+        const districtDropdown = document.getElementById('dropdown');
+        showError(districtDropdown, 'Please select a district.');
+        return;
     }
+
+    // 2. Establishment
+    const establishment_code = sessionStorage.getItem('selectedEstCodeDC');
     if (!establishment_code) {
-        alert('Please select an establishment.');
+        const establishmentSelect = document.getElementById('selectEsta');
+        showError(establishmentSelect, 'Please select an establishment.');
         return;
     }
-    if (!case_type) {
-        alert('Please select a case type.');
+
+    // 3. Name
+    const nameInput = document.getElementById('name');
+    if (!nameInput.value.trim()) {
+        showError(nameInput, 'Please enter the applicant name.');
         return;
     }
-    if (!applicant_name) {
-        alert('Please enter the applicant name.');
+
+    // 4. Mobile
+    const mobile = document.getElementById('mobileInput');
+    if (!mobile.value.trim()) {
+        showError(mobile, 'Please enter the mobile number.');
         return;
     }
-    if (!mobile_number) {
-        alert('Please enter the mobile number.');
+
+    // 5. Email
+    const email = document.getElementById('email');
+    if (!email.value.trim()) {
+        showError(email, 'Please enter email.');
         return;
     }
-    if (!email) {
-        alert('Please enter the email address.');
+
+    // 6. Confirm Email
+    const confirmEmail = document.getElementById('confirm-email');
+    if (!confirmEmail.value.trim()) {
+        showError(confirmEmail, 'Please confirm email.');
         return;
     }
-    if (!cnfemail) {
-        alert('Please confirm the email address.');
+
+    if (email.value.trim() !== confirmEmail.value.trim()) {
+        showError(confirmEmail, 'Emails do not match.');
         return;
     }
-    if (email !== cnfemail) {
-        alert('Email and Confirm Email do not match.');
-        return;
-    }
+
+    // 7. Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
+    if (!emailRegex.test(email.value.trim())) {
+        showError(email, 'Enter a valid email.');
         return;
     }
-    if (!case_filling_number) {
-        alert('Please enter the case filling number.');
+
+    // 8. Method (Case No / Filling No)
+    const selectedMethod = document.querySelector('input[name="select_mode"]:checked');
+    if (!selectedMethod) {
+        const methodField = document.querySelector('input[name="select_mode"]').closest('.form-field');
+        showError(methodField, 'Please select the method.');
         return;
     }
-    if (!case_filling_year) {
-        alert('Please enter the case filling year.');
+
+    // 9. Case Type
+    const case_type = sessionStorage.getItem('selectedCaseTypeDCNapix');
+    if (!case_type) {
+        const caseTypeSelect = document.getElementById('caseTypeSelectForOyherCopyDC');
+        showError(caseTypeSelect, 'Please select a case type.');
         return;
     }
-    if (!request_mode) {
-        alert('Please select the request mode.');
+
+    // 10. Case/Filing No
+    const caseFillingNumber = document.getElementById('case-no');
+    if (!caseFillingNumber.value.trim()) {
+        showError(caseFillingNumber, 'Enter case/filling number.');
         return;
     }
-    if (!required_document) {
-        alert('Please select the required document.');
+
+    // 11. Case Year
+    const caseFillingYear = document.getElementById('case-year');
+    if (!caseFillingYear.value.trim()) {
+        showError(caseFillingYear, 'Enter case/filling year.');
         return;
     }
-    if (!applied_by) {
-        alert('Please select who is applying (self or advocate).');
+
+    // 12. Request Mode (Urgent/Ordinary)
+    const requestMode = document.querySelector('input[name="request_mode"]:checked');
+    if (!requestMode) {
+        const requestModeField = document.getElementById('urgent').closest('.form-field');
+        showError(requestModeField, 'Please select request mode.');
         return;
     }
-    if (applied_by === 'advocate' && !advocate_registration) {
-        alert('Please enter the advocate registration number.');
+
+    // 13. Required Document
+    const requiredDoc = document.getElementById('required-document');
+    if (!requiredDoc.value.trim()) {
+        showError(requiredDoc, 'Enter document details.');
         return;
     }
-    if (!captcha) {
-        alert('Please evaluate the CAPTCHA.');
+
+    // 14. Applied By
+    const appliedBy = document.getElementById('apply-by');
+    if (!appliedBy.value.trim()) {
+        showError(appliedBy, 'Select who is applying.');
         return;
     }
+
+    // 15. Advocate Registration No (if applicable)
+    const advocateField = document.getElementById('adv_res');
+    if (appliedBy.value === 'advocate' && !advocateField.value.trim()) {
+        showError(advocateField, 'Enter Advocate Registration No.');
+        return;
+    }
+
+    // 16. CAPTCHA
+    const captcha = document.getElementById('captcha');
+    if (!captcha.value.trim()) {
+        showError(captcha, 'Please solve the captcha.');
+        return;
+    }
+
+    // ✅ CAPTCHA validation via API
     fetch('/validate-captcha', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',  // Ensure the response is expected in JSON format
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({
-            captcha: captcha,
-        }),
+        body: JSON.stringify({ captcha: captcha.value.trim() })
     })
-    .then(response => response.json()) // Ensure you're parsing the JSON response
+    .then(res => res.json())
     .then(data => {
         if (!data.success) {
-            alert('CAPTCHA validation failed. Please try again.');
-            document.getElementById('captcha').value = '';  // Clear captcha input field
-            refreshCaptcha(); // Optional: refresh captcha image
-            return;  // Stop further validation if CAPTCHA fails
+            showError(captcha, 'CAPTCHA validation failed.');
+            captcha.value = '';
+            refreshCaptcha();
+        } else {
+            submitFormData(); // Proceed only if captcha passed
         }
-        submitFormData();
     })
     .catch(error => {
         console.error('CAPTCHA validation error:', error);
-        alert('An error occurred while validating the CAPTCHA.');
+        showError(captcha, 'An error occurred while validating CAPTCHA.');
     });
-}
-
+}   
 // Function to submit the form data to the backend
 function submitFormData() {
     var confirmation = confirm('This is the final submit. Please check all your data. If you want to continue, press OK. Press Cancel to cancel the submission.');
@@ -647,6 +694,13 @@ function mapFieldNameToId(fieldName) {
     };
     return map[fieldName] || fieldName;
 }
+</script>
+<script>
+    window.addEventListener('load', function () {
+        sessionStorage.removeItem('selectedDistCode');
+        sessionStorage.removeItem('selectedEstCodeDC');
+        sessionStorage.removeItem('selectedCaseTypeDCNapix');
+    });
 </script>
 <script>
 function closeModal(event) {
