@@ -238,7 +238,7 @@ class DcOtherCopyController extends Controller
             ->update(['document_status' => 1]);
 
         // (Optional) Fetch user details to send notification
-        $user = DB::table('districct_court_applicant_registration')
+        $user = DB::table('district_court_applicant_registration')
             ->where('application_number', $applicationNumber)
             ->first();
 

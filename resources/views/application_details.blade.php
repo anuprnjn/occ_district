@@ -15,7 +15,7 @@
         <!-- Application data will appear here -->
     </div>
     
-    <button id="print-button" class="hidden sm:mt-10 sm:mb-0 mb-16 mt-2 p-2 bg-red-600 hover:bg-red-700 pl-5 pr-5 text-white rounded" onclick="printApplication()">
+    <button id="print-button" class="hidden sm:mt-10 sm:mb-0 mb-16 mt-2 p-2 bg-red-600 hover:bg-red-700 pl-5 pr-5 text-white rounded-md" onclick="printApplication()">
         <div class="flex gap-2">
         <img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Document
         </div>

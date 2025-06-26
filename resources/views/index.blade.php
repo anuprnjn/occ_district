@@ -548,9 +548,9 @@ function submitHcFormData() {
 }
 </script>
 <script>
-function closeModal(){
-    var application_modal = document.getElementById('application_n_details');
-    application_modal.classList.add("hidden");
+function closeModal(event) {
+    if (event) event.preventDefault(); 
+    document.getElementById("application_n_details").classList.add("hidden");
 }   
 </script>
 

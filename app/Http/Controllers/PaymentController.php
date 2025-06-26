@@ -87,8 +87,8 @@ class PaymentController extends Controller
             'ifmsofficecode' => $merchantDetails[0]['ifmsofficecode'] ?? '',
             'securitycode' => $merchantDetails[0]['securitycode'] ?? '',
             'response_url' => $responseURL ?? '',
-            'district_code' => $district_code ?? '',
-            'establishment_code' => $establishment_code ?? ''
+            'district_code' => $district_code ??  $userData['district_code'] ?? null,
+            'establishment_code' => $establishment_code ??  $userData['establishment_code'] ?? null,
         ];
        
         // Send data to entryPayDetails API

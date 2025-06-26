@@ -220,12 +220,12 @@
             </button>
             <div id="application_n_details" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] hidden">
                 <div class="dark_form bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[500px] md:w-[600px] lg:w-[1000px] relative">
-                    <button class="absolute top-2 right-2 text-gray-500 hover:text-black" onclick="closeModal()">✖</button>
+                    <button type="button" class="absolute top-2 right-2 ..." onclick="closeModal(event)">✖</button>
                     <h4 id="modalText" class="text-lg text-center mb-4"></h4>
                     <table id="trackedDataDC" class="w-[100%]"></table>
                 </div>
             </div>
-            <button id="view_recent_button" class="hidden bg-sky-600 hover:bg-sky-700 rounded-md text-white sm:w-[250px] w-[200px] p-[10px]" onclick="view_recent_app()">View Transactions</button>
+            <button type="button" id="view_recent_button" class=" hidden bg-teal-600 hover:bg-teal-700 rounded-md text-white sm:w-[250px] w-[200px] p-[10px]" onclick="view_recent_app()">View Transactions</button>
                  
             </div>
         </div>
@@ -347,7 +347,7 @@
             <button type="submit" id="submitBtn" class="btn-submit hidden sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmitForHighCourt(event)">Submit</button>
         </div>
     </div>
-        </form>
+    </form>
     </div>
 
 </section>
