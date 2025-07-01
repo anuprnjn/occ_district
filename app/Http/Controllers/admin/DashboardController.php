@@ -15,7 +15,6 @@ class DashboardController extends Controller
         $district_code = session('user.dist_code');
         $estd_code = session('user.estd_code');
 
-        // Get data for the last 15 days
         $startDate = Carbon::now()->subDays(14)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
 
@@ -41,6 +40,7 @@ class DashboardController extends Controller
         $dcOrderCopyData = DB::table('district_court_order_copy_applicant_registration')
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy(DB::raw('DATE(created_at)'))
             ->orderBy('date')
@@ -51,6 +51,7 @@ class DashboardController extends Controller
         $dcOtherCopyData = DB::table('district_court_applicant_registration')
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy(DB::raw('DATE(created_at)'))
             ->orderBy('date')
@@ -73,7 +74,7 @@ class DashboardController extends Controller
             $dcOtherCounts->push($dcOtherCopyData[$formatted] ?? 0);
         }
 
-        // Main query counts
+        // High Court Order/Web Queries
         $hcOrderQuery = DB::table('hc_order_copy_applicant_registration');
         $hcWebQuery   = DB::table('high_court_applicant_registration');
 
@@ -82,7 +83,7 @@ class DashboardController extends Controller
             $hcWebQuery->whereDate('created_at', $selectedDate);
         }
 
-        // Pending and Delivered Counts - High Court Order
+        // High Court Order Pending / Delivered
         $hcOrderPending = DB::table('hc_order_copy_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('certified_copy_ready_status', '0')
@@ -93,7 +94,7 @@ class DashboardController extends Controller
             ->where('certified_copy_ready_status', '1')
             ->count();
 
-        // Pending and Delivered Counts - High Court Web
+        // High Court Web Pending / Delivered
         $hcWebPending = DB::table('high_court_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('certified_copy_ready_status', '0')
@@ -104,39 +105,45 @@ class DashboardController extends Controller
             ->where('certified_copy_ready_status', '1')
             ->count();
 
-        // District Court Order/Web Queries
+        // ✅ District Court Queries with estd_code
         $dcOrderQuery = DB::table('district_court_order_copy_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->count();
 
         $dcOrderPending = DB::table('district_court_order_copy_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('certified_copy_ready_status', '0')
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->count();
 
         $dcOrderDelivered = DB::table('district_court_order_copy_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('certified_copy_ready_status', '1')
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->count();
 
         $dcWebQuery = DB::table('district_court_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->count();
 
         $dcWebPending = DB::table('district_court_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('certified_copy_ready_status', '0')
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->count();
 
         $dcWebDelivered = DB::table('district_court_applicant_registration')
             ->when($selectedDate, fn($query) => $query->whereDate('created_at', $selectedDate))
             ->where('certified_copy_ready_status', '1')
             ->where('district_code', $district_code)
+            ->where('establishment_code', $estd_code)
             ->count();
 
         return view('admin.dashboard', [
@@ -154,12 +161,13 @@ class DashboardController extends Controller
             'dcWebPending'     => $dcWebPending,
             'dcWebDelivered'   => $dcWebDelivered,
 
-            'dates'         => $dates,
-            'hcOrderCounts'   => $orderCounts,
-            'hcOtherCounts'   => $otherCounts,
-            'dcOrderCounts' => $dcOrderCounts,
-            'dcOtherCounts' => $dcOtherCounts,
-            'selectedDate'  => $selectedDate ?? now()->toDateString(),
+            'dates'            => $dates,
+            'hcOrderCounts'    => $orderCounts,
+            'hcOtherCounts'    => $otherCounts,
+            'dcOrderCounts'    => $dcOrderCounts,
+            'dcOtherCounts'    => $dcOtherCounts,
+            'selectedDate'     => $selectedDate ?? now()->toDateString(),
         ]);
     }
+
 }

@@ -107,6 +107,33 @@
                                                 </tr>
                                             </table>
                                         </div>
+                                         <div class="row">
+                                        <div class="col-md-12">
+                                            <p class="fw-bold text-success">Transaction Details</p>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="fw-bold">Transaction Number</th>
+                                                        <th class="fw-bold">Transaction Date</th>
+                                                        <th class="fw-bold">Amount</th>
+                                                        <th class="fw-bold">Payment Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                        <tr>
+                                                        <td>
+                                                        {{ $transaction_details->transaction_no ?? 'N/A' }}
+                                                    </td>
+                                                        <td>{{ $transaction_details->transaction_date ?? 'N/A' }}</td>
+                                                        <td>₹{{ $transaction_details->amount ?? 'N/A' }}</td>
+                                                        <td class="fw-bold {{ $transaction_details && $transaction_details->transaction_status == 'SUCCESS' ? 'text-success' : 'text-danger' }}">
+                                                            {{ $transaction_details->transaction_status ?? 'N/A' }}
+                                                        </td>
+                                                    </tr>
+                                            </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

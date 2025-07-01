@@ -40,8 +40,11 @@ public function paymentReportDC(Request $request)
 {
     $from = $request->input('from_date');
     $to = $request->input('to_date');
-
-    $query = DB::table('transaction_master_dc');
+    $district_code = session('user.dist_code');
+    $estd_code = session('user.estd_code');
+    $query = DB::table('transaction_master_dc')
+        ->where('district_code',$district_code)
+        ->where('establishment_code',$estd_code);
 
     if ($from && $to) {
         $query->whereRaw(
@@ -98,7 +101,8 @@ public function deliveredReportDC(Request $request)
 {
     $from = $request->input('from_date');
     $to = $request->input('to_date');
-
+    $district_code = session('user.dist_code');
+    $estd_code = session('user.estd_code');
     $applications = collect(); // Start with empty collection
 
     $fromDate = $from ? Carbon::parse($from)->startOfDay() : null;
@@ -108,11 +112,15 @@ public function deliveredReportDC(Request $request)
         $hcOrderData = DB::table('district_court_order_copy_applicant_registration')
             ->select('application_number', 'cino', 'applicant_name', 'mobile_number', 'email', 'updated_at')
             ->where('certified_copy_ready_status', 1)
+            ->where('district_code',$district_code) 
+            ->where('establishment_code',$estd_code)
             ->whereBetween('updated_at', [$fromDate, $toDate]);
 
         $hcCopyData = DB::table('district_court_applicant_registration')
             ->select('application_number', DB::raw('NULL as cino'), 'applicant_name', 'mobile_number', 'email', 'updated_at')
             ->where('certified_copy_ready_status', 1)
+            ->where('district_code',$district_code)
+            ->where('establishment_code',$estd_code)
             ->whereBetween('updated_at', [$fromDate, $toDate]);
 
         $applications = $hcOrderData->unionAll($hcCopyData)->get();
@@ -161,7 +169,8 @@ public function pendingReportDC(Request $request)
 {
     $from = $request->input('from_date');
     $to = $request->input('to_date');
-
+    $district_code = session('user.dist_code');
+    $estd_code = session('user.estd_code');
     $applications = collect(); // Empty collection by default
     $fromDate = $from ? Carbon::parse($from)->startOfDay() : null;
     $toDate = $to ? Carbon::parse($to)->endOfDay() : null;
@@ -170,11 +179,15 @@ public function pendingReportDC(Request $request)
         $hcOrderData = DB::table('district_court_order_copy_applicant_registration')
             ->select('application_number', 'cino', 'applicant_name', 'mobile_number', 'email', 'created_at')
             ->where('certified_copy_ready_status', 0)
+            ->where('district_code',$district_code)
+            ->where('establishment_code',$estd_code)
             ->whereBetween('created_at', [$fromDate, $toDate]);
 
         $hcCopyData = DB::table('district_court_applicant_registration')
             ->select('application_number', DB::raw('NULL as cino'), 'applicant_name', 'mobile_number', 'email', 'created_at')
             ->where('certified_copy_ready_status', 0)
+            ->where('district_code',$district_code)
+            ->where('establishment_code',$estd_code)
             ->whereBetween('created_at', [$fromDate, $toDate]);
 
         $applications = $hcOrderData->unionAll($hcCopyData)->get();
@@ -210,5 +223,29 @@ public function logsReport(Request $request)
     return view('admin.occ_report.activity_log_report', compact('logs'));
 }
 
+public function logsReportDC(Request $request)
+{
+    $logs = collect(); // Empty collection by default
+    $district_code = session('user.dist_code');
+    $estd_code = session('user.estd_code');
+    // Only run the query if from_date or to_date is provided
+    if ($request->from_date || $request->to_date) {
+        $query = DB::table('log_activity_dc')
+        ->where('dist_code',$district_code)
+        ->where('est_code',$estd_code);
+
+        if ($request->from_date) {
+            $query->whereDate('log_date', '>=', Carbon::parse($request->from_date));
+        }
+
+        if ($request->to_date) {
+            $query->whereDate('log_date', '<=', Carbon::parse($request->to_date));
+        }
+
+        $logs = $query->orderBy('log_date', 'desc')->get();
+    }
+
+    return view('admin.occ_report_dc.activity_log_report_dc', compact('logs'));
+}
  
 }

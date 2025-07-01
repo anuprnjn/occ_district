@@ -62,8 +62,11 @@ use Illuminate\Support\Facades\Crypt;
                             <td>{{ $hcuser->application_number }}</td>
                             <td>{{ $hcuser->applicant_name }}</td>
                             <td>{{ $hcuser->mobile_number }}</td>
+                            @php
+                                $shortType = explode(':', $hcuser->case_type_name)[0];
+                            @endphp
                             <td>
-                                {{ $hcuser->case_type_name . '/' . $hcuser->case_filling_number . '/' . $hcuser->case_filling_year }}
+                                {{ $shortType . '/' . $hcuser->case_filling_number . '/' . $hcuser->case_filling_year }}
                                 @if ($hcuser->selected_method == 'F') 
                                     (Filing No) 
                                 @elseif ($hcuser->selected_method == 'C')

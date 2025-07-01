@@ -36,7 +36,7 @@ use Carbon\Carbon;
                         <div class="card-body">
 
                             <!-- Date Range Filter -->
-                            <form method="GET" action="{{ route('admin.logs.report') }}" class="row g-3 mb-4">
+                            <form method="GET" action="{{ route('admin.logs.report_dc') }}" class="row g-3 mb-4">
                                 <div class="col-md-3">
                                     <label for="from_date">From Date</label>
                                     <input type="date" name="from_date" class="form-control" value="{{ request('from_date') }}">
@@ -47,7 +47,7 @@ use Carbon\Carbon;
                                 </div>
                                 <div class="col-md-3 d-flex align-items-end">
                                     <button class="btn btn-primary">Filter</button>
-                                    <a href="{{ route('admin.logs.report') }}" class="btn btn-secondary ms-2">Reset</a>
+                                    <a href="{{ route('admin.logs.report_dc') }}" class="btn btn-secondary ms-2">Reset</a>
                                 </div>
                             </form>
                             <!-- End Filter -->

@@ -46,13 +46,16 @@ class HcOtherCopyPaidController extends Controller
                 ->leftJoin('high_court_case_master as ct', 'hc.case_type', '=', 'ct.case_type')
                 ->where('hc.application_number', $appNumber)
                 ->first();
-
+            $transaction_details = DB::table('transaction_master_hc')
+                ->where('application_number', $appNumber)
+                ->where('payment_status', '1')
+                ->first();     
             // Fetch uploaded documents
             $documents = DB::table('highcourt_applicant_document_detail')
                 ->where('application_number', $appNumber)
                 ->get();
 
-            return view('admin.hc_other_copy.hc_paid_copy_view', compact('hcuser', 'documents'));
+            return view('admin.hc_other_copy.hc_paid_copy_view', compact('hcuser', 'documents','transaction_details'));
 
         } catch (\Exception $e) {
             Log::error('Error fetching HC Other Copy details', ['error' => $e->getMessage()]);
