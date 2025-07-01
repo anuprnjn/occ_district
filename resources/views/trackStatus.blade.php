@@ -43,7 +43,7 @@
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
 
 <!-- script to add js controls to the input box  -->
-<!-- <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
     const otpInput = document.getElementById('otp');
 
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         otpInput.addEventListener('contextmenu', e => e.preventDefault());
     }
 });
-</script> -->
+</script>
 <!-- script to check the mobile number or application number  -->
 <script>
     function trackApplication(input) {

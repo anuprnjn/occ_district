@@ -168,16 +168,18 @@ async function refreshCaptcha() {
 <!-- {{-- function for changing the fields based on case no and filling no  --}} -->
 <script>
    function updateFields() {
-    // Get the selected radio button value
-    var selectedMode = document.querySelector('input[name="select_mode"]:checked').value;
+    const selectedRadio = document.querySelector('input[name="select_mode"]:checked');
+    const field1Label = document.getElementById("field1-label");
+    const field1Input = document.getElementById("case-no");
+    const field2Label = document.getElementById("field2-label");
+    const field2Input = document.getElementById("case-year");
 
-    // Get references to the labels and input fields
-    var field1Label = document.getElementById("field1-label");
-    var field1Input = document.getElementById("case-no");
-    var field2Label = document.getElementById("field2-label");
-    var field2Input = document.getElementById("case-year");
+    if (!selectedRadio || !field1Label || !field1Input || !field2Label || !field2Input) {
+        return; // Safely exit if any element is missing
+    }
 
-    // Update the labels and placeholders based on the selected mode
+    const selectedMode = selectedRadio.value;
+
     if (selectedMode === "C") {
         field1Label.innerHTML = "Case No: <span class='red'>*</span>";
         field1Input.placeholder = "Enter Case No";
@@ -189,8 +191,7 @@ async function refreshCaptcha() {
         field2Label.innerHTML = "Filing Year: <span class='required'>*</span>";
         field2Input.placeholder = "Enter Filing Year";
     }
-    }
-    window.onload = updateFields;
+}
 </script>
 <!-- {{-- Function to store the district code in sessionStorage --}} -->
 <script>
@@ -787,10 +788,16 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        caseNoInput.addEventListener("keydown", allowOnlyDigits);
-        filingNoInput.addEventListener("keydown", allowOnlyDigits);
+        if (caseNoInput) {
+            caseNoInput.addEventListener("keydown", allowOnlyDigits);
+        }
+
+        if (filingNoInput) {
+            filingNoInput.addEventListener("keydown", allowOnlyDigits);
+        }
     });
 </script>
+
 <!--Script for Search High court order copy From Napix-->
 <script>
 

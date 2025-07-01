@@ -8,12 +8,12 @@
         $hasHC = session()->has('trackDetailsMobileHC');
         $hasDC = session()->has('trackDetailsMobileDC');
     @endphp
-    <button
+    <!-- <button
         onclick="window.location.href='{{ $hasHC ? '/trackStatusMobileHC' : '/trackStatusMobileDC' }}'"
         class="flex gap-2 p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">
         <img src="{{ asset('passets/images/icons/back.svg') }}" alt="">
         Back
-    </button>
+    </button> -->
         <button id="print-application-btn" class="flex gap-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5"><img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Application</button>
     </div>
 
@@ -392,104 +392,97 @@ function paymentPending(application_number) {
         }
     });
 
-    function doubleVerification(merchantDetails,app_no,responseData,orderDetails,color_key) {
+    function doubleVerification(merchantDetails, app_no, responseData, orderDetails, color_key) {
         const DEPID = merchantDetails.deptid;
         const DEPTTRANID = 'TR176261120073123';
-        // const DEPTTRANID = merchantDetails.transaction_number;
         const SECURITYCODE = merchantDetails.securitycode;
 
-        fetch('/double-verification', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({
-                depid: DEPID,
-                depttranid: DEPTTRANID,
-                securitycode: SECURITYCODE
-            })
-        })
+        // Timeout function (30 seconds)
+        const timeout = (ms) => new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Request timed out after ' + ms / 1000 + ' seconds')), ms);
+        });
+
+        Promise.race([
+            fetch('/double-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    depid: DEPID,
+                    depttranid: DEPTTRANID,
+                    securitycode: SECURITYCODE
+                })
+            }),
+            timeout(30000) // 30 seconds
+        ])
         .then(response => response.json())
-            .then(data => {
-                if (data.success && Array.isArray(data.decrypted_data)) {
-                    const decrypted_jegras_resp_dv_payload = {
-                        APPLICATION_NUMBER: app_no,
-                        DEPTID: data.decrypted_data[0],
-                        RECIEPTHEADCODE: data.decrypted_data[1],
-                        DEPOSITERNAME: data.decrypted_data[2],
-                        DEPTTRANID: data.decrypted_data[3],
-                        AMOUNT: data.decrypted_data[4],
-                        DEPOSITERID: data.decrypted_data[5],
-                        PANNO: data.decrypted_data[6],
-                        ADDINFO1: data.decrypted_data[7],
-                        ADDINFO2: data.decrypted_data[8],
-                        ADDINFO3: data.decrypted_data[9],
-                        TREASCODE: data.decrypted_data[10],
-                        IFMSOFFICECODE: data.decrypted_data[11],
-                        STATUS: data.decrypted_data[12],
-                        PAYMENTSTATUSMESSAGE: data.decrypted_data[13],
-                        GRN: data.decrypted_data[14],
-                        CIN: data.decrypted_data[15],
-                        REF_NO: data.decrypted_data[16],
-                        TXN_DATE: data.decrypted_data[17],
-                        TXN_AMOUNT: data.decrypted_data[18],
-                        CHALLAN_URL: data.decrypted_data[19],
-                        PMODE: data.decrypted_data[20],
-                        ADDINFO5: data.decrypted_data[21],
-                        ADDINFO6: data.decrypted_data[22],
-                    };
+        .then(data => {
+            if (data.success && Array.isArray(data.decrypted_data)) {
+                const d = data.decrypted_data;
 
-                    console.log("Payload to send: ", decrypted_jegras_resp_dv_payload);
-                    
-                    // Hit Laravel backend to forward to HC/DC API
-                    fetch('/verify-jegras-payment', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify(decrypted_jegras_resp_dv_payload)
-                    })
-                    .then(res => res.json())
-                    .then(apiResponse => {
-                        if (apiResponse.success) {
-                            // Proceed with status check
-                            const status = apiResponse.data.STATUS;
-                            console.log('status',status);
-                            if (status === "SUCCESS") {
-                                console.log('SU');
-                                responseData.paymentStatus = 1;
-                                responseData.application_status = 'Certified Copy is Not Ready Yet';
-                                console.log(responseData);
-                            } else if (status === "FAIL") {
-                                responseData.payment_status = 0;
-                                responseData.application_status = "Payment Pending";
-                            } else if (status === "BOOKED") {
-                                responseData.payment_status = 2;
-                                responseData.application_status = 'Payment is in Process';
-                            }
+                const decrypted_jegras_resp_dv_payload = {
+                    APPLICATION_NUMBER: app_no,
+                    DEPTID: d[0], RECIEPTHEADCODE: d[1], DEPOSITERNAME: d[2], DEPTTRANID: d[3],
+                    AMOUNT: d[4], DEPOSITERID: d[5], PANNO: d[6], ADDINFO1: d[7],
+                    ADDINFO2: d[8], ADDINFO3: d[9], TREASCODE: d[10], IFMSOFFICECODE: d[11],
+                    STATUS: d[12], PAYMENTSTATUSMESSAGE: d[13], GRN: d[14], CIN: d[15],
+                    REF_NO: d[16], TXN_DATE: d[17], TXN_AMOUNT: d[18], CHALLAN_URL: d[19],
+                    PMODE: d[20], ADDINFO5: d[21], ADDINFO6: d[22]
+                };
 
-                            displayApplicationDetails(responseData, orderDetails,merchantDetails.transaction_number,color_key);
-                        } else {
-                            console.log("Double Verification API failed.");
+                console.log("Payload to send: ", decrypted_jegras_resp_dv_payload);
+
+                fetch('/verify-jegras-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(decrypted_jegras_resp_dv_payload)
+                })
+                .then(res => res.json())
+                .then(apiResponse => {
+                    if (apiResponse.success) {
+                        const status = apiResponse.data.STATUS;
+                        console.log('status', status);
+
+                        if (status === "SUCCESS") {
+                            responseData.paymentStatus = 1;
+                            responseData.application_status = 'Certified Copy is Not Ready Yet';
+                        } else if (status === "FAIL") {
+                            responseData.payment_status = 0;
+                            responseData.application_status = "Payment Pending";
+                        } else if (status === "BOOKED") {
+                            responseData.payment_status = 2;
+                            responseData.application_status = 'Payment is in Process';
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error during Laravel DV API:', error);
-                    });
 
-                } else {
-                    console.log("Double Verification failed.");
-                }
-            })
-            .catch(error => {
-                console.error('Error during verification:', error);
-            });
+                        displayApplicationDetails(responseData, orderDetails, merchantDetails.transaction_number, color_key);
+                    } else {
+                        alert("Double Verification failed while verifying payment status.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during Laravel DV API:', error);
+                    alert("Something went wrong while verifying payment. Please try again later.");
+                });
+
+            } else {
+                alert("Double Verification failed. Decryption unsuccessful or data missing.");
+            }
+        })
+        .catch(error => {
+            console.error('Double Verification error:', error);
+            alert("Request failed or timed out. Please try again.");
+            window.location.href='{{ $hasHC ? '/trackStatusMobileHC' : '/trackStatusMobileDC' }}'
+        });
     }
 
+
     function displayApplicationDetails(data,orderDetails,transaction_number,color_key) {
-   
+        
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
         print_btn_track.classList.remove('hidden');
@@ -633,7 +626,7 @@ function paymentPending(application_number) {
                     </tr>
                     <tr class="border">
                         <td class="px-6 py-2 font-semibold uppercase border">Applicant Name</td>
-                        <td class="px-6 py-2 capitalize">${data.applicant_name}</td>
+                        <td class="px-6 py-2 uppercase">${data.applicant_name}</td>
                     </tr>
                     ${districtNameRow}
                     ${establishmentRow}
@@ -665,7 +658,12 @@ function paymentPending(application_number) {
                         <td class="px-6 py-2 font-semibold uppercase border">Applied Date</td>
                         <td class="px-6 py-2">${formattedCreatedAt}</td>
                     </tr>
-                    ${rejection_remarks}
+                    ${data.rejection_status === 1 ? `
+                        <tr class="border">
+                            <td class="px-6 py-2 font-semibold uppercase border">Rejection Remarks</td>
+                            <td class="px-6 py-2 uppercase text-red-500 font-bold">${data.rejection_remarks || 'N/A'}</td>
+                        </tr>
+                    ` : ''}
                 </tbody>
             </table>
             

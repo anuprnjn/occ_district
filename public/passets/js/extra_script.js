@@ -1,15 +1,17 @@
 
 // function to call another pages in the main page 
 
-    const loadingSpinner = document.getElementById('loading-spinner');
-    const contentArea = document.getElementById('content-area');
+   // Define globally
+    window.loadContent = function(routeName) {
+        sessionStorage.clear();
 
-    const loadContent = (routeName) => {
-       
-        loadingSpinner.classList.remove('hidden');
-        contentArea.innerHTML = ''; 
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const contentArea = document.getElementById('content-area');
 
-        fetch(`/${routeName}`, { 
+        if (loadingSpinner) loadingSpinner.classList.remove('hidden');
+        if (contentArea) contentArea.innerHTML = '';
+
+        fetch(`/${routeName}`, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -22,38 +24,44 @@
             return response.text();
         })
         .then(data => {
-            contentArea.innerHTML = data;
-            loadingSpinner.classList.add('hidden');
+            if (contentArea) contentArea.innerHTML = data;
+            if (loadingSpinner) loadingSpinner.classList.add('hidden');
         })
         .catch(error => {
             console.error('Fetch error:', error.message);
-            contentArea.innerHTML = `<p class="text-red-500">Failed to load content. (${error.message})</p>`;
-            loadingSpinner.classList.add('hidden');
+            if (contentArea) {
+                contentArea.innerHTML = `<p class="text-red-500">Failed to load content. (${error.message})</p>`;
+            }
+            if (loadingSpinner) loadingSpinner.classList.add('hidden');
         });
     };
 
+    // Initial load when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
         loadContent('hcPage');
     });
-
-// function to switch between pages using radio button 
+    // function to switch between pages using radio button 
 
     function myfun() {
-        var selectedOption = document.getElementById("highCourtSelect").value;
+        const highCourtSelect = document.getElementById("highCourtSelect");
+        const orderJudgementForm = document.getElementById("orderJudgementForm");
+        const otherForm = document.getElementById("otherForm");
+
+        // Safely return if elements are not found
+        if (!highCourtSelect || !orderJudgementForm || !otherForm) {
+            return;
+        }
+
+        const selectedOption = highCourtSelect.value;
+
         if (selectedOption === "applyJudgement") {
-            document.getElementById("orderJudgementForm").style.display = "block";
-            document.getElementById("otherForm").style.display = "none";
+            orderJudgementForm.style.display = "block";
+            otherForm.style.display = "none";
         } else if (selectedOption === "applyOrders") {
-            document.getElementById("orderJudgementForm").style.display = "none";
-            document.getElementById("otherForm").style.display = "block";
+            orderJudgementForm.style.display = "none";
+            otherForm.style.display = "block";
         }
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        myfun();  
-    });
-
-
 
     // function to toggle dropdown 
     function toggleDropdown() {
@@ -687,15 +695,30 @@ function getApplicationDetailByMobile(mobileNumber) {
 // function to toggle the district court form using select box 
 
 function toggleDistForm() {
-    var selectedOption = document.getElementById("civilCourtSelect").value;
+    const civilCourtSelect = document.getElementById("civilCourtSelect");
+    const orderJudgementFormDC = document.getElementById("orderJudgementFormDC");
+    const applyOrdersFormDC = document.getElementById("applyOrdersFormDC");
+
+    if (!civilCourtSelect || !orderJudgementFormDC || !applyOrdersFormDC) return;
+
+    const selectedOption = civilCourtSelect.value;
+
     if (selectedOption === "applyJudgementDC") {
-        document.getElementById("orderJudgementFormDC").style.display = "block";
-        document.getElementById("applyOrdersFormDC").style.display = "none";
+        orderJudgementFormDC.style.display = "block";
+        applyOrdersFormDC.style.display = "none";
     } else if (selectedOption === "applyOrdersDC") {
-        document.getElementById("applyOrdersFormDC").style.display = "block";
-        document.getElementById("orderJudgementFormDC").style.display = "none";
+        orderJudgementFormDC.style.display = "none";
+        applyOrdersFormDC.style.display = "block";
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const civilCourtSelect = document.getElementById("civilCourtSelect");
+    if (civilCourtSelect) {
+        civilCourtSelect.addEventListener("change", toggleDistForm);
+        toggleDistForm(); // Initial trigger
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     toggleDistForm();  
