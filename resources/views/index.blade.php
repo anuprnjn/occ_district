@@ -16,8 +16,8 @@
     <!-- Loading Spinner -->
     <div id="loading-spinner" class="absolute w-full h-[100vh] bg-white mt-10 inset-0 flex items-start justify-start z-50">
         <div class="spinner flex items-center gap-2 p-2 ml-4 mt-4"> 
-            <img class="w-[42px] animate-spin" src="{{ asset('passets/images/icons/loading.png') }}" alt="Loading">
-            <span class="text-gray-800 load text-lg">Loading please wait...</span>
+            <img class="w-[42px] animate-spin" src="{{ asset('passets/images/icons/refresh.png') }}" alt="Loading">
+            <span class="text-gray-800 load text-md">Loading please wait...</span>
         </div>
     </div>
     

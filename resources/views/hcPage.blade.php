@@ -141,7 +141,7 @@
         <div class="form-field mt-10">
             <button type="submit" class="btn btn-search flex items-center justify-center gap-2" onclick="submitJudgementForm(event)" id="searchBtn">
                 <span id="btnText">Search</span>
-                <span id="btnSpinner" class=" animate-spin hidden border-2 border-white border-t-transparent rounded-full w-6 h-6"></span>
+                <span id="btnSpinner" class=" animate-spin hidden border-4 border-white border-t-transparent rounded-full w-6 h-6"></span>
             </button>
         </div>
             </div>

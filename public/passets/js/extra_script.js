@@ -3,7 +3,7 @@
 
    // Define globally
     window.loadContent = function(routeName) {
-        sessionStorage.clear();
+        // sessionStorage.clear('selectedHcCaseType');
 
         const loadingSpinner = document.getElementById('loading-spinner');
         const contentArea = document.getElementById('content-area');
@@ -22,7 +22,7 @@
                 throw new Error(`Failed to fetch: ${response.statusText}`);
             }
             return response.text();
-        })
+        })  
         .then(data => {
             if (contentArea) contentArea.innerHTML = data;
             if (loadingSpinner) loadingSpinner.classList.add('hidden');

@@ -90,7 +90,7 @@
             </div>
 
             <div class="form-field">
-            <button type="submit" id="submitBtn" class=" mt-4 order_btn w-full bg-[#4B3E2F] text-white p-3 rounded-md hover:bg-[#D09A3F] flex items-center justify-center gap-2"
+            <button type="submit" id="submitBtn" class="hidden mt-4 order_btn w-full bg-[#4B3E2F] text-white p-3 rounded-md hover:bg-[#D09A3F] flex items-center justify-center gap-2"
                     onclick="submitDcUserOrderDetails(event)">
                 <span id="btnText">Submit</span>
                 <span id="btnspinnerDc" class="hidden loader"></span>
