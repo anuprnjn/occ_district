@@ -335,11 +335,10 @@ function handleFormSubmit(event) {
     // 12. Request Mode (Urgent/Ordinary)
     const requestMode = document.querySelector('input[name="request_mode"]:checked');
     if (!requestMode) {
-        const requestModeField = document.getElementById('urgent').closest('.form-field');
-        showError(requestModeField, 'Please select request mode.');
+        const requestModeContainer = document.getElementById('urgent').parentElement;
+        showError(requestModeContainer, 'Please select request mode.');
         return;
     }
-
     // 13. Required Document
     const requiredDoc = document.getElementById('required-document');
     if (!requiredDoc.value.trim()) {

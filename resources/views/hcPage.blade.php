@@ -313,7 +313,7 @@
             <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" style="margin-top: 10px;">
         </div>
     </div>
-            <div class="form-row mt-4">
+        <div class="form-row mt-4">
         <div class="form-field">
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
