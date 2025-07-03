@@ -18,7 +18,7 @@
         <div class="flex justify-center sm:flex-row flex-col items-center sm:gap-10">
             <div class="form-field">
                 <label for="application_number">Mobile Number / Application Number  <span>*</span></label>
-                <input type="text" id="application_number" name="application_number" placeholder="Enter Application Number" class="sm:mb-5">
+                <input type="text" id="application_number" name="application_number" placeholder="Enter Mobile Number / Application Number" class="sm:mb-5">
             </div>  
             <div class="hidden form-field mt-4 sm:mt-0 w-[90%] sm-w-[100%]" id="mobile_otp">
                 <div class="flex items-center justify-start gap-3">
