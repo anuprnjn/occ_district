@@ -84,7 +84,10 @@ Route::get('/login', function () {
 
 Route::get('/trackStatus', [mobileNumberTrackController::class, 'showTrackStatusPage'])->name('trackStatus');
 
-Route::get('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
+// Route::get('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
+Route::get('/trackStatusDetails', function () {
+    return view('trackStatusDetails');
+})->name('trackStatusDetails');
 
 Route::get('/pendingPayments', function () {
     return view('pendingPayments');
