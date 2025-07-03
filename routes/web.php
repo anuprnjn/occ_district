@@ -61,8 +61,14 @@ use App\Http\Middleware\RolePermissionMiddleware;
 
 
 Route::get('/', function () {
+    if (session()->has('trackDetailsMobileHC')) {
+        return redirect()->route('trackStatusMobileHC');
+    }
+    if (session()->has('trackDetailsMobileDC')) {
+        return redirect()->route('trackStatusMobileDC');
+    }
     return view('index');
-});
+})->name('index');
 
 Route::get('/hcPage', function () {
     return view('hcPage');
@@ -76,13 +82,9 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
-Route::get('/trackStatus', function () {
-    return view('trackStatus');
-})->name('trackStatus');
+Route::get('/trackStatus', [mobileNumberTrackController::class, 'showTrackStatusPage'])->name('trackStatus');
 
-Route::get('/trackStatusDetails', function () {
-    return view('trackStatusDetails');
-})->name('trackStatusDetails');
+Route::get('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
 
 Route::get('/pendingPayments', function () {
     return view('pendingPayments');
@@ -251,6 +253,7 @@ Route::get('/refresh-track-status-hc', [mobileNumberTrackController::class, 'ref
 
 Route::get('/refresh-track-status-dc', [mobileNumberTrackController::class, 'refreshTrackDetailsDCFromSession'])->name('refresh.track.status.dc');
 
+Route::post('/logout-tracking', [mobileNumberTrackController::class, 'logoutTracking'])->name('logout.tracking');
 
 //**********************************************************admin routes **************************************************************
 

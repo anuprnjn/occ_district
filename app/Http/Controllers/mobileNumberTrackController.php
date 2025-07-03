@@ -42,6 +42,20 @@ class mobileNumberTrackController extends Controller
         }
     }
 
+    public function setTrackDetailsHC(Request $request)
+    {
+        session()->forget('trackDetailsMobileDC');
+        $trackData = $request->input('data');
+
+        // Save in Laravel session
+        session(['trackDetailsMobileHC' => $trackData]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Track details of HC saved in session.'
+        ]);
+    }
+
     public function trackMobileNumberDC(Request $request)
     {
         // Validate the request
@@ -74,20 +88,6 @@ class mobileNumberTrackController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-    public function setTrackDetailsHC(Request $request)
-    {
-        session()->forget('trackDetailsMobileDC');
-        $trackData = $request->input('data');
-
-        // Save in Laravel session
-        session(['trackDetailsMobileHC' => $trackData]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Track details of HC saved in session.'
-        ]);
     }
 
     public function setTrackDetailsDC(Request $request)
@@ -188,4 +188,33 @@ class mobileNumberTrackController extends Controller
 
         return redirect()->back()->with('error', 'Session data not available.');
     }
+    public function logoutTracking(Request $request)
+    {
+        session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
+
+        // ✅ Redirect to /trackStatus instead of returning JSON
+        return redirect('/trackStatus')->with('message', 'You have been logged out.');
+    }
+    public function showTrackStatusDetails(Request $request)
+    {
+        if (!session()->has('trackDetailsMobileHC') && !session()->has('trackDetailsMobileDC')) {
+            return redirect('/trackStatus')->with('error', 'Session expired. Please login again.');
+        }
+
+        return view('trackStatusDetails');
+    }
+    
+    public function showTrackStatusPage()
+    {
+        if (session()->has('trackDetailsMobileHC')) {
+            return redirect()->route('trackStatusMobileHC');
+        }
+
+        if (session()->has('trackDetailsMobileDC')) {
+            return redirect()->route('trackStatusMobileDC');
+        }
+
+        return view('trackStatus'); // show login form
+    }
+
 }

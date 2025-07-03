@@ -4,7 +4,6 @@
 
 <section class="content-section h-[65vh]">
     <h3 class="font-semibold text-xl -mt-8">Online Certified Copy Portal - Sign In</h3>
-    
     <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id='trackApplicationForm'>
         <div class="form-group -ml-1">
             <label>
@@ -29,7 +28,7 @@
                 <input type="text" id="otp" name="otp" placeholder="Enter OTP" class="sm:mb-5">
             </div>  
             <div class="form-field">
-                <button id="otpButtonTrack" type="button" class="sm:w-[50%] w-[100%] btn-submit order_btn mt-4" onClick="checkInputType(event)">GO</button>
+                <button id="otpButtonTrack" type="button" class="rounded-md sm:w-[50%] w-[100%] btn-submit order_btn mt-4" onClick="checkInputType(event)">GO</button>
             </div>
         </div>
         <span id="error_span" class="text-red-500 font-normal text-sm ml-5 sm:ml-0 sm:text-left text-center mt-2 sm:mt-0 block"></span>

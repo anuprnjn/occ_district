@@ -2,7 +2,7 @@
 
 @section('content')
 
-<section class="content-section min-h-[65vh] px-4 sm:px-6 lg:px-8">
+<section class="content-section min-h-[80vh] px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col sm:flex-row justify-between items-center sm:-mb-4">
         <h3 class="font-semibold text-xl -mt-6 sm:-mt-10 text-center sm:text-left w-full sm:w-auto">
             Application Details - High Court

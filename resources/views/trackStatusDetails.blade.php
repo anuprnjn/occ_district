@@ -52,6 +52,7 @@
 
 @push('scripts')
 
+
 <script>
     
 function paymentPending(application_number) {
@@ -795,5 +796,6 @@ function paymentPending(application_number) {
     });
 
 </script>
+
 
 @endpush
