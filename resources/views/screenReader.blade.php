@@ -2,7 +2,7 @@
 
 @section('content')
 
-<section class="content-section min-h-[60vh] p-6">
+<section class="content-section min-h-[100vh] p-6">
     <h3 class="font-semibold text-xl mb-8 -mt-8 ml-1">Screen Reader Access</h3>
 
     <div class="overflow-x-auto border rounded-lg" id="main-content">

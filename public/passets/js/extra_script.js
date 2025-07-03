@@ -3,7 +3,12 @@
 
    // Define globally
     window.loadContent = function(routeName) {
-        // sessionStorage.clear('selectedHcCaseType');
+        
+        let s = sessionStorage, a = s.getItem('search_type'), p = s.getItem('previousPage'); 
+        s.clear(); 
+        a && s.setItem('search_type', a); 
+        p && s.setItem('previousPage', p);
+
 
         const loadingSpinner = document.getElementById('loading-spinner');
         const contentArea = document.getElementById('content-area');
