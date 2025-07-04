@@ -2,7 +2,7 @@
 
 @section('content')
 
-<section class="content-section h-[65vh]">
+<section class="content-section h-[68vh]">
     <h3 class="font-semibold text-xl -mt-8">Online Certified Copy Portal - Sign In</h3>
     <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10" id='trackApplicationForm'>
         <div class="form-group -ml-1">

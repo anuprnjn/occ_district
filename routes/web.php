@@ -60,13 +60,22 @@ use App\Http\Controllers\admin\ReportController;
 use App\Http\Middleware\RolePermissionMiddleware;
 
 
+// Route::get('/', function () {
+//     if (session()->has('trackDetailsMobileHC') || session()->has('trackDetailsMobileDC')) {
+//         return redirect()->route('session.active');
+//     }
+//     return view('index');
+// })->name('index');
+
+// active session page route 
+// Route::get('/session-active', function () {
+//     return view('session_active');
+// })->name('session.active');
+
 Route::get('/', function () {
-    if (session()->has('trackDetailsMobileHC')) {
-        return redirect()->route('trackStatusMobileHC');
-    }
-    if (session()->has('trackDetailsMobileDC')) {
-        return redirect()->route('trackStatusMobileDC');
-    }
+    // Forget specific session keys if they exist
+    session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
+
     return view('index');
 })->name('index');
 

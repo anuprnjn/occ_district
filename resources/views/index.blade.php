@@ -32,6 +32,7 @@
 @endsection
 
 @push('scripts')
+
 <script type="text/javascript" src="{{ asset('passets/js/extra_script.js')}}" defer></script>
 <!-- {{-- function for setting dist_code to esta_api  --}} -->
 <script>

@@ -6,9 +6,9 @@ return [
 
     'driver' => env('SESSION_DRIVER', 'database'), // Database session driver ensures persistence
 
-    'lifetime' => env('SESSION_LIFETIME', 180), // Increase session lifetime to 180 minutes
+    'lifetime' => env('SESSION_LIFETIME', 30), // Increase session lifetime to 180 minutes
 
-    'expire_on_close' => false, // Ensures session stays active even after browser is closed
+    'expire_on_close' => true, // Ensures session stays active even after browser is closed
 
     'encrypt' => true, // Encrypt session data for better security
 

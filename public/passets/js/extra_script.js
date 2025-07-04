@@ -1,4 +1,3 @@
-
 // function to call another pages in the main page 
 
    // Define globally

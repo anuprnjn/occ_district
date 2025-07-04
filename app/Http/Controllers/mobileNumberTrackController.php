@@ -203,7 +203,7 @@ class mobileNumberTrackController extends Controller
 
         return view('trackStatusDetails');
     }
-    
+   
     public function showTrackStatusPage()
     {
         if (session()->has('trackDetailsMobileHC')) {
