@@ -76,6 +76,9 @@ Route::get('/', function () {
     // Forget specific session keys if they exist
     session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
 
+    // Set isUserLoggedIn to false
+    session(['isUserLoggedIn' => false]);
+
     return view('index');
 })->name('index');
 
