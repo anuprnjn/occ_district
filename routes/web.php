@@ -93,10 +93,11 @@ Route::get('/login', function () {
 
 Route::get('/trackStatus', [mobileNumberTrackController::class, 'showTrackStatusPage'])->name('trackStatus');
 
-// Route::get('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
-Route::get('/trackStatusDetails', function () {
-    return view('trackStatusDetails');
-})->name('trackStatusDetails');
+Route::get('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
+
+// Route::get('/trackStatusDetails', function () {
+//     return view('trackStatusDetails');
+// })->name('trackStatusDetails');
 
 Route::get('/pendingPayments', function () {
     return view('pendingPayments');
@@ -155,6 +156,8 @@ Route::post('/get-establishments', [DistrictController::class, 'getEstablishment
 Route::post('/send-otp', [OtpController::class, 'sendOtp']);
 
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
+
+Route::post('/verify-otp-track', [OtpController::class, 'verifyOtpTrack']);
 
 Route::post('/resend-otp', [OtpController::class, 'resendOtp']);
 

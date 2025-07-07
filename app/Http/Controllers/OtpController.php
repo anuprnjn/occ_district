@@ -36,6 +36,25 @@ class OtpController extends Controller
         return response()->json(['success' => false, 'message' => 'Incorrect OTP']);
     }
 
+    public function verifyOtpTrack(Request $request)
+    {
+        $mobile = $request->mobile;
+        $otp = $request->otp;
+
+        // Check if OTP matches the one stored in session
+        if (session($mobile) && session($mobile) == $otp) {
+            session()->forget($mobile); // Remove OTP after successful verification
+
+            session(['isUserLoggedIn' => true]);
+            session(['trackStatusApplication' => true]);
+
+            return response()->json(['success' => true, 'message' => 'OTP verified']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Incorrect OTP']);
+    }
+    
+
     public function resendOtp(Request $request)
     {
         $mobile = $request->mobile;

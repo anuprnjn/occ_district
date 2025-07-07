@@ -190,6 +190,8 @@ class mobileNumberTrackController extends Controller
     }
     public function logoutTracking(Request $request)
     {
+        session(['isUserLoggedIn' => false]);
+        session(['trackStatusApplication' => false]);
         session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
 
         // ✅ Redirect to /trackStatus instead of returning JSON
@@ -197,24 +199,36 @@ class mobileNumberTrackController extends Controller
     }
     public function showTrackStatusDetails(Request $request)
     {
-        if (!session()->has('trackDetailsMobileHC') && !session()->has('trackDetailsMobileDC')) {
+        $hasHc = session()->has('trackDetailsMobileHC');
+        $hasDc = session()->has('trackDetailsMobileDC');
+        $hasTrackStatusApplication = session('trackStatusApplication') === true;
+
+        if (!$hasHc && !$hasDc && !$hasTrackStatusApplication) {
             return redirect('/trackStatus')->with('error', 'Session expired. Please login again.');
         }
 
         return view('trackStatusDetails');
     }
    
-    public function showTrackStatusPage()
+   public function showTrackStatusPage()
     {
-        if (session()->has('trackDetailsMobileHC')) {
-            return redirect()->route('trackStatusMobileHC');
+        if (session('isUserLoggedIn') === true) {
+
+            if (session()->has('trackDetailsMobileHC')) {
+                return redirect()->route('trackStatusMobileHC');
+            }
+
+            if (session()->has('trackDetailsMobileDC')) {
+                return redirect()->route('trackStatusMobileDC');
+            }
+
+            if (session('trackStatusApplication') === true) {
+                return redirect()->route('trackStatus');
+            }
+
         }
 
-        if (session()->has('trackDetailsMobileDC')) {
-            return redirect()->route('trackStatusMobileDC');
-        }
-
-        return view('trackStatus'); // show login form
+        return view('trackStatus'); // Not logged in
     }
 
 }

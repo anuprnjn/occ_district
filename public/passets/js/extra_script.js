@@ -433,7 +433,7 @@ function verifyOtpTrack(selectedCourt,validatedMobile, application_number) {
     console.log('otp',otp);
 
     // Make a POST request to the verifyOtp endpoint
-    fetch('/verify-otp', {
+    fetch('/verify-otp-track', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

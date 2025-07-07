@@ -32,7 +32,7 @@
         </li>
         {{-- Check if user is logged in via session --}}
         @php
-            $isLoggedIn = session()->has('trackDetailsMobileHC') || session()->has('trackDetailsMobileDC');
+            $isLoggedIn = session('isUserLoggedIn') === true;
         @endphp
 
         {{-- Only show Home if not logged in --}}

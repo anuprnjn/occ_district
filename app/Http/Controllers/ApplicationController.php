@@ -76,8 +76,7 @@ class ApplicationController extends Controller
 
             return response()->json(['success' => false, 'message' => 'Application number not found !']);
         } catch (\Exception $e) {
-            // If an exception occurs, return an error message
-            console.log($e);
+            
             return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
