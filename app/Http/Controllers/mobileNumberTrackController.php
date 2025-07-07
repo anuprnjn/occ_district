@@ -222,9 +222,9 @@ class mobileNumberTrackController extends Controller
                 return redirect()->route('trackStatusMobileDC');
             }
 
-            if (session('trackStatusApplication') === true) {
-                return redirect()->route('trackStatus');
-            }
+            // if (session('trackStatusApplication') === true) {
+            //     return redirect()->route('trackStatus');
+            // }
 
         }
 
