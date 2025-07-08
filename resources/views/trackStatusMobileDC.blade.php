@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 @endpush
 
-<section class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+<section class="min-h-screen px-4 py-6 sm:px-6 lg:px-8"> 
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 mb-6 w-full">
        <h3 class="text-lg sm:text-xl font-bold text-[#4B3E2F] text-center sm:text-left w-full sm:w-auto -mt-4 sm:mt-0">

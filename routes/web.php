@@ -60,25 +60,10 @@ use App\Http\Controllers\admin\ReportController;
 use App\Http\Middleware\RolePermissionMiddleware;
 
 
-// Route::get('/', function () {
-//     if (session()->has('trackDetailsMobileHC') || session()->has('trackDetailsMobileDC')) {
-//         return redirect()->route('session.active');
-//     }
-//     return view('index');
-// })->name('index');
-
-// active session page route 
-// Route::get('/session-active', function () {
-//     return view('session_active');
-// })->name('session.active');
 
 Route::get('/', function () {
-    // Forget specific session keys if they exist
-    session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
-
-    // Set isUserLoggedIn to false
+    session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC', 'HcCaseDetailsNapix','active_payment_source', 'DcCaseDetailsNapix']);
     session(['isUserLoggedIn' => false]);
-
     return view('index');
 })->name('index');
 
@@ -98,11 +83,10 @@ Route::get('/trackStatus', [mobileNumberTrackController::class, 'showTrackStatus
 
 Route::get('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
 
-// Route::get('/trackStatusDetails', function () {
-//     return view('trackStatusDetails');
-// })->name('trackStatusDetails');
-
 Route::get('/pendingPayments', function () {
+    if (session('isUserLoggedIn') === false) {
+        return redirect('/');
+    }
     return view('pendingPayments');
 })->name('pendingPayments');
 
@@ -115,27 +99,30 @@ Route::get('/hc-application-details', function () {
 })->name('hc_application_details');
 
 Route::get('/caseInformationDc', function () {
+     if (!session()->has('DcCaseDetailsNapix')) {
+    return redirect('/');
+    }
     return view('caseInformationDC');
 })->name('caseInformationDC');
 
-// Route::middleware([CheckSession::class])->group(function () {
-    Route::get('/caseInformation', function () {
-        return view('caseInformation');
-    })->name('caseInformation');
-// });
-// Route::middleware([CheckSessionCd_pay::class])->group(function () {
-    Route::get('/occ/cd_pay', function () {
-        return view('caseInformationDetails');
-    })->name('caseInformationDetails');
-// });
+Route::get('/caseInformation', function () {
+   if (!session()->has('HcCaseDetailsNapix')) {
+    return redirect('/');
+    }
+    return view('caseInformation');
+})->name('caseInformation');
+
+Route::get('/occ/cd_pay', function () {
+     if (!session()->has('active_payment_source')) {
+    return redirect('/');
+    }
+
+    return view('caseInformationDetails');
+})->name('caseInformationDetails');
 
 Route::get('/screenReader', function () {
     return view('screenReader');
 })->name('screenReader');
-
-// Route::get('/debug-php', function () {
-//     phpinfo();
-// });
 
 Route::get('/downloadCC', function () {
     return view('downloadCC');

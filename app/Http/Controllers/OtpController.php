@@ -46,7 +46,7 @@ class OtpController extends Controller
             session()->forget($mobile); // Remove OTP after successful verification
 
             session(['isUserLoggedIn' => true]);
-            session(['trackStatusApplication' => true]);
+            // session(['trackStatusApplication' => true]);
 
             return response()->json(['success' => true, 'message' => 'OTP verified']);
         }

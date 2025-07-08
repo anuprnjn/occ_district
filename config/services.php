@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'napix' => [
+        'token_url' => 'https://delhigw.napix.gov.in/nic/ecourts//oauth2/token',
+    ],
 
 ];

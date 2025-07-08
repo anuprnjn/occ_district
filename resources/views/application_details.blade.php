@@ -256,7 +256,7 @@
             document.head.appendChild(style);
 
             // Call this function when the application details page loads
-            showWarningMessage();
+            // showWarningMessage();
             } catch (error) {
                 console.error('Error fetching application details:', error);
                 document.getElementById('application-details-container').innerHTML = '<p class="text-center text-red-500">An error occurred while fetching application details.</p>';

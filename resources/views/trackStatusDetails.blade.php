@@ -41,7 +41,7 @@
     <div id="cc-download-result" class="mt-2 w-full mb-16 sm:mb-5">
     <!-- Table will be injected here -->
     </div>
-        <span id="note_span" class="hidden">
+        <span id="note_span" class="hidden sm:mt-0 am:mb-0 -mt-20 mb-16">
         <strong >Note : </strong>Actual delivery of certified copy is available after making payment on intimation made by copying section !
     </span>
     </div>

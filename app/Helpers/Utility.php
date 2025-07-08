@@ -9,7 +9,7 @@ class Utility
 
     public static function getNapixAccessToken($basicAuth)
     {
-        $url = env('NAPIX_TOKEN_URL');
+        $url = config('services.napix.token_url');
         $postFields = "grant_type=client_credentials&scope=napix";
     
         $ch = curl_init();
