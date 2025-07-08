@@ -89,7 +89,7 @@
         type="submit"
             class="w-full flex items-center gap-2 px-4 py-2 text-white font-medium bg-red-600 hover:bg-red-700 transition-colors duration-200
                    sm:rounded-md rounded-none h-[62px] sm:h-auto">
-            <svg style="fill: white;" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+            <svg style="fill: white;" class="w-6 h-6 -ml-2 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
                 <path d="M806-440H320v-80h486l-62-62 56-58 160 160-160 160-56-58 62-62ZM600-600v-160H200v560h400v-160h80v160q0 33-23.5 56.5T600-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h400q33 0 56.5 23.5T680-760v160h-80Z"/>
             </svg>
             <span>LOGOUT</span>

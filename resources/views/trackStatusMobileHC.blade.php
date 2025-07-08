@@ -45,7 +45,7 @@
 
     <!-- Loader -->
     <div id="common-loader" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-        <div class="flex items-center gap-3 bg-white px-6 py-4 border">
+        <div class="flex items-center gap-3 bg-white px-8 py-3 border rounded-md">
             <div class="relative w-8 h-8">
                 <div class="absolute inset-0 rounded-full border-4 border-teal-400 border-t-transparent animate-spin"></div>
             </div>
@@ -75,13 +75,13 @@
                 <div class="border rounded-lg shadow p-4 ">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="text-sm font-medium">S.No.</div>
-                        <div class="text-sm font-semibold">{{ $loop->iteration }}</div>
+                        <div class="text-sm font-semibold bg-[#D09A3F] w-6 text-center rounded-md text-white">{{ $loop->iteration }}</div>
                         
                         <div class="text-sm font-medium">Application No.</div>
-                        <div class="text-sm">
+                        <div class="text-sm font-semibold">
                             @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
                             <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
-                               class="text-teal-600 font-medium hover:text-teal-700 hover:underline">
+                               class="text-teal-600 font-semibold hover:text-teal-700 underline">
                                 {{ $copy['application_number'] }}
                             </a>
                         </div>
@@ -125,13 +125,13 @@
                 <div class="border rounded-lg shadow p-4 hidden previous-row">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="text-sm font-medium">S.No.</div>
-                        <div class="text-sm">{{ $loop->iteration + $latestDateApplications->count() }}</div>
+                        <div class="text-sm font-semibold bg-[#D09A3F] w-6 text-center rounded-md text-white">{{ $loop->iteration + $latestDateApplications->count() }}</div>
                         
                         <div class="text-sm font-medium">Application No.</div>
-                        <div class="text-sm">
+                        <div class="text-sm font-semibold">
                             @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
                             <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
-                               class="text-teal-600 font-medium hover:text-teal-700 hover:underline">
+                               class="text-teal-600 font-semibold hover:text-teal-700 underline">
                                 {{ $copy['application_number'] }}
                             </a>
                         </div>
@@ -190,7 +190,7 @@
                         @foreach($latestDateApplications as $copy)
                         <tr>
                             <td class="px-4 py-3">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 font-semibold">
                                 @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
                                 <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
                                    class="font-semibold text-teal-600 hover:text-teal-700 hover:underline">
@@ -224,10 +224,10 @@
                         @foreach($previousApplications as $copy)
                         <tr class=" transition-colors hidden previous-row">
                             <td class="px-4 py-3">{{ $loop->iteration + $latestDateApplications->count() }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 font-semibold">
                                 @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
                                 <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
-                                   class="text-teal-600 font-medium hover:text-teal-700 hover:underline">
+                                   class="text-teal-600 font-semibold hover:text-teal-700 hover:underline">
                                     {{ $copy['application_number'] }}
                                 </a>
                             </td>
