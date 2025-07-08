@@ -199,7 +199,7 @@ class mobileNumberTrackController extends Controller
     public function logoutTracking(Request $request)
     {
         session(['isUserLoggedIn' => false]);
-        session(['trackStatusApplication' => false]);
+        // session(['trackStatusApplication' => false]);
         session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
 
         // ✅ Redirect to /trackStatus instead of returning JSON
@@ -209,9 +209,9 @@ class mobileNumberTrackController extends Controller
     {
         $hasHc = session()->has('trackDetailsMobileHC');
         $hasDc = session()->has('trackDetailsMobileDC');
-        $hasTrackStatusApplication = session('trackStatusApplication') === true;
+        // $hasTrackStatusApplication = session('trackStatusApplication') === true;
 
-        if (!$hasHc && !$hasDc && !$hasTrackStatusApplication) {
+        if (!$hasHc && !$hasDc) {
             return redirect('/trackStatus')->with('error', 'Session expired. Please login again.');
         }
 

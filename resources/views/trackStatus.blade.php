@@ -279,7 +279,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             const orderCopyLength = data.data.order_copy.length;
                             const otherCopyLength = data.data.other_copy.length;
                             if (orderCopyLength > 0 || otherCopyLength > 0) {
-                                const validatedMobile = data.data.other_copy[0].mobile_number;
+                                const validatedMobile =
+                                (data?.data?.other_copy?.length > 0 && data.data.other_copy[0].mobile_number) ||
+                                (data?.data?.order_copy?.length > 0 && data.data.order_copy[0].mobile_number) ||
+                                '';
                                 sendOtpTrack(selectedCourt,validatedMobile);
                                 const maskedMobile = input.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
                                 otp_input.classList.remove('hidden');
