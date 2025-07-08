@@ -64,6 +64,7 @@ use App\Http\Middleware\RolePermissionMiddleware;
 Route::get('/', function () {
     session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC', 'HcCaseDetailsNapix','active_payment_source', 'DcCaseDetailsNapix']);
     session(['isUserLoggedIn' => false]);
+    session(['isUserLoggedInTransaction' => false]);
     return view('index');
 })->name('index');
 
@@ -91,10 +92,12 @@ Route::get('/pendingPayments', function () {
 })->name('pendingPayments');
 
 Route::get('/application-details', function () {
+    session()->put('isUserLoggedInTransaction', false); // Set before view loads
     return view('application_details');
 })->name('application_details');
 
 Route::get('/hc-application-details', function () {
+    session()->put('isUserLoggedInTransaction', false); // Set before view loads
     return view('hc_application_details');
 })->name('hc_application_details');
 

@@ -30,6 +30,9 @@ class OtpController extends Controller
         // Check if OTP matches the one stored in session
         if (session($mobile) && session($mobile) == $otp) {
             session()->forget($mobile); // Remove OTP after successful verification
+
+            session(['isUserLoggedInTransaction' => true]);
+
             return response()->json(['success' => true, 'message' => 'OTP verified']);
         }
 

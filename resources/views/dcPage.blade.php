@@ -85,23 +85,15 @@
                 Send OTP
             </button>
             <!-- application details div modal  -->
-            <div id="application_n_details"
-    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] p-4 sm:p-6 hidden">
-    
-    <div
-        class="dark_form bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-full sm:max-w-[500px] md:max-w-[600px] lg:max-w-[1000px] relative overflow-auto max-h-[90vh]">
-
-        <button type="button"
-            class="absolute top-2 right-2 text-gray-600 hover:text-red-600 text-xl font-bold"
-            onclick="closeModal(event)">✖</button>
-
-        <h4 id="modalText" class="text-lg text-center mb-4 font-medium"></h4>
-
-        <div class="overflow-x-auto">
-            <table id="trackedDataDC" class="w-full text-sm border-collapse"></table>
-        </div>
-    </div>
-</div>
+            <div id="application_n_details" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] p-4 sm:p-6 hidden">
+                <div class="dark_form bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-full sm:max-w-[500px] md:max-w-[600px] lg:max-w-[1000px] relative overflow-auto max-h-[90vh]">
+                    <button type="button" class="absolute top-2 right-2 text-gray-600 hover:text-red-600 text-xl font-bold" onclick="closeModal(event)">✖</button>
+                    <h4 id="modalText" class="sm:text-lg text-sm text-center mb-4 font-medium mt-2 sm:mt-0"></h4>
+                    <div class="overflow-x-auto">
+                        <table id="trackedDataDC" class="w-full sm:text-sm text-xs border-collapse"></table>
+                    </div>
+                </div>
+            </div>
 
            <button type="button" id="view_recent_button" class="hidden bg-teal-600 hover:bg-teal-700 rounded-md text-white sm:w-[250px] w-[280px] p-[9px] truncate whitespace-nowrap overflow-hidden text-ellipsis" onclick="view_recent_app()">View Transactions</button>
         </div>

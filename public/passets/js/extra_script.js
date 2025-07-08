@@ -430,8 +430,6 @@ function verifyOtpTrack(selectedCourt,validatedMobile, application_number) {
     }
 
     const otp = mobileInput.value;
-    console.log('otp',otp);
-
     // Make a POST request to the verifyOtp endpoint
     fetch('/verify-otp-track', {
         method: 'POST',
@@ -624,38 +622,36 @@ function selectCaseTypeOptionForOrderJudgementForm(element) {
 }
 
 function getApplicationDetailByMobile(mobileNumber) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // ✅ define it here
+
     const courtType = sessionStorage.getItem('court_type_for_verify_otp');
-    
     const view_recent_applications = document.getElementById('view_recent_button');
+
     var url = '/application-mobile-track';
-    if(courtType == 'HC') {
+    if (courtType == 'HC') {
         url = '/application-mobile-track-hc';
-    } else {
-        url = '/application-mobile-track';
     }
+
     fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'X-CSRF-TOKEN': csrfToken,
         },
-        body: JSON.stringify({ TrackMobileNumber : mobileNumber }),
+        body: JSON.stringify({ TrackMobileNumber: mobileNumber }),
     })
     .then(response => response.json())
-    .then(serverData =>{
-        if(serverData.success && serverData.data.count > 0)
-            {
+    .then(serverData => {
+        if (serverData.success && serverData.data.count > 0) {
             view_recent_applications.classList.remove('hidden');
-            
+
             let maskedNumber = `xxxxx xxx${mobileNumber.slice(-2)}`;
-            document.getElementById("modalText").innerHTML = 
-            `Details of recently applied applications with mobile no <span class="text-green-500">${maskedNumber}</span>`;
+            document.getElementById("modalText").innerHTML =
+                `Details of recently applied applications with mobile no <span class="text-green-500">${maskedNumber}</span>`;
 
             var MobileTrackApplicationDataDC = serverData.data.data;
             console.log(MobileTrackApplicationDataDC);
 
-           
-            // Sort data from latest to oldest based on created_at
             let trackedDataHTML = `
             <table class="border-collapse border border-gray-300 w-full">
                 <thead>
@@ -666,35 +662,37 @@ function getApplicationDetailByMobile(mobileNumber) {
                     </tr>
                 </thead>
                 <tbody>`;
-        
-        MobileTrackApplicationDataDC.forEach(app => {
-            trackedDataHTML += `
+
+            MobileTrackApplicationDataDC.forEach(app => {
+                const encodedAppNo = btoa(app.application_number);
+                const formId = `form-${app.application_number}`;
+
+                trackedDataHTML += `
                 <tr class="text-center">
                     <td class="border border-gray-300 px-4 py-2 text-[#D09A3F]">
-                        <a href="trackStatusDetails?application_number=${btoa(app.application_number)}" 
-                        class="underline hover:text-[#B07D2E]">
-                            ${app.application_number}
-                        </a>
+                        <form method="POST" action="trackStatusDetails" id="${formId}">
+                            <input type="hidden" name="_token" value="${csrfToken}">
+                            <input type="hidden" name="application_number" value="${encodedAppNo}">
+                            <a href="#" class="underline hover:text-[#B07D2E]"
+                               onclick="event.preventDefault(); document.getElementById('${formId}').submit();">
+                                ${app.application_number}
+                            </a>
+                        </form>
                     </td>
                     <td class="border border-gray-300 px-4 py-2">${app.status}</td>
                     <td class="border border-gray-300 px-4 py-2 text-sky-500">${app.created_at}</td>
                 </tr>`;
-        });
-        
-        trackedDataHTML += `
-                </tbody>
-            </table>`;
-        
-        document.getElementById("trackedDataDC").innerHTML = trackedDataHTML;
+            });
 
-            // document.getElementById("trackedDataDC").innerHTML = 
-            // `Details of recently applied applications with mobile no <span class="text-green-500">${MobileTrackApplicationDataDC.application_number}</span>`;
-        }else{
+            trackedDataHTML += `</tbody></table>`;
+
+            document.getElementById("trackedDataDC").innerHTML = trackedDataHTML;
+        } else {
             return;
         }
-    })
-
+    });
 }
+
 
 // function to toggle the district court form using select box 
 

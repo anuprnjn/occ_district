@@ -115,7 +115,7 @@ class mobileNumberTrackController extends Controller
 
         // Save in Laravel session
         session(['trackDetailsMobileDC' => $trackData]);
-\Log::info($trackData);
+        \Log::info($trackData);
         return response()->json([
             'success' => true,
             'message' => 'Track details of DC saved in session.'
@@ -208,48 +208,39 @@ class mobileNumberTrackController extends Controller
     public function logoutTracking(Request $request)
     {
         session(['isUserLoggedIn' => false]);
+        session(['isUserLoggedInTransaction' => false]);
         // session(['trackStatusApplication' => false]);
         session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
        
         return redirect('/trackStatus')->with('message', 'You have been logged out.');
     }
-     public function showTrackStatusDetails(Request $request)
-    {
-        $hasHc = session()->has('trackDetailsMobileHC');
-        $hasDc = session()->has('trackDetailsMobileDC');
-        $isUserLoggedIn = session('isUserLoggedIn') === true;
 
-        // Redirect if user not logged in
-        if (!$isUserLoggedIn) {
+    public function showTrackStatusDetails(Request $request)
+    {
+        $isUserLoggedIn = session('isUserLoggedIn') === true;
+        $isUserLoggedInTransaction = session('isUserLoggedInTransaction') === true;
+      
+        if (!$isUserLoggedIn && !$isUserLoggedInTransaction) {
             return redirect('/trackStatus')->with('error', 'Unauthorized access. Please login.');
         }
 
-        // Redirect if neither HC nor DC session exists
-        if (!$hasHc && !$hasDc) {
-            return redirect('/trackStatus')->with('error', 'Session expired. Please login again.');
-        }
-
-        // Decode application number from POST data
         $encodedAppNo = $request->input('application_number');
         $applicationNumber = null;
 
         if ($encodedAppNo) {
             try {
-                $applicationNumber = base64_decode($encodedAppNo);
+                $applicationNumber = base64_decode($encodedAppNo, true); // true = strict mode
             } catch (\Exception $e) {
                 return redirect('/trackStatus')->with('error', 'Invalid application number.');
             }
         }
 
-        // Optional: validate the decoded value (length, format, etc.)
         if (!$applicationNumber) {
             return redirect('/trackStatus')->with('error', 'Missing or invalid application number.');
         }
 
-        // Now pass the decoded value to the view
         return view('trackStatusDetails', compact('applicationNumber'));
     }
-
 
    
    public function showTrackStatusPage()
@@ -263,10 +254,6 @@ class mobileNumberTrackController extends Controller
             if (session()->has('trackDetailsMobileDC')) {
                 return redirect()->route('trackStatusMobileDC');
             }
-
-            // if (session('trackStatusApplication') === true) {
-            //     return redirect()->route('trackStatus');
-            // }
 
         }
 
