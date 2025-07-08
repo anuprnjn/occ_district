@@ -14,7 +14,7 @@
     <!-- Form for Apply for Orders and Judgement Copy -->
     <div class="orderJudgement" id="orderJudgementForm" style="display:block;">
        
-        <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementHc">
+        <form class="dark_form p-4 sm:mt-10 mt-4 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementHc">
         @csrf
             <h3 class="font-semibold sm:text-lg text-md mb-5">Apply for Orders And Judgement Copy :</h3>
             <div class="form-group">
@@ -181,66 +181,52 @@
     </div>
     <!-- Form for Apply for Others Copy -->
     <div class="otherform" id="otherForm" style="display:none;">
-        <form id="applyOrdersFormHC" class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-10">
-            <h3 class="font-semibold text-lg mb-4">Apply for Others Copy :</h3>
-            @csrf
-            <div class="form-row">
-                <div class="form-field">
-                    <label for="name">Name: <span>*</span></label>
-                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
-                </div>
+       <form id="applyOrdersFormHC" class="dark_form p-4 sm:mt-10 mt-4 bg-slate-100/70 rounded-md mb-10">
+    <h3 class="font-semibold text-lg mb-4">Apply for Others Copy :</h3>
+    @csrf
+    
+    <!-- Personal Information Section -->
+    <div class="form-row">
+        <div class="form-field">
+            <label for="name">Name: <span>*</span></label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        </div>
+        
         <div class="form-field">
             <div class="flex items-center justify-start gap-2">
                 <label for="mobile" id="mobileLabel">Mobile No: <span>*</span></label>
-            <span
-            id="otpTimer"
-            class="text-md text-rose-600 -mt-1"
-            ></span>
-            <span class="text-sm font-medium text-green-500 -mt-1" id="mobile_indicator"></span>
+                <span id="otpTimer" class="sm:text-md text-sm text-rose-600 -mt-1"></span>
+                <span class="text-sm font-medium text-green-500 -mt-1" id="mobile_indicator"></span>
             </div>
             <div class="flex items-center justify-center gap-2">
-            <input
-            type="text"
-            id="mobileInput"
-            name="mobile"
-            placeholder="Enter Your Mobile No"
-            class="p-[10px] border border-gray-300 rounded"
-            required
-            maxlength="10"
-            onkeydown="return isNumber(event)"
-            >
-            <button
-            type="button"
-            id="otpButton"
-            value = "HC"
-            onclick="sendOtp(value)"
-            class="bg-[#4B3E2F] sm:w-[200px] w-[150px] sm:p-[10px] p-[8px] rounded-md text-white hover:bg-[#D09A3F]"
-            >
-                Send OTP
-            </button>
-            <div id="application_n_details" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] hidden">
-                <div class="dark_form bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[500px] md:w-[600px] lg:w-[1000px] relative">
-                    <button type="button" class="absolute top-2 right-2 ..." onclick="closeModal(event)">✖</button>
-                    <h4 id="modalText" class="text-lg text-center mb-4"></h4>
-                    <table id="trackedDataDC" class="w-[100%]"></table>
-                </div>
-            </div>
-            <button type="button" id="view_recent_button" class=" hidden bg-teal-600 hover:bg-teal-700 rounded-md text-white sm:w-[250px] w-[200px] p-[10px]" onclick="view_recent_app()">View Transactions</button>
-                 
+                <input type="text" id="mobileInput" name="mobile" placeholder="Enter Your Mobile No" 
+                       class="p-[10px] border border-gray-300 rounded" required maxlength="10" 
+                       onkeydown="return isNumber(event)">
+                <button type="button" id="otpButton" value="HC" onclick="sendOtp(value)"
+                        class="bg-[#4B3E2F] sm:w-[200px] w-[150px] sm:p-[10px] p-[8px] rounded-md text-white hover:bg-[#D09A3F]">
+                    Send OTP
+                </button>
+                <button type="button" id="view_recent_button"
+                    class="hidden bg-teal-600 hover:bg-teal-700 rounded-md text-white sm:w-[250px] w-[280px] p-[9px] truncate whitespace-nowrap overflow-hidden text-ellipsis"
+                    onclick="view_recent_app()">View Transactions</button>
             </div>
         </div>
+    </div>
+
+    <!-- Email Section -->
+    <div class="form-row">
+        <div class="form-field">
+            <label for="email">Email: <span>*</span></label>
+            <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
         </div>
-        <div class="form-row">
-            <div class="form-field">
-                <label for="email">Email: <span>*</span></label>
-                <input type="email" id="email" name="email" placeholder="Enter Your Email" required>
-            </div>
-            <div class="form-field">
-                <label for="confirm-email">Confirm Email: <span>*</span></label>
-                <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
-            </div>
+        <div class="form-field">
+            <label for="confirm-email">Confirm Email: <span>*</span></label>
+            <input type="email" id="confirm-email" name="confirm_email" placeholder="Enter Your Confirm Email" required>
         </div>
-        <div class="form-row">
+    </div>
+
+    <!-- Case Information Section -->
+    <div class="form-row">
         <div class="form-field">
             <label for="request-mode">Select the method: <span>*</span></label>
             <div class="mt-2 radio-group">
@@ -250,7 +236,7 @@
                 <label for="filling_no">Filling No</label>
             </div>
         </div>
-             <div class="form-field">
+        <div class="form-field">
             <label for="case_type">Case Type: <span>*</span></label>
             <select id="case_type" name="case_type" required class="p-[10px] border rounded w-full">
                 <option value="">Please Select Case Type</option>
@@ -259,28 +245,24 @@
                 @endforeach
             </select>
         </div>
-        </div>
+    </div>
 
+    <!-- Case Details Section -->
     <div class="form-row">
         <div class="form-field">
             <label for="case-no-hc" id="field1-label">Case No: <span class="red">*</span></label>
-            <input type="text" id="case-no-hc" name="case_no" placeholder="Enter Case No" required inputmode="numeric" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')">
-
+            <input type="text" id="case-no-hc" name="case_no" placeholder="Enter Case No" required 
+                   inputmode="numeric" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')">
         </div>
         <div class="form-field">
             <label for="case-year-hc" id="field2-label">Case Year: <span class="red">*</span></label>
-            <input 
-                type="text" 
-                id="case-year-hc" 
-                name="case_year" 
-                placeholder="Enter Case Year" 
-                required 
-                inputmode="numeric" 
-                pattern="\d{4}" 
-                maxlength="4"
-                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)">
+            <input type="text" id="case-year-hc" name="case_year" placeholder="Enter Case Year" required 
+                   inputmode="numeric" pattern="\d{4}" maxlength="4"
+                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)">
         </div>
     </div>
+
+    <!-- Request Details Section -->
     <div class="form-row">
         <div class="form-field" id="request-mode-group">
             <label for="request-mode">Request Mode: <span>*</span></label>
@@ -297,6 +279,7 @@
         </div>
     </div>
 
+    <!-- Applicant Information Section -->
     <div class="form-row">
         <div class="form-field mt-1">
             <label for="apply-by">Applied By: <span>*</span></label>
@@ -313,11 +296,13 @@
             <input type="text" id="adv_res" name="adv_res" placeholder="Enter Advocate registration no" style="margin-top: 10px;">
         </div>
     </div>
-        <div class="form-row mt-4">
+
+    <!-- Captcha and Submit Section -->
+    <div class="form-row mt-4">
         <div class="form-field">
             <label for="captcha">Evaluate the Expression<span>*</span></label>
             <div class="flex justify-center items-center gap-1">
-            <img id="captchaImage" src="{{ $captcha }}" alt="Captcha" class="rounded-md">
+                <img id="captchaImage" src="{{ $captcha }}" alt="Captcha" class="rounded-md">
                 <input class="text-lg" type="text" id="captcha-hc" name="captcha" required placeholder="Enter the expression">
                 <button type="button" class="refresh-btn rounded-full hover:shadow-md" onclick="refreshCaptcha()" title="Refresh Captcha">
                     <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
@@ -328,7 +313,15 @@
             <button type="submit" id="submitBtn" class="btn-submit hidden sm:mt-7 order_btn" style="margin-top: 40px;" onclick="handleFormSubmitForHighCourt(event)">Submit</button>
         </div>
     </div>
-    </form>
+</form>
+<!-- Modal (kept at the bottom as it's hidden by default) -->
+<div id="application_n_details" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] hidden">
+    <div class="dark_form bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[500px] md:w-[600px] lg:w-[1000px] relative">
+        <button type="button" class="absolute top-2 right-2 ..." onclick="closeModal(event)">✖</button>
+        <h4 id="modalText" class="text-lg text-center mb-4"></h4>
+        <table id="trackedDataDC" class="w-[100%]"></table>
+    </div>
+</div>
     </div>
 
 </section>

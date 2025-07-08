@@ -52,7 +52,7 @@
         <!-- Mobile Input & Timer -->
         <div class="flex items-start justify-start gap-2 mb-2">
             <label for="mobileInput" id="mobileLabel">Mobile No: <span>*</span></label>
-            <span id="otpTimer" class="text-md text-rose-600"></span>
+            <span id="otpTimer" class="sm:text-md text-sm text-rose-600"></span>
         </div>
 
         <!-- Mobile Input Field + Send OTP -->

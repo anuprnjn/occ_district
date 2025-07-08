@@ -210,22 +210,47 @@ class mobileNumberTrackController extends Controller
         session(['isUserLoggedIn' => false]);
         // session(['trackStatusApplication' => false]);
         session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
-
-        // ✅ Redirect to /trackStatus instead of returning JSON
+       
         return redirect('/trackStatus')->with('message', 'You have been logged out.');
     }
-    public function showTrackStatusDetails(Request $request)
+     public function showTrackStatusDetails(Request $request)
     {
         $hasHc = session()->has('trackDetailsMobileHC');
         $hasDc = session()->has('trackDetailsMobileDC');
-        // $hasTrackStatusApplication = session('trackStatusApplication') === true;
+        $isUserLoggedIn = session('isUserLoggedIn') === true;
 
+        // Redirect if user not logged in
+        if (!$isUserLoggedIn) {
+            return redirect('/trackStatus')->with('error', 'Unauthorized access. Please login.');
+        }
+
+        // Redirect if neither HC nor DC session exists
         if (!$hasHc && !$hasDc) {
             return redirect('/trackStatus')->with('error', 'Session expired. Please login again.');
         }
 
-        return view('trackStatusDetails');
+        // Decode application number from POST data
+        $encodedAppNo = $request->input('application_number');
+        $applicationNumber = null;
+
+        if ($encodedAppNo) {
+            try {
+                $applicationNumber = base64_decode($encodedAppNo);
+            } catch (\Exception $e) {
+                return redirect('/trackStatus')->with('error', 'Invalid application number.');
+            }
+        }
+
+        // Optional: validate the decoded value (length, format, etc.)
+        if (!$applicationNumber) {
+            return redirect('/trackStatus')->with('error', 'Missing or invalid application number.');
+        }
+
+        // Now pass the decoded value to the view
+        return view('trackStatusDetails', compact('applicationNumber'));
     }
+
+
    
    public function showTrackStatusPage()
     {

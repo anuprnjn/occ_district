@@ -81,7 +81,7 @@ Route::get('/login', function () {
 
 Route::get('/trackStatus', [mobileNumberTrackController::class, 'showTrackStatusPage'])->name('trackStatus');
 
-Route::get('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
+Route::post('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
 
 Route::get('/pendingPayments', function () {
     if (session('isUserLoggedIn') === false) {

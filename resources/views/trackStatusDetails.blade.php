@@ -79,8 +79,6 @@ function paymentPending(application_number) {
     });
     }
     function ajaxForPendingPayment(caseInfoDetails){
-        console.log('Test case info details',caseInfoDetails);
-        // return;
         $.ajax({
                 url: '/set-caseInformation-PendingData-HC', 
                 method: 'POST',
@@ -322,29 +320,22 @@ function paymentPending(application_number) {
 <script>
     $(document).ready(function() {
         // function getQueryParam(param) {
-        //     let urlParams = new URLSearchParams(window.location.search);
-        //     return urlParams.get(param);
+        //     const urlParams = new URLSearchParams(window.location.search);
+        //     const encoded = urlParams.get(param);
+        //     if (encoded) {
+        //         try {
+        //             const decoded = atob(encoded);
+        //             return decoded;
+        //         } catch (e) {
+        //             console.error('Failed to decode:', e);
+        //             return null;
+        //         }
+        //     }
+        //     return null;
         // }
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const encoded = urlParams.get(param);
-            if (encoded) {
-                try {
-                    const decoded = atob(encoded); // Base64 decode
-                    return decoded;
-                } catch (e) {
-                    console.error('Failed to decode:', e);
-                    return null;
-                }
-            }
-            return null;
-        }
-        var url_application_number = getQueryParam('application_number');
-        // console.log(url_application_number);
-        // return;
-        // Retrieve the application number from sessionStorage
-        // var application_number = url_application_number || sessionStorage.getItem('track_application_number') ;
-       
+        // var url_application_number = getQueryParam('application_number');
+        const url_application_number = @json($applicationNumber);
+
         if (url_application_number) {
             // continue with AJAX logic
             if(url_application_number.startsWith('HC')) {

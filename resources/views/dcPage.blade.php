@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="w-full">
-<div id="civilCourtDropdown" class="dropdown w-[100%] sm:w-[50%] p-[10px] sm:-ml-2 mb-10">
+<div id="civilCourtDropdown" class="dropdown w-[100%] sm:w-[50%] p-[10px] sm:-ml-2 sm:mb-10 mb-2">
     <label for="civilCourtSelect" class="mb-4">Select an option:</label>
     <select id="civilCourtSelect" class="p-[10px]" onchange="toggleDistForm()">
         <option value="applyJudgementDC" selected>Apply for Orders and Judgement Copy (Civil Court)</option>
@@ -11,7 +11,7 @@
 </div>
 
 <!-- This is apply for others copy form  -->
-<form id="applyOrdersFormDC" class="dark_form p-4 bg-slate-100/70 rounded-md mb-10" style="display:none;">
+<form id="applyOrdersFormDC" class="dark_form p-4 bg-slate-100/70 rounded-md mb-10 mt-4 sm:mt-0" style="display:none;">
     <h3 class="font-semibold text-lg">Apply for Others Copy (Civil Court) :</h3>
     <div class="dark_form flex sm:flex-row flex-col justify-center items-center w-full rounded-md gap-4 mb-4 mt-2">
 
@@ -60,7 +60,7 @@
                 
                 <span
                 id="otpTimer"
-                class="text-md text-rose-600 -mt-1"
+                class="sm:text-md text-sm text-rose-600 -mt-1"
                 ></span>
                 <span class="text-sm font-medium text-green-500 -mt-1" id="mobile_indicator"></span>
             </div>
@@ -85,14 +85,25 @@
                 Send OTP
             </button>
             <!-- application details div modal  -->
-            <div id="application_n_details" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] hidden">
-                <div class="dark_form bg-white p-6 rounded-lg shadow-lg w-[100%] sm:w-[500px] md:w-[600px] lg:w-[1000px] relative">
-                   <button type="button" class="absolute top-2 right-2 text-gray-500 hover:text-black" onclick="closeModal()">✖</button>
-                    <h4 id="modalText" class="text-lg text-center mb-4"></h4>
-                    <table id="trackedDataDC" class="w-[100%]"></table>
-                </div>
-            </div>
-           <button type="button" id="view_recent_button" class="hidden bg-teal-600 hover:bg-teal-700 rounded-md text-white sm:w-[250px] w-[200px] p-[10px]" onclick="view_recent_app()">View Transactions</button>
+            <div id="application_n_details"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[99999] p-4 sm:p-6 hidden">
+    
+    <div
+        class="dark_form bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-full sm:max-w-[500px] md:max-w-[600px] lg:max-w-[1000px] relative overflow-auto max-h-[90vh]">
+
+        <button type="button"
+            class="absolute top-2 right-2 text-gray-600 hover:text-red-600 text-xl font-bold"
+            onclick="closeModal(event)">✖</button>
+
+        <h4 id="modalText" class="text-lg text-center mb-4 font-medium"></h4>
+
+        <div class="overflow-x-auto">
+            <table id="trackedDataDC" class="w-full text-sm border-collapse"></table>
+        </div>
+    </div>
+</div>
+
+           <button type="button" id="view_recent_button" class="hidden bg-teal-600 hover:bg-teal-700 rounded-md text-white sm:w-[250px] w-[280px] p-[9px] truncate whitespace-nowrap overflow-hidden text-ellipsis" onclick="view_recent_app()">View Transactions</button>
         </div>
             </div>
         </div>
@@ -196,7 +207,7 @@
 
 <div class="orderJudgement" id="orderJudgementFormDC">
        
-    <form class="dark_form p-4 mt-10 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementDC">
+    <form class="dark_form p-4 sm:mt-10 mt-4 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementDC">
        @csrf
            <h3 class="font-semibold sm:text-lg text-md mb-5">Apply for Orders And Judgement Copy (Civil Court) :</h3>
            <div class="form-group">

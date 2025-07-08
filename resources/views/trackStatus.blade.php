@@ -23,7 +23,7 @@
             <div class="hidden form-field mt-4 sm:mt-0 w-[100%] sm-w-[100%]" id="mobile_otp">
                 <div class="flex items-center justify-start gap-3">
                     <label for="otp" id="otp_label">Enter OTP :  <span>*</span></label>
-                    <span id="otpTimertrack" class="text-md text-rose-600 -mt-1"></span>
+                    <span id="otpTimertrack" class="sm:text-md text-sm text-rose-600 -mt-1"></span>
                 </div>
                 <input type="text" id="otp" name="otp" placeholder="Enter OTP" class="sm:mb-5 h-[45px]">
             </div>  

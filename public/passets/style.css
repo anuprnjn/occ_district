@@ -732,7 +732,7 @@ input, textarea {
 @media (max-width: 480px) {
     h3 {
         /* font-size1: 16px; */
-        text-align: center;
+        text-align: start;
     }
 
     label {
@@ -740,7 +740,7 @@ input, textarea {
     }
 
     input[type="text"], select, textarea {
-        padding: 6px;
+        padding: 8px;
         /* font-size1: 13px; */
     }
 
@@ -752,7 +752,7 @@ input, textarea {
         margin-bottom: 20px;
         display: flex !important;
         align-items:center !important;
-        justify-content: center !important;
+        justify-content: space-around !important;
         gap: 30px;
     }
     .card_container{

@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 @endpush
 
-<section class="min-h-screen px-4 py-6 sm:px-6 lg:px-8"> 
+<section class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 mb-6 w-full">
        <h3 class="text-lg sm:text-xl font-bold text-[#4B3E2F] text-center sm:text-left w-full sm:w-auto -mt-4 sm:mt-0">
-            Application Details - High Court
+            Application Details - Civil Court
         </h3>
         
         @if(session()->has('trackDetailsMobileDC'))
@@ -79,11 +79,15 @@
                         
                         <div class="text-sm font-medium">Application No.</div>
                         <div class="text-sm font-semibold">
-                            @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
-                            <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
-                               class="text-teal-600 font-semibold hover:text-teal-700 underline">
-                                {{ $copy['application_number'] }}
-                            </a>
+                            <form method="POST" action="{{ url('trackStatusDetails') }}" id="form-{{ $copy['application_number'] }}">
+                                @csrf
+                                <input type="hidden" name="application_number" value="{{ base64_encode($copy['application_number']) }}">
+                                <a href="#" 
+                                onclick="event.preventDefault(); document.getElementById('form-{{ $copy['application_number'] }}').submit();"
+                                class="font-semibold text-teal-600 hover:text-teal-700 hover:underline">
+                                    {{ $copy['application_number'] }}
+                                </a>
+                            </form>
                         </div>
                         
                         <div class="text-sm font-medium">Name</div>
@@ -129,11 +133,15 @@
                         
                         <div class="text-sm font-medium">Application No.</div>
                         <div class="text-sm font-semibold">
-                            @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
-                            <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
-                               class="text-teal-600 font-semibold hover:text-teal-700 underline">
-                                {{ $copy['application_number'] }}
-                            </a>
+                            <form method="POST" action="{{ url('trackStatusDetails') }}" id="form-{{ $copy['application_number'] }}">
+                                @csrf
+                                <input type="hidden" name="application_number" value="{{ base64_encode($copy['application_number']) }}">
+                                <a href="#" 
+                                onclick="event.preventDefault(); document.getElementById('form-{{ $copy['application_number'] }}').submit();"
+                                class="font-semibold text-teal-600 hover:text-teal-700 hover:underline">
+                                    {{ $copy['application_number'] }}
+                                </a>
+                            </form>
                         </div>
                         
                         <div class="text-sm font-medium">Name</div>
@@ -191,11 +199,15 @@
                         <tr>
                             <td class="px-4 py-3">{{ $loop->iteration }}</td>
                             <td class="px-4 py-3 font-semibold">
-                                @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
-                                <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
-                                   class="font-semibold text-teal-600 hover:text-teal-700 hover:underline">
-                                    {{ $copy['application_number'] }}
-                                </a>
+                                <form method="POST" action="{{ url('trackStatusDetails') }}" id="form-{{ $copy['application_number'] }}">
+                                    @csrf
+                                    <input type="hidden" name="application_number" value="{{ base64_encode($copy['application_number']) }}">
+                                    <a href="#" 
+                                    onclick="event.preventDefault(); document.getElementById('form-{{ $copy['application_number'] }}').submit();"
+                                    class="font-semibold text-teal-600 hover:text-teal-700 hover:underline">
+                                        {{ $copy['application_number'] }}
+                                    </a>
+                                </form>
                             </td>
                             <td class="px-4 py-3 uppercase">
                                 {{ is_array($copy['applicant_name']) ? implode(', ', $copy['applicant_name']) : strtoupper($copy['applicant_name']) }}
@@ -225,11 +237,15 @@
                         <tr class=" transition-colors hidden previous-row">
                             <td class="px-4 py-3">{{ $loop->iteration + $latestDateApplications->count() }}</td>
                             <td class="px-4 py-3 font-semibold">
-                                @php $encodedAppNo = base64_encode($copy['application_number']); @endphp
-                                <a href="{{ url('trackStatusDetails') }}?application_number={{ $encodedAppNo }}"
-                                   class="text-teal-600 font-semibold hover:text-teal-700 hover:underline">
-                                    {{ $copy['application_number'] }}
-                                </a>
+                                <form method="POST" action="{{ url('trackStatusDetails') }}" id="form-{{ $copy['application_number'] }}">
+                                    @csrf
+                                    <input type="hidden" name="application_number" value="{{ base64_encode($copy['application_number']) }}">
+                                    <a href="#" 
+                                    onclick="event.preventDefault(); document.getElementById('form-{{ $copy['application_number'] }}').submit();"
+                                    class="font-semibold text-teal-600 hover:text-teal-700 hover:underline">
+                                        {{ $copy['application_number'] }}
+                                    </a>
+                                </form>
                             </td>
                             <td class="px-4 py-3 uppercase">
                                 {{ is_array($copy['applicant_name']) ? implode(', ', $copy['applicant_name']) : strtoupper($copy['applicant_name']) }}
