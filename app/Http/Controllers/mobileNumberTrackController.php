@@ -60,32 +60,40 @@ class mobileNumberTrackController extends Controller
     {
         // Validate the request
         $request->validate([
-            'mobile_number' => 'required|digits:10',
+            'input_type' => 'required|in:mobile_number,application_number',
+            'input_value' => 'required',
         ]);
 
-        // Prepare the API endpoint and data
+        $inputType = $request->input('input_type'); // mobile_number or application_number
+        $inputValue = $request->input('input_value');
+
+        if ($inputType === 'mobile_number') {
+            $request->validate([
+                'input_value' => 'digits:10',
+            ]);
+        }
+
+        // Correct API endpoint — same for both types
         $apiUrl = config('app.api.base_url') . '/get_all_application_applied_user_from_mobile_dc.php';
-        $mobileNumber = $request->input('mobile_number');
 
         try {
             // Make POST request to the external PHP API
             $response = Http::post($apiUrl, [
-                'mobile_number' => $mobileNumber,
+                $inputType => $inputValue, // ✅ dynamic payload
             ]);
 
-            // Decode and return the response as JSON
+         \Log::info('Raw response body: ' . $response->body());
+
             $data = $response->json();
-            
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $data,
             ]);
         } catch (\Exception $e) {
-            // Handle errors
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch data from external API.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -98,7 +106,7 @@ class mobileNumberTrackController extends Controller
 
         // Save in Laravel session
         session(['trackDetailsMobileDC' => $trackData]);
-
+\Log::info($trackData);
         return response()->json([
             'success' => true,
             'message' => 'Track details of DC saved in session.'
