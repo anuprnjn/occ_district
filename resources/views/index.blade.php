@@ -174,6 +174,8 @@ async function refreshCaptcha() {
     const field1Input = document.getElementById("case-no");
     const field2Label = document.getElementById("field2-label");
     const field2Input = document.getElementById("case-year");
+    const field1InputHc = document.getElementById("case-no-hc");
+    const field2InputHc = document.getElementById("case-year-hc");
 
     if (!selectedRadio || !field1Label || !field1Input || !field2Label || !field2Input) {
         return; // Safely exit if any element is missing
@@ -186,11 +188,15 @@ async function refreshCaptcha() {
         field1Input.placeholder = "Enter Case No";
         field2Label.innerHTML = "Case Year: <span class='red'>*</span>";
         field2Input.placeholder = "Enter Case Year";
+        field1InputHc.placeholder = "Enter Case No";
+        field2InputHc.placeholder = "Enter Case Year";
     } else if (selectedMode === "F") {
         field1Label.innerHTML = "Filing No: <span class='red'>*</span>";
         field1Input.placeholder = "Enter Filing No";
         field2Label.innerHTML = "Filing Year: <span class='required'>*</span>";
         field2Input.placeholder = "Enter Filing Year";
+        field1InputHc.placeholder = "Enter Filing No";
+        field2InputHc.placeholder = "Enter Filing Year";
     }
 }
 </script>
