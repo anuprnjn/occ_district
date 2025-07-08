@@ -11,33 +11,42 @@ class mobileNumberTrackController extends Controller
     {
         // Validate the request
         $request->validate([
-            'mobile_number' => 'required|digits:10',
+            'input_type' => 'required|in:mobile_number,application_number',
+            'input_value' => 'required',
         ]);
+
+        $inputType = $request->input('input_type'); // mobile_number or application_number
+        $inputValue = $request->input('input_value');
+
+        if ($inputType === 'mobile_number') {
+            $request->validate([
+                'input_value' => 'digits:10',
+            ]);
+        }
 
         $baseUrl = config('app.api.hc_base_url');
         // Prepare the API endpoint and data
         $apiUrl = $baseUrl . '/get_all_application_applied_user_from_mobile_hc.php';
         $mobileNumber = $request->input('mobile_number');
 
-        try {
+       try {
             // Make POST request to the external PHP API
             $response = Http::post($apiUrl, [
-                'mobile_number' => $mobileNumber,
+                $inputType => $inputValue, // ✅ dynamic payload
             ]);
 
-            // Decode and return the response as JSON
+         \Log::info('Raw response body: ' . $response->body());
+
             $data = $response->json();
-            
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $data,
             ]);
         } catch (\Exception $e) {
-            // Handle errors
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch data from external API.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

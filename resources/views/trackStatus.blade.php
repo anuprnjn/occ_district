@@ -150,7 +150,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
-                    body: JSON.stringify({ mobile_number: validatedMobile }),
+                    body: JSON.stringify({ 
+                        input_type: 'mobile_number',
+                        input_value: validatedMobile, 
+                    }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -244,6 +247,55 @@ document.addEventListener('DOMContentLoaded', function () {
             // errorSpan.innerText = '';
             // trackApplication(input);
             if(selectedCourt === 'HC'){
+                fetch('/check-mobile-number-hc', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({ 
+                        input_type: 'application_number',
+                        input_value: input, 
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetch('/set-track-response-hc',{
+                            method : 'POST',
+                            headers:{
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({ data: data }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.success){
+                                console.log(data.message);
+                                
+                            }else{
+                                console.log("Error while setting track data to session");
+                            }
+                        });
+                            const orderCopyLength = data.data.order_copy.length;
+                            const otherCopyLength = data.data.other_copy.length;
+                            if (orderCopyLength > 0 || otherCopyLength > 0) {
+                                const validatedMobile = data.data?.order_copy[0]?.mobile_number || data.data?.other_copy[0]?.mobile_number;
+                                sendOtpTrack(selectedCourt,validatedMobile);
+                                const maskedMobile = input.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
+                                otp_input.classList.remove('hidden');
+                                errorSpan.style.color = 'green';
+                                errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: red;">${maskedMobile}</span>.`;
+
+                            } else {
+                                errorSpan.textContent="Mobile number not found !";
+                            }
+                    }else{
+                       alert("Internal server error !");
+                        return;       
+                    }
+                });
 
             } else {
                 fetch('/check-mobile-number-dc', {
