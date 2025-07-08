@@ -145,6 +145,6 @@
 
     <div class="line-animation" id="line"></div>
     <div class="top-bar">
-    <h2 class='sm:text-5xl text-2xl mb-1'>ONLINE CERTIFIED COPY</h2>
+    <h2 class='sm:text-5xl text-[1.66rem] mb-1'>ONLINE CERTIFIED COPY</h2>
 
     </div>

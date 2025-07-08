@@ -18,20 +18,20 @@
         <div class="flex justify-center sm:flex-row flex-col items-center sm:gap-10">
             <div class="form-field">
                 <label for="application_number">Mobile Number / Application Number  <span>*</span></label>
-                <input type="text" id="application_number" name="application_number" placeholder="Enter Mobile Number / Application Number" class="sm:mb-5">
+                <input type="text" id="application_number" name="application_number" placeholder="Enter Mobile Number / Application Number" class="sm:mb-5 h-[45px]">
             </div>  
-            <div class="hidden form-field mt-4 sm:mt-0 w-[90%] sm-w-[100%]" id="mobile_otp">
+            <div class="hidden form-field mt-4 sm:mt-0 w-[100%] sm-w-[100%]" id="mobile_otp">
                 <div class="flex items-center justify-start gap-3">
                     <label for="otp" id="otp_label">Enter OTP :  <span>*</span></label>
                     <span id="otpTimertrack" class="text-md text-rose-600 -mt-1"></span>
                 </div>
-                <input type="text" id="otp" name="otp" placeholder="Enter OTP" class="sm:mb-5">
+                <input type="text" id="otp" name="otp" placeholder="Enter OTP" class="sm:mb-5 h-[45px]">
             </div>  
-            <div class="form-field">
-                <button id="otpButtonTrack" type="button" class="rounded-md sm:w-[50%] w-[100%] btn-submit order_btn mt-4" onClick="checkInputType(event)">GO</button>
+            <div class="form-field flex flex-col justify-center items-center sm:block mt-2 sm:mt-0">
+                <button id="otpButtonTrack" type="button" class="rounded-md sm:w-[50%] w-[120%] btn-submit order_btn mt-4" onClick="checkInputType(event)">GO</button>
             </div>
         </div>
-        <span id="error_span" class="text-red-500 font-normal text-sm ml-5 sm:ml-0 sm:text-left text-center mt-2 sm:mt-0 block"></span>
+        <span id="error_span" class="text-red-500 font-normal text-sm ml-5 sm:ml-0 sm:text-left text-center mt-4 sm:mt-0 block"></span>
     </form>
 </section>
 
