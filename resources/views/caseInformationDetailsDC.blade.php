@@ -260,7 +260,7 @@
 
         const orderDetails = @json(session('dc_review_form_userDetails.orders'));
         const urgent_fee = @json(session('dc_review_form_userDetails.urgent_fee'));
-
+ 
         // Transform orderDetails to match API schema
         const transformedOrders = orderDetails.map(order => ({
             order_no: order.order_no,
@@ -349,7 +349,6 @@
                 Dc_userName,
                 Dc_totalAmount,
                 Dc_application_number,
-                paybleAmount: Dc_totalAmount,
                 applicationNumber: Dc_application_number,
                 district_code: district_code,
                 establishment_code: establishment_code

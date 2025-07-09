@@ -294,7 +294,7 @@
             cino: caseData?.cino || "",
             advocate_registration_number: userData.caseInfoDetails.adv_res || null,
             order_details: userData.caseInfoDetails.selectedOrders ? userData.caseInfoDetails.selectedOrders.map((order, index) => ({
-                order_no: index + 1,
+                order_no: order.order_no,
                 order_date: order.order_date,
                 case_number: caseNumber,
                 filing_number: filingNumber,
