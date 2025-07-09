@@ -155,12 +155,12 @@
         <tr>
             <td class="border p-2 font-bold">Request Mode</td>
             <td class="border p-2">
-    <span class="py-1 rounded  
-        @if(session('dc_review_form_userDetails.user_info.request_mode') == 'ordinary') capitalize
-        @elseif(session('dc_review_form_userDetails.user_info.request_mode') == 'urgent') capitalize
-        @endif">
-        {{ session('dc_review_form_userDetails.user_info.request_mode') ?? 'N/A' }}
-    </span>
+        <span class="py-1 rounded  
+            @if(session('dc_review_form_userDetails.user_info.request_mode') == 'ordinary') capitalize
+            @elseif(session('dc_review_form_userDetails.user_info.request_mode') == 'urgent') capitalize
+            @endif">
+            {{ session('dc_review_form_userDetails.user_info.request_mode') ?? 'N/A' }}
+        </span>
 
     @if(session('dc_review_form_userDetails.user_info.request_mode') == 'urgent')
     <span class="ml-2 text-sm text-red-500 font-bold">

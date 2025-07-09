@@ -116,7 +116,7 @@ Route::get('/caseInformation', function () {
 })->name('caseInformation');
 
 Route::get('/occ/cd_pay', function () {
-     if (!session()->has('active_payment_source')) {
+     if (!session()->has('active_payment_source') || session('isUserLoggedIn') === false) {
     return redirect('/');
     }
 

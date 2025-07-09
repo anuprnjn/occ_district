@@ -84,7 +84,6 @@
                                         <h4 class="text-center">
                                             <strong><u>Others Types Of Copy</u></strong>
                                         </h4>
-
                                         <div class="col-md-12">
                                             <p class="fw-bold text-success">Application Details</p>
                                             <table class="table table-bordered">
@@ -103,6 +102,14 @@
                                                     <td>{{ $hcuser->mobile_number }}</td>
                                                     <th>Email</th>
                                                     <td>{{ $hcuser->email }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Applied By</th>
+                                                    <td>{{ $hcuser->applied_by }}</td>
+                                                     @if (!empty($hcuser->advocate_registration_number))
+                                                    <th>Advocate Registration Number</th>
+                                                    <td>{{ $hcuser->advocate_registration_number }}</td>
+                                                    @endif
                                                 </tr>
                                             </table>
                                         </div>

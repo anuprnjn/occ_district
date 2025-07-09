@@ -119,7 +119,7 @@ class HcWebApplicationController extends Controller
     $request->validate([
         'application_number' => 'required',
         'order_number' => 'required',
-        'pdf_file' => 'required|mimes:pdf|max:2048'
+        'pdf_file' => 'required|mimes:pdf|max:20480'
     ]);
 
     try {

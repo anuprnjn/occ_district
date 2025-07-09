@@ -70,7 +70,7 @@ class HcOtherCopyPaidController extends Controller
         
         $request->validate([
             'id' => 'required',
-            'document' => 'required|mimes:pdf|max:2048',
+            'document' => 'required|mimes:pdf|max:20480',
             'application_number' => 'required',
             'document_id' => 'required'
         ]);

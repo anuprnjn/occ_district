@@ -119,8 +119,7 @@
                 <tbody id="applicantDetails">
                     @php
                         $caseInfo = session('caseInfoDetails', []);
-                        $urgentFee = session('caseInfoDetails')['urgent_fee'] ?? 0;
-                        $totalAmount = 0;
+                        $urgentFee = $caseInfo['urgent_fee'] ?? 0;
                     @endphp
 
                     @if(!empty($caseInfo))
@@ -130,6 +129,7 @@
                             <td class="border p-2 font-bold">Mobile</td>
                             <td class="border p-2">{{ $caseInfo['mobile'] ?? 'N/A' }}</td>
                         </tr>
+
                         <tr>
                             <td class="border p-2 font-bold">Email</td>
                             <td class="border p-2">{{ $caseInfo['email'] ?? 'N/A' }}</td>
@@ -151,6 +151,15 @@
                                     @endif
                                 </td>
                             </tr>
+
+                            <tr>
+                                <td class="border p-2 font-bold select-none">Total Payable Amount</td>
+                                <td class="border p-2" colspan="3">
+                                    <span id="totalAmount" class="bg-green-600 text-white rounded-md px-4 py-1">
+                                        ₹ Calculating...
+                                    </span>
+                                </td>
+                            </tr>
                         @else
                             <tr>
                                 <td class="border p-2 font-bold">Request Mode</td>
@@ -161,12 +170,13 @@
                                     @if(($caseInfo['requestMode'] ?? '') === 'urgent')
                                         <span class="text-xs ml-2">(Urgent Fee ₹{{ $urgentFee }})</span>
                                     @endif
-                                    <td class="border p-2 font-bold select-none">Total Payable Amount</td>
-                                    <td class="border p-2">
-                                        <span id="totalAmount" class="bg-green-600 text-white rounded-md px-4 py-1">
-                                            ₹ Calculating...
-                                        </span>
-                                    </td>
+                                </td>
+
+                                <td class="border p-2 font-bold select-none">Total Payable Amount</td>
+                                <td class="border p-2">
+                                    <span id="totalAmount" class="bg-green-600 text-white rounded-md px-4 py-1">
+                                        ₹ Calculating...
+                                    </span>
                                 </td>
                             </tr>
                         @endif
@@ -176,18 +186,15 @@
                         </tr>
                     @endif
                 </tbody>
-
-            
             </table>
 
             <div class="flex justify-end items-start w-full gap-3 mt-2 sm:mb-0 mb-20">
-                <!-- <button class="order_btn bg-sky-500 w-[200px] text-white p-3 rounded-md hover:bg-sky-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="editUserDetails()">Edit details</button> -->
                 <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="submitUserDetails(event)">
                     Pay now
                 </button>
             </div>
-       
-        </div> 
+        </div>
+
        
         <form name="eGrassClient" method="POST" action="https://jkuberuat.jharkhand.gov.in/jegras/deptuattest/uatpaymentpg.aspx">
             <input type="hidden" name="requestparam" value="">

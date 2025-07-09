@@ -95,7 +95,7 @@
                                                     <td>{{ $dcuser->created_at }}</td>
                                                     <th>Request Mode</th>
                                                     <td>{{ $dcuser->request_mode }}</td>
-                                                </tr>
+                                                </tr> 
                                                 <tr>
                                                     <th>Name</th>
                                                     <td>{{ $dcuser->applicant_name }}</td>
@@ -103,6 +103,14 @@
                                                     <td>{{ $dcuser->mobile_number }}</td>
                                                     <th>Email</th>
                                                     <td>{{ $dcuser->email }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Applied By</th>
+                                                    <td>{{ $dcuser->applied_by }}</td>
+                                                     @if (!empty($dcuser->advocate_registration_number))
+                                                    <th>Advocate Registration Number</th>
+                                                    <td>{{ $dcuser->advocate_registration_number }}</td>
+                                                    @endif
                                                 </tr>
                                             </table>
                                         </div>

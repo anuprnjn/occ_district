@@ -147,9 +147,9 @@
                                         <div class="col-md-4">
                                             <p class="fw-bold text-success">Payment Details</p>
                                             <table class="table table-bordered">
-                                                <tr>
-                                                    <th class="fw-bold">Payment Status</th>
-                                                    <td>
+                                               <tr>
+                                                <th class="fw-bold">Payment Status</th>
+                                                <td>
                                                     @if($dcuser->payment_status == 1)
                                                         Success
                                                     @elseif($dcuser->payment_status == 0)
@@ -158,11 +158,18 @@
                                                         Unknown
                                                     @endif
                                                 </td>
-                                                </tr>
+                                            </tr>
+
                                                 <tr>
                                                     <th class="fw-bold">Applied By</th>
                                                     <td>{{ $dcuser->applied_by }}</td>
                                                 </tr>
+                                               @if (!empty($dcuser->advocate_registration_number))
+                                                    <tr>
+                                                        <th class="fw-bold">Advocate Registration No.</th>
+                                                        <td>{{ $dcuser->advocate_registration_number }}</td>
+                                                    </tr>
+                                                @endif
                                                 <tr>
                                                     <th class="fw-bold">Created At</th>
                                                     <td>{{ $dcuser->created_at }}</td>

@@ -161,6 +161,12 @@
                                                     <th class="fw-bold">Applied By</th>
                                                     <td>{{ $hcuser->applied_by }}</td>
                                                 </tr>
+                                               @if (!empty($hcuser->advocate_registration_number))
+                                                    <tr>
+                                                        <th class="fw-bold">Advocate Registration No.</th>
+                                                        <td>{{ $hcuser->advocate_registration_number }}</td>
+                                                    </tr>
+                                                @endif
                                                 <tr>
                                                     <th class="fw-bold">Created At</th>
                                                     <td>{{ $hcuser->created_at }}</td>
