@@ -590,14 +590,23 @@ function paymentPending(application_number) {
 
 
         const orderDetailsList = orderDetails || []; // fallback to empty array
+        const hasExtraColumns = orderDetailsList.some(
+         item => item.number_of_page < item.new_page_no
+        );
+         
 
         const orderDetailsRows = orderDetailsList.map((item, index) => `
             <tr class="border">
-                <td class="px-4 py-2 border">${item.order_number || 'N/A'}</td>
-                <td class="px-4 py-2 border">${item.order_date || 'N/A'}</td>
-                <td class="px-4 py-2 border">${item.number_of_page || 'N/A'}</td>
-                <td class="px-4 py-2 border">${item.amount || 'N/A'}</td>
-            </tr>
+            <td class="px-4 py-2 border">${item.order_number || 'N/A'}</td>
+            <td class="px-4 py-2 border">${item.order_date || 'N/A'}</td>
+            <td class="px-4 py-2 border">${item.number_of_page || 'N/A'}</td>
+            <td class="px-4 py-2 border">₹${item.amount || 'N/A'}</td>
+            ${hasExtraColumns ? `
+                <td class="px-4 py-2 border">${item.new_page_no || 'N/A'}</td>
+                <td class="px-4 py-2 border">₹${item.new_page_amount || 'N/A'}</td>
+                 <td class="px-4 py-2 border">₹${item.new_page_amount- item.amount}</td>
+            ` : ''}
+        </tr>
         `).join('');
 
 
@@ -659,21 +668,26 @@ function paymentPending(application_number) {
                 </tbody>
             </table>
             
-
-             ${orderDetailsList.length > 0 ? `
+             
+            ${orderDetailsList.length > 0 ? `
             <div class="mt-6">
-                <h3 class="text-lg font-semibold mb-2">Order Details</h3>
+             <h3 class="text-lg font-semibold mb-2">Order Details</h3>
                 <table class="min-w-full border border-gray-300 text-sm">
                     <thead>
-                        <tr class="bg-[#4B3D2F] text-white text-left text-md">
-                            <th class="px-4 py-2 border">Order Number</th>
-                            <th class="px-4 py-2 border">Order Date</th>
-                            <th class="px-4 py-2 border">No of Page</th>
-                            <th class="px-4 py-2 border">Amount</th>
-                        </tr>
+                    <tr class="bg-[#4B3D2F] text-white text-left text-md">
+                        <th class="px-4 py-2 border">Order Number</th>
+                        <th class="px-4 py-2 border">Order Date</th>
+                        <th class="px-4 py-2 border">No of Page</th>
+                        <th class="px-4 py-2 border">Amount</th>
+                        ${hasExtraColumns ? `
+                        <th class="px-4 py-2 border">New Page No</th>
+                        <th class="px-4 py-2 border">New Amount</th>
+                        <th class="px-4 py-2 border">Deficit Amount</th>
+                        ` : ''}
+                    </tr>
                     </thead>
                     <tbody>
-                        ${orderDetailsRows}
+                    ${orderDetailsRows}
                     </tbody>
                 </table>
                 </div>
