@@ -29,16 +29,21 @@ function confirmRedirect(event, url) {
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const navLinks = document.querySelectorAll("nav ul li");
-    
-    // Get the current page URL
+
+    // Remove all active classes
+    navLinks.forEach(li => li.classList.remove("active"));
+
+    // Get current path
     const currentUrl = window.location.pathname;
 
-    // Store previous page when navigating
+    // Store previous page from referrer (if not already stored or changed)
     if (!sessionStorage.getItem("previousPage") || sessionStorage.getItem("previousPage") !== currentUrl) {
         sessionStorage.setItem("previousPage", document.referrer.split(window.location.origin)[1] || "/");
     }
-    
-    // Define routes
+
+    const previousPage = sessionStorage.getItem("previousPage");
+
+    // Route to menu ID mapping
     const routes = {
         "/": "home",
         "/hc-application-details": "home",
@@ -48,31 +53,43 @@ document.addEventListener("DOMContentLoaded", function () {
         "/trackStatusDetails": "track_app",
         "/caseInformation": "home",
         "/caseInformationDc": "home",
-        "/occ/cd_pay": "track_app", // Default behavior for /occ/cd_pay
+        "/occ/cd_pay": "track_app",
         "/api/occ/gras_resp_cc": "track_app",
-        "/trackStatusMobileHC" : "track_app",
-        "/trackStatusMobileDC" : "track_app",
+        "/trackStatusMobileHC": "track_app",
+        "/trackStatusMobileDC": "track_app",
     };
 
-    // Special condition for /occ/cd_pay
-    if (currentUrl === "/occ/cd_pay") {
-        const previousPage = sessionStorage.getItem("previousPage");
+    // Default activeId from route
+    let activeId = routes[currentUrl] || "home";
 
-        if (previousPage === "/pendingPayments") {
-            routes["/occ/cd_pay"] = "pending_payments"; // Show "Pending Payments" active
-        }
+    // Check previousPage override: caseInformation or occ/cd_pay
+    if (
+        previousPage === "/caseInformation" ||
+        previousPage === "/caseInformationDc" ||
+        previousPage.includes("/occ/cd_pay")
+    ) {
+        activeId = "home";
     }
 
-    // Remove 'active' from all <li> elements
-    navLinks.forEach((li) => li.classList.remove("active"));
-
-    // Check which route matches and add 'active' class
-    for (const [path, id] of Object.entries(routes)) {
-        if (currentUrl === path) {
-            document.getElementById(id)?.classList.add("active");
-            break;
-        }
+    // Final override: If PHP session indicates user is logged in
+    const isUserLoggedIn = {{ session('isUserLoggedIn') ? 'true' : 'false' }};
+    if (isUserLoggedIn) {
+        activeId = "track_app";
     }
+
+    // Apply the active class
+    const activeElement = document.getElementById(activeId);
+    if (activeElement) {
+        activeElement.classList.add("active");
+    }
+
+    // Optional debug
+    // console.log("currentUrl:", currentUrl);
+    // console.log("previousPage:", previousPage);
+    // console.log("activeId:", activeId);
 });
-</script> 
+</script>
+
+
+
 </html>

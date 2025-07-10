@@ -86,5 +86,9 @@ use App\Http\Controllers\GrasResponseController;
 //     return view('transactionStatus')->with('responseData', $decodedResponse ?? []);
 // })->name('transactionStatus');
 
+// Route::match(['get', 'post'], '/occ/gras_resp_cc', [GrasResponseController::class, 'handleResponse'])
+//     ->name('transactionStatus');
+
 Route::match(['get', 'post'], '/occ/gras_resp_cc', [GrasResponseController::class, 'handleResponse'])
+    ->middleware('web')  // ← Essential for session support
     ->name('transactionStatus');

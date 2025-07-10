@@ -178,7 +178,7 @@
 
     <!-- Pay Now Button -->
     <div class="flex justify-end items-center mt-4">
-        <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="saveDCOrderDetailsPay(event)">
+        <button class="order_btn bg-teal-500 w-[200px] text-white p-3 rounded-md hover:bg-teal-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="saveDCOrderDetailsPay(event)">
             Pay Now
         </button>
     </div>

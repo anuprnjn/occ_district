@@ -32,7 +32,7 @@ class OtpController extends Controller
             session()->forget($mobile); // Remove OTP after successful verification
 
             session(['isUserLoggedInTransaction' => true]);
-
+            
             return response()->json(['success' => true, 'message' => 'OTP verified']);
         }
 

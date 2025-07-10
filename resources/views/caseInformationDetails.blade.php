@@ -25,10 +25,7 @@
             <table class="w-full border border-gray-300">
                 <tbody id="caseInfoTable">
                     @php
-                    
                         $caseInfo = session('HcCaseDetailsNapix');
-                    
-                      
                     @endphp
 
                     @if (!empty($caseInfo))
@@ -189,7 +186,7 @@
             </table>
 
             <div class="flex justify-end items-start w-full gap-3 mt-2 sm:mb-0 mb-20">
-                <button class="order_btn bg-green-500 w-[200px] text-white p-3 rounded-md hover:bg-green-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="submitUserDetails(event)">
+                <button class="order_btn bg-teal-500 w-[200px] text-white p-3 rounded-md hover:bg-teal-700 flex items-center justify-center gap-2 mt-4 uppercase" onclick="submitUserDetails(event)">
                     Pay now
                 </button>
             </div>
@@ -213,13 +210,10 @@
     document.addEventListener("DOMContentLoaded", async function () {
         const selectedOrders = @json(session('caseInfoDetails.selectedOrders')); 
         const request_mode = @json(session('caseInfoDetails.requestMode'));
-        console.log("requestMode",request_mode);
-
         if (!selectedOrders || selectedOrders.length === 0) {
             document.getElementById("totalAmount").textContent = "₹ N/A";
             return;
         }
-
         try {
             const response = await fetch("{{ route('calculate-hc-final-amount') }}", {
                 method: "POST",
