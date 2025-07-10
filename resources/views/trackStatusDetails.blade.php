@@ -600,14 +600,14 @@ function paymentPending(application_number) {
             <td class="px-4 py-2 border">${item.order_number || 'N/A'}</td>
             <td class="px-4 py-2 border">${item.order_date || 'N/A'}</td>
             <td class="px-4 py-2 border">${item.number_of_page || 'N/A'}</td>
-            <td class="px-4 py-2 border">₹${item.amount || 'N/A'}</td>
+            <td class="px-4 py-2 border text-green-500">₹${item.amount || 'N/A'}</td>
             ${hasExtraColumns ? `
                 <td class="px-4 py-2 border">${item.new_page_no || 'N/A'}</td>
                 <td class="px-4 py-2 border">₹${item.new_page_amount || 'N/A'}</td>
-                 <td class="px-4 py-2 border">₹${item.new_page_amount- item.amount}</td>
+                    <td class="px-4 py-2 border text-green-500">₹${ (item.new_page_amount - item.amount).toFixed(2) }</td>
             ` : ''}
-        </tr>
-        `).join('');
+            </tr>
+            `).join('');
 
 
         detailsSection.html(`
