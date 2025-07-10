@@ -60,13 +60,12 @@ use App\Http\Controllers\admin\ReportController;
 use App\Http\Middleware\RolePermissionMiddleware;
 
 
-
-Route::get('/', function () {
-    session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC', 'HcCaseDetailsNapix','active_payment_source', 'DcCaseDetailsNapix']);
+Route::match(['get', 'post'], '/', function () {
+    session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC', 'HcCaseDetailsNapix', 'DcCaseDetailsNapix']);
     session(['isUserLoggedIn' => false]);
     session(['isUserLoggedInTransaction' => false]);
     return view('index');
-})->name('index');
+});
 
 Route::get('/hcPage', function () {
     return view('hcPage');
@@ -82,7 +81,7 @@ Route::get('/login', function () {
 
 Route::get('/trackStatus', [mobileNumberTrackController::class, 'showTrackStatusPage'])->name('trackStatus');
 
-Route::post('/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
+Route::match(['get', 'post'],'/trackStatusDetails', [mobileNumberTrackController::class, 'showTrackStatusDetails'])->name('trackStatusDetails');
 
 Route::get('/pendingPayments', function () {
     if (session('isUserLoggedIn') === false) {
@@ -116,10 +115,9 @@ Route::get('/caseInformation', function () {
 })->name('caseInformation');
 
 Route::get('/occ/cd_pay', function () {
-    //  if (!session()->has('active_payment_source') || session('isUserLoggedIn') === false) {
-    // return redirect('/');
-    // }
-
+    if (Session::get('isUserLoggedInTransaction') !== true && Session::get('isUserLoggedIn') !== true ) {
+        return redirect('/');
+    }
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
 
@@ -193,9 +191,25 @@ Route::post('/set-caseInformation-data', [StoreHCCaseDataController::class, 'set
 Route::get('/get-caseInformation-data', [SessionDataController::class, 'getCaseInfoData'])->middleware('web');
 
 Route::get('/clear-session', function () {
-    session()->flush(); 
+    $preserveKeys = [
+        'isUserLoggedIn',
+        'trackDetailsMobileHC',
+        'trackDetailsMobileDC',
+    ];
+    $preserved = [];
+    foreach ($preserveKeys as $key) {
+        if (Session::has($key)) {
+            $preserved[$key] = Session::get($key);
+        }
+    }
+    Session::flush();
+
+    foreach ($preserved as $key => $value) {
+        Session::put($key, $value);
+    }
     return response()->json(['success' => true]);
 })->name('clear.session');
+
 
 Route::post('/fetch-pending-payments-hc', [PendingPaymentController::class,'fetchPendingPaymentsHC']);
 
@@ -261,7 +275,7 @@ Route::get('/refresh-track-status-hc', [mobileNumberTrackController::class, 'ref
 
 Route::get('/refresh-track-status-dc', [mobileNumberTrackController::class, 'refreshTrackDetailsDCFromSession'])->name('refresh.track.status.dc');
 
-Route::post('/logout-tracking', [mobileNumberTrackController::class, 'logoutTracking'])->name('logout.tracking');
+Route::match(['get', 'post'], '/logout-tracking', [mobileNumberTrackController::class, 'logoutTracking'])->name('logout.tracking');
 
 //**********************************************************admin routes **************************************************************
 

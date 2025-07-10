@@ -375,6 +375,8 @@ function paymentPending(application_number) {
                     }
                 },
                 error: function() {
+                    document.getElementById('loading-overlay').style.display ='none';
+                    // window.location.href = '/';
                     $('#application-details').html('<p class="text-red-500">An error occurred while fetching the application details.</p>');
                 }
             });

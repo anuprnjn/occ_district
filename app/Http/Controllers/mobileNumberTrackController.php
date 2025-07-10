@@ -209,8 +209,8 @@ class mobileNumberTrackController extends Controller
     {
         session(['isUserLoggedIn' => false]);
         session(['isUserLoggedInTransaction' => false]);
-        // session(['trackStatusApplication' => false]);
-        session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC']);
+     
+        session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC', 'PendingCaseInfoDetails']);
        
         return redirect('/trackStatus')->with('message', 'You have been logged out.');
     }
