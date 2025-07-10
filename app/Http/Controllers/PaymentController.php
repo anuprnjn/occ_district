@@ -30,11 +30,14 @@ class PaymentController extends Controller
         $merchantDetails = $response->json();
         $userData = $request->input('userData');
         $paybleAmount = $request->input('paybleAmount');
+        $pendingPaybleAmount = $request->input('pendingPaybleAmount');
         
         if (!empty($paybleAmount)) {
             $urgent_fee = Session::get('hc_final_amount_summary')['urgent_fee'] ?? "0";
         } elseif (!empty($Dc_totalAmount)) {
             $urgent_fee = Session::get('dc_final_amount_summary')['urgent_fee'] ?? "0";
+        } elseif (!empty($pendingPaybleAmount)) { 
+           $urgent_fee = $request->input('urgentfee') ?? "0";
         } else {
             $urgent_fee = "0";
         }
@@ -55,7 +58,7 @@ class PaymentController extends Controller
             $merchantDetails[0]['recieptheadcode'],
             $userData['name'] ?? $userData['applicant_name'] ?? $Dc_userName ?? '', 
             $transaction_no,
-            $paybleAmount ?? $Dc_totalAmount,
+            $paybleAmount ?? $Dc_totalAmount ?? $pendingPaybleAmount,
             $depositerId,
             $PAN,
             $ADDINFO1,
@@ -77,7 +80,7 @@ class PaymentController extends Controller
             'depositername' => $userData['name'] ?? $userData['applicant_name'] ?? $Dc_userName ?? '',
             'depttranid' => $transaction_no ?? '',
             'depositerid'=> $depositerId ?? '',
-            'amount' => $paybleAmount ?? $Dc_totalAmount ?? '',
+            'amount' => $paybleAmount ?? $Dc_totalAmount ?? $pendingPaybleAmount ?? '',
             'panno' => $PAN ?? '',
             'urgent_fee' => $urgent_fee ?? '',
             'addinfo1' => $ADDINFO1 ?? '',
