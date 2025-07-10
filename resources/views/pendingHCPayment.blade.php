@@ -91,9 +91,15 @@
     @else
         <h2 class="text-md font-semibold mt-4 mb-3">Documents</h2>
     @endif
-
+        
+    @php
+        $orders = session('PendingCaseInfoDetails.order_details') ?? [];
+        $hasExtraColumns = collect($orders)->contains(function ($order) {
+            return ($order['number_of_page'] ?? 0) < ($order['new_page_no'] ?? 0);
+        });
+    @endphp
     <div class="overflow-x-auto">
-           @if(session('PendingCaseInfoDetails.order_details'))
+           @if($orders)
             <table class="w-full border border-gray-300 text-sm" id="ordersTable">
                 <thead>
                     <tr class="bg-[#4B3D2F] text-white text-left text-md">
@@ -101,6 +107,11 @@
                         <th class="py-2 px-2 border">Order Date</th>
                         <th class="py-2 px-2 border">Pages</th>
                         <th class="py-2 px-2 border">Amount</th>
+                         @if($hasExtraColumns)
+                            <th class="py-2 px-2 border">New Pages</th>
+                            <th class="py-2 px-2 border">New Amount</th>
+                            <th class="py-2 px-2 border">Deficit Amount</th>
+                        @endif
                     </tr>
                 </thead>
                 <!-- code to loop the orders  -->
@@ -111,6 +122,21 @@
                             <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
                             <td class="py-2 px-2 border">{{ $order['number_of_page'] ?? '0' }}</td>
                             <td class="py-2 px-2 border text-green-500">₹{{ $order['amount'] ?? '0.0' }}</td>
+                            @if($hasExtraColumns)
+                        <td class="py-2 px-2 border">
+                            {{ $order['new_page_no'] ?? '0' }}
+                        </td>
+                         <td class="py-2 px-2 border">
+                            ₹{{ $order['new_page_amount'] ?? '0.00' }}
+                        </td>
+                        <td class="py-2 px-2 border text-green-500">
+                            @if(($order['number_of_page'] ?? 0) < ($order['new_page_no'] ?? 0))
+                                ₹{{ number_format( ($order['new_page_amount'] ?? 0) - ($order['amount'] ?? 0.00), 2, '.', '') }}
+                            @else
+                                ₹0.00
+                            @endif
+                        </td>
+                    @endif
                         </tr>
                     @empty
                         <tr>
@@ -168,52 +194,51 @@
                 <td class="border p-2" colspan="3">{{ session('PendingCaseInfoDetails.case_info.advocate_registration_number') ?? 'N/A' }}</td>
             </tr>
         @endif
-        <tr>
+       <tr>
+            @php
+                $transactionDetails = session('PendingCaseInfoDetails.transaction_details');
+                $caseInfo = session('PendingCaseInfoDetails.case_info');
+
+                if (!$transactionDetails) {
+                    $transactionDetails = ['payable_amount' => $caseInfo['payable_amount'] ?? 'N/A'];
+                }
+
+                $amountToShow = $transactionDetails['payable_amount'] ?? 'N/A';
+                $isDeficit = false;
+                if (isset($caseInfo['payment_status'], $caseInfo['deficit_payment_status'], $caseInfo['deficit_amount'])) {
+                    if ((int)$caseInfo['payment_status'] === 1 && (int)$caseInfo['deficit_payment_status'] === 0) {
+                        $amountToShow = $caseInfo['deficit_amount'] ?? 'N/A';
+                        $isDeficit = true;
+                    } else {
+                        $amountToShow = $transactionDetails['payable_amount'] ?? 'N/A';
+                    }
+                }
+                $amountToShow = is_numeric($amountToShow) ? number_format((float)$amountToShow, 2, '.', '') : $amountToShow;
+            @endphp
             <td class="border p-2 font-bold">Request Mode</td>
             <td class="border p-2">
-    <span class="py-1 rounded  
-        @if(session('PendingCaseInfoDetails.case_info.request_mode') == 'ordinary') capitalize
-        @elseif(session('PendingCaseInfoDetails.case_info.request_mode') == 'urgent') capitalize
-        @endif">
-        {{ session('PendingCaseInfoDetails.case_info.request_mode') ?? 'N/A' }}
-    </span>
+            <span class="py-1 rounded  
+                @if(session('PendingCaseInfoDetails.case_info.request_mode') == 'ordinary') capitalize
+                @elseif(session('PendingCaseInfoDetails.case_info.request_mode') == 'urgent') capitalize
+                @endif">
+                {{ session('PendingCaseInfoDetails.case_info.request_mode') ?? 'N/A' }}
+            </span>
 
-    @if(session('PendingCaseInfoDetails.case_info.request_mode') == 'urgent')
-    <span class="ml-2 text-sm text-red-500 font-bold">
-        (Urgent Fee: ₹{{ session('PendingCaseInfoDetails.transaction_details.urgent_fee') 
-            ?? session('PendingCaseInfoDetails.case_info.urgent_fee') 
-            ?? 'N/A' }})
-    </span>
-    @endif
-    </td>
-        <td class="border p-2 font-bold">Total Payble Amount</td>
-        <td class="border p-2">
-        @php
-            $transactionDetails = session('PendingCaseInfoDetails.transaction_details');
-            $caseInfo = session('PendingCaseInfoDetails.case_info');
-
-            // If transaction_details is not available, use case_info.payable_amount
-            if (!$transactionDetails) {
-                $transactionDetails = ['payable_amount' => $caseInfo['payable_amount'] ?? 'N/A'];
-            }
-
-            // Default to payable_amount
-            $amountToShow = $transactionDetails['payable_amount'] ?? 'N/A';
-
-            // Ensure numeric comparison
-            if (isset($caseInfo['payment_status'], $caseInfo['deficit_payment_status'], $caseInfo['deficit_amount'])) {
-                if ((int)$caseInfo['payment_status'] === 1 && (int)$caseInfo['deficit_payment_status'] === 0) {
-                    $amountToShow = $caseInfo['deficit_amount'] ?? 'N/A';
-                } else {
-                    $amountToShow = $transactionDetails['payable_amount'] ?? 'N/A';
-                }
-            }
-            $amountToShow = is_numeric($amountToShow) ? number_format((float)$amountToShow, 2, '.', '') : $amountToShow;
-        @endphp
-
-        <span class="bg-green-600 text-white rounded-md px-4 py-1">₹{{ $amountToShow }}</span>
-    </td>
-</tr>
+            @if(session('PendingCaseInfoDetails.case_info.request_mode') == 'urgent' && !$isDeficit)
+            <span class="ml-2 text-sm text-red-500 font-bold">
+                (Urgent Fee: ₹{{ session('PendingCaseInfoDetails.transaction_details.urgent_fee') 
+                    ?? session('PendingCaseInfoDetails.case_info.urgent_fee') 
+                    ?? 'N/A' }})
+            </span>
+            @endif
+            </td>
+                <td class="border p-2 font-bold">
+                    {{ $isDeficit ? 'Total Deficit Payable Amount' : 'Total Payable Amount' }}
+                </td>
+                <td class="border p-2">
+                    <span class="bg-green-600 text-white rounded-md px-4 py-1">₹{{ $amountToShow }}</span>
+            </td>
+        </tr>
     </table>
 
     <!-- Pay Now Button -->
@@ -241,7 +266,17 @@
             alert('Error fetching applicant details. Please refresh the page and try again!');
             return;
         }
-        paybleAmount = parseFloat(paybleAmount);
+        pendingPaybleAmount = parseFloat(paybleAmount);
+        var paymentStatus = @json(session('PendingCaseInfoDetails.case_info.payment_status'));
+        var deficitPaymentStatus = @json(session('PendingCaseInfoDetails.case_info.deficit_payment_status'));
+        var isDeficit = (parseInt(paymentStatus) === 1) && (parseInt(deficitPaymentStatus) === 0);
+        var urgentfee = 0;
+        if(isDeficit) {
+            urgentfee= 0;
+        } else {
+           urgentfee = @json(session('PendingCaseInfoDetails.transaction_details.urgent_fee'));
+        }
+        
     
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -251,7 +286,7 @@
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": csrfToken
             },
-            body: JSON.stringify({ userData, paybleAmount, applicationNumber })
+            body: JSON.stringify({ userData, pendingPaybleAmount, urgentfee,applicationNumber })
         });
 
         const data = await response.json();
