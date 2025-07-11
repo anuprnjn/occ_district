@@ -210,7 +210,6 @@ Route::get('/clear-session', function () {
     return response()->json(['success' => true]);
 })->name('clear.session');
 
-
 Route::post('/fetch-pending-payments-hc', [PendingPaymentController::class,'fetchPendingPaymentsHC']);
 
 Route::post('/set-caseInformation-PendingData-HC', [SessionDataController::class, 'setPendingCaseInfoData'])->middleware('web');

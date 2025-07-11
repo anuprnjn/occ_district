@@ -8,7 +8,7 @@
     <div class="overflow-x-auto border rounded-lg" id="main-content">
         <table class="w-full border-collapse">
             <thead>
-                <tr class="bg-slate-900 text-white text-left">
+                <tr class="bg-[#4B3E2F] text-white text-left">
                     <th class="p-4">Screen Reader</th>
                     <th class="p-4">Website</th>
                     <th class="p-4">Free / Commercial</th>
