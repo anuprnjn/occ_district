@@ -11,6 +11,7 @@ class PendingPaymentController extends Controller
 {
     public function fetchPendingPaymentsHC(Request $request)
     {
+        session(['isPendingCase' => false]);
         $application_number = $request->input('application_number');
         $baseUrl = config('app.api.transaction_url');
         if (str_starts_with($application_number, 'HCW')) { 
@@ -44,7 +45,7 @@ class PendingPaymentController extends Controller
                 // Add document details if it came from the other copy API
                 $responsePayload['document_details'] = $responseData['document_details'];
             }
-    
+
             return response()->json($responsePayload);
         } else {
             return response()->json([
@@ -56,6 +57,7 @@ class PendingPaymentController extends Controller
    
     public function fetchPendingPaymentsDC(Request $request)
     {
+        session(['isPendingCase' => false]);
         $application_number = $request->input('application_number');
         $baseUrl = config('app.api.transaction_url');
         if (strlen($application_number) >= 4 && strtoupper($application_number[3]) === 'W') {
