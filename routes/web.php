@@ -63,6 +63,7 @@ use App\Http\Middleware\RolePermissionMiddleware;
 Route::match(['get', 'post'], '/', function () {
     session()->forget(['trackDetailsMobileHC', 'trackDetailsMobileDC', 'HcCaseDetailsNapix', 'DcCaseDetailsNapix']);
     session(['isUserLoggedIn' => false]);
+    session(['isPendingCase' => false]);
     session(['isUserLoggedInTransaction' => false]);
     return view('index');
 });
@@ -117,6 +118,9 @@ Route::get('/caseInformation', function () {
 Route::get('/occ/cd_pay', function () {
     if (Session::get('isUserLoggedInTransaction') !== true && Session::get('isUserLoggedIn') !== true ) {
         return redirect('/');
+    }
+    if(Session::get('isUserLoggedIn') === true && Session::get('isPendingCase') === true){
+        return redirect('/trackStatusDetails');
     }
     return view('caseInformationDetails');
 })->name('caseInformationDetails');
@@ -203,10 +207,11 @@ Route::get('/clear-session', function () {
         }
     }
     Session::flush();
-
     foreach ($preserved as $key => $value) {
         Session::put($key, $value);
     }
+    Session::put('isPendingCase', true);
+
     return response()->json(['success' => true]);
 })->name('clear.session');
 
