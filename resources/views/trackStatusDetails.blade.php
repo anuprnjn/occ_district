@@ -352,10 +352,12 @@ function paymentPending(application_number) {
                             displayApplicationDetails(responseData,orderDetails,transaction_no,color_key);
                         }
                     } else {
+                        document.getElementById('loading-overlay').style.display ='none';
                         $('#application-details').html('<p class="text-red-500">No details found for this application number.</p>');
                     }
                 },
                 error: function() {
+                    document.getElementById('loading-overlay').style.display ='none';
                     $('#application-details').html('<p class="text-red-500">An error occurred while fetching the application details.</p>');
                 }
             });
