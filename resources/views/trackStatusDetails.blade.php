@@ -88,9 +88,6 @@ function paymentPending(application_number) {
                 },
                 success: function(detailsResponse) {
                    if (detailsResponse) {
-
-                        console.log('this is detailed response',detailsResponse)
-                        
                         const caseInfo = detailsResponse.session_data.PendingCaseInfoDetails.case_info;
                         const transactionInfo = detailsResponse.session_data.PendingCaseInfoDetails.transaction_details;    
                         const paymentStatus = caseInfo.payment_status;
