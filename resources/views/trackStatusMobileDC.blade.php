@@ -14,7 +14,7 @@
         
         @if(session()->has('trackDetailsMobileDC'))
         <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <a href="{{ route('refresh.track.status.hc') }}"
+            <a href="{{ route('refresh.track.status.dc') }}"
                class="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm sm:text-base shadow transition-colors">
                <img src="{{ asset('passets/images/icons/refresh.svg')}}" alt="" class="w-5 h-5 hover:animate-spin">
                 <span>Refresh Application Status</span>

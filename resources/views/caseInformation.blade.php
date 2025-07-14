@@ -8,7 +8,10 @@
         
         <h2 class="text-xl font-semibold mt-0 mb-2">Case Information</h2>
         <div id="caseDetails">
-            <p class="text-green-600">Loading case details...</p>
+            <p class="text-gray-500 gap-2 h-[32vh] flex items-center justify-center">
+            <img src="{{ asset('passets/images/icons/refresh.png') }}" alt="LoadingIcon" class="w-8 animate-spin">
+            Loading case details...
+            </p>
         </div>
 
         <h2 class="text-lg font-semibold mt-2 mb-2">Orders</h2>

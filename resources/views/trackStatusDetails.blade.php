@@ -8,12 +8,12 @@
         $hasHC = session()->has('trackDetailsMobileHC');
         $hasDC = session()->has('trackDetailsMobileDC');
     @endphp
-    <!-- <button
+    <button
         onclick="window.location.href='{{ $hasHC ? '/trackStatusMobileHC' : '/trackStatusMobileDC' }}'"
         class="flex gap-2 p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">
         <img src="{{ asset('passets/images/icons/back.svg') }}" alt="">
         Back
-    </button> -->
+    </button>
         <button id="print-application-btn" class="flex gap-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5"><img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Application</button>
     </div>
 
@@ -224,14 +224,13 @@ function paymentPending(application_number) {
                                 <img src="/passets/images/icons/download.svg" alt="Download All" class="w-5 h-5">
                                 Download All Files
                             </button>
-                            <button onclick="downloadAsZip('${applicationNo}')" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
-                                <img src="/passets/images/icons/zip.svg" alt="Download ZIP" class="w-5 h-5">
-                                Download as ZIP
-                            </button>
                         </div>
                     `;
                 }
-
+    //  <button onclick="downloadAsZip('${applicationNo}')" class="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm sm:text-[16px] w-full sm:w-auto">
+    //     <img src="/passets/images/icons/zip.svg" alt="Download ZIP" class="w-5 h-5">
+    //     Download as ZIP
+    // </button>
                 let tableHTML = `
                     ${extraButtons}
                     <div class="overflow-x-auto">
@@ -319,21 +318,6 @@ function paymentPending(application_number) {
 
 <script>
     $(document).ready(function() {
-        // function getQueryParam(param) {
-        //     const urlParams = new URLSearchParams(window.location.search);
-        //     const encoded = urlParams.get(param);
-        //     if (encoded) {
-        //         try {
-        //             const decoded = atob(encoded);
-        //             return decoded;
-        //         } catch (e) {
-        //             console.error('Failed to decode:', e);
-        //             return null;
-        //         }
-        //     }
-        //     return null;
-        // }
-        // var url_application_number = getQueryParam('application_number');
         const url_application_number = @json($applicationNumber);
 
         if (url_application_number) {
@@ -474,7 +458,7 @@ function paymentPending(application_number) {
 
 
     function displayApplicationDetails(data,orderDetails,transaction_number,color_key) {
-        
+
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
         print_btn_track.classList.remove('hidden');
@@ -569,7 +553,9 @@ function paymentPending(application_number) {
                     <td class="px-6 py-2">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                 </tr>
             `;
-        } else if ((data.case_number && data.case_year) || (data.filing_number && data.filing_year) ) {
+        } else{
+            '';
+        } if ((data.case_number && data.case_year) || (data.filing_number && data.filing_year) ) {
             if(data.case_number && data.case_year){
             caseDetails = `
                 <tr class="border">
@@ -579,7 +565,7 @@ function paymentPending(application_number) {
             `;
             }if(data.filing_number && data.filing_year)
             {
-                 caseDetails = `
+                 caseDetails_filling = `
                 <tr class="border">
                     <td class="px-6 py-2 font-semibold uppercase border">Filling Number</td>
                     <td class="px-6 py-2">${data.case_type || ''}/${data.filing_number}/${data.filing_year}</td>
@@ -640,6 +626,7 @@ function paymentPending(application_number) {
                         <td class="px-6 py-2">${data.email}</td>
                     </tr>
                     ${caseDetails}
+                    ${caseDetails_filling}
                     <tr class="border">
                         <td class="px-6 py-2 font-semibold uppercase border">Request Mode</td>
                         <td class="px-6 py-2 capitalize">${data.request_mode}</td>

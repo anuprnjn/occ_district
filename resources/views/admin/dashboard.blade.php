@@ -95,26 +95,27 @@
 @endpush
 
 @push('styles')
+
 <style>
   .small-box {
     position: relative;
-    border-radius: 1rem;
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    padding: 2rem 1.5rem;
+    border-radius: 0.5rem;
+    padding: 0.1 0.5rem;
     transition: all 0.3s ease;
     color: #fff;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
   }
 
   .small-box:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+    transform: translateY(-5px);
   }
 
   .small-box .inner h3 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
     margin: 0;
   }
@@ -123,22 +124,31 @@
     font-size: 1rem;
     font-weight: 400;
     margin: 0.5rem 0 0;
-    opacity: 0.9;
+    opacity: 0.95;
   }
-.bg-soft-applied {
-  background: linear-gradient(135deg, #D09A3F, #A06E24); /* Golden Amber to Deep Bronze */
-  color: #ffffff;
-}
-.bg-soft-pending {
-  background: linear-gradient(135deg, #ef5350, #c62828); /* Warm Red to Soft Crimson */
-  color: #ffffff;
-}
 
-.bg-soft-delivered {
-  background: linear-gradient(135deg, #4B3D2F, #2E241A); /* Deep Brown to Dark Espresso */
-  color: #ffffff;
-}
+  .small-box-icon {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    width: 40px;
+    height: 40px;
+    opacity: 1;
+  }
+
+  .bg-soft-applied {
+    background: linear-gradient(135deg, #D09A3F, #A06E24);
+  }
+
+  .bg-soft-pending {
+    background: linear-gradient(135deg, #ef5350, #c62828);
+  }
+
+  .bg-soft-delivered {
+    background: linear-gradient(135deg, #4B3D2F, #2E241A);
+  }
 </style>
+
 @endpush
 
 @endsection
