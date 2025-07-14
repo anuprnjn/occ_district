@@ -64,10 +64,23 @@
                 $hasApplications = $allCopies->isNotEmpty();
             @endphp
             
-            @if($hasApplications)
-            <div class="w-full text-yellow-600 rounded mb-4 text-xs sm:text-sm">
-                <strong>Note:</strong> Click on the <span class="font-semibold text-yellow-700">Application Number</span> to view full application details.
-            </div>
+           @if($hasApplications)
+            @if($latestDateApplications->isEmpty() && $previousApplications->isNotEmpty())
+                <!-- Notice when only certified copy ready data exists -->
+                <div class="mt-4 mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg text-sm sm:text-base">
+                    <strong>Note:</strong> Your certified copy is ready. 
+                    Please click the 
+                    <span class="font-semibold text-green-900">“Show Previous & Delivered Applications”</span> 
+                    button to view your application.
+                </div>
+            @else
+                <!-- Regular Note for Mixed Applications -->
+                <div class="w-full text-yellow-600 rounded mb-4 text-xs sm:text-sm">
+                    <strong>Note:</strong> Click on the 
+                    <span class="font-semibold text-yellow-700">Application Number</span> 
+                    to view full application details.
+                </div>
+            @endif
             
             <!-- Mobile View (Cards) -->
             <div class="block sm:hidden space-y-4">
