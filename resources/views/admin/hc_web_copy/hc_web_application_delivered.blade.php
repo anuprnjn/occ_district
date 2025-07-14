@@ -79,7 +79,7 @@ use Carbon\Carbon;
                                             </tr>
                                         @endif
                                     @empty
-                                        <tr><td colspan="9" class="text-center">No Delivered Copies Found</td></tr>
+                                      
                                     @endforelse
                                 </tbody>
                             </table>

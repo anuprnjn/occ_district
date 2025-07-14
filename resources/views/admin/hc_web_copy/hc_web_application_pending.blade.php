@@ -87,7 +87,7 @@ use Carbon\Carbon;
                                             </tr>
                                         @endif
                                     @empty
-                                        <tr><td colspan="9" class="text-center">No Pending Copies Found</td></tr>
+                                      
                                     @endforelse
                                 </tbody>
                             </table>
