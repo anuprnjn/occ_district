@@ -10,7 +10,7 @@
     @endphp
     <button
         onclick="window.location.href='{{ $hasHC ? '/trackStatusMobileHC' : '/trackStatusMobileDC' }}'"
-        class="flex gap-2 p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">
+        class="flex gap-2 pl-2 pr-4 p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">
         <img src="{{ asset('passets/images/icons/back.svg') }}" alt="">
         Back
     </button>
@@ -458,7 +458,7 @@ function paymentPending(application_number) {
 
 
     function displayApplicationDetails(data,orderDetails,transaction_number,color_key) {
-
+        
         document.getElementById('loading-overlay').style.display ='none';
         const print_btn_track = document.getElementById('print_container');
         print_btn_track.classList.remove('hidden');
@@ -546,6 +546,7 @@ function paymentPending(application_number) {
                     <td class="px-6 py-2">${data.case_filling_year}</td>
                 </tr>
             `;
+            caseDetails_filling = ``;
         } else if (data.selected_method === 'C') {
             caseDetails = `
                 <tr class="border">
@@ -553,6 +554,7 @@ function paymentPending(application_number) {
                     <td class="px-6 py-2">${data.case_type}/${data.case_filling_number}/${data.case_filling_year}</td>
                 </tr>
             `;
+            caseDetails_filling = ``;
         } else{
             '';
         } if ((data.case_number && data.case_year) || (data.filing_number && data.filing_year) ) {
@@ -563,6 +565,7 @@ function paymentPending(application_number) {
                     <td class="px-6 py-2">${data.case_type || ''}/${data.case_number}/${data.case_year}</td>
                 </tr>
             `;
+            caseDetails_filling = ``;
             }if(data.filing_number && data.filing_year)
             {
                  caseDetails_filling = `
