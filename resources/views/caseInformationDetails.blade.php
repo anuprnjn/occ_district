@@ -11,11 +11,12 @@
 @elseif($active === 'dc_review_form_userDetails')
     @include('caseInformationDetailsDC')
 @else
-    <section class="content-section flex flex-col gap-4">  
+    <section class="content-section flex flex-col gap-4 sm:-mt-0 -mt-6">  
         <!-- Case Information & Orders -->
-        <div class="w-full rounded-md -mt-10">
+        <div class="overflow-x-auto w-full">
+        <div class="w-full rounded-md ">
             <div class="flex items-center">
-                <h2 class="text-lg font-semibold mb-3 w-[18%]">Case Information</h2>
+                <h2 class="text-lg font-semibold mb-3 w-[18%] truncate overflow-hidden whitespace-nowrap">Case Information</h2>
                 <marquee behavior="" direction="left" class="w-full -mt-1">
                     <span class="text-red-500 text-md font-extrabold" style="font-weight: 900;">
                         ( NOTE: It is advised to pay through Netbanking/BHIM UPI with the SBI epay gateway option )
@@ -108,9 +109,10 @@
 
             </div>
         </div>
+        </div>
 
         <!-- Applicant Details -->
-        <div class="w-full dark_form rounded-md">
+        <div class="w-full overflow-x-auto rounded-md">
             <h2 class="text-lg font-semibold mb-3">Applicant Details</h2>
             <table class="w-full border border-gray-300">
                 <tbody id="applicantDetails">
