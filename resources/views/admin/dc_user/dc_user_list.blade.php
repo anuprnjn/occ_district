@@ -66,13 +66,15 @@
                                                         <td>{{ $dcuser['role_name'] }}</td>
                                                         <td>{{ $dcuser['username'] }}</td>
                                                         <td>
-                                                            <a href="{{ route('dc_user_edit', $dcuser['id']) }}"
-                                                                class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i>Edit</a>
+                                                            <a href="{{ route('dc_user_edit', encrypt($dcuser['id'])) }}" 
+                                                            class="btn btn-warning btn-sm">
+                                                                <i class="bi bi-pencil"></i>Edit
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 @endif
                                             @empty
-                                              
+                                                {{-- Empty state content --}}
                                             @endforelse
                                         </tbody>
                                     </table>

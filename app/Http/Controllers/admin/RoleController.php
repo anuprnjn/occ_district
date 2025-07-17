@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Crypt;
 
 class RoleController extends Controller
 {
@@ -80,9 +81,12 @@ class RoleController extends Controller
     }
 
     // Show Edit Role Form
-    public function editRole($role_id)
+    public function editRole($encryptedRoleId)
     {
         try {
+            // Decrypt the role_id
+            $role_id = Crypt::decrypt($encryptedRoleId);
+            
             // Fetch Role Data
             $roleResponse = Http::get(config('app.api.admin_url') . '/fetch_role.php', [
                 'role_id' => $role_id
@@ -94,6 +98,10 @@ class RoleController extends Controller
 
             $role = collect($roleResponse->json())->firstWhere('role_id', $role_id);
 
+            if (!$role) {
+                return redirect()->route('role_list')->with('error', 'Role not found.');
+            }
+
             // Fetch Permissions Data
             $menuResponse = Http::get(config('app.api.admin_url') . '/fetch_submenu_permission.php');
 
@@ -104,6 +112,10 @@ class RoleController extends Controller
             }
 
             return view('admin.role.role_edit', compact('role', 'menudata'));
+            
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            Log::error('Invalid encrypted role ID', ['error' => $e->getMessage()]);
+            return redirect()->route('role_list')->with('error', 'Invalid request.');
         } catch (\Exception $e) {
             Log::error('Error fetching role data', ['error' => $e->getMessage()]);
             return redirect()->route('role_list')->with('error', 'Error fetching role data.');

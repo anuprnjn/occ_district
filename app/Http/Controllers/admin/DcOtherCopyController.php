@@ -150,7 +150,7 @@ class DcOtherCopyController extends Controller
     {
         $request->validate([
             'application_number' => 'required|string',
-            'documents.*' => 'required|mimes:pdf|max:20480', // Only PDFs, max 5MB
+            'documents.*' => 'required|mimes:pdf|max:20480', // Only PDFs, max 20MB
             'document_types.*' => 'required|string|max:200',
         ]);
     

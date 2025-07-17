@@ -59,7 +59,7 @@
                                             @if (session('user.role_id') != 1 && $hcuser['role_id'] == 1)
                                                 @continue
                                             @endif
-                                            <tr> 
+                                            <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ $hcuser['name'] }}</td>
                                                 <td>{{ $hcuser['email'] }}</td>
@@ -68,12 +68,14 @@
                                                 <td>{{ $hcuser['role_id'] }}</td>
                                                 <td>{{ $hcuser['username'] }}</td>
                                                 <td>
-                                                    <a href="{{ route('hc_user_edit', $hcuser['id']) }}"
-                                                        class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i>Edit</a>
+                                                    <a href="{{ route('hc_user_edit', encrypt($hcuser['id'])) }}" 
+                                                    class="btn btn-warning btn-sm">
+                                                        <i class="bi bi-pencil"></i>Edit
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @empty
-                                            
+                                            {{-- Empty state content --}}
                                         @endforelse
                                     </tbody>
                                 </table>

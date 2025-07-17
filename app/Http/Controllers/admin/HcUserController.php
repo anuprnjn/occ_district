@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Crypt;
 
 class   HcUserController extends Controller
 {
@@ -104,37 +105,44 @@ class   HcUserController extends Controller
     }   
 
     // Show Edit User Form
-    public function editHcUser($user_id)
-{
-    try {
-        // Fetch user details by user_id
-        $userResponse = Http::get(config('app.api.admin_url') . '/fetch_hc_user_id.php', [
-            'user_id' => $user_id
-        ]);
+    public function editHcUser($encryptedId)
+    {
+        try {
+            // Decrypt the ID
+            $user_id = Crypt::decrypt($encryptedId);
+            
+            // Fetch user details by user_id
+            $userResponse = Http::get(config('app.api.admin_url') . '/fetch_hc_user_id.php', [
+                'user_id' => $user_id
+            ]);
 
-        if ($userResponse->failed()) {
-            return redirect()->route('hc_user_list')->with('error', 'Failed to fetch user data.');
+            if ($userResponse->failed()) {
+                return redirect()->route('hc_user_list')->with('error', 'Failed to fetch user data.');
+            }
+
+            $userData = $userResponse->json();
+
+            // Check if user data exists
+            if (!isset($userData['user'])) {
+                return redirect()->route('hc_user_list')->with('error', 'User not found.');
+            }
+
+            $hcUser = $userData['user'];
+
+            // Fetch roles
+            $roleResponse = Http::get(config('app.api.admin_url') . '/fetch_role_hc.php');
+            $roledata = $roleResponse->json() ?? [];
+
+            return view('admin.hc_user.hc_user_edit', compact('hcUser', 'roledata'));
+            
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            Log::error('Invalid encrypted ID', ['error' => $e->getMessage()]);
+            return redirect()->route('hc_user_list')->with('error', 'Invalid request.');
+        } catch (\Exception $e) {
+            Log::error('Error fetching user data', ['error' => $e->getMessage()]);
+            return redirect()->route('hc_user_list')->with('error', 'Error fetching user data.');
         }
-
-        $userData = $userResponse->json();
-
-        // Check if user data exists
-        if (!isset($userData['user'])) {
-            return redirect()->route('hc_user_list')->with('error', 'User not found.');
-        }
-
-        $hcUser = $userData['user'];
-
-        // Fetch roles
-        $roleResponse = Http::get(config('app.api.admin_url') . '/fetch_role_hc.php');
-        $roledata = $roleResponse->json() ?? [];
-
-        return view('admin.hc_user.hc_user_edit', compact('hcUser', 'roledata'));
-    } catch (\Exception $e) {
-        Log::error('Error fetching user data', ['error' => $e->getMessage()]);
-        return redirect()->route('hc_user_list')->with('error', 'Error fetching user data.');
     }
-}
 
 
     // Update User

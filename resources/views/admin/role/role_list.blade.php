@@ -69,7 +69,7 @@ use Illuminate\Support\Facades\Crypt;
                                                     <ul>
                                                         @foreach ($role['permissions'] as $permission)
                                                             <li>
-                                                                {{ $permission['menu_name'] ?? 'N/A' }} | 
+                                                                {{ $permission['menu_name'] ?? 'N/A' }} |
                                                                 {{ $permission['submenu_name'] ?? 'N/A' }}
                                                             </li>
                                                         @endforeach
@@ -79,11 +79,14 @@ use Illuminate\Support\Facades\Crypt;
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('role_edit', ['role_id' => $role['role_id']]) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i>Edit</a>
+                                                <a href="{{ route('role_edit', ['role_id' => encrypt($role['role_id'])]) }}" 
+                                                class="btn btn-warning btn-sm">
+                                                    <i class="bi bi-pencil"></i>Edit
+                                                </a>
                                             </td>
                                         </tr>
                                     @empty
-                                  
+                                        {{-- Empty state content --}}
                                     @endforelse
                                 </tbody>
                             </table>

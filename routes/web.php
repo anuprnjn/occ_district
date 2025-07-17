@@ -478,32 +478,30 @@ Route::get('/admin/payment-report', [ReportController::class, 'paymentReport'])-
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/delivered-report', [ReportController::class, 'deliveredReport'])->name('delivered.report');
 });
-
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/pending-report', [ReportController::class, 'pendingReport'])->name('pending.report');
 });
-
 Route::get('/admin/activity-log-report', [ReportController::class, 'logsReport'])->name('admin.logs.report');
-
 // dc report section 
 
 Route::get('/admin/payment-report-dc', [ReportController::class, 'paymentReportDC'])->name('payment_report_dc');
-
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/delivered-report-dc', [ReportController::class, 'deliveredReportDC'])->name('delivered.report_dc');
 });
-
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/pending-report-dc', [ReportController::class, 'pendingReportDC'])->name('pending.report_dc');
 });
-
 Route::get('/admin/activity-log-report-dc', [ReportController::class, 'logsReportDC'])->name('admin.logs.report_dc');
-
-});
 
 // Fee Master Routes
 Route::get('/admin/fee-master', [FeeMasterController::class, 'fee_master'])->name('fee_master');
 Route::get('/admin/fee-master/create', [FeeMasterController::class, 'create'])->name('fee_master.create');
 Route::post('/admin/fee-master', [FeeMasterController::class, 'store'])->name('fee_master.store');
 Route::get('/admin/fee-master/{id}/edit', [FeeMasterController::class, 'edit'])->name('fee_master.edit');
-Route::put('/admin/fee-master/{id}', [FeeMasterController::class, 'update'])->name('fee_master.update');  
+Route::put('/admin/fee-master/{id}', [FeeMasterController::class, 'update'])->name('fee_master.update'); 
+
+// function closes 
+
+});
+
+ 

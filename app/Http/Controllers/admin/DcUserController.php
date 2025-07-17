@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\ActivityLogger;
+use Illuminate\Support\Facades\Crypt;
 
 class  DcUserController extends Controller
 {
@@ -137,61 +138,65 @@ class  DcUserController extends Controller
 }
 
     // Show Edit User Form
-    public function editDcUser($user_id)
-{
-    try {
-        // Fetch user details by user_id
-        $userResponse = Http::get(config('app.api.admin_url') . '/fetch_dc_user_id.php', [
-            'user_id' => $user_id
-        ]);
+    public function editDcUser($encryptedId)
+    {
+        try {
+            // Decrypt the ID
+            $user_id = Crypt::decrypt($encryptedId);
+            
+            // Fetch user details by user_id
+            $userResponse = Http::get(config('app.api.admin_url') . '/fetch_dc_user_id.php', [
+                'user_id' => $user_id
+            ]);
 
-        if ($userResponse->failed()) {
-            return redirect()->route('dc_user_list')->with('error', 'Failed to fetch user data.');
+            if ($userResponse->failed()) {
+                return redirect()->route('dc_user_list')->with('error', 'Failed to fetch user data.');
+            }
+
+            $userData = $userResponse->json();
+
+            // Check if user data exists
+            if (!isset($userData['user'])) {
+                return redirect()->route('dc_user_list')->with('error', 'User not found.');
+            }
+
+            $dcUser = $userData['user'];
+
+            // Fetch roles
+            $roleResponse = Http::get(config('app.api.admin_url') . '/fetch_role_dc.php');
+            $roledata = $roleResponse->json() ?? [];
+
+            // Fetch districts
+            $districtResponse = Http::get(config('app.api.admin_url') . '/district_dropdown.php');
+            $districtdata = $districtResponse->json() ?? [];
+
+            // Fetch establishments for selected district
+            $establishmentResponse = Http::post(config('app.api.admin_url') . '/establishment.php', [
+                'dist_code' => $dcUser['dist_code'] ?? '',
+            ]);
+            $establishments = $establishmentResponse->json() ?? [];
+            
+            // Fetch user's selected establishments with both dist_code and user_id
+            $userEstablishmentResponse = Http::post(config('app.api.admin_url') . '/user_establishment.php', [
+                'dist_code' => $dcUser['dist_code'] ?? '',
+                'user_id' => $user_id, // Use decrypted user_id
+            ]);
+            
+            $userEstablishments = $userEstablishmentResponse->json() ?? [];
+            
+            // Ensure we are accessing the correct part of the response
+            $selectedEstCodes = collect($userEstablishments['establishments'] ?? [])->pluck('est_code')->toArray();
+
+            return view('admin.dc_user.dc_user_edit', compact('dcUser', 'roledata', 'districtdata', 'establishments', 'selectedEstCodes'));
+
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            Log::error('Invalid encrypted ID', ['error' => $e->getMessage()]);
+            return redirect()->route('dc_user_list')->with('error', 'Invalid request.');
+        } catch (\Exception $e) {
+            Log::error('Error fetching user data', ['error' => $e->getMessage()]);
+            return redirect()->route('dc_user_list')->with('error', 'Error fetching user data.');
         }
-
-        $userData = $userResponse->json();
-
-        // Check if user data exists
-        if (!isset($userData['user'])) {
-            return redirect()->route('dc_user_list')->with('error', 'User not found.');
-        }
-
-        $dcUser = $userData['user'];
-
-        // Fetch roles
-        $roleResponse = Http::get(config('app.api.admin_url') . '/fetch_role_dc.php');
-        $roledata = $roleResponse->json() ?? [];
-
-        // Fetch districts
-        $districtResponse = Http::get(config('app.api.admin_url') . '/district_dropdown.php');
-        $districtdata = $districtResponse->json() ?? [];
-
-        // Fetch establishments for selected district
-        $establishmentResponse = Http::post(config('app.api.admin_url') . '/establishment.php', [
-            'dist_code' => $dcUser['dist_code'] ?? '',
-        ]);
-        $establishments = $establishmentResponse->json() ?? [];
-        // Fetch user’s selected establishments with both dist_code and user_id
-        $userEstablishmentResponse = Http::post(config('app.api.admin_url') . '/user_establishment.php', [
-            'dist_code' => $dcUser['dist_code'] ?? '',
-            'user_id' => $user_id,
-        ]);
-        
-        $userEstablishments = $userEstablishmentResponse->json() ?? [];
-        
-        // Ensure we are accessing the correct part of the response
-        $selectedEstCodes = collect($userEstablishments['establishments'] ?? [])->pluck('est_code')->toArray();
-        
-        //dd($selectedEstCodes); // Now should return ["JHBK03", "JHBK04", "JHBK02"]
-
-        return view('admin.dc_user.dc_user_edit', compact('dcUser', 'roledata', 'districtdata', 'establishments', 'selectedEstCodes'));
-
-    } catch (\Exception $e) {
-        Log::error('Error fetching user data', ['error' => $e->getMessage()]);
-        return redirect()->route('dc_user_list')->with('error', 'Error fetching user data.');
     }
-}
-
     // Update User
     // Update User
     public function updateDcUser(Request $request, $user_id)

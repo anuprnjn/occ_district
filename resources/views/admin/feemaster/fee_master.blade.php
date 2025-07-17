@@ -63,11 +63,10 @@
                                             @foreach($feeMasters as $feeMaster)
                                                 <tr>
                                                     <td>{{ $feeMaster->fee_type }}</td>
-                                                    <td>₹{{ number_format($feeMaster->amount, 2) }}</td>
+                                                    <td>{{ $feeMaster->amount }}</td>
                                                     <td>
-                                                        <a href="{{ route('fee_master.edit', $feeMaster->fee_id) }}" 
-                                                           class="btn btn-warning btn-sm">
-                                                            <i class="fas fa-edit"></i> Edit
+                                                        <a href="{{ route('fee_master.edit', encrypt($feeMaster->fee_id)) }}" class="btn btn-primary btn-sm">
+                                                            Edit
                                                         </a>
                                                     </td>
                                                 </tr>
