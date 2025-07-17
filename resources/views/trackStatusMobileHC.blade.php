@@ -27,7 +27,13 @@
                     ->sortByDesc('created_at')
                     ->values();
                 
-                $previousApplications = $allCopies->filter(fn($item) =>
+                // Always show the latest application + any non-certified applications
+                $latestDateApplications = $allCopies->filter(fn($item, $index) => 
+                    $index === 0 || $item['application_status'] !== 'CERTIFIED COPY IS READY TO BE DOWNLOADED'
+                )->values();
+                
+                // Previous applications (certified ones, excluding the latest)
+                $previousApplications = $allCopies->slice(1)->filter(fn($item) =>
                     $item['application_status'] === 'CERTIFIED COPY IS READY TO BE DOWNLOADED'
                 )->values();
             @endphp
@@ -57,36 +63,43 @@
     <div class="mb-12">
         @if(session()->has('trackDetailsMobileHC'))
             @php
-                $latestDateApplications = $allCopies->filter(fn($item) =>
-                    $item['application_status'] !== 'CERTIFIED COPY IS READY TO BE DOWNLOADED'
-                )->values();
-                
                 $hasApplications = $allCopies->isNotEmpty();
+                $latestApp = $latestDateApplications->first();
+                $isLatestCertified = $latestApp && $latestApp['application_status'] === 'CERTIFIED COPY IS READY TO BE DOWNLOADED';
             @endphp
             
             @if($hasApplications)
-            @if($latestDateApplications->isEmpty() && $previousApplications->isNotEmpty())
-                <!-- Notice when only certified copy ready data exists -->
-                <div class="mt-4 mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg text-sm sm:text-base">
-                    <strong>Note:</strong> Your certified copy is ready. 
-                    Please click the 
-                    <span class="font-semibold text-green-900">“Show Previous & Delivered Applications”</span> 
-                    button to view your application.
-                </div>
-            @else
-                <!-- Regular Note for Mixed Applications -->
-                <div class="w-full text-yellow-600 rounded mb-4 text-xs sm:text-sm">
-                    <strong>Note:</strong> Click on the 
-                    <span class="font-semibold text-yellow-700">Application Number</span> 
-                    to view full application details.
-                </div>
-            @endif
+                @if($isLatestCertified && $previousApplications->isNotEmpty())
+                    <!-- Notice when latest is certified and there are more certified applications -->
+                    <div class="mt-4 mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg text-sm sm:text-base">
+                        <strong>Note:</strong> Click on the 
+                        <span class="font-semibold text-green-700">Application Number</span> 
+                        to view full application details.
+                    </div>
+                @elseif($latestDateApplications->count() > 1 || $previousApplications->isNotEmpty())
+                    <!-- Regular Note for Mixed Applications -->
+                    <div class="mt-4 mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg text-sm sm:text-base">
+                        <strong>Note:</strong> Click on the 
+                        <span class="font-semibold text-green-700">Application Number</span> 
+                        to view full application details.
+                    </div>
+                @else
+                    <!-- Single application note -->
+                    <div class="mt-4 mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg text-sm sm:text-base">
+                        <strong>Note:</strong> Click on the 
+                        <span class="font-semibold text-green-700">Application Number</span> 
+                        to view full application details.
+                    </div>
+                @endif
 
             
             <!-- Mobile View (Cards) -->
             <div class="block sm:hidden space-y-4">
                 @foreach($latestDateApplications as $copy)
-                <div class="border rounded-lg shadow p-4 ">
+                <div class="border rounded-lg shadow p-4 {{ $loop->first ? 'border-blue-300 bg-blue-50' : '' }}">
+                    @if($loop->first)
+                        <div class="mb-2 text-xs font-medium text-blue-600 uppercase tracking-wide">Latest Application</div>
+                    @endif
                     <div class="grid grid-cols-2 gap-3">
                         <div class="text-sm font-medium">S.No.</div>
                         <div class="text-sm font-semibold bg-[#D09A3F] w-6 text-center rounded-md text-white">{{ $loop->iteration }}</div>
@@ -210,8 +223,11 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach($latestDateApplications as $copy)
-                        <tr>
-                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                        <tr class="{{ $loop->first ? 'bg-blue-10' : '' }}">
+                            <td class="px-4 py-3">
+                                {{ $loop->iteration }}
+                                
+                            </td>
                             <td class="px-4 py-3 font-semibold">
                                 <form method="POST" action="{{ url('trackStatusDetails') }}" id="form-{{ $copy['application_number'] }}">
                                     @csrf
@@ -248,7 +264,7 @@
                         @endforeach
                         
                         @foreach($previousApplications as $copy)
-                        <tr class=" transition-colors hidden previous-row">
+                        <tr class="transition-colors hidden previous-row">
                             <td class="px-4 py-3">{{ $loop->iteration + $latestDateApplications->count() }}</td>
                             <td class="px-4 py-3 font-semibold">
                                 <form method="POST" action="{{ url('trackStatusDetails') }}" id="form-{{ $copy['application_number'] }}">
