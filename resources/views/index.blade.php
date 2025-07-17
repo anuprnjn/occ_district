@@ -1376,69 +1376,97 @@ function setcaseDetailsToPhpSession(caseDetails) {
     .catch(error => console.error('Error:', error));
 }
 
+function showErrorDC(inputId, message) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    let errorDiv = input.nextElementSibling;
+
+    const needsExtraMargin = inputId === 'dropdownToggleDC';
+
+    if (!errorDiv || !errorDiv.classList.contains('input-error')) {
+        errorDiv = document.createElement('div');
+        errorDiv.classList.add('input-error', 'text-red-500', 'text-sm', 'mt-1');
+
+        // Apply mt-2 for District and Establishment, mt-1 otherwise
+        errorDiv.classList.add(needsExtraMargin ? 'mt-2' : 'mt-1');
+
+        input.parentNode.appendChild(errorDiv);
+    }
+
+    errorDiv.textContent = message;
+}
+
 function submitDCJudgementForm(e) {
     e.preventDefault();
+    clearAllErrors();
 
-    // Step 1: Get the selected values
     const selectedDistrict = document.getElementById('dropdownToggleDC')?.innerText.trim();
     const selectedEstablishment = document.getElementById('selectEstaDC')?.value.trim();
     const selectedCaseType = document.getElementById('caseTypeSelectForOrderJudgementFormDC')?.value.trim();
     const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
+    const captcha = document.getElementById('captcha-hc-orderJudgement')?.value.trim();
 
-    // Step 2: Validate District, Establishment, CaseType
+    let hasError = false;
+
+    // District
     if (!selectedDistrict || selectedDistrict === 'Please Select District') {
-        alert('Please select District.');
-        return;
+        showErrorDC('err_dist_dropdown', 'Please select District.');
+        hasError = true;
     }
+
+    // Establishment
     if (!selectedEstablishment) {
-        alert('Please select Establishment.');
-        return;
+        showErrorDC('selectEstaDC', 'Please select Establishment.');
+        hasError = true;
     }
+
+    // Case Type
     if (!selectedCaseType) {
-        alert('Please select Case Type.');
-        return;
+        showErrorDC('err_case_type', 'Please select Case Type.');
+        hasError = true;
     }
+
+    // Radio validation
     if (!selectedRadio) {
-        alert('Please choose Case Number or Filing Number.');
-        return;
+        showErrorDC('orderJudgementDC', 'Please choose Case Number or Filing Number.');
+        hasError = true;
     }
 
-    let caseNo, caseYear, filingNo, filingYear;
-
-    // Step 3: Validate based on selected search type
-    if (selectedRadio.value === "case") {
-        caseNo = document.getElementById('case-no-dc')?.value.trim();
-        caseYear = document.getElementById('case-year-dc')?.value.trim();
+    // Case or Filing validation
+    if (selectedRadio?.value === "case") {
+        const caseNo = document.getElementById('case-no-dc')?.value.trim();
+        const caseYear = document.getElementById('case-year-dc')?.value.trim();
 
         if (!caseNo) {
-            alert("Please enter Case Number.");
-            return;
+            showErrorDC('case-no-dc', 'Please enter Case Number.');
+            hasError = true;
         }
         if (!caseYear) {
-            alert("Please enter Case Year.");
-            return;
+            showErrorDC('case-year-dc', 'Please enter Case Year.');
+            hasError = true;
         }
-    } else if (selectedRadio.value === "filling") {
-        filingNo = document.getElementById('filling-no-dc')?.value.trim();
-        filingYear = document.getElementById('filling-year-dc')?.value.trim();
+    } else if (selectedRadio?.value === "filling") {
+        const filingNo = document.getElementById('filling-no-dc')?.value.trim();
+        const filingYear = document.getElementById('filling-year-dc')?.value.trim();
 
         if (!filingNo) {
-            alert("Please enter Filing Number.");
-            return;
+            showErrorDC('filling-no-dc', 'Please enter Filing Number.');
+            hasError = true;
         }
         if (!filingYear) {
-            alert("Please enter Filing Year.");
-            return;
+            showErrorDC('filling-year-dc', 'Please enter Filing Year.');
+            hasError = true;
         }
     }
 
-    // Step 4: Validate CAPTCHA
-    const captcha = document.getElementById('captcha-hc-orderJudgement')?.value.trim();
+    // CAPTCHA
     if (!captcha) {
-        alert('Please evaluate the CAPTCHA.');
-        return;
+        showErrorDC('captchaWrapper', 'Please evaluate the Expression.');
+        hasError = true;
     }
 
+    if (hasError) return;
     // Step 5: CAPTCHA API Validation
     fetch('/validate-captcha', {
         method: 'POST',
@@ -1791,6 +1819,6 @@ function submitDCJudgementForm(e) {
         });
     }
 </script>
-
+<!-- Designed and Developed by Tushar -->
 
 @endpush

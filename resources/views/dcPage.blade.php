@@ -199,7 +199,7 @@
 
 <div class="orderJudgement" id="orderJudgementFormDC">
        
-    <form class="dark_form p-4 sm:mt-10 mt-4 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementDC">
+<form class="dark_form p-4 sm:mt-10 mt-4 bg-slate-100/70 rounded-md mb-[5rem]" id="orderJudgementDC">
        @csrf
            <h3 class="font-semibold sm:text-lg text-md mb-5">Apply for Orders And Judgement Copy (Civil Court) :</h3>
            <div class="form-group">
@@ -216,7 +216,7 @@
 
     <div class="w-full sm:w-1/2">
         <label for="selectDist" class="mb-2 block">Please Select District:<span>*</span></label>
-        <div class="relative w-full dark_select">
+        <div class="relative w-full dark_select" id="err_dist_dropdown">
             <!-- Custom Dropdown -->
             <div id="dropdownDC" class="w-full p-[10px] border rounded ">
                 <div id="dropdownToggleDC" class="cursor-pointer" onclick="toggleDropdownDC()">Please Select District</div>
@@ -249,9 +249,9 @@
     </div>
 
  <div class="form-row">
-    <div class="form-field">
+    <div class="form-field" >
         <label for="case-type">Case Type: <span>*</span></label>
-        <div class="relative w-full dark_select">
+        <div class="relative w-full dark_select" id="err_case_type">
             <select id="caseTypeSelectForOrderJudgementFormDC" 
                     class="w-full p-[12px] border border-[#ccc] rounded" 
                     onchange="selectCaseTypeOption(this)">
@@ -307,6 +307,7 @@
            <div class="form-row">
            <div class="form-field">
            <label for="captcha">Evaluate the Expression<span>*</span></label>
+           <div class="flex flex-col gap-1" id="captchaWrapper">
            <div class="flex justify-center items-center gap-1">
                <!-- <img id="captchaImageOrderJudgement" src="{{ session('captcha_image') }} alt="Captcha"> -->
                <img id="captchaImageOrderJudgement" src="{{ $captcha }}" alt="Captcha" class="rounded-md">
@@ -316,6 +317,7 @@
                    <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
                </button>
            </div>
+        </div>
        </div>
        <div class="form-field mt-10">
            <button type="submit" class="btn btn-search flex items-center justify-center gap-2" onclick="submitDCJudgementForm(event)" id="searchBtn">
@@ -324,7 +326,7 @@
            </button>
        </div>
            </div>
-    </form>
+</form>
     <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
 
             <h3 class="p-3 font-semibold sm:text-xl text-lg -mb-4">Order and Judgement Copy Details (Civil Court) :</h3>
