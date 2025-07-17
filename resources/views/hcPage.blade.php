@@ -29,42 +29,46 @@
             </div>
             <div class="form-row">
             <div class="form-field">
-            <label for="case-type">Case Type: <span>*</span></label>
-            <div class="relative w-full dark_select">
-                <!-- Custom Dropdown -->
-                <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border border-[#ccc] rounded relative">
-    <div id="caseTypeToggleForOrderJudgementForm" 
-         class="cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis" 
-         onclick="toggleCaseTypeDropdownForOrderJudgement()">Please Select Case Type</div>
-    <div id="caseTypeMenuForOrderJudgementForm" 
-         class="hidden absolute top-full left-0 w-full max-h-60 border border-[#ccc] dark_select overflow-y-auto rounded shadow-lg z-10">
-        <!-- Search Box -->
-        <div class="p-2">
-            <input type="text" id="caseTypeSearchInputForOrderJudgementForm" 
-                   class="w-full p-[10px] border border-[#ccc] rounded" 
-                   placeholder="Search Case Type..." 
-                   onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
-                    </div>
-                    <!-- Options -->
-                    <ul id="caseTypeOptionsForOrderJudgementForm" class="list-none p-0 m-0">
-                        <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
-                            onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">Please Select Case Type</li>
-                        @if (!empty($caseTypes) && is_array($caseTypes))
-                            @foreach ($caseTypes as $caseType)
-                                <li data-value="{{ $caseType['case_type'] }}" 
-                                    class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap" 
+                <label for="case-type">Case Type: <span>*</span></label>
+                <div class="relative w-full dark_select" id="err_select">
+                    <!-- Custom Dropdown -->
+                    <div id="caseTypeDropdownForOrderJudgement" class="w-full p-[10px] border border-[#ccc] rounded relative">
+                        <div id="caseTypeToggleForOrderJudgementForm"
+                            class="cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
+                            onclick="toggleCaseTypeDropdownForOrderJudgement()">
+                            Please Select Case Type
+                        </div>
+                        <div id="caseTypeMenuForOrderJudgementForm"
+                            class="hidden absolute top-full left-0 w-full max-h-60 border border-[#ccc] dark_select overflow-y-auto rounded shadow-lg z-10">
+                            <!-- Search Box -->
+                            <div class="p-2">
+                                <input type="text" id="caseTypeSearchInputForOrderJudgementForm"
+                                    class="w-full p-[10px] border border-[#ccc] rounded"
+                                    placeholder="Search Case Type..."
+                                    onkeyup="filterCaseTypeOptionsForOrderJudgementForm()">
+                            </div>
+                            <!-- Options -->
+                            <ul id="caseTypeOptionsForOrderJudgementForm" class="list-none p-0 m-0">
+                                <li data-value="" class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
                                     onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">
-                                    {{ $caseType['type_name'] }}
+                                    Please Select Case Type
                                 </li>
-                            @endforeach
-                        @else
-                            <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
-                        @endif
-                    </ul>
+                                @if (!empty($caseTypes) && is_array($caseTypes))
+                                    @foreach ($caseTypes as $caseType)
+                                        <li data-value="{{ $caseType['case_type'] }}"
+                                            class="p-2 hover:bg-gray-100 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
+                                            onclick="selectCaseTypeOptionForOrderJudgementForm(this); getHcCaseType(this)">
+                                            {{ $caseType['type_name'] }}
+                                        </li>
+                                    @endforeach
+                                @else
+                                    <li data-value="" class="p-2 cursor-not-allowed text-gray-500">No Case Types Available</li>
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-        </div>
                
         <div class="form-field case-field space-y-[14px]">
             <label for="case-no">Case Number: <span>*</span></label>
@@ -127,18 +131,24 @@
             </div>
             <div class="form-row">
             <div class="form-field">
-            <label for="captcha">Evaluate the Expression<span>*</span></label>
-            <div class="flex justify-center items-center gap-1">
-                <!-- <img id="captchaImageOrderJudgement" src="{{ session('captcha_image') }} alt="Captcha"> -->
-                <img id="captchaImageOrderJudgement" src="{{ $captcha }}" alt="Captcha" class="rounded-md">
+                <label for="captcha">Evaluate the Expression<span>*</span></label>
+                <div class="flex flex-col gap-1" id="captchaWrapper">
+                    <div class="flex justify-center items-center gap-1">
+                        <img id="captchaImageOrderJudgement" src="{{ $captcha }}" alt="Captcha" class="rounded-md">
 
-                <input class="text-lg" type="text" id="captcha-hc-orderJudgement" name="captcha" required placeholder="Enter the expression">
-                
-                <button type="button" class="refresh-btn-orderJudgement rounded-full hover:shadow-md" onclick="refreshCaptchaForOrderJudgement()" title="Refresh Captcha">
-                    <img class="w-[52px]" src="{{ asset('passets/images/icons/refresh.png')}}" alt="Refresh">
-                </button>
+                        <input class="text-lg" type="text" id="captcha-hc-orderJudgement" name="captcha"
+                            placeholder="Enter the expression">
+
+                        <button type="button"
+                            class="refresh-btn-orderJudgement rounded-full hover:shadow-md"
+                            onclick="refreshCaptchaForOrderJudgement()" title="Refresh Captcha">
+                            <img class="sm:w-[52px] w-[100px]" src="{{ asset('passets/images/icons/refresh.png') }}" alt="Refresh">
+                        </button>
+                    </div>
+                    <!-- JS will inject the error below here -->
+                </div>
             </div>
-        </div>
+
         <div class="form-field mt-10">
             <button type="submit" class="btn btn-search flex items-center justify-center gap-2" onclick="submitJudgementForm(event)" id="searchBtn">
                 <span id="btnText">Search</span>
@@ -150,18 +160,6 @@
 
         <!-- response data of order and judgement copy in this div  -->
         <div id="orderDetails" class="relative dark_form flex flex-col items-start justify-start gap-5 p-4 bg-slate-100/70 rounded-md sm:mb-4 mb-16 hidden">
-            <!-- Loading Overlay -->
-            <!-- <div id="loadingOverlay" class="loading_hc absolute inset-0 flex items-center justify-center z-10">
-                <div class="flex flex-col items-center">
-                    <svg class="animate-spin h-8 w-8 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                    </svg>
-                    <p class="mt-2 text-teal-600 font-semibold">Please wait...</p>
-                </div>
-            </div> -->
-
-            <!-- Title -->
             <h3 class="p-3 font-semibold sm:text-xl text-lg -mb-4">Order and Judgement Copy Details:</h3>
 
             <!-- Table -->

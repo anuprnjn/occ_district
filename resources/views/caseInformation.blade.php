@@ -126,12 +126,9 @@
 
             // Ensure responseData exists
             const responseData = data?.session_data?.HcCaseDetailsNapix;
-            console.log(responseData);
             if (!responseData) {
                 throw new Error('Missing responseData!');
             }
-            console.log(responseData);
-
             // ** Display Case Details **
             const caseDetailsDiv = document.getElementById("caseDetails");
             const caseInfo = responseData;

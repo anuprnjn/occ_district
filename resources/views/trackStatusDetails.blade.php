@@ -578,9 +578,11 @@ function paymentPending(application_number) {
 
 
         const orderDetailsList = orderDetails || []; // fallback to empty array
+        const deficit_status = data.deficit_status || 0; 
         const hasExtraColumns = orderDetailsList.some(
          item => item.number_of_page < item.new_page_no
         );
+        const is_deficit = hasExtraColumns && deficit_status == 1;
          
 
         const orderDetailsRows = orderDetailsList.map((item, index) => `
@@ -589,7 +591,7 @@ function paymentPending(application_number) {
             <td class="px-4 py-2 border">${item.order_date || 'N/A'}</td>
             <td class="px-4 py-2 border">${item.number_of_page || 'N/A'}</td>
             <td class="px-4 py-2 border text-green-500">₹${item.amount || 'N/A'}</td>
-            ${hasExtraColumns ? `
+            ${is_deficit? `
                 <td class="px-4 py-2 border">${item.new_page_no || 'N/A'}</td>
                 <td class="px-4 py-2 border">₹${item.new_page_amount || 'N/A'}</td>
                     <td class="px-4 py-2 border text-green-500">₹${ (item.new_page_amount - item.amount).toFixed(2) }</td>
@@ -668,7 +670,7 @@ function paymentPending(application_number) {
                         <th class="px-4 py-2 border">Order Date</th>
                         <th class="px-4 py-2 border">No of Page</th>
                         <th class="px-4 py-2 border">Amount</th>
-                        ${hasExtraColumns ? `
+                        ${is_deficit? `
                         <th class="px-4 py-2 border">New Page No</th>
                         <th class="px-4 py-2 border">New Amount</th>
                         <th class="px-4 py-2 border">Deficit Amount</th>

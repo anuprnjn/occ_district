@@ -93,9 +93,11 @@
         
     @php
         $orders = session('PendingCaseInfoDetails.order_details') ?? [];
+        $deficit_status = session('PendingCaseInfoDetails.case_info.deficit_status');
         $hasExtraColumns = collect($orders)->contains(function ($order) {
             return ($order['number_of_page'] ?? 0) < ($order['new_page_no'] ?? 0);
         });
+        $is_deficit = $hasExtraColumns && $deficit_status == 1;
     @endphp
     <div class="overflow-x-auto">
            @if($orders)
@@ -106,7 +108,7 @@
                         <th class="py-2 px-2 border">Order Date</th>
                         <th class="py-2 px-2 border">Pages</th>
                         <th class="py-2 px-2 border">Amount</th>
-                         @if($hasExtraColumns)
+                         @if($is_deficit)
                             <th class="py-2 px-2 border">New Pages</th>
                             <th class="py-2 px-2 border">New Amount</th>
                             <th class="py-2 px-2 border">Deficit Amount</th>
@@ -121,7 +123,7 @@
                             <td class="py-2 px-2 border">{{ $order['order_date'] ?? 'N/A' }}</td>
                             <td class="py-2 px-2 border">{{ $order['number_of_page'] ?? '0' }}</td>
                             <td class="py-2 px-2 border text-green-500">₹{{ $order['amount'] ?? '0.0' }}</td>
-                            @if($hasExtraColumns)
+                            @if($is_deficit)
                         <td class="py-2 px-2 border">
                             {{ $order['new_page_no'] ?? '0' }}
                         </td>

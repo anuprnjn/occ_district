@@ -58,6 +58,7 @@ use App\Http\Controllers\DownloadCertifiedCopyController;
 use App\Http\Controllers\mobileNumberTrackController;
 use App\Http\Controllers\admin\ReportController;
 use App\Http\Middleware\RolePermissionMiddleware;
+use App\Http\Controllers\admin\FeeMasterController;
 
 
 Route::match(['get', 'post'], '/', function () {
@@ -499,3 +500,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::get('/admin/activity-log-report-dc', [ReportController::class, 'logsReportDC'])->name('admin.logs.report_dc');
 
 });
+
+// Fee Master Routes
+Route::get('/admin/fee-master', [FeeMasterController::class, 'fee_master'])->name('fee_master');
+Route::get('/admin/fee-master/create', [FeeMasterController::class, 'create'])->name('fee_master.create');
+Route::post('/admin/fee-master', [FeeMasterController::class, 'store'])->name('fee_master.store');
+Route::get('/admin/fee-master/{id}/edit', [FeeMasterController::class, 'edit'])->name('fee_master.edit');
+Route::put('/admin/fee-master/{id}', [FeeMasterController::class, 'update'])->name('fee_master.update');  

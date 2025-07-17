@@ -218,12 +218,12 @@
         <label for="selectDist" class="mb-2 block">Please Select District:<span>*</span></label>
         <div class="relative w-full dark_select">
             <!-- Custom Dropdown -->
-            <div id="dropdownDC" class="w-full p-[8px] border rounded ">
+            <div id="dropdownDC" class="w-full p-[10px] border rounded ">
                 <div id="dropdownToggleDC" class="cursor-pointer" onclick="toggleDropdownDC()">Please Select District</div>
                 <div id="dropdownMenuDC" class="hidden absolute top-full left-0 w-full max-h-60 border border-gray-300 dark_select overflow-y-auto rounded shadow-lg z-10">
                     <!-- Search Box -->
                     <div class="p-2">
-                        <input type="text" id="searchInputDC" class="w-full p-[8.5px] border border-gray-300 rounded" placeholder="Search District..." onkeyup="filterOptionsDC()">
+                        <input type="text" id="searchInputDC" class="w-full p-[10px] border border-gray-300 rounded" placeholder="Search District..." onkeyup="filterOptionsDC()">
                     </div>
                     <!-- Options -->
                     <ul id="dropdownOptionsDC" class="list-none p-0 m-0">
@@ -241,7 +241,7 @@
     </div>
     <div class="w-full sm:w-1/2">
         <label for="selectEstaDC" class="mb-2 block mt-4 sm:mt-0">Select Establishment:<span>*</span></label>
-        <select id="selectEstaDC" class="w-full p-[10px] border border-gray-300 rounded" onchange="saveEstCode(this)">
+        <select id="selectEstaDC" class="w-full p-[12px] border border-gray-300 rounded" onchange="saveEstCode(this)">
             <option value="" selected>Select Establishment</option>
         </select>
     </div>
@@ -253,7 +253,7 @@
         <label for="case-type">Case Type: <span>*</span></label>
         <div class="relative w-full dark_select">
             <select id="caseTypeSelectForOrderJudgementFormDC" 
-                    class="w-full p-[10px] border border-[#ccc] rounded" 
+                    class="w-full p-[12px] border border-[#ccc] rounded" 
                     onchange="selectCaseTypeOption(this)">
                 <option value="">Please Select Case Type</option>
             </select>

@@ -146,6 +146,9 @@
                                 <h5 class="card-title">Upload Document (Civilcourt Other Copy)</h5>
                             </div>
                             <div class="card-body">
+                                <div class="alert alert-warning" role="alert">
+                                <strong>Note:</strong> If document size is greater than 20 MB, split and upload PDFs.
+                                </div>
                                 <form id="documentUploadForm">
                                     @csrf
                                     <div class="d-flex justify-content-end mt-2">

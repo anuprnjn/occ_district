@@ -806,61 +806,76 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <!--Script for Search High court order copy From Napix-->
 <script>
+    function showError(inputId, message) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
 
-    function submitJudgementForm(e) {
+        let errorDiv = input.nextElementSibling;
+        if (!errorDiv || !errorDiv.classList.contains('input-error')) {
+            errorDiv = document.createElement('div');
+            errorDiv.classList.add('input-error', 'text-red-500', 'text-sm', 'mt-1');
+            input.parentNode.appendChild(errorDiv);
+        }
+        errorDiv.textContent = message;
+    }
+
+    function clearAllErrors() {
+        document.querySelectorAll('.input-error').forEach(el => el.remove());
+    }
+
+   function submitJudgementForm(e) {
         e.preventDefault();
+        clearAllErrors(); // clear previous errors
 
-        // Step 1: Get the Case Type from the selected element (if any)
         const selectedCaseTypeHc = sessionStorage.getItem('selectedHcCaseType');
-        
-        // Ensure Case Type is selected before proceeding
-        if (!selectedCaseTypeHc) {
-            alert("Please select Case Type.");
-            return;
-        }
-
-        // Step 2: Check if the user selected a Case Type for the search form.
         const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
-        if (!selectedRadio) {
-            alert("Please choose Case Number or Filling Number.");
-            return;
+        const captcha = document.getElementById('captcha-hc-orderJudgement').value.trim();
+        const captcha_err = document.getElementById('err_captcha');
+        let caseNo = document.getElementById('case-no').value.trim();
+        let caseYear = document.getElementById('case-year').value.trim();
+        let filingNo = document.getElementById('filling-no').value.trim();
+        let filingYear = document.getElementById('filling-year').value.trim();
+
+        let hasError = false;
+
+        if (!selectedCaseTypeHc) {
+            showError('err_select', 'Please select Case Type.');
+            hasError = true;
         }
 
-        let caseNo, caseYear, filingNo, filingYear;
-        
-        // Step 3: Validate Case No / Filing No based on the selected search type.
-        if (selectedRadio.value === "case") {
-            caseNo = document.getElementById('case-no').value.trim();
-            caseYear = document.getElementById('case-year').value.trim();
-            
+        if (!selectedRadio) {
+            showError('case-no', 'Please choose Case Number or Filing Number.');
+            hasError = true;
+        }
+
+        if (selectedRadio?.value === 'case') {
             if (!caseNo) {
-                alert("Please enter Case Number.");
-                return;
+                showError('case-no', 'Please enter Case Number.');
+                hasError = true;
             }
             if (!caseYear) {
-                alert("Please enter Case Year.");
-                return;
-            }
-        } else if (selectedRadio.value === "filling") {
-            filingNo = document.getElementById('filling-no').value.trim();
-            filingYear = document.getElementById('filling-year').value.trim();
-            
-            if (!filingNo) {
-                alert("Please enter Filing Number.");
-                return;
-            }
-            if (!filingYear) {
-                alert("Please enter Filing Year.");
-                return;
+                showError('case-year', 'Please enter Case Year.');
+                hasError = true;
             }
         }
 
-        // Step 4: Validate CAPTCHA.
-        const captcha = document.getElementById('captcha-hc-orderJudgement').value.trim();
-        if (!captcha) {
-            alert('Please evaluate the CAPTCHA.');
-            return;
+        if (selectedRadio?.value === 'filling') {
+            if (!filingNo) {
+                showError('filling-no', 'Please enter Filing Number.');
+                hasError = true;
+            }
+            if (!filingYear) {
+                showError('filling-year', 'Please enter Filing Year.');
+                hasError = true;
+            }
         }
+
+        if (!captcha) {
+            showError('captchaWrapper', 'Please evaluate the Expression.');
+            hasError = true;
+        }
+
+        if (hasError) return;
 
         // Step 5: CAPTCHA API Validation
         fetch('/validate-captcha', {
@@ -1105,8 +1120,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-
-
     }
 
     function handleSetHcPhpSession(button) {
@@ -1205,14 +1218,14 @@ document.addEventListener("DOMContentLoaded", function () {
 <!--Script for High court when in order copy order is not available-->
 <script>
     function handleApplyForOthers() {
-    const orderDetailsDiv = document.getElementById("orderDetails");
+        const orderDetailsDiv = document.getElementById("orderDetails");
 
-    orderDetailsDiv.classList.add("hidden");
+        orderDetailsDiv.classList.add("hidden");
 
-    var selectedOption = document.getElementById("highCourtSelect").value = "applyOrders";
-    document.getElementById("orderJudgementForm").style.display = "none";
-    document.getElementById("otherForm").style.display = "block";
-}
+        var selectedOption = document.getElementById("highCourtSelect").value = "applyOrders";
+        document.getElementById("orderJudgementForm").style.display = "none";
+        document.getElementById("otherForm").style.display = "block";
+    }
 </script>  
 
 <!--Script for High court when in order copy order is available-->
@@ -1692,91 +1705,91 @@ function submitDCJudgementForm(e) {
 </script>
 <!--Script for Civil Court when in order copy order is not available-->
 <script>
-    function handleApplyForOthersDC() {
-    
-    const orderDetailsDiv = document.getElementById("orderDetails");
+  function handleApplyForOthersDC() {
+        
+        const orderDetailsDiv = document.getElementById("orderDetails");
 
-    orderDetailsDiv.classList.add("hidden");
+        orderDetailsDiv.classList.add("hidden");
 
-    var selectedOption = document.getElementById("civilCourtSelect").value = "applyOrdersDC";
-    document.getElementById("orderJudgementFormDC").style.display = "none";
-    document.getElementById("applyOrdersFormDC").style.display = "block";
-}
+        var selectedOption = document.getElementById("civilCourtSelect").value = "applyOrdersDC";
+        document.getElementById("orderJudgementFormDC").style.display = "none";
+        document.getElementById("applyOrdersFormDC").style.display = "block";
+    }
 </script> 
 
 <!--This script is used for get case type on the basis of selected establishment in civil court other copy-->
 <script>
- function saveEstCodeDcOtherCopy(selectElement) {
-    const selectedEstCode = selectElement.value;
+    function saveEstCodeDcOtherCopy(selectElement) {
+        const selectedEstCode = selectElement.value;
 
-    if (selectedEstCode !== '') {
-        sessionStorage.setItem('selectedEstCodeDC', selectedEstCode);
-        // sessionStorage.setItem('selectedEstCodeDCOtherCopy', selectedEstCode);
+        if (selectedEstCode !== '') {
+            sessionStorage.setItem('selectedEstCodeDC', selectedEstCode);
+            // sessionStorage.setItem('selectedEstCodeDCOtherCopy', selectedEstCode);
 
-        // Show loading spinner
-        document.getElementById('loadingSpinnerOtherCopyDc').classList.remove('hidden');
+            // Show loading spinner
+            document.getElementById('loadingSpinnerOtherCopyDc').classList.remove('hidden');
 
-        // Make AJAX call to fetch case types
-        fetch('/get-dc-case-master', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ est_code: selectedEstCode })
-        })
-        .then(response => response.json().then(data => ({ status: response.status, body: data })))
-        .then(({ status, body }) => {
-            console.log('Case Types Response:', body);
+            // Make AJAX call to fetch case types
+            fetch('/get-dc-case-master', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ est_code: selectedEstCode })
+            })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                console.log('Case Types Response:', body);
 
-            // Hide spinner regardless of result
-            document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+                // Hide spinner regardless of result
+                document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
 
-            if (!body.success) {
-                alert(body.message);
-                return;
-            }
+                if (!body.success) {
+                    alert(body.message);
+                    return;
+                }
 
-            const caseTypes = Array.isArray(body.data) ? body.data : Object.values(body.data);
-            populateSelectDropdownDCOtherCopy(caseTypes);
+                const caseTypes = Array.isArray(body.data) ? body.data : Object.values(body.data);
+                populateSelectDropdownDCOtherCopy(caseTypes);
 
-        })
-        .catch(error => {
-            console.error('Error fetching case types:', error);
-            alert('An error occurred while connecting to the server.');
-            document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+            })
+            .catch(error => {
+                console.error('Error fetching case types:', error);
+                alert('An error occurred while connecting to the server.');
+                document.getElementById('loadingSpinnerOtherCopyDc').classList.add('hidden');
+            });
+
+        } else {
+            sessionStorage.removeItem('selectedEstCodeDC');
+        }
+    }
+
+    function populateSelectDropdownDCOtherCopy(caseTypes) {
+        const selectElement = document.getElementById('caseTypeSelectForOyherCopyDC');
+
+        if (!selectElement) {
+            console.error('caseTypeSelectForOtherCopyFormDC element not found!');
+            return;
+        }
+
+        // Clear existing options
+        selectElement.innerHTML = '<option value="">Please Select Case Type</option>';
+
+        caseTypes.forEach(caseType => {
+            const optionElement = document.createElement('option');
+            optionElement.value = caseType.case_type;
+            optionElement.textContent = `${caseType.type_name}`;
+            selectElement.appendChild(optionElement);
         });
-
-    } else {
-        sessionStorage.removeItem('selectedEstCodeDC');
+    
+        // Attach change event listener (to save selected case type in sessionStorage)
+        selectElement.addEventListener('change', function() {
+            const selectedCaseType = this.value;
+            sessionStorage.setItem('selectedCaseTypeDCNapix', selectedCaseType);
+            // console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
+        });
     }
-}
-
-function populateSelectDropdownDCOtherCopy(caseTypes) {
-    const selectElement = document.getElementById('caseTypeSelectForOyherCopyDC');
-
-    if (!selectElement) {
-        console.error('caseTypeSelectForOtherCopyFormDC element not found!');
-        return;
-    }
-
-    // Clear existing options
-    selectElement.innerHTML = '<option value="">Please Select Case Type</option>';
-
-    caseTypes.forEach(caseType => {
-        const optionElement = document.createElement('option');
-        optionElement.value = caseType.case_type;
-        optionElement.textContent = `${caseType.type_name}`;
-        selectElement.appendChild(optionElement);
-    });
-  
-    // Attach change event listener (to save selected case type in sessionStorage)
-    selectElement.addEventListener('change', function() {
-        const selectedCaseType = this.value;
-        sessionStorage.setItem('selectedCaseTypeDCNapix', selectedCaseType);
-        // console.log('Selected Case Type saved to sessionStorage:', selectedCaseType);
-    });
-}
 </script>
 
 
