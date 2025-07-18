@@ -16,7 +16,7 @@
             </label>
         </div>
         <div class="flex justify-center sm:flex-row flex-col items-center sm:gap-10">
-            <div class="form-field">
+            <div class="form-field w-[100%] sm:w-[100%]">
                 <label for="application_number">Mobile Number / Application Number  <span>*</span></label>
                 <input type="text" id="application_number" name="application_number" placeholder="Enter Mobile Number / Application Number" class="sm:mb-5 h-[45px]">
             </div>  

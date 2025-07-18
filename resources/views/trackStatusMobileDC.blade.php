@@ -91,15 +91,11 @@
                         to view full application details.
                     </div>
                 @endif
-
             
             <!-- Mobile View (Cards) -->
             <div class="block sm:hidden space-y-4">
                 @foreach($latestDateApplications as $copy)
-                <div class="border rounded-lg shadow p-4 {{ $loop->first ? 'border-blue-300 bg-blue-50' : '' }}">
-                    @if($loop->first)
-                        <div class="mb-2 text-xs font-medium text-blue-600 uppercase tracking-wide">Latest Application</div>
-                    @endif
+                <div class="border rounded-lg shadow p-4">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="text-sm font-medium">S.No.</div>
                         <div class="text-sm font-semibold bg-[#D09A3F] w-6 text-center rounded-md text-white">{{ $loop->iteration }}</div>
