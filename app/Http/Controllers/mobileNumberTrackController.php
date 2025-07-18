@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class mobileNumberTrackController extends Controller
 {
@@ -17,6 +18,9 @@ class mobileNumberTrackController extends Controller
 
         $inputType = $request->input('input_type'); // mobile_number or application_number
         $inputValue = $request->input('input_value');
+
+        Session::put('inputTypeHC', $inputType);
+        Session::put('inputValueHC', $inputValue);
 
         if ($inputType === 'mobile_number') {
             $request->validate([
@@ -76,6 +80,9 @@ class mobileNumberTrackController extends Controller
         $inputType = $request->input('input_type'); // mobile_number or application_number
         $inputValue = $request->input('input_value');
 
+        Session::put('inputTypeDC', $inputType);
+        Session::put('inputValueDC', $inputValue);
+
         if ($inputType === 'mobile_number') {
             $request->validate([
                 'input_value' => 'digits:10',
@@ -127,22 +134,17 @@ class mobileNumberTrackController extends Controller
         // Step 1: Check if HC session exists
         if (session()->has('trackDetailsMobileHC')) {
             $sessionData = session('trackDetailsMobileHC');
-            $mobile = null;
-
-            // Step 2: Extract mobile number from either order_copy or other_copy
-            if (!empty($sessionData['data']['order_copy'])) {
-                $mobile = $sessionData['data']['order_copy'][0]['mobile_number'] ?? null;
-            } elseif (!empty($sessionData['data']['other_copy'])) {
-                $mobile = $sessionData['data']['other_copy'][0]['mobile_number'] ?? null;
-            }
+           
+            $inputType = session('inputTypeHC');
+            $inputValue = session('inputValueHC');
 
             // Step 3: If mobile number found, fetch updated data from external API
-            if ($mobile) {
+            if (!$inputType) {
                 $apiUrl = config('app.api.hc_base_url') . '/get_all_application_applied_user_from_mobile_hc.php';
 
                 try {
                     $response = Http::post($apiUrl, [
-                        'mobile_number' => $mobile
+                        $inputType => $inputValue
                     ]);
 
                     $data = $response->json();
@@ -169,22 +171,17 @@ class mobileNumberTrackController extends Controller
         // Step 1: Check if HC session exists
         if (session()->has('trackDetailsMobileDC')) {
             $sessionData = session('trackDetailsMobileDC');
-            $mobile = null;
-
-            // Step 2: Extract mobile number from either order_copy or other_copy
-            if (!empty($sessionData['data']['order_copy'])) {
-                $mobile = $sessionData['data']['order_copy'][0]['mobile_number'] ?? null;
-            } elseif (!empty($sessionData['data']['other_copy'])) {
-                $mobile = $sessionData['data']['other_copy'][0]['mobile_number'] ?? null;
-            }
+            
+            $inputType = session('inputTypeDC');
+            $inputValue = session('inputValueDC');
 
             // Step 3: If mobile number found, fetch updated data from external API
-            if ($mobile) {
+            if (!$inputType) {
                  $apiUrl = config('app.api.base_url') . '/get_all_application_applied_user_from_mobile_dc.php';
 
                 try {
                     $response = Http::post($apiUrl, [
-                        'mobile_number' => $mobile
+                        $inputType => $inputValue
                     ]);
 
                     $data = $response->json();

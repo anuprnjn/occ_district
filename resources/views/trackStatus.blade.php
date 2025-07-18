@@ -59,64 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <!-- script to check the mobile number or application number  -->
 <script>
-    function trackApplication(input) {
-
-        var applicationNumberInput = input;
-        var application_number = applicationNumberInput.trim().toUpperCase();
-        var errorSpan = document.getElementById('error_span');
-        var selectedCourt = document.querySelector('input[name="search-type"]:checked').value;
-        const otp_input = document.getElementById("mobile_otp");
-
-
-        // Clear previous error message
-        errorSpan.innerText = '';  
-
-        // Check if the application number is empty
-        if (application_number === '') {
-            errorSpan.innerText = 'Please enter the application number or mobile number !';
-            return;
-        }
-
-        // Check if the selected court matches the application number prefix
-        if ((selectedCourt === 'HC' && !application_number.startsWith('HC'))
-         || (selectedCourt === 'DC' && application_number.startsWith('HC'))) {
-            errorSpan.innerText = 'Selected court and application number do not match!';
-            otp_input.classList.add('hidden');
-            trackApplicationForm.reset();
-            return;
-        }
-
-
-        // Make AJAX request based on selected court
-        var url = selectedCourt === 'HC' ? '/fetch-hc-application-details' : '/fetch-application-details';
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                application_number: application_number,
-            },
-            success: function(response) {
-               if (response.success) {
-                    const fetched_mobile = response.data[0].mobile_number;
-                    const masked_mobile = fetched_mobile.slice(0, 2) + 'xxxx' + fetched_mobile.slice(-4);
-                    otp_input.classList.remove('hidden');
-                    document.getElementById('error_span').innerHTML = `
-                        <span class="text-green-600">OTP has been sent to registered mobile number - </span>
-                        <span class="text-red-600">${masked_mobile}</span>
-                    `;
-                    sendOtpTrack('application', fetched_mobile, application_number);
-                } else {
-                    errorSpan.innerText = response.message || 'Failed to fetch application details.';
-                    otp_input.classList.add('hidden');
-                }
-            },
-            error: function() {
-                errorSpan.innerText = 'An error occurred while fetching the application details.';
-            }
-        });
-    }
     function checkInputType(event) {
         event.preventDefault();
 
@@ -243,9 +185,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
         } else {
-            // otp_input.classList.remove('hidden');
-            // errorSpan.innerText = '';
-            // trackApplication(input);
             if(selectedCourt === 'HC'){
                 fetch('/check-mobile-number-hc', {
                     method: 'POST',
@@ -286,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 (orderCopyLength > 0 && data.data.order_copy[0].mobile_number) ||
                                 '';
                                 sendOtpTrack(selectedCourt,validatedMobile);
-                                const maskedMobile = input.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
+                                const maskedMobile = validatedMobile.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
                                 otp_input.classList.remove('hidden');
                                 errorSpan.style.color = 'green';
                                 errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: red;">${maskedMobile}</span>.`;
@@ -339,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 (orderCopyLength > 0 && data.data.order_copy[0].mobile_number) ||
                                 '';
                                 sendOtpTrack(selectedCourt,validatedMobile);
-                                const maskedMobile = input.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
+                                const maskedMobile = validatedMobile.replace(/^(\d{2})\d{4}(\d{4})$/, '$1xxxx$2');
                                 otp_input.classList.remove('hidden');
                                 errorSpan.style.color = 'green';
                                 errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: red;">${maskedMobile}</span>.`;
