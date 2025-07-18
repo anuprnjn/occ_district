@@ -259,7 +259,6 @@
 <script>
     async function paymentToMerchant(event, applicationNumber, paybleAmount) {
     event.preventDefault();
-        console.log(paybleAmount);
     try {
         var userData = @json(session('PendingCaseInfoDetails.case_info'));
 
@@ -275,10 +274,9 @@
         if(isDeficit) {
             urgentfee= 0;
         } else {
-           urgentfee = @json(session('PendingCaseInfoDetails.transaction_details.urgent_fee'));
+            urgentfee = @json(session('PendingCaseInfoDetails.transaction_details.urgent_fee')) ||  @json(session('PendingCaseInfoDetails.case_info.urgent_fee'));
         }
-        
-    
+
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         const response = await fetch("/fetch-merchant-details", {
@@ -287,7 +285,7 @@
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": csrfToken
             },
-            body: JSON.stringify({ userData, pendingPaybleAmount, urgentfee,applicationNumber })
+            body: JSON.stringify({ userData, pendingPaybleAmount, urgentfee, applicationNumber })
         });
 
         const data = await response.json();

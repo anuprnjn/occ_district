@@ -194,7 +194,7 @@
                                                 </div>
                                                 <button 
                                                     type="button" 
-                                                    class="btn btn-link p-2" 
+                                                    class="mt-2 btn btn-outline-info btn-sm" 
                                                     onclick="processPDF(
                                                         '{{ Storage::url('highcourt_other_copies' . '/' . strtolower(\Carbon\Carbon::parse($doc->uploaded_date)->format('Fy')) . '/' . $doc->file_name) }}',
                                                         '{{ $hcuser->created_at }}',
@@ -204,8 +204,8 @@
                                                         '{{ $transaction_details->transaction_no ?? 'TRNTEST12345' }}',
                                                         '{{ \Carbon\Carbon::parse($transaction_details->transaction_date ?? '2025-04-09')->format('Y-m-d') }}'
                                                     )"
-                                                >
-                                                    View/Download
+                                                > 
+                                                    Download <i class="bi bi-download"></i>
                                                 </button>
                                             </td>
                                                 <td style="width:250px;">

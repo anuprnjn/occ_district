@@ -643,7 +643,6 @@ function submitHcFormData() {
         advocate_registration_number: document.getElementById('adv_res').value,
         selected_method: document.querySelector('input[name="select_mode"]:checked')?.value,
     };
-
     fetch('/hc-register-application', {
         method: 'POST',
         headers: {

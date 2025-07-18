@@ -31,7 +31,7 @@ class PaymentController extends Controller
         $userData = $request->input('userData');
         $paybleAmount = $request->input('paybleAmount');
         $pendingPaybleAmount = $request->input('pendingPaybleAmount');
-        
+       
         if (!empty($paybleAmount)) {
             $urgent_fee = Session::get('hc_final_amount_summary')['urgent_fee'] ?? "0";
         } elseif (!empty($Dc_totalAmount)) {
