@@ -15,6 +15,6 @@ class SessionEstdController extends Controller
 
         Session::put('user.estd_code', $request->est_code);
 
-        return redirect()->back(); // Redirect back after setting session
+        return redirect('/admin/index'); 
     }
 }

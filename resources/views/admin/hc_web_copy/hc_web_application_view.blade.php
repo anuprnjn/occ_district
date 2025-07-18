@@ -136,6 +136,14 @@
                                                     <th class="fw-bold">Request Mode</th>
                                                     <td>{{ $hcuser->request_mode }}</td>
                                                 </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Petitioner Name</th>
+                                                    <td>{{ $hcuser->petitioner_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Respondent Name</th>
+                                                    <td>{{ $hcuser->respondent_name }}</td>
+                                                </tr>
 
                                             </table>
                                         </div>

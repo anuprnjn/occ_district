@@ -103,6 +103,10 @@
                                                     <th class="fw-bold">Email</th>
                                                     <td>{{ $dcuser->email }}</td>
                                                 </tr>
+                                               <tr>
+                                                    <th class="fw-bold">District Name</th>
+                                                    <td>{{ $dcuser->dist_name }}</td>
+                                                </tr>
                                             </table>
                                         </div>
 
@@ -125,6 +129,7 @@
                                                 </tr>
                                                  <tr>
                                                 @if ($dcuser->case_status)
+                                               
                                                 <th class="fw-bold">Case Status</th>
                                                 <td>
                                                     @if ($dcuser->case_status == 'D' || $dcuser->case_status == 'd')
@@ -139,7 +144,14 @@
                                                     <th class="fw-bold">Request Mode</th>
                                                     <td>{{ $dcuser->request_mode }}</td>
                                                 </tr>
-
+                                                <tr>
+                                                    <th class="fw-bold">Petitioner Name</th>
+                                                    <td>{{ $dcuser->petitioner_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Respondent Name</th>
+                                                    <td>{{ $dcuser->respondent_name }}</td>
+                                                </tr>
                                             </table>
                                         </div>
 
