@@ -31,7 +31,7 @@ class HcOrderNapixController extends Controller
 
                 $perPageFee = DB::table('fee_master')
                     ->where('fee_type', 'per_page_fee')
-                    ->value('amount') ?? 5;
+                    ->value('amount');
 
                 $totalAmount = $pageCount * $perPageFee;
 
