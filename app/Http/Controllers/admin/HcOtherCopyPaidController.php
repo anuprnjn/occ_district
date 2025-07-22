@@ -53,6 +53,7 @@ class HcOtherCopyPaidController extends Controller
             // Fetch uploaded documents
             $documents = DB::table('highcourt_applicant_document_detail')
                 ->where('application_number', $appNumber)
+                ->orderBy('id', 'ASC')
                 ->get();
 
             return view('admin.hc_other_copy.hc_paid_copy_view', compact('hcuser', 'documents','transaction_details'));

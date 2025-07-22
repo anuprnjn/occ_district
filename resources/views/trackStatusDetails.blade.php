@@ -8,11 +8,9 @@
         $hasHC = session()->has('trackDetailsMobileHC');
         $hasDC = session()->has('trackDetailsMobileDC');
     @endphp
-    <button
-        onclick="window.location.href='{{ $hasHC ? '/trackStatusMobileHC' : '/trackStatusMobileDC' }}'"
-        class="flex gap-2 pl-2 pr-4 p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">
+    <button class="flex gap-2 pl-2 pr-4 p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5">
         <img src="{{ asset('passets/images/icons/back.svg') }}" alt="">
-        Back
+        <a href="{{ $hasHC ? '/trackStatusMobileHC' : '/trackStatusMobileDC' }}" class="w-full h-full block text-white" style="text-decoration: none;">Back</a>
     </button>
         <button id="print-application-btn" class="flex gap-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg mb-20 sm:mb-4 sm:mt-5"><img src="{{ asset('passets/images/icons/print.svg')}}" alt="">Print Application</button>
     </div>
