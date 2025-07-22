@@ -1404,7 +1404,11 @@ function submitDCJudgementForm(e) {
     const selectedEstablishment = document.getElementById('selectEstaDC')?.value.trim();
     const selectedCaseType = document.getElementById('caseTypeSelectForOrderJudgementFormDC')?.value.trim();
     const selectedRadio = document.querySelector('input[name="search-type-case"]:checked');
+    const caseNo = document.getElementById('case-no-dc')?.value.trim();
+    const caseYear = document.getElementById('case-year-dc')?.value.trim();
     const captcha = document.getElementById('captcha-hc-orderJudgement')?.value.trim();
+    const filingNo = document.getElementById('filling-no-dc')?.value.trim();
+    const filingYear = document.getElementById('filling-year-dc')?.value.trim();
 
     let hasError = false;
 
@@ -1434,8 +1438,6 @@ function submitDCJudgementForm(e) {
 
     // Case or Filing validation
     if (selectedRadio?.value === "case") {
-        const caseNo = document.getElementById('case-no-dc')?.value.trim();
-        const caseYear = document.getElementById('case-year-dc')?.value.trim();
 
         if (!caseNo) {
             showErrorDC('case-no-dc', 'Please enter Case Number.');
@@ -1446,8 +1448,6 @@ function submitDCJudgementForm(e) {
             hasError = true;
         }
     } else if (selectedRadio?.value === "filling") {
-        const filingNo = document.getElementById('filling-no-dc')?.value.trim();
-        const filingYear = document.getElementById('filling-year-dc')?.value.trim();
 
         if (!filingNo) {
             showErrorDC('filling-no-dc', 'Please enter Filing Number.');
