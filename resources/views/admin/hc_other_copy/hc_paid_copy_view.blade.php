@@ -144,6 +144,9 @@
                             <div class="card-header">
                                 <h5 class="card-title">Upload Document (Hc Other Copy)</h5>
                             </div>
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Note:</strong> Upload certified copy documents max size 20mb.
+                                </div>
                             <div class="card-body">
                             <table class="table table-bordered" id="documentTable">
                                 <thead>
