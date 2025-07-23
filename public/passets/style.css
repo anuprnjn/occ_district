@@ -2,6 +2,17 @@
     font-family: roboto;
     src: url('./roboto.ttf');
 }
+/* For modern browsers */
+::selection {
+  background-color: #4B3E2F; /* Or any other color you prefer */
+  color: white; /* Optional: change the text color as well */
+}
+
+/* For Firefox */
+::-moz-selection {
+  background-color: #4B3E2F;
+  color: white;
+}
 
 :root{
     --base-clr: #FAF4EA;
