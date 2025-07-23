@@ -300,7 +300,7 @@
             const form = document.querySelector('form[name="eGrassClient"]');
             if (form) {
                 form.querySelector('input[name="requestparam"]').value = data.enc_val;
-                alert('Entered to Transaction Details Master');
+                // alert('Entered to Transaction Details Master');
                 // form.submit();
                 window.location.href = '/api/occ/gras_resp_cc';
             } else {

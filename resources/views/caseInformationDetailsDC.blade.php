@@ -307,7 +307,7 @@
         .then(res => {
             // console.log('API Response:', res);
             if (res.success) {
-                alert(`Success! Application No: ${res.application_number}`);
+                // alert(`Success! Application No: ${res.application_number}`);
                 // return;
                 paymentToMerchant(event, res.application_number,res.district_code,res.establishment_code);
             } else {
