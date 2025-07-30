@@ -195,7 +195,7 @@
         </div>
 
        
-        <form name="eGrassClient" method="POST" action="https://jkuberuat.jharkhand.gov.in/jegras/deptuattest/uatpaymentpg.aspx">
+        <form name="eGrassClient" method="POST" action="{{ env('JEGRAS_PAY_URL_UAT') }}">
             <input type="hidden" name="requestparam" value="">
             <input type="submit" value="Submit" class="hidden">
         </form>
@@ -385,8 +385,9 @@
                 if (form) {
                     form.querySelector('input[name="requestparam"]').value = data.enc_val;
                     // alert('Entered to transaction details');
-                   // form.submit();
-                    window.location.href='/api/occ/gras_resp_cc';
+                    form.submit();
+                    // return;
+                    // window.location.href='/api/occ/gras_resp_cc';
                 } else {
                     console.error("Form 'eGrassClient' not found!");
                     alert("Payment form not found. Please try again.");

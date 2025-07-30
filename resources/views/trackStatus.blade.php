@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 errorSpan.innerHTML = `OTP has been sent to mobile number - <span style="color: red;">${maskedMobile}</span>.`;
 
                             } else {
-                                errorSpan.textContent="Mobile number not found !";
+                                errorSpan.textContent="Mobile number not registered !";
                             }
                     }else{
                        alert("Internal server error !");
