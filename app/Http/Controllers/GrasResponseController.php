@@ -90,7 +90,7 @@ class GrasResponseController extends Controller
 public function handleResponse(Request $request)
 {
     $encryptionHelper = new clsEncrypt();
-    $secretKey = 'key1234';
+    $secretKey = 'Ky@5432#';
     
     // Get encrypted text from request parameters
     $encryptedText = $request->input('encryptedText');

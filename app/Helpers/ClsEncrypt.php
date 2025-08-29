@@ -32,12 +32,12 @@ class clsEncrypt
     /**
      * Encrypts a plain text string
      */
-    public function encrypt($plainText, $secretKey)
-    {
-        list($key, $iv) = $this->getKeyAndIV($secretKey);
-        $encrypted = openssl_encrypt($plainText, $this->cipher, $key, OPENSSL_RAW_DATA, $iv);
-
-        return base64_encode($encrypted); // Base64 encode for readability
+    public function encrypt($requestParameter, $key)
+    {    
+        $iv=$key;
+        $cipher   = 'AES-128-CBC';
+        $enc_val  = @openssl_encrypt($requestParameter, $cipher, $key, 0, $iv); 
+        return $enc_val; 
     }
     /**
      * Decrypts an encrypted string
